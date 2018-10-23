@@ -43,13 +43,20 @@ class ProductTemplateKitBom(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    sequence = fields.Integer('Sequence', default=10)
-    product_id = fields.Many2one('product.template', 'Product', index=True)
-    product_uom_qty = fields.Float(
-        'Quantity', digits=dp.get_precision('Product Unit of Measure'), 
-        required=True)
-    product_uom_id = fields.Many2one('product.uom', 'Unit of Measure', 
-        required=True)
+    sequence = fields.Integer(
+        'Sequence', default=10)
+    product_id = fields.Many2one(
+        'product.template', 'Product', index=True)
+    component_id = fields.Many2one(
+        'product.template', 'Component', index=True, 
+        domain=[('is_kit', '=', False)], required=True,
+        )
+    product_qty = fields.Float(
+        'Quantity', required=True,
+        digits=dp.get_precision('Product Unit of Measure'))
+    uom_id = fields.Many2one(
+        'product.uom', 'Unit of Measure', readonly=True, 
+        related='component_id.uom_id')
     
 
 class ProductTemplate(models.Model):
