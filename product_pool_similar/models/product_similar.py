@@ -40,7 +40,43 @@ class ProductTemplatePoolSimilar(models.Model):
     _rec_name = 'id'
     _order = 'id'
     
-    # XXX Has only pool of product
+    @api.multi
+    def add_product_in_pool(self):
+        ''' Create a new pool of similar product, start adding this product
+            in it
+        '''
+        """similar_pool = self.env['product.template.pool.similar']
+        model_pool = self.env['ir.model.data']
+        
+        # Create new pool and attach this product
+        similar = similar_pool.create({
+            'similar_ids': [(6, 0, (self.id, ))],
+            })
+        self.similar_id = similar.id    
+            
+        #view_id = model_pool.get_object_reference(
+        #    'module_name', 'view_name')[1]
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('New similar pool'),
+            'view_type': 'form',
+            'view_mode': 'form', # tree
+            'res_id': similar.id,
+            'res_model': 'product.template.pool.similar',
+            #'view_id': view_id, # False
+            'views': [(False, 'form')], #, (False, 'tree')
+            'domain': [],
+            'context': self.env.context,
+            'target': 'new',
+            'nodestroy': False,
+            }"""
+        return True    
+
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
+    product_id = fields.Many2one('product.template', 'Add similar')
+    
 
 class ProductTemplate(models.Model):
     """ Model name: ProductTemplate
@@ -86,7 +122,7 @@ class ProductTemplate(models.Model):
         similar = similar_pool.create({
             'similar_ids': [(6, 0, (self.id, ))],
             })
-        self.similar_id = similar.id    
+        #self.similar_id = similar.id    
             
         #view_id = model_pool.get_object_reference(
         #    'module_name', 'view_name')[1]
@@ -109,15 +145,16 @@ class ProductTemplate(models.Model):
     #                          Related fields function
     # -------------------------------------------------------------------------
     #@api.one
-    #def _compute_product_template_similar_ids(self):
-    #    ''' Return pool of product present in similar pool:
-    #        It's a related field but maybe modified in the future
-    #    '''
-    #    self.similar_ids = []
-    #    for similar in sorted(self.similar_id.similar_ids, 
-    #            key=lambda x: x.default_code):
-    #        if similar != self:
-    #            self.similar_ids.append(similar)
+    def _compute_product_template_similar_ids(self):
+        ''' Return pool of product present in similar pool:
+            It's a related field but maybe modified in the future
+        '''
+        res = []
+        for similar in sorted(self.similar_id.similar_ids, 
+                key=lambda x: x.name):
+            if similar != self:
+                res.append(similar.id)
+        self.similar_ids = res        
     
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
@@ -127,8 +164,8 @@ class ProductTemplate(models.Model):
     #    string='Default Pricelist')
     similar_ids = fields.Many2many(
         'product.template', 
-        #compute='_compute_product_template_similar_ids',
-        related='similar_id.similar_ids',
+        compute='_compute_product_template_similar_ids',
+        #related='similar_id.similar_ids',
         string='Similar pool')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

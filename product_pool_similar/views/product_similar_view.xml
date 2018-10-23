@@ -1,6 +1,28 @@
 <?xml version="1.0"?>
 <openerp>
-    <data>        
+    <data>
+        <record model="ir.ui.view" id="view_product_template_pool_similar_form">
+            <field name="name">product.template.pool.similar.form</field>
+            <field name="model">product.template.pool.similar</field>
+            <field name="arch" type="xml">
+                <form string="Similar product pool" version="7.0">
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="product_id" />
+                            <button name="add_product_in_pool" string="Add in pool" type="object" />
+                            
+                            <separator string="Similar pool" colspan="4"/>
+                            <field name="similar_ids">
+                               <tree string="Similar">
+                                   <field name="name" />
+                                   <field name="default_code" />
+                               </tree>
+                            </field>
+                        </group>
+                    </sheet>        
+                </form>
+            </field>
+        </record>
         <record model="ir.ui.view" id="view_product_template_similar_page_form">
             <field name="name">product.template.similar.page.form</field>
             <field name="model">product.template</field>
