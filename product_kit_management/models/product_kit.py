@@ -52,7 +52,7 @@ class ProductTemplateKitBom(models.Model):
         domain=[('is_kit', '=', False)], required=True,
         )
     product_qty = fields.Float(
-        'Quantity', required=True,
+        'Quantity', required=True, default=1.0,
         digits=dp.get_precision('Product Unit of Measure'))
     uom_id = fields.Many2one(
         'product.uom', 'Unit of Measure', readonly=True, 
