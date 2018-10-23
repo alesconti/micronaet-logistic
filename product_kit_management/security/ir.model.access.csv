@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_template_kit_bom_manager,product.template.kit.bom,model_product_template_kit_bom,stock.group_stock_manager,1,1,1,1
+access_product_template_kit_bom_user,product.template.kit.bom,model_product_template_kit_bom,base.group_user,1,0,0,0
+

@@ -26,16 +26,17 @@
     'version': '1.0',
     'category': 'Product',
     'sequence': 5,
-    #'summary': '',
+    'summary': 'Product, kit management',
     #'description': '',
-    'website': 'https://micronaet.comk',
+    'website': 'https://micronaet.com',
     'depends': [
         'base',
         'product',
+        'stock', # Group management
         ],
     'data': [
         #'security/crm_security.xml',
-        #'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
 
         'views/product_kit_view.xml',
         ],
