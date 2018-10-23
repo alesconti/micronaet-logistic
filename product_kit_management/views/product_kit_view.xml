@@ -2,10 +2,17 @@
 <openerp>
     <data>
         <record model="ir.ui.view" id="view_product_kit_page_form">
-            <field name="name">product.template.form</field>
-            <field name="model">product.template</field>
+            <field name="name">product.product.form</field>
+            <field name="model">product.product</field>
             <field name="inherit_id" ref="product.product_normal_form_view"/>
             <field name="arch" type="xml">
+                <!--<xpath expr="//div[@name='options']/div[1]" position="before">
+                    <div>
+                        <field name="is_kit"/>
+                        <label for="is_kit"/>
+                    </div>
+                </xpath>-->
+
                 <xpath expr="//page[1]" position="after">
                     <page string="Kit">
                         <group colspan="4" col="4">
