@@ -10,10 +10,11 @@
                     <page string="Similar">
                         <group colspan="4" col="4">
                              <separator string="Similar management" colspan="4"/>
-                             <button name="create_similar_pool" string="Manage similar" type="object" />
-                             <field name="similar_id" attrs="{'invisible': [('similar_id', '=', False)]}"/>
                              
-                             <field name="pool_ids" colspan="4" nolabel="1" readonly="1" attrs="{'invisible': [('similar_id', '=', False)]}">
+                             <field name="similar_id" attrs="{'invisible': [('similar_id', '=', False)]}"/>
+                             <button name="create_similar_pool" string="Manage similar" type="object" attrs="{'invisible': [('similar_id', '!=', False)]}" class="btn-primary"/>
+                             
+                             <field name="similar_ids" colspan="4" nolabel="1" readonly="1" attrs="{'invisible': [('similar_id', '=', False)]}">
                                  <tree string="Product similar" editable="bottom">
                                      <field name="name" />
                                      <field name="default_code" />

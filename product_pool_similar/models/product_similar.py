@@ -62,7 +62,8 @@ class ProductTemplatePoolSimilar(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------    
-    pool_ids = fields.One2many('product.template', 'similar_id', 'Pool')
+    #similar_ids = fields.One2many('product.template', 'similar_id', 'Pool')
+    similar_ids = fields.Many2many('product.template', string='Similar')
 
 class ProductTemplate(models.Model):
     """ Model name: ProductTemplate
@@ -78,27 +79,56 @@ class ProductTemplate(models.Model):
         ''' Create a new pool of similar product, start adding this product
             in it
         '''
-        return True
+        similar_pool = self.env['product.template.pool.similar']
+        model_pool = self.env['ir.model.data']
+        
+        # Create new pool and attach this product
+        similar = similar_pool.create({
+            'similar_ids': [(6, 0, (self.id, ))],
+            })
+        self.similar_id = similar.id    
+            
+        #view_id = model_pool.get_object_reference(
+        #    'module_name', 'view_name')[1]
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('New similar pool'),
+            'view_type': 'form',
+            'view_mode': 'form', # tree
+            'res_id': similar.id,
+            'res_model': 'product.template.pool.similar',
+            #'view_id': view_id, # False
+            'views': [(False, 'form')], #, (False, 'tree')
+            'domain': [],
+            'context': self.env.context,
+            'target': 'new',
+            'nodestroy': False,
+            }
         
     # -------------------------------------------------------------------------
     #                          Related fields function
     # -------------------------------------------------------------------------
-    @api.one
-    def _compute_pricelist_ids(self):
-        ''' Return pool of product present in similar pool:
-            It's a related field but maybe modified in the future
-        '''
-        self.pool_ids = []
-        for similar in sorted(self.similar_id.pool_ids, 
-                key=lambda x: x.default_code):
-            if similar != self:
-                self.pool_ids.append(similar)
+    #@api.one
+    #def _compute_product_template_similar_ids(self):
+    #    ''' Return pool of product present in similar pool:
+    #        It's a related field but maybe modified in the future
+    #    '''
+    #    self.similar_ids = []
+    #    for similar in sorted(self.similar_id.similar_ids, 
+    #            key=lambda x: x.default_code):
+    #        if similar != self:
+    #            self.similar_ids.append(similar)
     
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    similar_ids = fields.One2many(
-        'product.template', compute='_compute_product_template_similar_ids', 
-        string='Default Pricelist')
+    #similar_ids = fields.One2many(
+    #    'product.template', compute='_compute_product_template_similar_ids',
+    #    string='Default Pricelist')
+    similar_ids = fields.Many2many(
+        'product.template', 
+        #compute='_compute_product_template_similar_ids',
+        related='similar_id.similar_ids',
+        string='Similar pool')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
