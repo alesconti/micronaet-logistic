@@ -55,11 +55,11 @@ odoo = erppeek.Client(
 product_pool = odoo.model('product.template')
 
 # Update kit check:
-not_kit_product = product_pool.search([
+kit_product_ids = product_pool.search([
     ('default_code', 'ilike', '#'),
     ('is_kit', '=', False),
     ])
-product_pool.write(not_kit_ids, {
+product_pool.write(kit_product_ids, {
     'is_kit': True,
     })
 
