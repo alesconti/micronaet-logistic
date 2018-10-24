@@ -22,11 +22,11 @@
 ###############################################################################
 
 {
-    'name': 'Product similar',
+    'name': 'Product linked',
     'version': '1.0',
     'category': 'Product',
     'sequence': 5,
-    'summary': 'Product, similar',
+    'summary': 'Product, similar or alternative',
     #'description': '',
     'website': 'https://micronaet.com',
     'depends': [

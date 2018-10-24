@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <tree string="Similar product pool">
                     <field name="id" />
+                    <field name="mode" />
                     <field name="pool_text" />
                     <field name="note" />
                 </tree>
@@ -21,7 +22,7 @@
                     <sheet>
                         <group col="4" colspan="4">
                             <field name="id" readonly="1"/>
-                            <newline/>
+                            <field name="mode" />
                             <field name="product_id" domain="[('id', 'not in', similar_ids)]"/>
                             <button name="add_product_in_pool" string="Add in pool" type="object" class="btn-primary" />
                             

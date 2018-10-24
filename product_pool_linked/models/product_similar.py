@@ -92,10 +92,15 @@ class ProductTemplatePoolSimilar(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
+    mode = fields.Selection([
+        ('alternative', 'Alternative'),
+        ('similar', 'Similar'),
+        ], 'Mode', default='similar')
     product_id = fields.Many2one('product.template', 'Add similar')
     pool_text = fields.Text(
         'Similar product', compute='_get_product_pool_text', store=False)
     note = fields.Text('Note')
+    
 
 class ProductTemplate(models.Model):
     """ Model name: ProductTemplate
@@ -200,7 +205,11 @@ class ProductTemplate(models.Model):
     similar_ids = fields.One2many(
         'product.template', 
         compute='_compute_product_template_similar_ids',
-        #related='similar_id.similar_ids',
         string='Similar pool')
+
+    alternative_ids = fields.One2many(
+        'product.template', 
+        compute='_compute_product_template_alternative_ids',
+        string='Alternative pool')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
