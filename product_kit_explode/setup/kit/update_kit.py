@@ -73,7 +73,7 @@ import pdb; pdb.set_trace()
 for product in product_pool.browse(product_ids):
     # Lauch button procedure:
     try:
-        product.explode_kit_from_name()
+        res = product.explode_kit_from_name()
     except:
         log_file.write('%s\n' % product.default_code or '')
 log_file.close()
