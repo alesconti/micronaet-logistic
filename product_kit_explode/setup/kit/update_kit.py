@@ -54,7 +54,7 @@ product_ids = mrp_pool.search([
     ])
     
 product_pool.write(product_ids, {
-    'is_kit'_ True,
+    'is_kit': True,
     })
 
 log_file = open('./error.log', 'w')
