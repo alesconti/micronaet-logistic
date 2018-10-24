@@ -1,0 +1,144 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* product_pool_similar
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-10-24 09:18+0000\n"
+"PO-Revision-Date: 2018-10-24 11:20+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: product_pool_similar
+#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_pool_similar_form
+msgid "Add in pool"
+msgstr "Aggiungi nel pool"
+
+#. module: product_pool_similar
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_product_id
+msgid "Add similar"
+msgstr "Aggiunge simile"
+
+#. module: product_pool_similar
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: product_pool_similar
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: product_pool_similar
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_display_name
+msgid "Display Name"
+msgstr "Nome Completo"
+
+#. module: product_pool_similar
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_id
+msgid "ID"
+msgstr "ID"
+
+#. module: product_pool_similar
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar___last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: product_pool_similar
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: product_pool_similar
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: product_pool_similar
+#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_similar_page_form
+msgid "Manage similar"
+msgstr "Gestisci prodotti simili"
+
+#. module: product_pool_similar
+#: code:addons/product_pool_similar/models/product_similar.py:155
+#, python-format
+msgid "New similar pool"
+msgstr "Nuovo pool simili"
+
+#. module: product_pool_similar
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_note
+#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_pool_similar_form
+msgid "Note"
+msgstr "Nota"
+
+#. module: product_pool_similar
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_similar_ids
+msgid "Pool"
+msgstr "Pool"
+
+#. module: product_pool_similar
+#: code:addons/product_pool_similar/models/product_similar.py:65
+#, python-format
+msgid "Pool management"
+msgstr "Gestione pool"
+
+#. module: product_pool_similar
+#: model:ir.model,name:product_pool_similar.model_product_template_pool_similar
+msgid "Pool of similar product"
+msgstr "Pool di prodotti simili"
+
+#. module: product_pool_similar
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_pool_text
+msgid "Pool product"
+msgstr "Pool di prodotti"
+
+#. module: product_pool_similar
+#: model:ir.model,name:product_pool_similar.model_product_template
+msgid "Product Template"
+msgstr "Modello Prodotto"
+
+#. module: product_pool_similar
+#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_similar_page_form
+msgid "Product similar"
+msgstr "Prodotto simile"
+
+#. module: product_pool_similar
+#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_similar_page_form
+msgid "Remove from pool"
+msgstr "Rimuovi dal pool"
+
+#. module: product_pool_similar
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_product_similar_id
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_similar_id
+#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_pool_similar_form
+#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_similar_page_form
+msgid "Similar"
+msgstr "Simile"
+
+#. module: product_pool_similar
+#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_similar_page_form
+msgid "Similar management"
+msgstr "Gestione prodotti simili"
+
+#. module: product_pool_similar
+#: model:ir.actions.act_window,name:product_pool_similar.action_product_template_pool_similar
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_product_similar_ids
+#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_similar_ids
+#: model:ir.ui.menu,name:product_pool_similar.menu_product_template_pool_similar
+#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_pool_similar_form
+msgid "Similar pool"
+msgstr "Pool simili"
+
+#. module: product_pool_similar
+#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_pool_similar_form
+#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_pool_similar_tree
+msgid "Similar product pool"
+msgstr "Pool prodotti simili"
