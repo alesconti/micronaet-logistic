@@ -40,11 +40,13 @@ class ProductTemplatePoolSimilar(models.Model):
     _rec_name = 'id'
     _order = 'id'
     
+    # -------------------------------------------------------------------------
+    #                                   BUTTON:
+    # -------------------------------------------------------------------------
     @api.multi
     def add_product_in_pool(self):
         ''' Add selected product in pool
         '''
-        import pdb; pdb.set_trace()
         product = self.product_id
         if not product:
             return True
@@ -57,6 +59,7 @@ class ProductTemplatePoolSimilar(models.Model):
 
         #view_id = model_pool.get_object_reference(
         #    'module_name', 'view_name')[1]
+        target = self.env.context.get('open_mode', 'current')
         return {
             'type': 'ir.actions.act_window',
             'name': _('Pool management'),
@@ -68,15 +71,31 @@ class ProductTemplatePoolSimilar(models.Model):
             'views': [(False, 'form')], #, (False, 'tree')
             'domain': [],
             'context': self.env.context,
-            'target': 'current',
+            'target': target,
             'nodestroy': False,
             }
+
+    # -------------------------------------------------------------------------
+    #                             FUNCTION FIELD:
+    # -------------------------------------------------------------------------
+    @api.multi
+    def _get_product_pool_text(self):
+        ''' Better list of product for tree view
+        '''
+        for pool in self:
+            res = []
+            for similar in sorted(pool.similar_ids, 
+                    key=lambda x: x.name):
+                res.append(similar.default_code)
+            pool.pool_text = ', '.join(res)
 
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     product_id = fields.Many2one('product.template', 'Add similar')
-    
+    pool_text = fields.Text(
+        'Similar product', compute='_get_product_pool_text', store=False)
+    note = fields.Text('Note')
 
 class ProductTemplate(models.Model):
     """ Model name: ProductTemplate
@@ -150,11 +169,19 @@ class ProductTemplate(models.Model):
     def unlink_similar_pool(self):
         ''' Unlink from the pool, delete also pool if is the last
         '''
+        similar = self.similar_id
+        # Delete pool if only 1 or 2 record (no similar product)
+        if len(similar.similar_ids) in (1, 2): 
+            similar.unlink()
+        else:    
+            self.similar_id = False
+        
         return True
         
     # -------------------------------------------------------------------------
     #                          Related fields function
     # -------------------------------------------------------------------------
+    # Only in form mode (not depends):
     @api.one
     def _compute_product_template_similar_ids(self):
         ''' Return pool of product present in similar pool:
@@ -170,10 +197,7 @@ class ProductTemplate(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    #similar_ids = fields.One2many(
-    #    'product.template', compute='_compute_product_template_similar_ids',
-    #    string='Default Pricelist')
-    similar_ids = fields.Many2many(
+    similar_ids = fields.One2many(
         'product.template', 
         compute='_compute_product_template_similar_ids',
         #related='similar_id.similar_ids',
