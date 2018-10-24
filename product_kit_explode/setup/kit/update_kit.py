@@ -52,21 +52,28 @@ odoo = erppeek.Client(
     user=user,
     password=pwd,
     )
-import pdb; pdb.set_trace()
 product_pool = odoo.model('product.template')
-product_ids = product_pool.search([
+
+# Update kit check:
+not_kit_product = product_pool.search([
     ('default_code', 'ilike', '#'),
+    ('is_kit', '=', False),
     ])
-    
-product_pool.write(product_ids, {
+product_pool.write(not_kit_ids, {
     'is_kit': True,
     })
 
+# Update component:
+product_ids = product_pool.search([
+    ('default_code', 'ilike', '#'),
+    ])
+
 log_file = open('./error.log', 'w')
+import pdb; pdb.set_trace()
 for product in product_pool.browse(product_ids):
     # Lauch button procedure:
     try:
-        product.explode_kit_from_name(product.id)
+        product.explode_kit_from_name()
     except:
-        log_file.write('%s\n' % default_code)
+        log_file.write('%s\n' % product.default_code or '')
 log_file.close()
