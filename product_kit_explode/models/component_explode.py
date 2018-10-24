@@ -31,45 +31,41 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
-class ProductTemplateKitBom(models.Model):
-    """ Model name: ProductTemplateKitBom
-    """
-    
-    _name = 'product.template.kit.bom'
-    _description = 'Kit BOM'
-    _rec_name = 'product_id'
-    _order = 'sequence'
-    
-    # -------------------------------------------------------------------------
-    #                                   COLUMNS:
-    # -------------------------------------------------------------------------
-    sequence = fields.Integer(
-        'Sequence', default=10)
-    product_id = fields.Many2one(
-        'product.template', 'Product', index=True)
-    component_id = fields.Many2one(
-        'product.template', 'Component', index=True, 
-        domain=[('is_kit', '=', False)], required=True,
-        )
-    product_qty = fields.Float(
-        'Quantity', required=True, default=1.0,
-        digits=dp.get_precision('Product Unit of Measure'))
-    uom_id = fields.Many2one(
-        'product.uom', 'Unit of Measure', readonly=True, 
-        related='component_id.uom_id')
-    
-
 class ProductTemplate(models.Model):
     """ Model name: ProductTemplate
     """
     
     _inherit = 'product.template'
-    
+
     # -------------------------------------------------------------------------
-    #                                   COLUMNS:
+    #                            Button event:
     # -------------------------------------------------------------------------
-    is_kit = fields.Boolean('Is Kit')
-    component_ids = fields.One2many(
-        'product.template.kit.bom', 'product_id', 'Kit Component')
+    @api.multi
+    def explode_kit_from_name(self):
+        ''' Explode kit product from name (raise error)
+        '''
+        if '#' not in self.default_code:
+            raise exceptions.Warning(_('No "#" char present in default code'))
+
+        code_list = self.default_code.split('#')
+        components = self.search([('default_code', 'in', code_list)])
+        if len(code_list) != len(components):
+            raise exceptions.Warning(
+                _('Not all code found: \nSearch: %s\nFind only: %s') % (
+                    code_list,
+                    list([item.default_code for item in components]),
+                    ))
+                    
+        # Remove all:
+        self.component_ids = [(5, False, False)] 
+        
+        # Create all record:
+        component_pool = self.env['product.template.kit.bom']
+        for component in components:
+            component_pool.create({
+                'sequence': 10,
+                'product_id': self.id,
+                'component_id': component.id,
+                })
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
