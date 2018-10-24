@@ -24,7 +24,7 @@ import sys
 import erppeek
 
 
-cfg_file = os.path.expanduser('../openerp.cfg')
+cfg_file = os.path.expanduser('../odoo.cfg')
 
 try: # Pyton 2.7
     import ConfigParser
