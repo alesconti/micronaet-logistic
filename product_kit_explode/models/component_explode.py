@@ -47,7 +47,9 @@ class ProductTemplate(models.Model):
         if '#' not in self.default_code:
             raise exceptions.Warning(_('No "#" char present in default code'))
 
-        code_list = self.default_code.split('#')
+        # Clean extra special char (\t \n ' ')
+        default_code = (self.default_code or '').strip()
+        code_list = default_code.split('#')
         components = self.search([('default_code', 'in', code_list)])
         if len(code_list) != len(components):
             raise exceptions.Warning(
