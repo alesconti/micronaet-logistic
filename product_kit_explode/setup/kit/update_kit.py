@@ -22,15 +22,20 @@
 import os
 import sys
 import erppeek
-import ConfigParser
+
+
+cfg_file = os.path.expanduser('../openerp.cfg')
+
+try: # Pyton 2.7
+    import ConfigParser
+    config = ConfigParser.ConfigParser()
+except: # Python 3 (pip install ConfigParser)
+    import configparser
+    config = configparser.ConfigParser()
 
 # -----------------------------------------------------------------------------
 # From config file:
 # -----------------------------------------------------------------------------
-cfg_file = os.path.expanduser('../openerp.cfg')
-#cfg_file = os.path.expanduser('../local.cfg')
-
-config = ConfigParser.ConfigParser()
 config.read([cfg_file])
 dbname = config.get('dbaccess', 'dbname')
 user = config.get('dbaccess', 'user')
