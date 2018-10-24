@@ -30,7 +30,7 @@ msgstr "Aggiungi nel pool"
 #. module: product_pool_linked
 #: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_similar_id
 msgid "Add similar"
-msgstr "Aggiunge simile"
+msgstr "Aggiungi simile"
 
 #. module: product_pool_linked
 #: model:ir.model.fields,field_description:product_pool_linked.field_product_product_alternative_id
@@ -43,7 +43,7 @@ msgstr "Alternativo"
 #. module: product_pool_linked
 #: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
 msgid "Alternative management"
-msgstr "Gestione alternativi"
+msgstr "Gestione prodotti alternativi"
 
 #. module: product_pool_linked
 #: model:ir.actions.act_window,name:product_pool_linked.action_product_template_pool_alternative_linked
