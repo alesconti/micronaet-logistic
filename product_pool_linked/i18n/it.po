@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* product_pool_similar
+# 	* product_pool_linked
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-24 09:18+0000\n"
-"PO-Revision-Date: 2018-10-24 11:20+0100\n"
+"POT-Creation-Date: 2018-10-24 16:15+0000\n"
+"PO-Revision-Date: 2018-10-24 18:18+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,128 +17,189 @@ msgstr ""
 "Language: it\n"
 "X-Generator: Poedit 1.6.10\n"
 
-#. module: product_pool_similar
-#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_pool_similar_form
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_alternative_id
+msgid "Add alternative"
+msgstr "Aggiungi alternativo"
+
+#. module: product_pool_linked
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_pool_linked_form
 msgid "Add in pool"
 msgstr "Aggiungi nel pool"
 
-#. module: product_pool_similar
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_product_id
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_similar_id
 msgid "Add similar"
 msgstr "Aggiunge simile"
 
-#. module: product_pool_similar
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_create_uid
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_product_alternative_id
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_alternative_id
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_pool_linked_form
+#: selection:product.template.pool.linked,mode:0
+msgid "Alternative"
+msgstr "Alternativo"
+
+#. module: product_pool_linked
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
+msgid "Alternative management"
+msgstr "Gestione alternativi"
+
+#. module: product_pool_linked
+#: model:ir.actions.act_window,name:product_pool_linked.action_product_template_pool_alternative_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_product_alternative_ids
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_alternative_ids
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_alternative_ids
+#: model:ir.ui.menu,name:product_pool_linked.menu_product_template_pool_alternative_linked
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_pool_linked_form
+msgid "Alternative pool"
+msgstr "Pool alternativi"
+
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_alternative_text
+msgid "Alternative product"
+msgstr "Prodotto alternativo"
+
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_create_uid
 msgid "Created by"
 msgstr "Creato da"
 
-#. module: product_pool_similar
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_create_date
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_create_date
 msgid "Created on"
 msgstr "Creato il"
 
-#. module: product_pool_similar
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_display_name
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_display_name
 msgid "Display Name"
 msgstr "Nome Completo"
 
-#. module: product_pool_similar
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_id
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_id
 msgid "ID"
 msgstr "ID"
 
-#. module: product_pool_similar
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar___last_update
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked___last_update
 msgid "Last Modified on"
 msgstr "Data di ultima modifica"
 
-#. module: product_pool_similar
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_write_uid
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_write_uid
 msgid "Last Updated by"
 msgstr "Ultima modifica di"
 
-#. module: product_pool_similar
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_write_date
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_write_date
 msgid "Last Updated on"
 msgstr "Ultima modifica il"
 
-#. module: product_pool_similar
-#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_similar_page_form
+#. module: product_pool_linked
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
+msgid "Linked"
+msgstr "Collegato"
+
+#. module: product_pool_linked
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_pool_linked_form
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_pool_linked_tree
+msgid "Linked product pool"
+msgstr "Pool prodotti collegati"
+
+#. module: product_pool_linked
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
+msgid "Manage alternative"
+msgstr "Gestisci prodotti alternativi"
+
+#. module: product_pool_linked
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
 msgid "Manage similar"
 msgstr "Gestisci prodotti simili"
 
-#. module: product_pool_similar
-#: code:addons/product_pool_similar/models/product_similar.py:155
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_mode
+msgid "Mode"
+msgstr "Modo"
+
+#. module: product_pool_linked
+#: code:addons/product_pool_linked/models/product_linked.py:242
+#, python-format
+msgid "New alternative pool"
+msgstr "Nuovo pool alternativo"
+
+#. module: product_pool_linked
+#: code:addons/product_pool_linked/models/product_linked.py:209
 #, python-format
 msgid "New similar pool"
 msgstr "Nuovo pool simili"
 
-#. module: product_pool_similar
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_note
-#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_pool_similar_form
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_note
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_pool_linked_form
 msgid "Note"
 msgstr "Nota"
 
-#. module: product_pool_similar
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_similar_ids
-msgid "Pool"
-msgstr "Pool"
-
-#. module: product_pool_similar
-#: code:addons/product_pool_similar/models/product_similar.py:65
+#. module: product_pool_linked
+#: code:addons/product_pool_linked/models/product_linked.py:63
+#: code:addons/product_pool_linked/models/product_linked.py:93
 #, python-format
 msgid "Pool management"
 msgstr "Gestione pool"
 
-#. module: product_pool_similar
-#: model:ir.model,name:product_pool_similar.model_product_template_pool_similar
+#. module: product_pool_linked
+#: model:ir.model,name:product_pool_linked.model_product_template_pool_linked
+msgid "Pool of linked product"
+msgstr "Pool dei prodotti collegati"
+
+#. module: product_pool_linked
+#: model:ir.model,name:product_pool_linked.model_product_template_pool_similar
 msgid "Pool of similar product"
-msgstr "Pool di prodotti simili"
+msgstr "Pool dei prodotti simili"
 
-#. module: product_pool_similar
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_pool_similar_pool_text
-msgid "Pool product"
-msgstr "Pool di prodotti"
-
-#. module: product_pool_similar
-#: model:ir.model,name:product_pool_similar.model_product_template
+#. module: product_pool_linked
+#: model:ir.model,name:product_pool_linked.model_product_template
 msgid "Product Template"
 msgstr "Modello Prodotto"
 
-#. module: product_pool_similar
-#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_similar_page_form
+#. module: product_pool_linked
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
+msgid "Product alternative"
+msgstr "Prodotto alternativo"
+
+#. module: product_pool_linked
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
 msgid "Product similar"
 msgstr "Prodotto simile"
 
-#. module: product_pool_similar
-#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_similar_page_form
+#. module: product_pool_linked
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
 msgid "Remove from pool"
 msgstr "Rimuovi dal pool"
 
-#. module: product_pool_similar
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_product_similar_id
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_similar_id
-#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_pool_similar_form
-#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_similar_page_form
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_product_similar_id
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_similar_id
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_pool_linked_form
+#: selection:product.template.pool.linked,mode:0
 msgid "Similar"
 msgstr "Simile"
 
-#. module: product_pool_similar
-#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_similar_page_form
+#. module: product_pool_linked
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
 msgid "Similar management"
 msgstr "Gestione prodotti simili"
 
-#. module: product_pool_similar
-#: model:ir.actions.act_window,name:product_pool_similar.action_product_template_pool_similar
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_product_similar_ids
-#: model:ir.model.fields,field_description:product_pool_similar.field_product_template_similar_ids
-#: model:ir.ui.menu,name:product_pool_similar.menu_product_template_pool_similar
-#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_pool_similar_form
+#. module: product_pool_linked
+#: model:ir.actions.act_window,name:product_pool_linked.action_product_template_pool_similar_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_product_similar_ids
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_similar_ids
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_similar_ids
+#: model:ir.ui.menu,name:product_pool_linked.menu_product_template_pool_similar_linked
+#: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_pool_linked_form
 msgid "Similar pool"
 msgstr "Pool simili"
 
-#. module: product_pool_similar
-#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_pool_similar_form
-#: model:ir.ui.view,arch_db:product_pool_similar.view_product_template_pool_similar_tree
-msgid "Similar product pool"
-msgstr "Pool prodotti simili"
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_similar_text
+msgid "Similar product"
+msgstr "Prodotto simile"

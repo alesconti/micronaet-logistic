@@ -61,14 +61,23 @@
                 </form>
             </field>
         </record>  
-        <record model="ir.actions.act_window" id="action_product_template_pool_linked">
+        <record model="ir.actions.act_window" id="action_product_template_pool_similar_linked">
             <field name="name">Similar pool</field>
             <field name="res_model">product.template.pool.linked</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_product_template_pool_linked_tree"/>
-            <field name="context">{}</field>
-            <field name="domain">[]</field>
+            <field name="context">{'default_mode': 'similar'}</field>
+            <field name="domain">[('mode', '=', 'similar')]</field>
+        </record>    
+        <record model="ir.actions.act_window" id="action_product_template_pool_alternative_linked">
+            <field name="name">Alternative pool</field>
+            <field name="res_model">product.template.pool.linked</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_product_template_pool_linked_tree"/>
+            <field name="context">{'default_mode': 'alternative'}</field>
+            <field name="domain">[('mode', '=', 'alternative')]</field>
         </record>    
                 
         <!--INHERIT-->  
@@ -115,8 +124,14 @@
 
         <menuitem 
             parent="stock.menu_product_variant_config_stock" 
-            id="menu_product_template_pool_linked" 
-            action="action_product_template_pool_linked"
+            id="menu_product_template_pool_similar_linked" 
+            action="action_product_template_pool_similar_linked"
+            sequence="20"
+            />
+        <menuitem 
+            parent="stock.menu_product_variant_config_stock" 
+            id="menu_product_template_pool_alternative_linked" 
+            action="action_product_template_pool_alternative_linked"
             sequence="20"
             />
 

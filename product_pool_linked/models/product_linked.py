@@ -162,7 +162,7 @@ class ProductTemplate(models.Model):
         'product.template.pool.linked', 'Similar', ondelete='set null')
     alternative_id = fields.Many2one(
         'product.template.pool.linked', 'Alternative', ondelete='set null')
-    
+
 class ProductTemplatePoolLinked(models.Model):
     """ Model name: ProductTemplatePoolLinked
     """
