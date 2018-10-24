@@ -42,35 +42,34 @@ class ProductTemplatePoolSimilar(models.Model):
     
     @api.multi
     def add_product_in_pool(self):
-        ''' Create a new pool of similar product, start adding this product
-            in it
+        ''' Add selected product in pool
         '''
-        """similar_pool = self.env['product.template.pool.similar']
-        model_pool = self.env['ir.model.data']
+        product = self.product_id
+        if not product:
+            return True
         
-        # Create new pool and attach this product
-        similar = similar_pool.create({
-            'similar_ids': [(6, 0, (self.id, ))],
-            })
-        self.similar_id = similar.id    
-            
+        # Update product with this pool reference:
+        product.similar_id = self.id
+
+        # Clean product selection in pool:
+        self.product_id = False
+
         #view_id = model_pool.get_object_reference(
         #    'module_name', 'view_name')[1]
         return {
             'type': 'ir.actions.act_window',
-            'name': _('New similar pool'),
+            'name': _('Pool management'),
             'view_type': 'form',
-            'view_mode': 'form', # tree
-            'res_id': similar.id,
+            'view_mode': 'form',
+            'res_id': self.id,
             'res_model': 'product.template.pool.similar',
             #'view_id': view_id, # False
             'views': [(False, 'form')], #, (False, 'tree')
             'domain': [],
             'context': self.env.context,
-            'target': 'new',
+            'target': 'current',
             'nodestroy': False,
-            }"""
-        return True    
+            }
 
     # -------------------------------------------------------------------------
     #                                   COLUMNS:

@@ -10,9 +10,9 @@
                     <sheet>
                         <group col="4" colspan="4">
                             <field name="product_id" />
-                            <button name="add_product_in_pool" string="Add in pool" type="object" />
+                            <button name="add_product_in_pool" string="Add in pool" type="object" class="btn-primary" />
                             
-                            <separator string="Similar pool" colspan="4"/>
+                            <separator string="Similar pool" colspan="4" nolabel="1"/>
                             <field name="similar_ids" colspan="4">
                                <tree string="Similar">
                                    <field name="name" />
@@ -35,7 +35,7 @@
                              <separator string="Similar management" colspan="4"/>
                              
                              <field name="similar_id" invisible="1"/>
-                             <button name="create_similar_pool" string="Manage similar" type="object" class="btn-primary" colspan="1"/> <!--attrs="{'invisible': [('similar_id', '!=', False)]}"-->
+                             <button name="create_similar_pool" string="Manage similar" type="object" class="btn-primary" colspan="1"/>
                              <button name="unlink_similar_pool" string="Remove from pool" type="object" attrs="{'invisible': [('similar_id', '=', False)]}" colspan="1"/> 
                              
                              <field name="similar_ids" colspan="4" nolabel="1" readonly="1" attrs="{'invisible': [('similar_id', '=', False)]}">
