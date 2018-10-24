@@ -70,7 +70,11 @@ product_ids = product_pool.search([
 
 log_file = open('./product_not_found.log', 'w')
 log_file.write('Kit non generati per codici prodotto mancanti:\n')
+i = 0
 for product in product_pool.browse(product_ids):
+    i += 1
+    if i % 50 == 0:
+        print 'Product updated: %s' % i
     # Lauch button procedure:
     try:
         product.explode_kit_from_name()
