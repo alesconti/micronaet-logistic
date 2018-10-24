@@ -2,18 +2,30 @@
 <openerp>
     <data>
         <!--product.template.pool.similar-->
+        <record model="ir.ui.view" id="view_product_template_pool_similar_tree">
+            <field name="name">product.template.pool.similar.form</field>
+            <field name="model">product.template.pool.similar</field>
+            <field name="arch" type="xml">
+                <tree string="Similar product pool">
+                    <field name="id" />
+                    <field name="similar_ids" />
+                </tree>
+            </field>
+        </record> 
         <record model="ir.ui.view" id="view_product_template_pool_similar_form">
             <field name="name">product.template.pool.similar.form</field>
             <field name="model">product.template.pool.similar</field>
             <field name="arch" type="xml">
-                <form string="Similar product pool" version="7.0">
+                <form string="Similar product pool">
                     <sheet>
                         <group col="4" colspan="4">
+                            <field name="id" readonly="1"/>
+                            <newline/>
                             <field name="product_id" />
                             <button name="add_product_in_pool" string="Add in pool" type="object" class="btn-primary" />
                             
-                            <separator string="Similar pool" colspan="4" nolabel="1"/>
-                            <field name="similar_ids" colspan="4">
+                            <separator string="Similar pool" colspan="4" />
+                            <field name="similar_ids" colspan="4" nolabel="1"><!--NOT FOR o2m options="{'no_create': True, 'no_edit': True}"-->
                                <tree string="Similar">
                                    <field name="name" />
                                    <field name="default_code" />
@@ -23,7 +35,18 @@
                     </sheet>        
                 </form>
             </field>
-        </record>        
+        </record>  
+        <record model="ir.actions.act_window" id="action_product_template_pool_similar">
+            <field name="name">Similar pool</field>
+            <field name="res_model">product.template.pool.similar</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_product_template_pool_similar_tree"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>    
+                
+        <!--INHERIT-->  
         <record model="ir.ui.view" id="view_product_template_similar_page_form">
             <field name="name">product.template.similar.page.form</field>
             <field name="model">product.template</field>
@@ -50,6 +73,14 @@
                 </xpath>
             </field>
         </record>
+
+        <menuitem 
+            parent="stock.menu_product_variant_config_stock" 
+            id="menu_product_template_pool_similar" 
+            action="action_product_template_pool_similar"
+            sequence="20"
+            />
+
     </data>
 </openerp>
 

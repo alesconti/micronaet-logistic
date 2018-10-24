@@ -33,6 +33,7 @@
         'base',
         'product',
         'stock', # Group management
+        #'web_m2x_options', # Repository: Micronaet/micronaet_utility
         ],
     'data': [
         'security/ir.model.access.csv',

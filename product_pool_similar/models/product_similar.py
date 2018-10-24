@@ -44,6 +44,7 @@ class ProductTemplatePoolSimilar(models.Model):
     def add_product_in_pool(self):
         ''' Add selected product in pool
         '''
+        import pdb; pdb.set_trace()
         product = self.product_id
         if not product:
             return True
@@ -98,8 +99,8 @@ class ProductTemplatePoolSimilar(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------    
-    #similar_ids = fields.One2many('product.template', 'similar_id', 'Pool')
-    similar_ids = fields.Many2many('product.template', string='Similar')
+    similar_ids = fields.One2many('product.template', 'similar_id', 'Pool')
+    #similar_ids = fields.Many2many('product.template', string='Similar')
 
 class ProductTemplate(models.Model):
     """ Model name: ProductTemplate
