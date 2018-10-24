@@ -44,25 +44,49 @@ class ProductTemplatePoolLinked(models.Model):
     #                                   BUTTON:
     # -------------------------------------------------------------------------
     @api.multi
-    def add_product_in_pool(self):
-        ''' Add selected product in similar/alternative pool 
+    def add_similar_product_in_pool(self):
+        ''' Add selected product in similar pool 
             depend on open mode selection
         '''
-        product = self.product_id
+        product = self.similar_id
         if not product:
             return True
         
-        # Update product with this pool reference:
-        if self.mode == 'similar':
-            product.similar_id = self.id
-        else:    
-            product.alternative_id = self.id
+        product.similar_id = self.id
 
         # Clean product selection in pool:
-        self.product_id = False
+        self.similar_id = False
 
-        #view_id = model_pool.get_object_reference(
-        #    'module_name', 'view_name')[1]
+        target = self.env.context.get('open_mode', 'current')
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Pool management'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_id': self.id,
+            'res_model': 'product.template.pool.linked',
+            #'view_id': view_id, # False
+            'views': [(False, 'form')], #, (False, 'tree')
+            'domain': [],
+            'context': self.env.context,
+            'target': target,
+            'nodestroy': False,
+            }
+
+    @api.multi
+    def add_alternative_product_in_pool(self):
+        ''' Add selected product in alternative pool 
+            depend on open mode selection
+        '''
+        product = self.alternative_id
+        if not product:
+            return True
+        
+        product.alternative_id = self.id
+
+        # Clean product selection in pool:
+        self.alternative_id = False
+
         target = self.env.context.get('open_mode', 'current')
         return {
             'type': 'ir.actions.act_window',
@@ -112,19 +136,23 @@ class ProductTemplatePoolLinked(models.Model):
         ('alternative', 'Alternative'),
         ('similar', 'Similar'),
         ], 'Mode', default='similar')
-    product_id = fields.Many2one('product.template', 'Add similar')
+        
+    similar_id = fields.Many2one('product.template', 'Add similar')
+    alternative_id = fields.Many2one('product.template', 'Add alternative')
+    
     similar_text = fields.Text(
         'Similar product', compute='_get_product_similar_text', store=False)
     alternative_text = fields.Text(
         'Alternative product', compute='_get_product_alternative_text', 
         store=False)
+
     note = fields.Text('Note')
     
 
 class ProductTemplate(models.Model):
     """ Model name: ProductTemplate
     """
-    
+
     _inherit = 'product.template'
     
     # -------------------------------------------------------------------------
@@ -207,7 +235,7 @@ class ProductTemplate(models.Model):
                 'mode': 'alternative',
                 'alternative_ids': [(6, 0, (self.id, ))],
                 })
-            linked_id = alternative.id
+            linked_id = linked.id
 
         return {
             'type': 'ir.actions.act_window',

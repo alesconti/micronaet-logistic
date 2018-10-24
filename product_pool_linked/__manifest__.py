@@ -38,7 +38,7 @@
     'data': [
         'security/ir.model.access.csv',
 
-        'views/product_similar_view.xml',
+        'views/product_linked_view.xml',
         ],
     'demo': [],
     'css': [],

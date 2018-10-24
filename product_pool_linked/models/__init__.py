@@ -21,4 +21,4 @@
 #
 ###############################################################################
 
-from . import product_similar
+from . import product_linked
