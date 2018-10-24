@@ -87,7 +87,8 @@ class ProductTemplate(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    similar_id = fields.Many2one('product.template.pool.similar', 'Similar')
+    similar_id = fields.Many2one(
+        'product.template.pool.similar', 'Similar', ondelete='set null')
     
 class ProductTemplatePoolSimilar(models.Model):
     """ Model name: ProductTemplatePoolSimilar
@@ -118,11 +119,15 @@ class ProductTemplate(models.Model):
         similar_pool = self.env['product.template.pool.similar']
         model_pool = self.env['ir.model.data']
         
-        # Create new pool and attach this product
-        similar = similar_pool.create({
-            'similar_ids': [(6, 0, (self.id, ))],
-            })
-        #self.similar_id = similar.id    
+        if self.similar_id:
+            similar_id = self.similar_id.id
+        else:
+            # Create new pool and attach this product
+            similar = similar_pool.create({
+                'similar_ids': [(6, 0, (self.id, ))],
+                })
+            similar_id = similar.id
+        #self.similar_id = similar.id
             
         #view_id = model_pool.get_object_reference(
         #    'module_name', 'view_name')[1]
@@ -131,7 +136,7 @@ class ProductTemplate(models.Model):
             'name': _('New similar pool'),
             'view_type': 'form',
             'view_mode': 'form', # tree
-            'res_id': similar.id,
+            'res_id': similar_id,
             'res_model': 'product.template.pool.similar',
             #'view_id': view_id, # False
             'views': [(False, 'form')], #, (False, 'tree')
@@ -140,11 +145,17 @@ class ProductTemplate(models.Model):
             'target': 'new',
             'nodestroy': False,
             }
+            
+    @api.multi
+    def unlink_similar_pool(self):
+        ''' Unlink from the pool, delete also pool if is the last
+        '''
+        return True
         
     # -------------------------------------------------------------------------
     #                          Related fields function
     # -------------------------------------------------------------------------
-    #@api.one
+    @api.one
     def _compute_product_template_similar_ids(self):
         ''' Return pool of product present in similar pool:
             It's a related field but maybe modified in the future

@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <!--product.template.pool.similar-->
         <record model="ir.ui.view" id="view_product_template_pool_similar_form">
             <field name="name">product.template.pool.similar.form</field>
             <field name="model">product.template.pool.similar</field>
@@ -12,7 +13,7 @@
                             <button name="add_product_in_pool" string="Add in pool" type="object" />
                             
                             <separator string="Similar pool" colspan="4"/>
-                            <field name="similar_ids">
+                            <field name="similar_ids" colspan="4">
                                <tree string="Similar">
                                    <field name="name" />
                                    <field name="default_code" />
@@ -22,7 +23,7 @@
                     </sheet>        
                 </form>
             </field>
-        </record>
+        </record>        
         <record model="ir.ui.view" id="view_product_template_similar_page_form">
             <field name="name">product.template.similar.page.form</field>
             <field name="model">product.template</field>
@@ -33,8 +34,9 @@
                         <group colspan="4" col="4">
                              <separator string="Similar management" colspan="4"/>
                              
-                             <field name="similar_id" attrs="{'invisible': [('similar_id', '=', False)]}"/>
-                             <button name="create_similar_pool" string="Manage similar" type="object" attrs="{'invisible': [('similar_id', '!=', False)]}" class="btn-primary"/>
+                             <field name="similar_id" invisible="1"/>
+                             <button name="create_similar_pool" string="Manage similar" type="object" class="btn-primary" colspan="1"/> <!--attrs="{'invisible': [('similar_id', '!=', False)]}"-->
+                             <button name="unlink_similar_pool" string="Remove from pool" type="object" attrs="{'invisible': [('similar_id', '=', False)]}" colspan="1"/> 
                              
                              <field name="similar_ids" colspan="4" nolabel="1" readonly="1" attrs="{'invisible': [('similar_id', '=', False)]}">
                                  <tree string="Product similar" editable="bottom">
