@@ -52,9 +52,9 @@ odoo = erppeek.Client(
     user=user,
     password=pwd,
     )
-    
+import pdb; pdb.set_trace()
 product_pool = odoo.model('product.template')
-product_ids = mrp_pool.search([
+product_ids = product_pool.search([
     ('default_code', 'ilike', '#'),
     ])
     
