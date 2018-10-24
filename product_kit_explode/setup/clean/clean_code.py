@@ -23,6 +23,7 @@ import os
 import sys
 import erppeek
 
+remove_char = ('\t', '\n')
 
 cfg_file = os.path.expanduser('../odoo.cfg')
 
@@ -56,19 +57,45 @@ product_pool = odoo.model('product.template')
 
 # Update kit check:
 log_file = open('./clean_code.log', 'w')
-remove_char = ('\t', '\n')
-for remove in remove_char:    
-    log_file.write('Clean code: %s\n\n' % remove)
-    
-    product_ids = product_pool.search([
-        ('default_code', 'ilike', '\t'),
-        ])
-    for product in product_pool.search(product_ids):        
+
+# -----------------------------------------------------------------------------
+# Clean trail spaces:
+# -----------------------------------------------------------------------------
+product_ids = product_pool.search([
+    '|',
+    ('default_code', '=ilike', '% '),
+    ('default_code', '=ilike', ' %'),
+    ])
+log_text = 'Clean trail spaces (# %s)\n\n' % len(product_ids)
+print(log_text)
+log_file.write(log_text)
+if product_ids:    
+    for product in product_pool.browse(product_ids):        
         default_code = product.default_code
         new_code = default_code.strip()
         product_pool.write(product.id, {
             'default_code': new_code,
             })    
-        log_file.write('"%s" >>>> "%s"' % (default_code, new_code))
+        log_file.write('"%s" >>>> "%s"\n' % (default_code, new_code))
 
+# -----------------------------------------------------------------------------
+# Clean special char:
+# -----------------------------------------------------------------------------
+for char in remove_char:    
+    product_ids = product_pool.search([
+        ('default_code', 'ilike', char),
+        ])
+    log_text = 'Clean code (# %s): %s\n\n' % (len(product_ids), char)
+    print(log_text)
+    log_file.write(log_text)
+    if not product_ids:
+        continue
+        
+    for product in product_pool.browse(product_ids):        
+        default_code = product.default_code
+        new_code = default_code.replace(char, '')
+        product_pool.write(product.id, {
+            'default_code': new_code,
+            })    
+        log_file.write('"%s" >>>> "%s"\n' % (default_code, new_code))
 log_file.close()

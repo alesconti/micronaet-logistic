@@ -1,38 +1,52 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-        <!--product.template.pool.similar-->
-        <record model="ir.ui.view" id="view_product_template_pool_similar_tree">
-            <field name="name">product.template.pool.similar.form</field>
-            <field name="model">product.template.pool.similar</field>
+        <!--product.template.pool.linked-->
+        <record model="ir.ui.view" id="view_product_template_pool_linked_tree">
+            <field name="name">product.template.pool.linked.tree</field>
+            <field name="model">product.template.pool.linked</field>
             <field name="arch" type="xml">
-                <tree string="Similar product pool">
-                    <field name="id" />
+                <tree string="Linked product pool">
                     <field name="mode" />
-                    <field name="pool_text" />
+                    <field name="id" />
+                    <field name="similar_text" />
+                    <field name="alternative_text" />
                     <field name="note" />
                 </tree>
             </field>
         </record> 
-        <record model="ir.ui.view" id="view_product_template_pool_similar_form">
-            <field name="name">product.template.pool.similar.form</field>
-            <field name="model">product.template.pool.similar</field>
+        <record model="ir.ui.view" id="view_product_template_pool_linked_form">
+            <field name="name">product.template.pool.linked.form</field>
+            <field name="model">product.template.pool.linked</field>
             <field name="arch" type="xml">
-                <form string="Similar product pool">
+                <form string="Linked product pool">
                     <sheet>
                         <group col="4" colspan="4">
                             <field name="id" readonly="1"/>
                             <field name="mode" />
+                            
                             <field name="product_id" domain="[('id', 'not in', similar_ids)]"/>
                             <button name="add_product_in_pool" string="Add in pool" type="object" class="btn-primary" />
                             
-                            <separator string="Similar pool" colspan="4" />
-                            <field name="similar_ids" colspan="4" nolabel="1"><!--NOT FOR o2m options="{'no_create': True, 'no_edit': True}"-->
-                               <tree string="Similar">
-                                   <field name="name" />
-                                   <field name="default_code" />
-                               </tree>
-                            </field>
+                            <group col="4" colspan="4" attrs="{'invisible': [('mode','!=','similar')]}">                            
+                                <separator string="Similar pool" colspan="4" />
+                                <field name="similar_ids" colspan="4" nolabel="1"><!--NOT FOR o2m options="{'no_create': True, 'no_edit': True}"-->
+                                   <tree string="Similar">
+                                       <field name="name" />
+                                       <field name="default_code" />
+                                   </tree>
+                                </field>
+                            </group>
+                            <group col="4" colspan="4" attrs="{'invisible': [('mode','!=','alternative')]}">                            
+                                <separator string="Alternative pool" colspan="4" />
+                                <field name="alternative_ids" colspan="4" nolabel="1">
+                                   <tree string="Alternative">
+                                       <field name="name" />
+                                       <field name="default_code" />
+                                   </tree>
+                                </field>
+                            </group>    
+                            
                             <separator string="Note" colspan="4" />
                             <field name="note" colspan="4" nolabel="1" />
                         </group>
@@ -40,37 +54,52 @@
                 </form>
             </field>
         </record>  
-        <record model="ir.actions.act_window" id="action_product_template_pool_similar">
+        <record model="ir.actions.act_window" id="action_product_template_pool_linked">
             <field name="name">Similar pool</field>
-            <field name="res_model">product.template.pool.similar</field>
+            <field name="res_model">product.template.pool.linked</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="view_product_template_pool_similar_tree"/>
+            <field name="view_id" ref="view_product_template_pool_linked_tree"/>
             <field name="context">{}</field>
             <field name="domain">[]</field>
         </record>    
                 
         <!--INHERIT-->  
-        <record model="ir.ui.view" id="view_product_template_similar_page_form">
-            <field name="name">product.template.similar.page.form</field>
+        <record model="ir.ui.view" id="view_product_template_linked_page_form">
+            <field name="name">product.template.linked.page.form</field>
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_form_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//page[1]" position="after">
-                    <page string="Similar">
+                    <page string="Linked">
                         <group colspan="4" col="4">
-                             <separator string="Similar management" colspan="4"/>                             
-                             <button name="create_similar_pool" string="Manage similar" type="object" class="btn-primary" colspan="2" context="{'open_mode': 'new'}"/>
-                             <button name="unlink_similar_pool" string="Remove from pool" type="object" attrs="{'invisible': [('similar_id', '=', False)]}" colspan="2"/> 
-                             
-                             <field name="similar_ids" colspan="4" nolabel="1" readonly="1" attrs="{'invisible': [('similar_id', '=', False)]}">
-                                 <tree string="Product similar" editable="bottom">
-                                     <field name="name" />
-                                     <field name="default_code" />
-                                     <!--<field name="state" />-->
-                                 </tree>
-                             </field>
-                             <field name="similar_id" invisible="1"/>
+                            <group colspan="2" col="4">
+                                 <separator string="Similar management" colspan="4"/>
+                                 <button name="create_similar_pool" string="Manage similar" type="object" class="btn-primary" colspan="2" context="{'open_mode': 'new'}"/>
+                                 <button name="unlink_similar_pool" string="Remove from pool" type="object" attrs="{'invisible': [('similar_id', '=', False)]}" colspan="2"/> 
+                                 
+                                 <field name="similar_ids" colspan="4" nolabel="1" readonly="1" attrs="{'invisible': [('similar_id', '=', False)]}">
+                                     <tree string="Product similar" editable="bottom">
+                                         <field name="name" />
+                                         <field name="default_code" />
+                                     </tree>
+                                 </field>
+                                 <field name="similar_id" invisible="1"/>
+                            </group>                        
+
+                            <group colspan="2" col="4">
+                                 <separator string="Alternative management" colspan="4"/>
+                                 <button name="create_alternative_pool" string="Manage alternative" type="object" class="btn-primary" colspan="2" context="{'open_mode': 'new'}"/>
+                                 <button name="unlink_alternative_pool" string="Remove from pool" type="object" attrs="{'invisible': [('alternative_id', '=', False)]}" colspan="2"/> 
+                                 
+                                 <field name="alternative_ids" colspan="4" nolabel="1" readonly="1" attrs="{'invisible': [('alternative_id', '=', False)]}">
+                                     <tree string="Product alternative" editable="bottom">
+                                         <field name="name" />
+                                         <field name="default_code" />
+                                     </tree>
+                                 </field>
+                                 <field name="alternative_id" invisible="1"/>
+                            </group>                        
                         </group>                        
                     </page>
                 </xpath>
@@ -79,8 +108,8 @@
 
         <menuitem 
             parent="stock.menu_product_variant_config_stock" 
-            id="menu_product_template_pool_similar" 
-            action="action_product_template_pool_similar"
+            id="menu_product_template_pool_linked" 
+            action="action_product_template_pool_linked"
             sequence="20"
             />
 
