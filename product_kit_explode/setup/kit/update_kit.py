@@ -74,7 +74,8 @@ i = 0
 for product in product_pool.browse(product_ids):
     i += 1
     if i % 50 == 0:
-        print 'Product updated: %s' % i
+        print('Product updated: %s' % i)
+    
     # Lauch button procedure:
     try:
         product.explode_kit_from_name()
