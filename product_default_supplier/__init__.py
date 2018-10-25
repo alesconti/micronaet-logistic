@@ -21,26 +21,6 @@
 #
 ###############################################################################
 
-{
-    'name': 'Order line change product',
-    'version': '1.0',
-    'category': 'Product',
-    'sequence': 5,
-    'summary': 'Order, change product',
-    #'description': '',
-    'website': 'https://micronaet.com',
-    'depends': [
-        'base',
-        'product',
-        'sale',
-        'product_pool_linked',
-        ],
-    'data': [
-        'views/order_change_view.xml',
-        ],
-    'demo': [],
-    'css': [],
-    'installable': True,
-    'application': False,
-    'auto_install': False,
-    }
+
+from . import models
+

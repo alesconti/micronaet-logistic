@@ -22,21 +22,19 @@
 ###############################################################################
 
 {
-    'name': 'Order line change product',
+    'name': 'Product default supplier',
     'version': '1.0',
     'category': 'Product',
     'sequence': 5,
-    'summary': 'Order, change product',
+    'summary': 'Product, default supplier',
     #'description': '',
     'website': 'https://micronaet.com',
     'depends': [
         'base',
         'product',
-        'sale',
-        'product_pool_linked',
         ],
     'data': [
-        'views/order_change_view.xml',
+        'views/default_supplier_view.xml',
         ],
     'demo': [],
     'css': [],

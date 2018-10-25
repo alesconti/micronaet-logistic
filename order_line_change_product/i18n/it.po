@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* order_line_explode_kit
+# 	* order_line_change_product
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-25 10:29+0000\n"
-"PO-Revision-Date: 2018-10-25 12:30+0100\n"
+"POT-Creation-Date: 2018-10-25 12:36+0000\n"
+"PO-Revision-Date: 2018-10-25 14:39+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,32 +17,27 @@ msgstr ""
 "Language: it\n"
 "X-Generator: Poedit 1.6.10\n"
 
-#. module: order_line_explode_kit
-#: model:ir.ui.view,arch_db:order_line_explode_kit.view_sale_order_button_explode_kit_form
-msgid "Explode KIT"
-msgstr "Esplodi il KIT"
+#. module: order_line_change_product
+#: selection:sale.order.line,linked_mode:0
+msgid "Alternative"
+msgstr "Alternativo"
 
-#. module: order_line_explode_kit
-#: model:ir.model.fields,field_description:order_line_explode_kit.field_sale_order_line_is_kit
-msgid "Is kit"
-msgstr "E' Kit"
+#. module: order_line_change_product
+#: model:ir.model.fields,field_description:order_line_change_product.field_sale_order_line_linked_mode
+msgid "Link mode"
+msgstr "Modo"
 
-#. module: order_line_explode_kit
-#: model:ir.model.fields,field_description:order_line_explode_kit.field_sale_order_line_kit_line_id
-msgid "Kit line"
-msgstr "Riga Kit"
+#. module: order_line_change_product
+#: model:ir.model.fields,field_description:order_line_change_product.field_sale_order_line_origin_product_id
+msgid "Origin product"
+msgstr "Prodotto originale"
 
-#. module: order_line_explode_kit
-#: model:ir.model.fields,field_description:order_line_explode_kit.field_sale_order_line_kit_product_id
-msgid "Kit reference"
-msgstr "Rif. Kit"
-
-#. module: order_line_explode_kit
-#: model:ir.model,name:order_line_explode_kit.model_sale_order
-msgid "Quotation"
-msgstr "Preventivo"
-
-#. module: order_line_explode_kit
-#: model:ir.model,name:order_line_explode_kit.model_sale_order_line
+#. module: order_line_change_product
+#: model:ir.model,name:order_line_change_product.model_sale_order_line
 msgid "Sales Order Line"
 msgstr "Riga Ordine di Vendita"
+
+#. module: order_line_change_product
+#: selection:sale.order.line,linked_mode:0
+msgid "Similar"
+msgstr "Simile"
