@@ -1,0 +1,51 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* product_default_supplier
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-10-25 14:09+0000\n"
+"PO-Revision-Date: 2018-10-25 16:11+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: product_default_supplier
+#: model:ir.model,name:product_default_supplier.model_res_partner
+msgid "Contact"
+msgstr "Contatto"
+
+#. module: product_default_supplier
+#: model:ir.model.fields,field_description:product_default_supplier.field_product_product_default_supplier_id
+#: model:ir.model.fields,field_description:product_default_supplier.field_product_template_default_supplier_id
+msgid "Default supplier"
+msgstr "Fornitore predefinito"
+
+#. module: product_default_supplier
+#: code:addons/product_default_supplier/models/default_supplier.py:63
+#, python-format
+msgid "No default code present"
+msgstr "Nessun codice prodotto presente"
+
+#. module: product_default_supplier
+#: model:ir.model,name:product_default_supplier.model_product_template
+msgid "Product Template"
+msgstr "Modello Prodotto"
+
+#. module: product_default_supplier
+#: model:ir.model.fields,field_description:product_default_supplier.field_res_partner_product_suffix
+#: model:ir.model.fields,field_description:product_default_supplier.field_res_users_product_suffix
+msgid "Product suffix"
+msgstr "Suffisso prodotto"
+
+#. module: product_default_supplier
+#: sql_constraint:res.partner:0
+msgid "Product suffix must be unique!"
+msgstr "Il suffisso prodotto deve essere unico!"

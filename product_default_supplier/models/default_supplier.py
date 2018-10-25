@@ -69,7 +69,9 @@ class ProductTemplate(models.Model):
     # -------------------------------------------------------------------------
     # COLUMNS:
     # -------------------------------------------------------------------------
-    default_supplier_id = fields.Many2one('res.partner', 'Default supplier')
+    default_supplier_id = fields.Many2one(
+        'res.partner', 'Default supplier', domain="[('supplier', '=', True)]",
+        context="{'default_supplier': True}")
     # -------------------------------------------------------------------------
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
