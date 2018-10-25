@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <!--INHERIT-->  
+        <record model="ir.ui.view" id="view_sale_order_button_explode_kit_form">
+            <field name="name">sale.order.explode.kit.button.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/header/field[@name='state']" position="before">
+                    <button name="explode_kit_in_order_line" string="Explode KIT" type="object" class="btn-primary" states="draft"/>
+                </xpath>
+                
+                <xpath expr="//field[@name='order_line']/tree/field[1]" position="after">
+                    <field name="kit_line_id" invisible="1"/>
+                    <field name="is_kit" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']/tree" position="attributes">
+                    <attribute name="decoration-warning">kit_line_id > 0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree" position="attributes">
+                    <attribute name="decoration-info">is_kit == True</attribute>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</openerp>
+
