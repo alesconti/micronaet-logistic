@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <!--INHERIT-->  
+        <record model="ir.ui.view" id="view_sale_order_line_real_product_form">
+            <field name="name">sale.order.line.real.product.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="after">
+                    <button name="use_another_product" string=">>" type="object" />
+                    <field name="origin_product_id" />
+                    <field name="linked_mode" attrs="{'required': [('origin_product_id','!=',False)]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
+

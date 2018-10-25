@@ -31,59 +31,28 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
-class ProductProduct(models.Model):
-    """ Model name: Product Product
-    """
-    _inherit = 'product.product'
-
-    # -------------------------------------------------------------------------
-    #                            Button event:
-    # -------------------------------------------------------------------------
-    @api.multi
-    def explode_kit_from_name(self):
-        ''' Launche generator from template object
-        '''
-        return self.product_tmpl_id.explode_kit_from_name()
-    
-
-class ProductTemplate(models.Model):
-    """ Model name: ProductTemplate
+class SaleOrderLine(models.Model):
+    """ Model name: Sale Order Line
     """
     
-    _inherit = 'product.template'
+    _inherit = 'sale.order.line'
 
     # -------------------------------------------------------------------------
-    #                            Button event:
+    #                                BUTTONS: 
     # -------------------------------------------------------------------------
     @api.multi
-    def explode_kit_from_name(self):
-        ''' Explode kit product from name (raise error)
+    def use_another_product(self):
+        ''' Copy product read to original
         '''
-        if not self.default_code or '#' not in self.default_code:
-            raise exceptions.Warning(_('No "#" char present in default code'))
+        self.origin_product_id = self.product_id.id
+        self.linked_mode = 'alternative'
 
-        # Clean extra special char (\t \n ' ')
-        default_code = (self.default_code or '').strip()
-        code_list = default_code.split('#')
-        components = self.search([('default_code', 'in', code_list)])
-        if len(code_list) != len(components):
-            raise exceptions.Warning(
-                _('Not all code found: \nSearch: %s\nFind only: %s') % (
-                    code_list,
-                    list([item.default_code for item in components]),
-                    ))
-                    
-        # Remove all:
-        self.component_ids = [(5, False, False)] 
-        
-        # Create all record:
-        component_pool = self.env['product.template.kit.bom']
-        for component in components:
-            component_pool.create({
-                'sequence': 10,
-                'product_id': self.id,
-                'component_id': component.id,
-                })
-        
-
+    # -------------------------------------------------------------------------
+    #                                COLUMNS: 
+    # -------------------------------------------------------------------------
+    origin_product_id = fields.Many2one('product.product', 'Origin product')
+    linked_mode = fields.Selection([
+        ('similar', 'Similar'), 
+        ('alternative', 'Alternative'),
+        ], string='Link mode')
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
