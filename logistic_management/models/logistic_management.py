@@ -104,7 +104,8 @@ class SaleOrderLine(models.Model):
     #                            COMPUTE FIELDS FUNCTION:
     # -------------------------------------------------------------------------
     @api.multi
-    @api.depends('assigned_line_ids', 'purchase_line_ids', 'load_line_ids')
+    @api.depends('assigned_line_ids', 'purchase_line_ids', 'load_line_ids',
+        'delivered_line_ids')
     def _get_logist_status_field(self):
         ''' Manage all data for logistic situation in sale order:
         '''
