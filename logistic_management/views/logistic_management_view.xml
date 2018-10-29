@@ -69,21 +69,25 @@
                          
                              <page string="Assigned">
                                  <group colspan="4" col="4">
+                                     <separator string="Assigned from stock:" colspan="4"/>
                                      <field name="assigned_line_ids" nolabel="1" colspan="4"/>
                                  </group>    
                              </page>
                              <page string="Purchase order">
                                  <group colspan="4" col="4">
+                                     <separator string="Supplier purchased:" colspan="4"/>
                                      <field name="purchase_line_ids" nolabel="1" colspan="4" />
                                  </group>    
                              </page>
                              <page string="Load move">
                                  <group colspan="4" col="4">
+                                     <separator string="Supplier loaded:" colspan="4"/>
                                      <field name="load_line_ids" nolabel="1" colspan="4" />
                                  </group>    
                              </page>
                              <page string="Delivered move">
                                  <group colspan="4" col="4">
+                                     <separator string="Customer delivered:" colspan="4"/>
                                      <field name="delivered_line_ids" nolabel="1" colspan="4" />
                                  </group>    
                              </page>                             
