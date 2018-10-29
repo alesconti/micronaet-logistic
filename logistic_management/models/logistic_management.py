@@ -32,44 +32,6 @@ from odoo.tools.translate import _
 _logger = logging.getLogger(__name__)
 
 
-class StockMoveIn(models.Model):
-    """ Model name: Stock Move
-    """
-    
-    _inherit = 'stock.move'
-    
-    # -------------------------------------------------------------------------
-    #                                   COLUMNS:
-    # -------------------------------------------------------------------------
-    # TODO Need index?
-    # USED STOCK: Linked used
-    logistic_assigned_id = fields.Many2one(
-        'sale.order.line', 'Link covered to generator', 
-        help='Link to sale line the assigned qty', 
-        index=True, ondelete='cascade', # remove stock move when delete order
-        )
-
-    # SUPPLIER ORDER: Purchase management:
-    logistic_purchase_id = fields.many2one(
-        'purchase.order.line', 'Link load to purchase', 
-        help='Link pick in line to generat purchase line',
-        index=True, ondelete='set null',
-        )
-    # Direct link to sale order line (generated from purchase order):    
-    logistic_load_id = fields.many2one(
-        'sale.order.line', 'Link load to sale', 
-        help='Link pick in line to original sale line (bypass purchase)',
-        index=True, ondelete='set null',
-        )
-    
-    # DELIVER: Pick out
-    logistic_unload_id = fields.many2one(
-        'sale.order.line', 'Link unload to sale', 
-        help='Link pick out line to sale order',
-        index=True, ondelete='set null',
-        )
-    
-    
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
     """
@@ -88,9 +50,57 @@ class PurchaseOrderLine(models.Model):
         index=True, ondelete='set null',
         )
 
+
+class StockMoveIn(models.Model):
+    """ Model name: Stock Move
+    """
+    
+    _inherit = 'stock.move'
+    
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
+    # TODO Need index?
+    # USED STOCK: Linked used
+    logistic_assigned_id = fields.Many2one(
+        'sale.order.line', 'Link covered to generator', 
+        help='Link to sale line the assigned qty', 
+        index=True, ondelete='cascade', # remove stock move when delete order
+        )
+
+    # Direct link to sale order line (generated from purchase order):    
+    logistic_load_id = fields.Many2one(
+        'sale.order.line', 'Link load to sale', 
+        help='Link pick in line to original sale line (bypass purchase)',
+        index=True, ondelete='set null',
+        )
+    
+    # DELIVER: Pick out
+    logistic_unload_id = fields.Many2one(
+        'sale.order.line', 'Link unload to sale', 
+        help='Link pick out line to sale order',
+        index=True, ondelete='set null',
+        )
+
+    # SUPPLIER ORDER: Purchase management:
+    logistic_purchase_id = fields.Many2one(
+        'purchase.order.line', 'Link load to purchase',
+        help='Link pick in line to generat purchase line',
+        index=True, ondelete='set null',
+        )
+
+class PurchaseOrderLine(models.Model):
+    """ Model name: Purchase Order Line
+    """
+    
+    _inherit = 'purchase.order.line'
+    
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
     # Relation one 2 many:
     load_line_ids = fields.One2many(
-        'stock.move', 'logistic_load_id', 'Linked load to purchase', 
+        'stock.move', 'logistic_purchase_id', 'Linked load to purchase', 
         help='Load linked to this purchase line',
         )
 
@@ -115,18 +125,18 @@ class SaleOrderLine(models.Model):
             # -----------------------------------------------------------------
             # OC: Ordered qty: 
             # -----------------------------------------------------------------
-            logistic_order_qty = line.product_qty # TODO Verify
+            logistic_order_qty = line.product_uom_qty
             
             # -----------------------------------------------------------------
             # ASS: Assigned:
             # -----------------------------------------------------------------
             logistic_covered_qty = 0.0
-            for move in assigned_line_ids:
+            for move in line.assigned_line_ids:
                 logistic_covered_qty += move.product_uom_qty # TODO verify
             line.logistic_covered_qty = logistic_covered_qty
             
             # State valuation:
-            if logistic_order_qty = logistic_covered_qty:
+            if logistic_order_qty == logistic_covered_qty:
                 state = 'ready' # All in stock 
             else:
                 state = 'uncovered' # To order    
@@ -155,7 +165,7 @@ class SaleOrderLine(models.Model):
             # BF: Received (loaded in stock):
             # -----------------------------------------------------------------
             logistic_received_qty = 0.0
-            for move in line.received_line_ids:
+            for move in line.load_line_ids:
                 logistic_received_qty += move.product_uom_qty # TODO verify
             line.logistic_received_qty = logistic_received_qty
             
@@ -202,13 +212,13 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     # A. Assigned stock:
     assigned_line_ids = fields.One2many(
-        'stock.move', 'logistic_used_generator_id', 'Assign from stock',
+        'stock.move', 'logistic_assigned_id', 'Assign from stock',
         help='Assign all this q. to this line (usually one2one',
         )
 
     # B. Purchased:
     purchase_line_ids = fields.One2many(
-        'purchase.order.line', 'logistic_purchase_id', 'Linked to purchase', 
+        'purchase.order.line', 'logistic_sale_id', 'Linked to purchase', 
         help='Supplier ordered line linked to customer\'s one',
         )
     load_line_ids = fields.One2many(
@@ -227,43 +237,43 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     # Computed q.ty data:
     logistic_covered_qty = fields.Float(
-        'Covered qty', digits=(16, config(int['price_accuracy'])),
+        'Covered qty', digits=dp.get_precision('Product Price'),
         help='Qty covered with internal stock',
         readonly=True, compute='_get_logist_status_field', multi=True,
         store=False,
         )
     logistic_uncovered_qty = fields.Float(
-        'Uncovered qty', digits=(16, config(int['price_accuracy'])),
+        'Uncovered qty', digits=dp.get_precision('Product Price'),
         help='Qty not covered with internal stock (so to be purchased)',
         readonly=True, compute='_get_logist_status_field', multi=True,
         store=False,
         )
     logistic_purchase_qty = fields.Float(
-        'Purchae qty', digits=(16, config(int['price_accuracy'])),
+        'Purchae qty', digits=dp.get_precision('Product Price'),
         help='Qty order to supplier',
         readonly=True, compute='_get_logist_status_field', multi=True,
         store=False,
         )
     logistic_received_qty = fields.Float(
-        'Received qty', digits=(16, config(int['price_accuracy'])),
+        'Received qty', digits=dp.get_precision('Product Price'),
         help='Qty received with pick in delivery',
         readonly=True, compute='_get_logist_status_field', multi=True,
         store=False,
         )
     logistic_remain_qty = fields.Float(
-        'Remain qty', digits=(16, config(int['price_accuracy'])),
+        'Remain qty', digits=dp.get_precision('Product Price'),
         help='Qty remain to receive to complete ordered',
         readonly=True, compute='_get_logist_status_field', multi=True,
         store=False,
         )
     logistic_delivered_qty = fields.Float(
-        'Delivered qty', digits=(16, config(int['price_accuracy'])),
+        'Delivered qty', digits=dp.get_precision('Product Price'),
         help='Qty deliverer  to final customer',
         readonly=True, compute='_get_logist_status_field', multi=True,
         store=False,
         )
     logistic_undelivered_qty = fields.Float(
-        'Not delivered qty', digits=(16, config(int['price_accuracy'])),
+        'Not delivered qty', digits=dp.get_precision('Product Price'),
         help='Qty not deliverer to final customer',
         readonly=True, compute='_get_logist_status_field', multi=True,
         store=False,
@@ -279,5 +289,5 @@ class SaleOrderLine(models.Model):
         ], 'Logistic state', default='draft',
         readonly=True, compute='_get_logist_status_field', multi=True,
         store=True, # for create columns
-        ),
+        )
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

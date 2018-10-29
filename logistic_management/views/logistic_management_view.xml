@@ -1,7 +1,110 @@
 <?xml version="1.0"?>
 <openerp>
-    <data>
-        
+    <data> 
+         <!--sale.order.line-->
+         <record model="ir.ui.view" id="view_sale_order_line_logistic_tree">
+             <field name="name">sale.order.line.logistic.tree</field>
+             <field name="model">sale.order.line</field>
+             <field name="priority" eval="40" />
+             <field name="arch" type="xml">
+                 <tree string="Sale line logistic">
+                     <field name="order_id" />
+                     <field name="product_id" />
+                     <field name="name" />
+                     <field name="product_uom_qty" />
+                     <field name="logistic_covered_qty" />
+                     <field name="logistic_uncovered_qty" />
+                     <field name="logistic_purchase_qty" />
+                     <field name="logistic_received_qty" />
+                     <field name="logistic_remain_qty" />
+                     <field name="logistic_delivered_qty" />
+                     <field name="logistic_undelivered_qty" />
+                     <field name="logistic_state" />
+                 </tree>
+             </field>
+         </record>
+         <record model="ir.ui.view" id="view_sale_order_line_logistic_form">
+             <field name="name">sale.order.line.logistic.form</field>
+             <field name="model">sale.order.line</field>
+             <field name="priority" eval="40" />
+             <field name="arch" type="xml">
+                 <form string="Sale line logistic">
+                     <header>                           
+                             <field name="logistic_state" widget="statusbar"  />                         
+                     </header>
+                     <sheet>
+                         <group colspan="4" col="4">
+                             <field name="order_id" />
+                             <newline/>
+                             <field name="product_id" />
+                             <field name="name" />
+                         </group>                         
+                         <notebook colspan="4">
+                             <page string="Quantity">
+                                 <group colspan="4" col="4">
+                                     <field name="product_uom_qty" />
+                                     <newline/>
+                                     <field name="logistic_covered_qty" />
+                                     <field name="logistic_uncovered_qty" />
+                                     
+                                     <field name="logistic_purchase_qty" />
+                                     <field name="logistic_received_qty" />
+                                     
+                                     <field name="logistic_remain_qty" />
+                                     
+                                     <field name="logistic_delivered_qty" />
+                                     <field name="logistic_undelivered_qty" />                                     
+                                 </group>    
+                             </page>
+                         
+                             <page string="Assigned">
+                                 <group colspan="4" col="4">
+                                     <field name="assigned_line_ids" />
+                                 </group>    
+                             </page>
+                             <page string="Purchase order">
+                                 <group colspan="4" col="4">
+                                     <field name="purchase_line_ids" />
+                                 </group>    
+                             </page>
+                             <page string="Load move">
+                                 <group colspan="4" col="4">
+                                     <field name="load_line_ids" />
+                                 </group>    
+                             </page>
+                             <page string="Delivered move">
+                                 <group colspan="4" col="4">
+                                     <field name="delivered_line_ids" />
+                                 </group>    
+                             </page>                             
+                         </notebook>
+                    </sheet>     
+                 </form>
+             </field>
+         </record>
+         <record model="ir.actions.act_window" id="action_sale_order_line_logistic">
+             <field name="name">Sale line logistic</field>
+             <field name="res_model">sale.order.line</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="view_id" ref="view_sale_order_line_logistic_tree"/>
+             <field name="context">{'form_view_ref': 'logistic_management.view_sale_order_line_logistic_form'}</field>
+             <field name="domain">[]</field>
+         </record>
+         <menuitem 
+             id="menu_logistic_management_root" 
+             parent="stock.menu_stock_root" 
+             name="Logistic management"
+             sequence="30"
+             />
+             <menuitem 
+                 id="menu_sale_order_line_logistic" 
+                 parent="menu_logistic_management_root"
+                 action="action_sale_order_line_logistic"
+                 sequence="10"
+                 />
+             
+         
     </data>
 </openerp>
 

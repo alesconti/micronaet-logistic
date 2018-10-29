@@ -32,6 +32,7 @@
     'depends': [
         'base',
         'sale',
+        'sale_management',
         'product',
         'stock',
         'purchase',
