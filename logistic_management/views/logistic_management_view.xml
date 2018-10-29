@@ -8,8 +8,12 @@
              <field name="priority" eval="40" />
              <field name="arch" type="xml">
                  <tree string="Sale line logistic">
+                     <field name="is_kit" />
                      <field name="order_id" />
                      <field name="product_id" />
+                     <field name="kit_product_id" />
+                     <field name="origin_product_id" />
+                     <field name="linked_mode" />
                      <field name="name" />
                      <field name="product_uom_qty" />
                      <field name="logistic_covered_qty" />
@@ -38,6 +42,12 @@
                              <newline/>
                              <field name="product_id" />
                              <field name="name" />
+                             
+                             <field name="is_kit" />
+                             <field name="kit_product_id" />
+
+                             <field name="origin_product_id" />
+                             <field name="linked_mode" />
                          </group>                         
                          <notebook colspan="4">
                              <page string="Quantity">
@@ -59,22 +69,22 @@
                          
                              <page string="Assigned">
                                  <group colspan="4" col="4">
-                                     <field name="assigned_line_ids" />
+                                     <field name="assigned_line_ids" nolabel="1" colspan="4"/>
                                  </group>    
                              </page>
                              <page string="Purchase order">
                                  <group colspan="4" col="4">
-                                     <field name="purchase_line_ids" />
+                                     <field name="purchase_line_ids" nolabel="1" colspan="4" />
                                  </group>    
                              </page>
                              <page string="Load move">
                                  <group colspan="4" col="4">
-                                     <field name="load_line_ids" />
+                                     <field name="load_line_ids" nolabel="1" colspan="4" />
                                  </group>    
                              </page>
                              <page string="Delivered move">
                                  <group colspan="4" col="4">
-                                     <field name="delivered_line_ids" />
+                                     <field name="delivered_line_ids" nolabel="1" colspan="4" />
                                  </group>    
                              </page>                             
                          </notebook>

@@ -36,6 +36,8 @@
         'product',
         'stock',
         'purchase',
+        'order_line_explode_kit', # Sale kit explode
+        'order_line_change_product', # Replaced link product
         ],
     'data': [
         #'security/crm_security.xml',
