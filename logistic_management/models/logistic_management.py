@@ -120,90 +120,106 @@ class SaleOrderLine(models.Model):
         ''' Manage all data for logistic situation in sale order:
         '''
         for line in self:
-            state = 'draft'
-
-            # -----------------------------------------------------------------
-            # OC: Ordered qty: 
-            # -----------------------------------------------------------------
-            logistic_order_qty = line.product_uom_qty
-            
-            # -----------------------------------------------------------------
-            # ASS: Assigned:
-            # -----------------------------------------------------------------
-            logistic_covered_qty = 0.0
-            for move in line.assigned_line_ids:
-                logistic_covered_qty += move.product_uom_qty # TODO verify
-            line.logistic_covered_qty = logistic_covered_qty
-            
-            # State valuation:
-            if logistic_order_qty == logistic_covered_qty:
-                state = 'ready' # All in stock 
+            if line.product_id.is_kit:
+                # -------------------------------------------------------------
+                #                           KIT:
+                # -------------------------------------------------------------
+                # if is kit >> line not used:
+                line.logistic_covered_qty = 0.0
+                line.logistic_purchase_qty = 0.0
+                line.logistic_uncovered_qty = 0.0
+                line.logistic_received_qty = 0.0
+                line.logistic_remain_qty = 0.0
+                line.logistic_delivered_qty = 0.0
+                line.logistic_undelivered_qty = 0.0
+                line.logistic_state = 'unused'
             else:
-                state = 'uncovered' # To order    
+                # -------------------------------------------------------------
+                #                       NORMAL PRODUCT:
+                # -------------------------------------------------------------
+                state = 'draft'
+                # -------------------------------------------------------------
+                # OC: Ordered qty:
+                # -------------------------------------------------------------
+                logistic_order_qty = line.product_uom_qty
+                
+                # -------------------------------------------------------------
+                # ASS: Assigned:
+                # -------------------------------------------------------------
+                logistic_covered_qty = 0.0
+                for move in line.assigned_line_ids:
+                    logistic_covered_qty += move.product_uom_qty # TODO verify
+                line.logistic_covered_qty = logistic_covered_qty
+                
+                # State valuation:
+                if logistic_order_qty == logistic_covered_qty:
+                    state = 'ready' # All in stock 
+                else:
+                    state = 'uncovered' # To order    
 
-            # -----------------------------------------------------------------
-            # PUR: Purchase (order done):
-            # -----------------------------------------------------------------
-            logistic_purchase_qty = 0.0
-            for purchase in line.purchase_line_ids:
-                logistic_purchase_qty += purchase.product_uom_qty # TODO verify
-            line.logistic_purchase_qty = logistic_purchase_qty
-            
-            # -----------------------------------------------------------------
-            # UNC: Uncovered (to purchase) [OC - ASS - PUR]:
-            # -----------------------------------------------------------------
-            logistic_uncovered_qty = \
-                logistic_order_qty - logistic_covered_qty - \
-                logistic_purchase_qty
-            line.logistic_uncovered_qty = logistic_uncovered_qty
+                # -------------------------------------------------------------
+                # PUR: Purchase (order done):
+                # -------------------------------------------------------------
+                logistic_purchase_qty = 0.0
+                for purchase in line.purchase_line_ids:
+                    logistic_purchase_qty += purchase.product_uom_qty # TODO verify
+                line.logistic_purchase_qty = logistic_purchase_qty
+                
+                # -------------------------------------------------------------
+                # UNC: Uncovered (to purchase) [OC - ASS - PUR]:
+                # -------------------------------------------------------------
+                logistic_uncovered_qty = \
+                    logistic_order_qty - logistic_covered_qty - \
+                    logistic_purchase_qty
+                line.logistic_uncovered_qty = logistic_uncovered_qty
 
-            # State valuation:
-            if state != 'ready' and not logistic_uncovered_qty: # XXX          
-                state = 'ordered' # A part (or all) is order
+                # State valuation:
+                if state != 'ready' and not logistic_uncovered_qty: # XXX          
+                    state = 'ordered' # A part (or all) is order
 
-            # -----------------------------------------------------------------
-            # BF: Received (loaded in stock):
-            # -----------------------------------------------------------------
-            logistic_received_qty = 0.0
-            for move in line.load_line_ids:
-                logistic_received_qty += move.product_uom_qty # TODO verify
-            line.logistic_received_qty = logistic_received_qty
-            
-            # -----------------------------------------------------------------
-            # REM: Remain to receive [OC - ASS - BF]:
-            # -----------------------------------------------------------------
-            logistic_remain_qty = \
-                logistic_order_qty - logistic_covered_qty - \
-                logistic_received_qty
-            line.logistic_remain_qty = logistic_remain_qty    
+                # -------------------------------------------------------------
+                # BF: Received (loaded in stock):
+                # -------------------------------------------------------------
+                logistic_received_qty = 0.0
+                for move in line.load_line_ids:
+                    logistic_received_qty += move.product_uom_qty # TODO verify
+                line.logistic_received_qty = logistic_received_qty
+                
+                # -------------------------------------------------------------
+                # REM: Remain to receive [OC - ASS - BF]:
+                # -------------------------------------------------------------
+                logistic_remain_qty = \
+                    logistic_order_qty - logistic_covered_qty - \
+                    logistic_received_qty
+                line.logistic_remain_qty = logistic_remain_qty    
 
-            # State valuation:
-            if state != 'ready' and not logistic_remain_qty: # XXX
-                state = 'ready' # All present coveder or in purchase
+                # State valuation:
+                if state != 'ready' and not logistic_remain_qty: # XXX
+                    state = 'ready' # All present coveder or in purchase
 
-            # -----------------------------------------------------------------
-            # BC: Delivered:
-            # -----------------------------------------------------------------
-            logistic_delivered_qty = 0.0
-            for move in line.delivered_line_ids:
-                logistic_delivered_qty += move.product_uom_qty # TODO verify
-            line.logistic_delivered_qty = logistic_delivered_qty
-            
-            # -----------------------------------------------------------------
-            # UND: Undelivered (remain to pick out) [OC - BC]
-            # -----------------------------------------------------------------
-            logistic_undelivered_qty = \
-                logistic_order_qty - logistic_delivered_qty
-            line.logistic_undelivered_qty = logistic_undelivered_qty
+                # -------------------------------------------------------------
+                # BC: Delivered:
+                # -------------------------------------------------------------
+                logistic_delivered_qty = 0.0
+                for move in line.delivered_line_ids:
+                    logistic_delivered_qty += move.product_uom_qty # TODO verify
+                line.logistic_delivered_qty = logistic_delivered_qty
+                
+                # -------------------------------------------------------------
+                # UND: Undelivered (remain to pick out) [OC - BC]
+                # -------------------------------------------------------------
+                logistic_undelivered_qty = \
+                    logistic_order_qty - logistic_delivered_qty
+                line.logistic_undelivered_qty = logistic_undelivered_qty
 
-            # State valuation:
-            if not logistic_undelivered_qty: # XXX
-                state = 'done' # All delivered to customer
-            
-            # -----------------------------------------------------------------
-            # Write data:
-            # -----------------------------------------------------------------
-            line.logistic_state = state
+                # State valuation:
+                if not logistic_undelivered_qty: # XXX
+                    state = 'done' # All delivered to customer
+                
+                # -------------------------------------------------------------
+                # Write data:
+                # -------------------------------------------------------------
+                line.logistic_state = state
 
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
@@ -281,6 +297,8 @@ class SaleOrderLine(models.Model):
     
     # State (sort of workflow):
     logistic_state = fields.Selection([
+        ('unused', 'Unused'), # Line not managed
+    
         ('draft', 'Custom order'), # Draft, order is received now
         ('uncovered', 'Uncovered'), # Not coveder to be ordered
         ('ordered', 'Ordered'), # Supplier order defined
@@ -288,6 +306,6 @@ class SaleOrderLine(models.Model):
         ('done', 'Done'), # Delivered qty (order will be closed)
         ], 'Logistic state', default='draft',
         readonly=True, compute='_get_logist_status_field', multi=True,
-        store=True, # for create columns
+        store=False, # TODO store True # for create columns
         )
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

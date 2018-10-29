@@ -7,7 +7,7 @@
              <field name="model">sale.order.line</field>
              <field name="priority" eval="40" />
              <field name="arch" type="xml">
-                 <tree string="Sale line logistic">
+                 <tree string="Sale line logistic" decoration-muted="is_kit==True" decoration-warning="kit_product_id != False">
                      <field name="is_kit" />
                      <field name="order_id" />
                      <field name="product_id" />
