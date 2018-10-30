@@ -21,7 +21,4 @@
 #
 ###############################################################################
 
-
-from . import models
-from . import wizard
-
+from . import manual_operation_wizard

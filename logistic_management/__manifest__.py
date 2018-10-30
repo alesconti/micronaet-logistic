@@ -44,6 +44,7 @@
         #'security/ir.model.access.csv',
 
         'views/logistic_management_view.xml',
+        'wizard/manual_operation_view.xml',
         ],
     'demo': [],
     'css': [],

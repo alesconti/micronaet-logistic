@@ -162,7 +162,6 @@ class SaleOrderLine(models.Model):
             if not product:
                 continue # Comment line
             
-            
             order_qty = line.product_uom_qty
             product_list = [product].extend([
                 item.product_id for item in product.similar_ids])
@@ -172,7 +171,7 @@ class SaleOrderLine(models.Model):
             # -----------------------------------------------------------------
             for used_product in product_list:                    
                 stock_qty = used_product.qty_available
-                if mode = 'first_available' and stock_qty:
+                if mode == 'first_available' and stock_qty:
                     if stock_qty > order_qty:
                         quantity = order_qty
                         state = 'ready'
@@ -182,7 +181,7 @@ class SaleOrderLine(models.Model):
 
                     company = line.order_id.company_id # XXX
                     data = {
-                        'company_id': company.id
+                        'company_id': company.id,
                         'in_date': now,
                         'location_id': location_id,
                         #'lot_id' #'package_id'
