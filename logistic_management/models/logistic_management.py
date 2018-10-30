@@ -437,7 +437,7 @@ class SaleOrderLine(models.Model):
         ('ready', 'Ready'), # Order to be picked out (all in stock)
         ('done', 'Done'), # Delivered qty (order will be closed)
         ], 'Logistic state', default='draft',
-        readonly=True, 
+        #readonly=True, 
         #compute='_get_logist_status_field', multi=True,
         #store=True, # TODO store True # for create columns
         )
