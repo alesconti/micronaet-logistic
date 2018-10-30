@@ -139,12 +139,13 @@ class SaleOrderLine(models.Model):
             stock.move or stock.quant movement 
             Evaluate also if we can use alternative product
         '''
+        import pdb; pdb.set_trace()
         # TODO read paremeter:
         mode = 'first_available' # TODO move management: 'better_available'
         location_id = 11
         now = fields.Datetime.now()
 
-        line_pool = self.env['stock.quant']
+        quant_pool = self.env['stock.quant']
         line_pool = self.env['sale.order.line']
         lines = line_pool.search([
             # TODO manage order status (only confirmed will be searched)
@@ -192,7 +193,8 @@ class SaleOrderLine(models.Model):
                         # Link field:
                         'logistic_assigned_id': line.id,
                         }            
-
+                    quant_pool.create(data)
+                    
                     # Update line if quant created                
                     update_db[line] = {
                         'logistic_state': state,
@@ -258,12 +260,12 @@ class SaleOrderLine(models.Model):
                 line.logistic_remain_qty = 0.0
                 line.logistic_delivered_qty = 0.0
                 line.logistic_undelivered_qty = 0.0
-                line.logistic_state = 'unused'
+                #line.logistic_state = 'unused'
             else:
                 # -------------------------------------------------------------
                 #                       NORMAL PRODUCT:
                 # -------------------------------------------------------------
-                state = 'draft'
+                #state = 'draft'
                 # -------------------------------------------------------------
                 # OC: Ordered qty:
                 # -------------------------------------------------------------
@@ -278,10 +280,10 @@ class SaleOrderLine(models.Model):
                 line.logistic_covered_qty = logistic_covered_qty
                 
                 # State valuation:
-                if logistic_order_qty == logistic_covered_qty:
-                    state = 'ready' # All in stock 
-                else:
-                    state = 'uncovered' # To order    
+                #if logistic_order_qty == logistic_covered_qty:
+                #    state = 'ready' # All in stock 
+                #else:
+                #    state = 'uncovered' # To order    
 
                 # -------------------------------------------------------------
                 # PUR: Purchase (order done):
@@ -300,8 +302,8 @@ class SaleOrderLine(models.Model):
                 line.logistic_uncovered_qty = logistic_uncovered_qty
 
                 # State valuation:
-                if state != 'ready' and not logistic_uncovered_qty: # XXX          
-                    state = 'ordered' # A part (or all) is order
+                #if state != 'ready' and not logistic_uncovered_qty: # XXX          
+                #    state = 'ordered' # A part (or all) is order
 
                 # -------------------------------------------------------------
                 # BF: Received (loaded in stock):
@@ -320,8 +322,8 @@ class SaleOrderLine(models.Model):
                 line.logistic_remain_qty = logistic_remain_qty    
 
                 # State valuation:
-                if state != 'ready' and not logistic_remain_qty: # XXX
-                    state = 'ready' # All present coveder or in purchase
+                #if state != 'ready' and not logistic_remain_qty: # XXX
+                #    state = 'ready' # All present coveder or in purchase
 
                 # -------------------------------------------------------------
                 # BC: Delivered:
@@ -339,13 +341,13 @@ class SaleOrderLine(models.Model):
                 line.logistic_undelivered_qty = logistic_undelivered_qty
 
                 # State valuation:
-                if not logistic_undelivered_qty: # XXX
-                    state = 'done' # All delivered to customer
+                #if not logistic_undelivered_qty: # XXX
+                #    state = 'done' # All delivered to customer
                 
                 # -------------------------------------------------------------
                 # Write data:
                 # -------------------------------------------------------------
-                line.logistic_state = state
+                #line.logistic_state = state
 
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
@@ -435,7 +437,8 @@ class SaleOrderLine(models.Model):
         ('ready', 'Ready'), # Order to be picked out (all in stock)
         ('done', 'Done'), # Delivered qty (order will be closed)
         ], 'Logistic state', default='draft',
-        readonly=True, compute='_get_logist_status_field', multi=True,
-        store=False, # TODO store True # for create columns
+        readonly=True, 
+        #compute='_get_logist_status_field', multi=True,
+        #store=True, # TODO store True # for create columns
         )
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

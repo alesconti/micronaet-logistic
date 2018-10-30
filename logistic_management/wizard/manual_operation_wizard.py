@@ -46,7 +46,7 @@ class StockChangeStandardPrice(models.TransientModel):
         line_pool = self.env['sale.order.line']
         
         # Call procedure:
-        return line_pool.logistic_assign_stock_to_customer_order       
+        return line_pool.logistic_assign_stock_to_customer_order()       
         
     @api.multi
     def generate_purchase(self):
