@@ -1,0 +1,299 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* logistic_management
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-10-29 16:53+0000\n"
+"PO-Revision-Date: 2018-10-29 18:04+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_sale_order_line_assigned_line_ids
+msgid "Assign all this q. to this line (usually one2one"
+msgstr "Assegna tutta la q. a questa linea (si solito uno a uno)"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_assigned_line_ids
+msgid "Assign from stock"
+msgstr "Assegnato da magazzino"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_form
+msgid "Assigned"
+msgstr "Assegnato"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_form
+msgid "Assigned from stock:"
+msgstr "Assegnato da magazzino:"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_covered_qty
+msgid "Covered qty"
+msgstr "Q. coperta"
+
+#. module: logistic_management
+#: selection:sale.order.line,logistic_state:0
+msgid "Custom order"
+msgstr "Ordine cliente"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_form
+msgid "Customer delivered:"
+msgstr "Consegnato a cliente:"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_sale_order_line_delivered_line_ids
+msgid "Deliver movement in pick out documents"
+msgstr "Movimenti di consegna dei documenti di pick out"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_form
+msgid "Delivered move"
+msgstr "Movimenti di consegna"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_delivered_qty
+msgid "Delivered qty"
+msgstr "Q. Consegnata"
+
+#. module: logistic_management
+#: selection:sale.order.line,logistic_state:0
+msgid "Done"
+msgstr "Chiuso"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_stock_move_logistic_assigned_id
+msgid "Link covered to generator"
+msgstr "Collegamento a generatore"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_purchase_order_line_logistic_sale_id
+msgid "Link generator sale order line: one customer line=one purchase"
+msgstr ""
+"Collegamento generatore riga ordine: una riga cliente = una riga acquisto"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_stock_move_logistic_purchase_id
+msgid "Link load to purchase"
+msgstr "Collega carichi ad acquisto"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_stock_move_logistic_load_id
+msgid "Link load to sale"
+msgstr "Collega carichi a vendita"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_stock_move_logistic_purchase_id
+msgid "Link pick in line to generat purchase line"
+msgstr "Collega movimenti in ingresso alla riga di acquisto che li ha generati"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_stock_move_logistic_load_id
+msgid "Link pick in line to original sale line (bypass purchase)"
+msgstr ""
+"Collega movimenti di ingresso alla riga ordine cliente (bypassando "
+"l'acquisto)"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_stock_move_logistic_unload_id
+msgid "Link pick out line to sale order"
+msgstr "Collega movimenti di uscita all'ordine cliente"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_purchase_order_line_logistic_sale_id
+msgid "Link to generator"
+msgstr "Collega al generatore"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_stock_move_logistic_assigned_id
+msgid "Link to sale line the assigned qty"
+msgstr "Collega la riga di vendita alla q. assegnata"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_stock_move_logistic_unload_id
+msgid "Link unload to sale"
+msgstr "Collega scarichi alle vendite"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_purchase_order_line_load_line_ids
+msgid "Linked load to purchase"
+msgstr "Collega carichi agli acquisti"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_load_line_ids
+msgid "Linked load to sale"
+msgstr "Collega carichi alle vendite"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_delivered_line_ids
+msgid "Linked to deliveder"
+msgstr "Collegati alle consegne"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_purchase_line_ids
+msgid "Linked to purchase"
+msgstr "Collegati agli acquisti"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_purchase_order_line_load_line_ids
+msgid "Load linked to this purchase line"
+msgstr "Carichi collegati alle righe di acquisto"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_form
+msgid "Load move"
+msgstr "Movimenti di carico"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_sale_order_line_load_line_ids
+msgid "Loaded movement in picking in documents"
+msgstr "Movimenti di carico nei documenti di pick in"
+
+#. module: logistic_management
+#: model:ir.ui.menu,name:logistic_management.menu_logistic_management_root
+msgid "Logistic management"
+msgstr "Gestione logistica"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_state
+msgid "Logistic state"
+msgstr "Stato logistica"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_undelivered_qty
+msgid "Not delivered qty"
+msgstr "Q. non consegnata"
+
+#. module: logistic_management
+#: selection:sale.order.line,logistic_state:0
+msgid "Ordered"
+msgstr "Ordinata"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_purchase_qty
+msgid "Purchae qty"
+msgstr "Q. ordinata a fornitore"
+
+#. module: logistic_management
+#: model:ir.model,name:logistic_management.model_purchase_order_line
+msgid "Purchase Order Line"
+msgstr "Riga di acquisto"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_form
+msgid "Purchase order"
+msgstr "Ordine acquisto"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_sale_order_line_logistic_covered_qty
+msgid "Qty covered with internal stock"
+msgstr "Q. coperta con magazzino"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_sale_order_line_logistic_delivered_qty
+msgid "Qty deliverer  to final customer"
+msgstr "Q. consegnata a cliente"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_sale_order_line_logistic_uncovered_qty
+msgid "Qty not covered with internal stock (so to be purchased)"
+msgstr "Q. non coperta con magazzino (da acquistare)"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_sale_order_line_logistic_undelivered_qty
+msgid "Qty not deliverer to final customer"
+msgstr "Q. non consegnata all'utente finale"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_sale_order_line_logistic_purchase_qty
+msgid "Qty order to supplier"
+msgstr "Q. ordinata al fornitore"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_sale_order_line_logistic_received_qty
+msgid "Qty received with pick in delivery"
+msgstr "Q. ricevuta con bolla fornitore"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_sale_order_line_logistic_remain_qty
+msgid "Qty remain to receive to complete ordered"
+msgstr "Q. da ricevere per completare l'ordinata"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_form
+msgid "Quantity"
+msgstr "Quantità"
+
+#. module: logistic_management
+#: selection:sale.order.line,logistic_state:0
+msgid "Ready"
+msgstr "Pronto"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_received_qty
+msgid "Received qty"
+msgstr "Q. ricevuta"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_remain_qty
+msgid "Remain qty"
+msgstr "Q. rimanente"
+
+#. module: logistic_management
+#: model:ir.actions.act_window,name:logistic_management.action_sale_order_line_logistic
+#: model:ir.ui.menu,name:logistic_management.menu_sale_order_line_logistic
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_form
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_tree
+msgid "Sale line logistic"
+msgstr "Riga ordine logistica"
+
+#. module: logistic_management
+#: model:ir.model,name:logistic_management.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Riga Ordine di Vendita"
+
+#. module: logistic_management
+#: model:ir.model,name:logistic_management.model_stock_move
+msgid "Stock Move"
+msgstr "Movimento Magazzino"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_form
+msgid "Supplier loaded:"
+msgstr "Carico da fornitore"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_sale_order_line_purchase_line_ids
+msgid "Supplier ordered line linked to customer's one"
+msgstr "Righe ordine a fornitore collegate a quelle del cliente"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_form
+msgid "Supplier purchased:"
+msgstr "Ordinato a fornitore:"
+
+#. module: logistic_management
+#: selection:sale.order.line,logistic_state:0
+msgid "Uncovered"
+msgstr "Non coperta"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_uncovered_qty
+msgid "Uncovered qty"
+msgstr "Q. non coperta"
+
+#. module: logistic_management
+#: selection:sale.order.line,logistic_state:0
+msgid "Unused"
+msgstr "Non usata"

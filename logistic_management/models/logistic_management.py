@@ -62,11 +62,12 @@ class StockMoveIn(models.Model):
     # -------------------------------------------------------------------------
     # TODO Need index?
     # USED STOCK: Linked used
-    logistic_assigned_id = fields.Many2one(
-        'sale.order.line', 'Link covered to generator', 
-        help='Link to sale line the assigned qty', 
-        index=True, ondelete='cascade', # remove stock move when delete order
-        )
+    # Moved in stock.quant:
+    #logistic_assigned_id = fields.Many2one(
+    #    'sale.order.line', 'Link covered to generator', 
+    #    help='Link to sale line the assigned qty', 
+    #    index=True, ondelete='cascade', # remove stock move when delete order
+    #    )
 
     # Direct link to sale order line (generated from purchase order):    
     logistic_load_id = fields.Many2one(
@@ -104,11 +105,137 @@ class PurchaseOrderLine(models.Model):
         help='Load linked to this purchase line',
         )
 
+class StockQuant(models.Model):
+    """ Model name: Stock quant
+    """
+    
+    _inherit = 'stock.quant'
+    
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
+    logistic_assigned_id = fields.Many2one(
+        'sale.order.line', 'Link covered to generator', 
+        help='Link to sale line the assigned qty', 
+        index=True, ondelete='cascade', # remove stock move when delete order
+        )
+    
+    
+
 class SaleOrderLine(models.Model):
     """ Model name: Sale Order Line
     """
     
     _inherit = 'sale.order.line'
+    
+    # -------------------------------------------------------------------------
+    #                    LOGISTIC OPERATION FUNCTION:
+    # -------------------------------------------------------------------------
+    # A. Assign available q.ty in stock assign a stock movement / quants
+    @api.model
+    def logistic_assign_stock_to_customer_order(self):
+        ''' Logistic phasae 1:
+            Assign stock q. available to order product creating a 
+            stock.move or stock.quant movement 
+            Evaluate also if we can use alternative product
+        '''
+        # TODO read paremeter:
+        mode = 'first_available' # TODO move management: 'better_available'
+        location_id = 11
+        now = fields.Datetime.now()
+
+        line_pool = self.env['stock.quant']
+        line_pool = self.env['sale.order.line']
+        lines = line_pool.search([
+            # TODO manage order status (only confirmed will be searched)
+            #('order_id.state', '=', 'sale'),
+            ('order_id.state', 'in', ('draft', 'sent')),
+            
+            ('logistic_state', '=', 'draft'),
+            ])
+
+        # Evaluate stock assign:
+        update_db = {}
+        selected_line = []
+        for line in lines:
+            product = line.product_id
+            if not product:
+                continue # Comment line
+            
+            
+            order_qty = line.product_uom_qty
+            product_list = [product].extend([
+                item.product_id for item in product.similar_ids])
+            
+            # -----------------------------------------------------------------
+            # Use stock to cover order:
+            # -----------------------------------------------------------------
+            for used_product in product_list:                    
+                stock_qty = used_product.qty_available
+                if mode = 'first_available' and stock_qty:
+                    if stock_qty > order_qty:
+                        quantity = order_qty
+                        state = 'ready'
+                    else:    
+                        quantity = stock_qty
+                        state = 'uncovered'
+
+                    company = line.order_id.company_id # XXX
+                    data = {
+                        'company_id': company.id
+                        'in_date': now,
+                        'location_id': location_id,
+                        #'lot_id' #'package_id'
+                        'product_id': used_product.id,
+                        'product_tmpl_id': used_product.product_tmpl_id.id,
+                        'quantity': quantity,
+
+                        # Link field:
+                        'logistic_assigned_id': line.id,
+                        }            
+
+                    # Update line if quant created                
+                    update_db[line] = {
+                        'logistic_state': state,
+                        }
+                # TODO manage similar and alternative product here!    
+                if state and used_product != product:
+                    # Update sale line with information:
+                    update_db[line]['linked_mode'] = 'similar'
+                    update_db[line]['origin_product_id'] = used_product.id
+        
+            # Line without stock used:
+            if line not in update_db:
+                # Select 
+                selected_line.append(line.id)
+                
+        # ---------------------------------------------------------------------
+        # Update sale line status:
+        # ---------------------------------------------------------------------
+        for line in update_db:
+            line.write(update_db[line])
+            selected_line.append(line.id)
+            
+        model_pool = self.env['ir.model.data']
+        tree_view_id = model_pool.get_object_reference(
+            'logistic_management', 'view_sale_order_line_logistic_tree')[1]
+        form_view_id = model_pool.get_object_reference(
+            'logistic_management', 'view_sale_order_line_logistic_form')[1]
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Updated lines'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            #'res_id': 1,
+            'res_model': 'sale.order.line',
+            'view_id': tree_view_id,
+            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
+            'domain': [('id', 'in', selected_line)],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
     
     # -------------------------------------------------------------------------
     #                            COMPUTE FIELDS FUNCTION:
@@ -227,8 +354,12 @@ class SaleOrderLine(models.Model):
     #                              RELATION MANY 2 ONE
     # -------------------------------------------------------------------------
     # A. Assigned stock:
+    #assigned_line_ids = fields.One2many(
+    #    'stock.move', 'logistic_assigned_id', 'Assign from stock',
+    #    help='Assign all this q. to this line (usually one2one',
+    #    )
     assigned_line_ids = fields.One2many(
-        'stock.move', 'logistic_assigned_id', 'Assign from stock',
+        'stock.quant', 'logistic_assigned_id', 'Assign from stock',
         help='Assign all this q. to this line (usually one2one',
         )
 
@@ -265,7 +396,7 @@ class SaleOrderLine(models.Model):
         store=False,
         )
     logistic_purchase_qty = fields.Float(
-        'Purchae qty', digits=dp.get_precision('Product Price'),
+        'Purchase qty', digits=dp.get_precision('Product Price'),
         help='Qty order to supplier',
         readonly=True, compute='_get_logist_status_field', multi=True,
         store=False,
