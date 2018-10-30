@@ -1,19 +1,57 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-        <!--INHERIT-->  
-        <record model="ir.ui.view" id="view_sale_order_line_real_product_form">
-            <field name="name">sale.order.line.real.product.form</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_order_form"/>
+        <record id="view_logistic_manual_operation_wizard" model="ir.ui.view">
+            <field name="name">Logistic operation wizard</field>
+            <field name="model">logistic.manual.operation.wizard</field>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="after">
-                    <button name="use_another_product" string=">>" type="object" class="oe_link"/>
-                    <field name="origin_product_id" />
-                    <field name="linked_mode" attrs="{'required': [('origin_product_id','!=',False)]}"/>
-                </xpath>
+              <form string="Logistic operation management:">
+                  <header>
+                      <button string="Cancel" class="btn-default" special="cancel" />
+                  </header>
+                  <sheet>
+                      <group colspan="4" col="2">
+                          <separator string="A. Assign stock to order:"/>
+                          <button name="assign_stock" string="_Assign stock" type="object" class="btn-primary" />
+                      </group>    
+                      <group colspan="4" col="2">
+                          <separator string="B. Generate purchase:"/>
+                          <button name="generate_purchase" string="_Generate purchase" type="object" class="btn-primary" />
+                      </group>    
+                      <group colspan="4" col="2">
+                          <separator string="C. Generate purchase:"/>
+                          <button name="update_ready" string="_Update ready" type="object" class="btn-primary" />
+                      </group>    
+                      <group colspan="4" col="2">
+                          <separator string="D. Generate purchase:"/>
+                          <button name="generate_delivery" string="Generate _Delivery" type="object" class="btn-primary" />
+                      </group>    
+                      <group colspan="4" col="2">
+                          <separator string="E. Generate purchase:"/>
+                          <button name="closed_delivered" string="_Closed Delivered" type="object" class="btn-primary" />
+                      </group>    
+                  </sheet>
+              </form>
             </field>
         </record>
+
+        <record id="action_logistic_manual_operation_wizard" model="ir.actions.act_window">
+            <field name="name">Change Standard Price</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">logistic.manual.operation.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_logistic_manual_operation_wizard"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem 
+            parent="menu_logistic_management_root"
+            sequence="20"
+            id="menu_logistic_manual_operation_wizard" 
+            action="action_logistic_manual_operation_wizard"
+             />
+        
+
     </data>
 </openerp>
 

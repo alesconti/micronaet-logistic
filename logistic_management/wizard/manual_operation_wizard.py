@@ -32,5 +32,46 @@ from odoo.tools.translate import _
 _logger = logging.getLogger(__name__)
 
 
+class StockChangeStandardPrice(models.TransientModel):
+    _name = 'logistic.manual.operation.wizard'
+    _description = 'Logistic manual operation'
+
+    # -------------------------------------------------------------------------
+    #                               BUTTON EVENT:    
+    # -------------------------------------------------------------------------
+    @api.multi
+    def assign_stock(self):
+        ''' A. Assign stock product to open orders
+        '''
+        line_pool = self.env['sale.order.line']
+        
+        # Call procedure:
+        return line_pool.logistic_assign_stock_to_customer_order       
+        
+    @api.multi
+    def generate_purchase(self):
+        ''' B. Generate purchase order for not cover qty
+        '''
+        return True
+        
+    @api.multi
+    def update_ready(self):
+        ''' C. Update order ready with stock or load
+        '''
+        return True
+
+    @api.multi
+    def generate_delivery(self):
+        ''' D. Generate delivery order in draft mode
+        '''
+        return True
+
+    @api.multi
+    def closed_delivered(self):
+        ''' E. Close delivery order
+        '''
+        return True
+        
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
