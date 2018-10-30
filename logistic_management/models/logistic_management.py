@@ -139,10 +139,9 @@ class SaleOrderLine(models.Model):
             stock.move or stock.quant movement 
             Evaluate also if we can use alternative product
         '''
-        import pdb; pdb.set_trace()
         # TODO read paremeter:
         mode = 'first_available' # TODO move management: 'better_available'
-        location_id = 11
+        location_id = 12
         now = fields.Datetime.now()
 
         quant_pool = self.env['stock.quant']
@@ -160,16 +159,22 @@ class SaleOrderLine(models.Model):
         selected_line = []
         for line in lines:
             product = line.product_id
-            if not product:
+            if not product or product.is_kit:
+                update_db[line] = {
+                    'logistic_state': 'unused',
+                    }
                 continue # Comment line
             
             order_qty = line.product_uom_qty
-            product_list = [product].extend([
-                item.product_id for item in product.similar_ids])
+            product_list = [product]
+            if product.similar_ids:
+                product_list.extend([
+                    item for item in product.similar_ids]) # XXX Error!!!!!!
             
             # -----------------------------------------------------------------
             # Use stock to cover order:
             # -----------------------------------------------------------------
+            state = False
             for used_product in product_list:                    
                 stock_qty = used_product.qty_available
                 if mode == 'first_available' and stock_qty:
@@ -205,10 +210,11 @@ class SaleOrderLine(models.Model):
                     update_db[line]['linked_mode'] = 'similar'
                     update_db[line]['origin_product_id'] = used_product.id
         
-            # Line without stock used:
-            if line not in update_db:
-                # Select 
-                selected_line.append(line.id)
+            # No stock passed in unvocered state:
+            if line not in update_db: 
+                update_db[line] = {
+                    'logistic_state': 'uncovered',
+                    }
                 
         # ---------------------------------------------------------------------
         # Update sale line status:
@@ -275,8 +281,8 @@ class SaleOrderLine(models.Model):
                 # ASS: Assigned:
                 # -------------------------------------------------------------
                 logistic_covered_qty = 0.0
-                for move in line.assigned_line_ids:
-                    logistic_covered_qty += move.product_uom_qty # TODO verify
+                for quant in line.assigned_line_ids:
+                    logistic_covered_qty += quant.quantity
                 line.logistic_covered_qty = logistic_covered_qty
                 
                 # State valuation:
