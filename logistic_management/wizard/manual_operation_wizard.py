@@ -49,8 +49,9 @@ class StockChangeStandardPrice(models.TransientModel):
         orders = order_pool.search([
             ('logistic_state', '=', 'draft'),
             ])
-        orders.explode_kit_in_order_line()
-        orders.logistic_state = 'order'
+        for order in orders:    
+            order.explode_kit_in_order_line()
+            order.logistic_state = 'order'
 
         # ---------------------------------------------------------------------
         # Return view:

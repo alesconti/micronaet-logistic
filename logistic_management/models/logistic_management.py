@@ -31,6 +31,35 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+class ResCompany(models.Model):
+    """ Model name: Res Company
+    """
+    
+    _inherit = 'res.company'
+
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
+    # Logistic parameters:
+    logistic_assign_mode = fields.Selection([
+        ('first_available', 'First available'),
+        #('better_available', 'Better available'),
+        ], 'Assign stock mode', default='first_available', 
+        help='Assign stock mode to order line (first avilable or better)',
+        required=True,
+        )
+    logistic_order_sort = fields.Selection([
+        ('create_date', 'Create date'),
+        ('validity_date', 'Validity date'),
+        ], 'Order sort', default='create_date', 
+        help='Sort order to assign stock availability',
+        required=True,
+        )
+    logistic_location_id = fields.Many2one(
+        'stock.location', 'Stock Location IN', 
+        help='Stock location for q. created',
+        required=True,
+        )
 
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
@@ -135,7 +164,7 @@ class SaleOrder(models.Model):
         ('draft', 'Order draft '), # Draft, new order received
         ('order', 'Order confirmed'), # Quotation transformed
         
-        ('dropship', 'Dropship'), # Dropship order XXX to be used?
+        #('dropship', 'Dropship'), # Dropship order XXX to be used?
         ('pending', 'Pending delivery'), # Waiting for delivery
         ('ready', 'Ready'), # Ready for transfer
         ('done', 'Done'), # Delivered or closed XXX manage partial delivery
@@ -162,11 +191,6 @@ class SaleOrderLine(models.Model):
             stock.move or stock.quant movement 
             Evaluate also if we can use alternative product
         '''
-        import pdb; pdb.set_trace()
-        # TODO read paremeter:
-        mode = 'first_available' # TODO move management: 'better_available'
-        sort = 'create_date' # TODO manage in parameters
-        location_id = 12
         now = fields.Datetime.now()
 
         quant_pool = self.env['stock.quant']
@@ -174,8 +198,9 @@ class SaleOrderLine(models.Model):
         lines = line_pool.search([
             # TODO manage order status (only confirmed will be searched)
             #('order_id.state', '=', 'sale'),
-            ('order_id.state', 'in', ('draft', 'sent')),
+            #('order_id.state', 'in', ('draft', 'sent')),
             
+            ('order_id.logistic_state', 'in', ('order', 'pending')),            
             ('logistic_state', '=', 'draft'),
             ])
 
@@ -191,7 +216,24 @@ class SaleOrderLine(models.Model):
         #                  Modify sale order line status:
         # ---------------------------------------------------------------------
         update_db = {}
+        load_parameter = False
         for line in sorted_line:
+            # -----------------------------------------------------------------
+            # Load parameter from company setup:
+            # -----------------------------------------------------------------
+            if not load_parameter:
+                load_parameter = True                
+                company = line.order_id.company_id
+                location_id = company.logistic_load_id.id
+                sort = company.logistic_order_sort
+                mode = company.logistic_assign_mode
+                _logger.info(
+                    'Update order with parameter: Location: %s, sort: %s, mode: %s' % (
+                        location_id, 
+                        sort,
+                        mode,
+                        )
+                
             product = line.product_id
             
             # Kit line not used:

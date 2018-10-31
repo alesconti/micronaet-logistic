@@ -1,6 +1,42 @@
 <?xml version="1.0"?>
 <openerp>
-    <data> 
+    <data>         
+         <!--res.company-->
+         <record model="ir.ui.view" id="view_res_company_logistic_parameter_form">
+             <field name="name">res.company.form</field>
+             <field name="model">res.company</field>
+             <field name="arch" type="xml">
+                 <form string="Logistic parameter">  
+                     <sheet>
+                         <group col="4" colspan="4">
+                             <field name="name" readonly="1" />
+                             <notebook colspan="4">
+                                 <page string="Logistic">
+                                     <group col="4" colspan="4">
+                                         <separator string="Logistic parameters:" colspan="4"/>
+                                         <field name="logistic_location_id" widget="selection"/>                                         
+                                         
+                                         <field name="logistic_assign_mode" />
+                                         <field name="logistic_order_sort" />                                         
+                                     </group>
+                                 </page>
+                             </notebook>
+                         </group>
+                     </sheet>        
+                 </form>
+             </field>
+         </record>
+         <record model="ir.actions.act_window" id="action_res_company_parameter">
+             <field name="name">Logistic parameter</field>
+             <field name="res_model">res.company</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <!--<field name="view_id" ref="view_model_name_form"/>-->          
+             <field name="context">{'form_view_ref': 'logistic_management.view_res_company_logistic_parameter_form'}</field>
+             <field name="domain">[]</field>
+         </record>
+         
+    
          <!--sale.order-->
          <record model="ir.ui.view" id="view_sale_order_logistic_form">
              <field name="name">sale.order.logistic.form</field>
@@ -151,8 +187,19 @@
                  action="action_sale_order_line_logistic"
                  sequence="10"
                  />
-             
-         
+                 
+             <menuitem 
+                 id="menu_res_company_parameter_configuration"
+                 parent="menu_logistic_management_root"
+                 name="Configuration"
+                 sequence="99"
+                 />
+             <menuitem 
+                 id="menu_action_res_company_parameter"
+                 parent="menu_res_company_parameter_configuration"
+                 action="action_res_company_parameter"
+                 sequence="10"
+                 />
     </data>
 </openerp>
 
