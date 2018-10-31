@@ -45,9 +45,12 @@ class StockChangeStandardPrice(models.TransientModel):
         '''
         order_pool = self.env['sale.order']
         
+        # TODO put in payment order wit sure method here:
+
+        
         # Call procedure:
         orders = order_pool.search([
-            ('logistic_state', '=', 'draft'),
+            ('logistic_state', '=', 'payment'),
             ])
         for order in orders:    
             order.explode_kit_in_order_line()

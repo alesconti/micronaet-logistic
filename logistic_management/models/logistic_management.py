@@ -161,14 +161,16 @@ class SaleOrder(models.Model):
     #    help='All order will be managed externally')
         
     logistic_state = fields.Selection([
-        ('draft', 'Order draft '), # Draft, new order received
-        ('order', 'Order confirmed'), # Quotation transformed
+        ('draft', 'Order draft'), # Draft, new order received
+        ('payment', 'Payment confirmed'), # Payment confirmed
         
-        #('dropship', 'Dropship'), # Dropship order XXX to be used?
+        # Start automation:
+        ('order', 'Order confirmed'), # Quotation transformed in order
         ('pending', 'Pending delivery'), # Waiting for delivery
         ('ready', 'Ready'), # Ready for transfer
         ('done', 'Done'), # Delivered or closed XXX manage partial delivery
         ], 'Logistic state', default='draft',
+        #('dropship', 'Dropship'), # Dropship order XXX to be used?
         #readonly=True, 
         #compute='_get_logist_status_field', multi=True,
         #store=True, # TODO store True # for create columns
@@ -196,53 +198,58 @@ class SaleOrderLine(models.Model):
         quant_pool = self.env['stock.quant']
         line_pool = self.env['sale.order.line']
         lines = line_pool.search([
-            # TODO manage order status (only confirmed will be searched)
-            #('order_id.state', '=', 'sale'),
-            #('order_id.state', 'in', ('draft', 'sent')),
-            
-            ('order_id.logistic_state', 'in', ('order', 'pending')),            
+            # Filter logistic state:
+            ('order_id.logistic_state', 'in', ('order', 'pending')),
             ('logistic_state', '=', 'draft'),
             ])
+
+        # ---------------------------------------------------------------------
+        # Load parameter from company setup:
+        # ---------------------------------------------------------------------
+        if lines:
+            # Access company parameter from first line
+            company = lines[0].order_id.company_id
+            
+            location_id = company.logistic_location_id.id
+            sort = company.logistic_order_sort
+            mode = company.logistic_assign_mode
+            
+            _logger.info(
+                'Update order with parameter: '
+                'Location: %s, sort: %s, mode: %s' % (
+                    location_id,
+                    sort,
+                    mode,
+                    ))
+        else:
+            _logger.info('No linea ready for assign stock qty')
+            return True    
 
         # ---------------------------------------------------------------------
         # Sort options:
         # ---------------------------------------------------------------------
         if sort == 'create_date':
             sorted_line = sorted(lines, key=lambda x: x.order_id.create_date)
-        else: # deadline
-            sorted_line = sorted(lines, key=lambda x: x.order_id.validity_date)    
+        else: # validity_date
+            sorted_line = sorted(lines, key=lambda x:
+                x.order_id.validity_date or x.order_id.create_date)
             
         # ---------------------------------------------------------------------
         #                  Modify sale order line status:
         # ---------------------------------------------------------------------
         update_db = {}
-        load_parameter = False
         for line in sorted_line:
-            # -----------------------------------------------------------------
-            # Load parameter from company setup:
-            # -----------------------------------------------------------------
-            if not load_parameter:
-                load_parameter = True                
-                company = line.order_id.company_id
-                location_id = company.logistic_load_id.id
-                sort = company.logistic_order_sort
-                mode = company.logistic_assign_mode
-                _logger.info(
-                    'Update order with parameter: Location: %s, sort: %s, mode: %s' % (
-                        location_id, 
-                        sort,
-                        mode,
-                        )
-                
             product = line.product_id
             
+            # -----------------------------------------------------------------
             # Kit line not used:
+            # -----------------------------------------------------------------
             if not product or product.is_kit:
                 update_db[line] = {
                     'logistic_state': 'unused',
                     }
                 continue # Comment line
-            
+
             order_qty = line.product_uom_qty
             
             # Similar pool, product first:
@@ -326,7 +333,7 @@ class SaleOrderLine(models.Model):
         all_done = set(['done'])
         for order in selected_order:
             # Jump yet managed order draft and pending:
-            if order.logistic_state in ('dropship', 'ready', 'done'):
+            if order.logistic_state in ('draft', 'ready', 'done'):
                 continue
 
             # Generate list of line state, jump not used:                
@@ -369,6 +376,110 @@ class SaleOrderLine(models.Model):
             'nodestroy': False,
             }
     
+    # A. Assign available q.ty in stock assign a stock movement / quants
+    @api.model
+    def logistic_order_uncovered_supplier_order(self):
+        ''' Logistic phasae 2:
+            Order remain uncovered qty to the default supplier            
+        '''
+        now = fields.Datetime.now()
+        
+        # Pool:
+        purchase_pool = self.env['purchase.order']
+        purchase_line_pool = self.env['purchase.order.line']        
+        line_pool = self.env['sale.order.line']
+
+        lines = line_pool.search([
+            # Filter logistic state:
+            ('order_id.logistic_state', 'in', ('pending', )),
+            # Filter line state:
+            ('logistic_state', '=', 'uncovered'),
+            ])
+
+        # ---------------------------------------------------------------------
+        #                 Collect data for purchase order:
+        # ---------------------------------------------------------------------
+        purchase_db = {} # supplier key
+        for line in lines:
+            product = line.product_id
+            order_qty = line.product_uom_qty
+            supplier = product.default_supplier_id
+            if supplier not in purchase_db:
+                purchase_db[supplier] = []
+            purchase_db[supplier].append(line)
+
+        selected_purchase = []
+        import pdb; pdb.set_trace()
+        for supplier in purchase_db:            
+            # -----------------------------------------------------------------
+            # Create header:
+            # -----------------------------------------------------------------            
+            purchase = purchase_pool.create({
+                'partner_id': supplier.id,
+                'date_order': now,
+                'date_planned': now,
+                #'name': 
+                #'partner_ref': '',
+                #'logistic_state': 'draft',
+                })
+            selected_purchase.append(purchase.id)    
+
+            # -----------------------------------------------------------------
+            # Create details:
+            # -----------------------------------------------------------------
+            for line in purchase_db[supplier]:
+                # -------------------------------------------------------------
+                # Use stock to cover order:
+                # -------------------------------------------------------------
+                product = line.prodct_id
+                purchase_qty = product.logistic_uncovered_qty
+                if purchase <= 0.0:
+                    continue # no order negativa uncoveder (XXX needed)
+
+                purchase_line_pool.create({
+                    'order_id': purchase.id,
+                    'product_id': product.id,
+                    'name': product.name,
+                    'product_qty', line.product_uom_qty,
+                    'date_planned': now,
+                    #'price_unit': 0.0,
+
+                    # Link to sale:
+                    'logistic_sale_id': line.id,
+                    })
+                # Update line state:    
+                line.logistic_state = 'ordered'
+        
+        # XXX Note: Order was yet in pendind state (no other update here)
+        #`TODO Manage dropshipping here?!?
+
+        # ---------------------------------------------------------------------
+        # Return view:
+        # ---------------------------------------------------------------------
+        model_pool = self.env['ir.model.data']
+        tree_view_id = False 
+        #model_pool.get_object_reference(
+        #    'logistic_management', 'view_sale_order_line_logistic_tree')[1]
+        form_view_id = False
+        #model_pool.get_object_reference(
+        #    'logistic_management', 'view_sale_order_line_logistic_form')[1]
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Purchase order created:'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            #'res_id': 1,
+            'res_model': 'purchase.order',
+            'view_id': tree_view_id,
+            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
+            'domain': [('id', 'in', selected_purchase)],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+    
+
     # -------------------------------------------------------------------------
     #                            COMPUTE FIELDS FUNCTION:
     # -------------------------------------------------------------------------
@@ -450,7 +561,7 @@ class SaleOrderLine(models.Model):
                 logistic_remain_qty = \
                     logistic_order_qty - logistic_covered_qty - \
                     logistic_received_qty
-                line.logistic_remain_qty = logistic_remain_qty    
+                line.logistic_remain_qty = logistic_remain_qty    pending
 
                 # State valuation:
                 #if state != 'ready' and not logistic_remain_qty: # XXX
@@ -562,9 +673,9 @@ class SaleOrderLine(models.Model):
     logistic_state = fields.Selection([
         ('unused', 'Unused'), # Line not managed
     
-        ('draft', 'Custom order'), # Draft, order is received now
-        ('uncovered', 'Uncovered'), # Not coveder to be ordered
-        ('ordered', 'Ordered'), # Supplier order defined
+        ('draft', 'Custom order'), # Draft, customer order
+        ('uncovered', 'Uncovered'), # Not covered with stock
+        ('ordered', 'Ordered'), # Supplier order uncovered
         ('ready', 'Ready'), # Order to be picked out (all in stock)
         ('done', 'Done'), # Delivered qty (order will be closed)
         ], 'Logistic state', default='draft',
