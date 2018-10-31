@@ -61,6 +61,19 @@ class ResCompany(models.Model):
         required=True,
         )
 
+class PurchaseOrder(models.Model):
+    """ Model name: Sale Order
+    """
+    
+    _inherit = 'purchase.order'
+
+    logistic_state = fields.Selection([
+        ('draft', 'Order draft'), # Draft purchase
+        ('confirmed', 'Confirmed'), # Purchase confirmed
+        ('done', 'Done'), # All loaded in stock
+        ], 'Logistic state', default='draft',
+        )
+
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
     """
