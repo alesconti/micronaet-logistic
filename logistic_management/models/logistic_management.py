@@ -120,8 +120,24 @@ class StockQuant(models.Model):
         index=True, ondelete='cascade', # remove stock move when delete order
         )
     
+class SaleOrder(models.Model):
+    """ Model name: Sale Order
+    """
     
+    _inherit = 'sale.order'
 
+    # State (sort of workflow):
+    logistic_state = fields.Selection([
+        ('draft', 'Custom order'), # Draft, new order received
+        ('dropship', 'Dropship'), # Dropship order
+        ('pending', 'Pending delivery'), # Waiting for delivery
+        ('ready', 'Ready'), # Ready for transfer
+        ('done', 'Done'), # Delivered or closed XXX manage partial delivery
+        ], 'Logistic state', default='draft',
+        #readonly=True, 
+        #compute='_get_logist_status_field', multi=True,
+        #store=True, # TODO store True # for create columns
+        )
 class SaleOrderLine(models.Model):
     """ Model name: Sale Order Line
     """
@@ -139,6 +155,7 @@ class SaleOrderLine(models.Model):
             stock.move or stock.quant movement 
             Evaluate also if we can use alternative product
         '''
+        import pdb; pdb.set_trace()
         # TODO read paremeter:
         mode = 'first_available' # TODO move management: 'better_available'
         sort = 'create_date' # TODO manage in parameters
@@ -169,6 +186,8 @@ class SaleOrderLine(models.Model):
         update_db = {}
         for line in sorted_line:
             product = line.product_id
+            
+            # Kit line not used:
             if not product or product.is_kit:
                 update_db[line] = {
                     'logistic_state': 'unused',
@@ -176,17 +195,23 @@ class SaleOrderLine(models.Model):
                 continue # Comment line
             
             order_qty = line.product_uom_qty
+            
+            # Similar pool, product first:
             product_list = [product]
             if product.similar_ids:
                 product_list.extend([
-                    item for item in product.similar_ids]) # XXX Error?!?!
+                    item for item in product.similar_ids]) # XXX Check data!
             
             # -----------------------------------------------------------------
             # Use stock to cover order:
             # -----------------------------------------------------------------
-            state = False
+            state = False # Used for check if used some pool product
             for used_product in product_list:                    
                 stock_qty = used_product.qty_available
+
+                # -------------------------------------------------------------
+                # Manage mode of use stock: (TODO better available)
+                # -------------------------------------------------------------
                 if mode == 'first_available' and stock_qty:
                     if stock_qty > order_qty:
                         quantity = order_qty
@@ -214,11 +239,19 @@ class SaleOrderLine(models.Model):
                     update_db[line] = {
                         'logistic_state': state,
                         }
-                # TODO manage similar and alternative product here!    
+
+                # -------------------------------------------------------------
+                # TODO manage alternative product here!    
+                # -------------------------------------------------------------
+                
+                # -------------------------------------------------------------
+                # Update similar product in order line (if used):
+                # -------------------------------------------------------------
                 if state and used_product != product:
                     # Update sale line with information:
                     update_db[line]['linked_mode'] = 'similar'
-                    update_db[line]['origin_product_id'] = used_product.id
+                    update_db[line]['origin_product_id'] = product.id
+                    update_db[line]['product_id'] = used_product.id
         
             # No stock passed in unvocered state:
             if line not in update_db: 
@@ -230,10 +263,42 @@ class SaleOrderLine(models.Model):
         # Update sale line status:
         # ---------------------------------------------------------------------
         selected_line = []
+        selected_order = []
         for line in update_db:
             line.write(update_db[line])
             selected_line.append(line.id)
+            if line.order_id not in selected_order:
+                selected_order.append(line.order_id)                
+
+        # ---------------------------------------------------------------------
+        # Update order status:
+        # ---------------------------------------------------------------------
+        all_ready = set(['ready'])
+        all_done = set(['done'])
+        for order in selected_order:
+            # Jump yet managed order draft and pending:
+            if order.logistic_state in ('dropship', 'ready', 'done'):
+                continue
+
+            # Generate list of line state, jump not used:                
+            state_list = [
+                line.logistic_state for line in order.order_line\
+                    if line.logistic_state not in ('unused')]
+                    
+            # -----------------------------------------------------------------        
+            # Update order state depend on line:        
+            # -----------------------------------------------------------------        
+            if all_ready == set(state_list):
+                order.logistic_state = 'ready'
+            elif all_done == set(state_list):
+                order.logistic_state = 'done'
+            else:    
+                order.logistic_state = 'pending'
+            # TODO Manage Dropshipping!!    
             
+        # ---------------------------------------------------------------------
+        # Return view:
+        # ---------------------------------------------------------------------
         model_pool = self.env['ir.model.data']
         tree_view_id = model_pool.get_object_reference(
             'logistic_management', 'view_sale_order_line_logistic_tree')[1]
