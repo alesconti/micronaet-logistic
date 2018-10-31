@@ -440,7 +440,7 @@ class SaleOrderLine(models.Model):
                     'order_id': purchase.id,
                     'product_id': product.id,
                     'name': product.name,
-                    'product_qty', line.product_uom_qty,
+                    'product_qty': line.product_uom_qty,
                     'date_planned': now,
                     #'price_unit': 0.0,
 
@@ -561,7 +561,7 @@ class SaleOrderLine(models.Model):
                 logistic_remain_qty = \
                     logistic_order_qty - logistic_covered_qty - \
                     logistic_received_qty
-                line.logistic_remain_qty = logistic_remain_qty    pending
+                line.logistic_remain_qty = logistic_remain_qty
 
                 # State valuation:
                 #if state != 'ready' and not logistic_remain_qty: # XXX

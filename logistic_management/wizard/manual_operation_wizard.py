@@ -45,7 +45,7 @@ class StockChangeStandardPrice(models.TransientModel):
         '''
         order_pool = self.env['sale.order']
         
-        # TODO put in payment order wit sure method here:
+        # TODO put in payment order with sure method here:
 
         
         # Call procedure:
@@ -88,14 +88,17 @@ class StockChangeStandardPrice(models.TransientModel):
         '''
         line_pool = self.env['sale.order.line']
         
-        # Call procedure:
+        # Call assign stock procedure:
         return line_pool.logistic_assign_stock_to_customer_order()       
         
     @api.multi
     def generate_purchase(self):
         ''' C. Generate purchase order for not cover qty
         '''
-        return True
+        line_pool = self.env['sale.order.line']
+
+        # Call purchase order generator procedure:        
+        return line_pool.logistic_order_uncovered_supplier_order()
         
     @api.multi
     def update_ready(self):
