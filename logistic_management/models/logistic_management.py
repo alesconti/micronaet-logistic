@@ -396,6 +396,12 @@ class SaleOrderLine(models.Model):
             ('logistic_state', '=', 'uncovered'),
             ])
 
+        if lines:
+            # Access company parameter from first line
+            company = lines[0].order_id.company_id
+        else:
+            return True
+
         # ---------------------------------------------------------------------
         #                 Collect data for purchase order:
         # ---------------------------------------------------------------------
@@ -409,13 +415,15 @@ class SaleOrderLine(models.Model):
             purchase_db[supplier].append(line)
 
         selected_purchase = []
-        import pdb; pdb.set_trace()
         for supplier in purchase_db:            
             # -----------------------------------------------------------------
             # Create header:
             # -----------------------------------------------------------------            
+            partner = supplier or company.partner_id # Use company 
+            # TODO if order was deleted restore logistic_state to uncovered
+
             purchase = purchase_pool.create({
-                'partner_id': supplier.id,
+                'partner_id': partner.id,
                 'date_order': now,
                 'date_planned': now,
                 #'name': 
@@ -431,18 +439,22 @@ class SaleOrderLine(models.Model):
                 # -------------------------------------------------------------
                 # Use stock to cover order:
                 # -------------------------------------------------------------
-                product = line.prodct_id
-                purchase_qty = product.logistic_uncovered_qty
-                if purchase <= 0.0:
+                product = line.product_id
+                if not product:
+                    continue
+
+                purchase_qty = line.logistic_uncovered_qty
+                if purchase_qty <= 0.0:
                     continue # no order negativa uncoveder (XXX needed)
 
                 purchase_line_pool.create({
                     'order_id': purchase.id,
                     'product_id': product.id,
                     'name': product.name,
-                    'product_qty': line.product_uom_qty,
+                    'product_qty': purchase_qty,
                     'date_planned': now,
-                    #'price_unit': 0.0,
+                    'product_uom': product.uom_id.id,
+                    'price_unit': 1.0, # TODO change product.0.0,
 
                     # Link to sale:
                     'logistic_sale_id': line.id,
@@ -532,7 +544,7 @@ class SaleOrderLine(models.Model):
                 # -------------------------------------------------------------
                 logistic_purchase_qty = 0.0
                 for purchase in line.purchase_line_ids:
-                    logistic_purchase_qty += purchase.product_uom_qty # TODO verify
+                    logistic_purchase_qty += purchase.product_qty
                 line.logistic_purchase_qty = logistic_purchase_qty
                 
                 # -------------------------------------------------------------
