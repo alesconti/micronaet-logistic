@@ -141,6 +141,7 @@ class SaleOrderLine(models.Model):
         '''
         # TODO read paremeter:
         mode = 'first_available' # TODO move management: 'better_available'
+        sort = 'create_date' # TODO manage in parameters
         location_id = 12
         now = fields.Datetime.now()
 
@@ -154,10 +155,19 @@ class SaleOrderLine(models.Model):
             ('logistic_state', '=', 'draft'),
             ])
 
-        # Evaluate stock assign:
+        # ---------------------------------------------------------------------
+        # Sort options:
+        # ---------------------------------------------------------------------
+        if sort == 'create_date':
+            sorted_line = sorted(lines, key=lambda x: x.order_id.create_date)
+        else: # deadline
+            sorted_line = sorted(lines, key=lambda x: x.order_id.validity_date)    
+            
+        # ---------------------------------------------------------------------
+        #                  Modify sale order line status:
+        # ---------------------------------------------------------------------
         update_db = {}
-        selected_line = []
-        for line in lines:
+        for line in sorted_line:
             product = line.product_id
             if not product or product.is_kit:
                 update_db[line] = {
@@ -169,7 +179,7 @@ class SaleOrderLine(models.Model):
             product_list = [product]
             if product.similar_ids:
                 product_list.extend([
-                    item for item in product.similar_ids]) # XXX Error!!!!!!
+                    item for item in product.similar_ids]) # XXX Error?!?!
             
             # -----------------------------------------------------------------
             # Use stock to cover order:
@@ -219,6 +229,7 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         # Update sale line status:
         # ---------------------------------------------------------------------
+        selected_line = []
         for line in update_db:
             line.write(update_db[line])
             selected_line.append(line.id)
