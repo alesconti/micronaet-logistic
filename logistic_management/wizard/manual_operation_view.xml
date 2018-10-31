@@ -9,25 +9,29 @@
                   <header>
                       <button string="Cancel" class="btn-default" special="cancel" />
                   </header>
-                  <sheet>
+                  <sheet>                  
                       <group colspan="4" col="2">
-                          <separator string="A. Assign stock to order:"/>
+                          <separator string="A. Confirm new order:"/>
+                          <button name="confirm_order" string="_Confirm order" type="object" class="btn-primary" />
+                      </group>    
+                      <group colspan="4" col="2">
+                          <separator string="B. Assign stock to order:"/>
                           <button name="assign_stock" string="_Assign stock" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="B. Generate purchase:"/>
+                          <separator string="C. Generate purchase:"/>
                           <button name="generate_purchase" string="_Generate purchase" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="C. Generate purchase:"/>
+                          <separator string="D. Generate purchase:"/>
                           <button name="update_ready" string="_Update ready" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="D. Generate purchase:"/>
+                          <separator string="E. Generate purchase:"/>
                           <button name="generate_delivery" string="Generate _Delivery" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="E. Generate purchase:"/>
+                          <separator string="F. Generate purchase:"/>
                           <button name="closed_delivered" string="_Closed Delivered" type="object" class="btn-primary" />
                       </group>    
                   </sheet>

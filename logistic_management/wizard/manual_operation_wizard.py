@@ -40,8 +40,47 @@ class StockChangeStandardPrice(models.TransientModel):
     #                               BUTTON EVENT:    
     # -------------------------------------------------------------------------
     @api.multi
+    def confirm_order(self):
+        ''' A. Confirm quotation in order (explode kit)
+        '''
+        order_pool = self.env['sale.order']
+        
+        # Call procedure:
+        orders = order_pool.search([
+            ('logistic_state', '=', 'draft'),
+            ])
+        orders.explode_kit_in_order_line()
+        orders.logistic_state = 'order'
+
+        # ---------------------------------------------------------------------
+        # Return view:
+        # ---------------------------------------------------------------------
+        #model_pool = self.env['ir.model.data']
+        #tree_view_id = model_pool.get_object_reference(
+        #    'logistic_management', 'view_sale_order_line_logistic_tree')[1]
+        #form_view_id = model_pool.get_object_reference(
+        #    'logistic_management', 'view_sale_order_line_logistic_form')[1]
+        tree_view_id = False
+        form_view_id = False
+        selected_order = [order.id for order in orders]
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Order confirmed'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            #'res_id': 1,
+            'res_model': 'sale.order',
+            'view_id': tree_view_id,
+            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
+            'domain': [('id', 'in', selected_order)],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+
+    @api.multi
     def assign_stock(self):
-        ''' A. Assign stock product to open orders
+        ''' B. Assign stock product to open orders
         '''
         line_pool = self.env['sale.order.line']
         
@@ -50,25 +89,25 @@ class StockChangeStandardPrice(models.TransientModel):
         
     @api.multi
     def generate_purchase(self):
-        ''' B. Generate purchase order for not cover qty
+        ''' C. Generate purchase order for not cover qty
         '''
         return True
         
     @api.multi
     def update_ready(self):
-        ''' C. Update order ready with stock or load
+        ''' D. Update order ready with stock or load
         '''
         return True
 
     @api.multi
     def generate_delivery(self):
-        ''' D. Generate delivery order in draft mode
+        ''' E. Generate delivery order in draft mode
         '''
         return True
 
     @api.multi
     def closed_delivered(self):
-        ''' E. Close delivery order
+        ''' F. Close delivery order
         '''
         return True
         

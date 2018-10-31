@@ -1,6 +1,40 @@
 <?xml version="1.0"?>
 <openerp>
     <data> 
+         <!--sale.order-->
+         <record model="ir.ui.view" id="view_sale_order_logistic_form">
+             <field name="name">sale.order.logistic.form</field>
+             <field name="model">sale.order</field>
+             <field name="inherit_id" ref="sale.view_order_form"/>
+             <field name="arch" type="xml">
+                 <field name="partner_id" position="after">
+                     <field name="logistic_state" />
+                 </field>
+             </field>
+         </record>    
+         <record model="ir.ui.view" id="view_sale_order_quotation_logistic_tree">
+             <field name="name">sale.order.logistic.tree</field>
+             <field name="model">sale.order</field>
+             <field name="inherit_id" ref="sale.view_quotation_tree"/>
+             <field name="arch" type="xml">
+                 <field name="state" position="after">
+                     <field name="logistic_state" />
+                 </field>
+                 <!--TODO hide state field-->
+             </field>
+         </record>    
+         <record model="ir.ui.view" id="view_sale_order_logistic_tree">
+             <field name="name">sale.order.logistic.tree</field>
+             <field name="model">sale.order</field>
+             <field name="inherit_id" ref="sale.view_order_tree"/>
+             <field name="arch" type="xml">
+                 <field name="state" position="after">
+                     <field name="logistic_state" />
+                 </field>
+                 <!--TODO hide state field-->
+             </field>
+         </record>    
+
          <!--sale.order.line-->
          <record model="ir.ui.view" id="view_sale_order_line_logistic_tree">
              <field name="name">sale.order.line.logistic.tree</field>

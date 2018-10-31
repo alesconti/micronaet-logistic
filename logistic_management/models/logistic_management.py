@@ -127,9 +127,15 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     # State (sort of workflow):
+    # TODO
+    #dropshipping = fields.Boolean('Dropshipping', 
+    #    help='All order will be managed externally')
+        
     logistic_state = fields.Selection([
-        ('draft', 'Custom order'), # Draft, new order received
-        ('dropship', 'Dropship'), # Dropship order
+        ('draft', 'Order draft '), # Draft, new order received
+        ('order', 'Order confirmed'), # Quotation transformed
+        
+        ('dropship', 'Dropship'), # Dropship order XXX to be used?
         ('pending', 'Pending delivery'), # Waiting for delivery
         ('ready', 'Ready'), # Ready for transfer
         ('done', 'Done'), # Delivered or closed XXX manage partial delivery
@@ -138,6 +144,7 @@ class SaleOrder(models.Model):
         #compute='_get_logist_status_field', multi=True,
         #store=True, # TODO store True # for create columns
         )
+
 class SaleOrderLine(models.Model):
     """ Model name: Sale Order Line
     """
@@ -286,7 +293,7 @@ class SaleOrderLine(models.Model):
                     if line.logistic_state not in ('unused')]
                     
             # -----------------------------------------------------------------        
-            # Update order state depend on line:        
+            # Update order state depend on all line:        
             # -----------------------------------------------------------------        
             if all_ready == set(state_list):
                 order.logistic_state = 'ready'
