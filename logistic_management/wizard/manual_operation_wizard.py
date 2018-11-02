@@ -74,19 +74,15 @@ class StockChangeStandardPrice(models.TransientModel):
             ('logistic_state', '=', 'payment'),
             ])
         for order in orders:    
+            # Generate subelements from kit:
             order.explode_kit_in_order_line()
+            # Became real order:
             order.logistic_state = 'order'
 
         # ---------------------------------------------------------------------
         # Return view:
         # ---------------------------------------------------------------------
-        #model_pool = self.env['ir.model.data']
-        #tree_view_id = model_pool.get_object_reference(
-        #    'logistic_management', 'view_sale_order_line_logistic_tree')[1]
-        #form_view_id = model_pool.get_object_reference(
-        #    'logistic_management', 'view_sale_order_line_logistic_form')[1]
-        tree_view_id = False
-        form_view_id = False
+        tree_view_id = form_view_id = False
         selected_order = [order.id for order in orders]
         return {
             'type': 'ir.actions.act_window',

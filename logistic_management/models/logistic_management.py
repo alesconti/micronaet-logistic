@@ -171,7 +171,7 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
     # -------------------------------------------------------------------------
-    # A. Check secure payment:
+    # A. Logisticp phase 1: Check secure payment:
     @api.model
     def check_secure_payment_draft_order(self):
         ''' Assign logistic_state to secure order
@@ -236,10 +236,6 @@ class SaleOrder(models.Model):
         ('ready', 'Ready'), # Ready for transfer
         ('done', 'Done'), # Delivered or closed XXX manage partial delivery
         ], 'Logistic state', default='draft',
-        #('dropship', 'Dropship'), # Dropship order XXX to be used?
-        #readonly=True, 
-        #compute='_get_logist_status_field', multi=True,
-        #store=True, # TODO store True # for create columns
         )
 
 class SaleOrderLine(models.Model):
@@ -254,7 +250,7 @@ class SaleOrderLine(models.Model):
     # A. Assign available q.ty in stock assign a stock movement / quants
     @api.model
     def logistic_assign_stock_to_customer_order(self):
-        ''' Logistic phasae 1:
+        ''' Logistic phase 3:
             Assign stock q. available to order product creating a 
             stock.move or stock.quant movement 
             Evaluate also if we can use alternative product
@@ -265,7 +261,7 @@ class SaleOrderLine(models.Model):
         line_pool = self.env['sale.order.line']
         lines = line_pool.search([
             # Filter logistic state:
-            ('order_id.logistic_state', 'in', ('order', 'pending')),
+            ('order_id.logistic_state', 'in', ('order', )), # ex , 'pending'
             ('logistic_state', '=', 'draft'),
             ])
 
@@ -283,19 +279,17 @@ class SaleOrderLine(models.Model):
             _logger.info(
                 'Update order with parameter: '
                 'Location: %s, sort: %s, mode: %s' % (
-                    location_id,
-                    sort,
-                    mode,
-                    ))
+                    location_id, sort, mode))
         else:
-            _logger.info('No linea ready for assign stock qty')
-            return True    
+            _logger.info('No line ready for assign stock qty')
+            return True 
 
         # ---------------------------------------------------------------------
-        # Sort options:
+        # Parameter: Sort options:
         # ---------------------------------------------------------------------
         if sort == 'create_date':
-            sorted_line = sorted(lines, key=lambda x: x.order_id.create_date)
+            sorted_line = sorted(lines, key=lambda x:
+                x.order_id.create_date)
         else: # validity_date
             sorted_line = sorted(lines, key=lambda x:
                 x.order_id.validity_date or x.order_id.create_date)
@@ -318,7 +312,9 @@ class SaleOrderLine(models.Model):
 
             order_qty = line.product_uom_qty
             
-            # Similar pool, product first:
+            # -----------------------------------------------------------------
+            # Similar pool, product first of the list:
+            # -----------------------------------------------------------------
             product_list = [product]
             if product.similar_ids:
                 product_list.extend([
@@ -336,10 +332,10 @@ class SaleOrderLine(models.Model):
                 # -------------------------------------------------------------
                 if mode == 'first_available' and stock_qty:
                     if stock_qty > order_qty:
-                        quantity = order_qty
+                        assign_quantity = order_qty
                         state = 'ready'
                     else:    
-                        quantity = stock_qty
+                        assign_quantity = stock_qty
                         state = 'uncovered'
 
                     company = line.order_id.company_id # XXX
@@ -350,7 +346,7 @@ class SaleOrderLine(models.Model):
                         #'lot_id' #'package_id'
                         'product_id': used_product.id,
                         'product_tmpl_id': used_product.product_tmpl_id.id,
-                        'quantity': quantity,
+                        'quantity': assign_quantity,
 
                         # Link field:
                         'logistic_assigned_id': line.id,
@@ -375,7 +371,9 @@ class SaleOrderLine(models.Model):
                     update_db[line]['origin_product_id'] = product.id
                     update_db[line]['product_id'] = used_product.id
         
-            # No stock passed in unvocered state:
+            # -----------------------------------------------------------------
+            # No stock passed in uncovered state:
+            # -----------------------------------------------------------------
             if line not in update_db: 
                 update_db[line] = {
                     'logistic_state': 'uncovered',
@@ -384,8 +382,8 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         # Update sale line status:
         # ---------------------------------------------------------------------
-        selected_line = []
-        selected_order = []
+        selected_line = [] # ID, to return view list
+        selected_order = [] # Obj, to update master order status
         for line in update_db:
             line.write(update_db[line])
             selected_line.append(line.id)
@@ -396,12 +394,7 @@ class SaleOrderLine(models.Model):
         # Update order status:
         # ---------------------------------------------------------------------
         all_ready = set(['ready'])
-        all_done = set(['done'])
         for order in selected_order:
-            # Jump yet managed order draft and pending:
-            if order.logistic_state in ('draft', 'ready', 'done'):
-                continue
-
             # Generate list of line state, jump not used:                
             state_list = [
                 line.logistic_state for line in order.order_line\
@@ -412,8 +405,6 @@ class SaleOrderLine(models.Model):
             # -----------------------------------------------------------------        
             if all_ready == set(state_list):
                 order.logistic_state = 'ready'
-            elif all_done == set(state_list):
-                order.logistic_state = 'done'
             else:    
                 order.logistic_state = 'pending'
             # TODO Manage Dropshipping!!    
