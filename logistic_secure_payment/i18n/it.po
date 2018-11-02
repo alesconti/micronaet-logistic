@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-02 09:31+0000\n"
-"PO-Revision-Date: 2018-11-02 10:33+0100\n"
+"POT-Creation-Date: 2018-11-02 10:51+0000\n"
+"PO-Revision-Date: 2018-11-02 11:55+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,23 +18,77 @@ msgstr ""
 "X-Generator: Poedit 1.6.10\n"
 
 #. module: logistic_secure_payment
+#: model:ir.ui.view,arch_db:logistic_secure_payment.view_order_secure_form
+msgid "Confirm payment done? is so order will start logistic process!"
+msgstr ""
+"Confermi il  pagamento effettuato? L'ordine verrà avanzato nel processo "
+"logistico!"
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,help:logistic_secure_payment.field_sale_order_payment_done
+msgid "Consider payed order so go in confirmed state"
+msgstr ""
+"Considerato l'ordine come pagato quindi avanzerà nel processo logistico"
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_account_fiscal_position_secure_create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_account_fiscal_position_secure_create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_account_fiscal_position_secure_display_name
+msgid "Display Name"
+msgstr "Nome Completo"
+
+#. module: logistic_secure_payment
 #: model:ir.model,name:logistic_secure_payment.model_account_fiscal_position
 msgid "Fiscal Position"
 msgstr "Posizione Fiscale"
 
 #. module: logistic_secure_payment
-#: model:ir.model.fields,help:logistic_secure_payment.field_sale_order_secure_payment
-msgid ""
-"If order comes from a secure market, as Amazon is secureand direct "
-"confirmed, instead need to be checked"
-msgstr ""
-"Se l'ordine proviene da un mercato sicuro, come Amazon, l'ordine viene "
-"direttamente marcato come sicuro e avviato alla conferma."
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_account_fiscal_position_secure_position_id
+msgid "Fiscal position"
+msgstr "Posizione fiscale"
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_account_fiscal_position_secure_id
+msgid "ID"
+msgstr "ID"
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_account_fiscal_position_secure___last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_account_fiscal_position_secure_write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_account_fiscal_position_secure_write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_sale_order_payment_done
+msgid "Payment Done"
+msgstr "Pagamento effettuato"
 
 #. module: logistic_secure_payment
 #: model:ir.model,name:logistic_secure_payment.model_account_payment_term
 msgid "Payment Terms"
 msgstr "Termini di pagamento"
+
+#. module: logistic_secure_payment
+#: model:ir.ui.view,arch_db:logistic_secure_payment.view_order_secure_form
+msgid "Payment done!"
+msgstr "Pagamento effettuato!"
 
 #. module: logistic_secure_payment
 #: model:ir.model,name:logistic_secure_payment.model_account_payment
@@ -47,18 +101,32 @@ msgid "Quotation"
 msgstr "Preventivo"
 
 #. module: logistic_secure_payment
-#: model:ir.model.fields,field_description:logistic_secure_payment.field_account_fiscal_position_secure_payment
+#: model:ir.model,name:logistic_secure_payment.model_crm_team
+msgid "Sales Channel"
+msgstr "Canale di Vendita"
+
+#. module: logistic_secure_payment
 #: model:ir.model.fields,field_description:logistic_secure_payment.field_account_payment_term_secure_payment
-#: model:ir.model.fields,field_description:logistic_secure_payment.field_sale_order_secure_payment
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_crm_team_secure_payment
 msgid "Secure Payment"
 msgstr "Pagamento sicuro"
 
 #. module: logistic_secure_payment
-#: model:ir.model.fields,help:logistic_secure_payment.field_account_fiscal_position_secure_payment
-msgid "This fiscal position is consider as secure, order direct confirm"
-msgstr ""
-"La posizione fiscale è da considerare sicure, l'ordine viene avviato alla "
-"conferma"
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_account_fiscal_position_secure_ids
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_account_fiscal_position_secure_payment_id
+#: model:ir.ui.view,arch_db:logistic_secure_payment.view_account_position_secure_form
+msgid "Secure payment"
+msgstr "Pagamento sicuro"
+
+#. module: logistic_secure_payment
+#: model:ir.model,name:logistic_secure_payment.model_account_fiscal_position_secure
+msgid "Secure payment for fiscal"
+msgstr "Pagamenti sicuri per posizione fiscale"
+
+#. module: logistic_secure_payment
+#: model:ir.ui.view,arch_db:logistic_secure_payment.view_account_position_secure_form
+msgid "Secure payment list:"
+msgstr "Lista pagamenti sicuri:"
 
 #. module: logistic_secure_payment
 #: model:ir.model.fields,help:logistic_secure_payment.field_account_payment_term_secure_payment
@@ -66,3 +134,10 @@ msgid "This payment is consider as secure, order directly confirmed"
 msgstr ""
 "Questo termine di pagamento viene considerato sicuro, l'ordine viene avviato "
 "alla conferma."
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,help:logistic_secure_payment.field_crm_team_secure_payment
+msgid "This sale team has secure payment so order will be direct confirmed."
+msgstr ""
+"Questo team di vendita è considerato sicuro per i pagamenti, gli ordini "
+"verranno avanzati nel processo logistico."

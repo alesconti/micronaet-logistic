@@ -31,6 +31,20 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+class CrmTeam(models.Model):
+    """ Model name: Crm Team
+    """
+    
+    _inherit = 'crm.team'
+
+    # -------------------------------------------------------------------------    
+    #                          COLUMNS:
+    # -------------------------------------------------------------------------    
+    secure_payment = fields.Boolean('Secure Payment', 
+        help='This sale team has secure payment so order will be direct '
+            'confirmed.'
+        )
+
 class SaleOrder(models.Model):
     """ Model name: Sale Order
     """
@@ -38,11 +52,20 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     # -------------------------------------------------------------------------    
+    #                           BUTTON EVENTS:
+    # -------------------------------------------------------------------------    
+    @api.multi
+    def payment_is_done(self):
+        ''' Update payment field done
+        '''
+        self.payment_done = True
+        return True
+        
+    # -------------------------------------------------------------------------    
     #                          COLUMNS:
     # -------------------------------------------------------------------------    
-    secure_payment = fields.Boolean('Secure Payment', 
-        help='If order comes from a secure market, as Amazon is secure'
-        'and direct confirmed, instead need to be checked'
+    payment_done = fields.Boolean('Payment Done', 
+        help='Consider payed order so go in confirmed state'
         )
 
 class AccountPayment(models.Model):
@@ -58,6 +81,17 @@ class AccountPayment(models.Model):
         help='This payment is consider as secure, order directly confirmed'
         )
 
+class AccountFiscalPositionSecurePayment(models.Model):
+    """ Model name: Account Fiscal Position secure payment
+    """
+    
+    _name = 'account.fiscal.position.secure'
+    _description = 'Secure payment for fiscal'
+    _rec_name = 'payment_id'
+    
+    payment_id = fields.Many2one('account.payment.term', 'Secure payment')
+    position_id = fields.Many2one('account.fiscal.position', 'Fiscal position')
+
 class AccountFiscalPosition(models.Model):
     """ Model name: Account Fiscal Position
     """
@@ -67,8 +101,7 @@ class AccountFiscalPosition(models.Model):
     # -------------------------------------------------------------------------    
     #                          COLUMNS:
     # -------------------------------------------------------------------------    
-    secure_payment = fields.Boolean('Secure Payment', 
-        help='This fiscal position is consider as secure, order direct confirm'
-        )
+    secure_ids = fields.One2many(
+        'account.fiscal.position.secure', 'position_id', 'Secure payment')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

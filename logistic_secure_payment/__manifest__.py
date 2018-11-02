@@ -34,8 +34,11 @@
         'product',
         'account',
         'sale',
+        'sales_team',
         ],
     'data': [
+        'security/ir.model.access.csv',
+        
         'views/secure_payment_view.xml',
         ],
     'demo': [],

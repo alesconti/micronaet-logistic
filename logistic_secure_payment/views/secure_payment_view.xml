@@ -1,47 +1,39 @@
 <?xml version="1.0"?>
 <openerp>
-    <data>
-        <!-- INHERIT: account.payment.term -->
-        <record model="ir.ui.view" id="view_payment_term_secure_tree">
-            <field name="name">account.payment.term.tree</field>
-            <field name="model">account.payment.term</field>
-            <field name="inherit_id" ref="account.view_payment_term_tree"/>
-            <field name="arch" type="xml">
-                <field name="name" position="after">
-                   <field name="secure_payment" />
-                </field>
-            </field>
-        </record>
-        <record model="ir.ui.view" id="view_payment_term_secure_form">
-            <field name="name">account.payment.term.tree</field>
-            <field name="model">account.payment.term</field>
-            <field name="inherit_id" ref="account.view_payment_term_form"/>
+    <data>        
+        <!--crm.team-->
+        <record model="ir.ui.view" id="view_crm_team_view_form">
+            <field name="name">crm.team.form</field>
+            <field name="model">crm.team</field>
+            <field name="inherit_id" ref="sales_team.crm_team_view_form"/>
             <field name="arch" type="xml">
                 <field name="company_id" position="after">
                    <field name="secure_payment" />
                 </field>
             </field>
         </record>
-
-        <!-- INHERIT: account.fiscal.position -->        
-        <record model="ir.ui.view" id="view_account_position_secure_tree">
-            <field name="name">account.fiscal.position.tree</field>
-            <field name="model">account.fiscal.position</field>
-            <field name="inherit_id" ref="account.view_account_position_tree"/>
-            <field name="arch" type="xml">
-                <field name="name" position="after">
-                   <field name="secure_payment" />
-                </field>
-            </field>
-        </record>
+        
+        <!--account.fiscal.position-->
         <record model="ir.ui.view" id="view_account_position_secure_form">
             <field name="name">account.fiscal.position.form</field>
             <field name="model">account.fiscal.position</field>
             <field name="inherit_id" ref="account.view_account_position_form"/>
             <field name="arch" type="xml">
-                <field name="active" position="before">
-                   <field name="secure_payment" />
-                </field>
+                <xpath expr="//page[1]" position="after">
+                    <page string="Secure payment">
+                        <separator string="Secure payment list:" colspan="4"/>
+                        <field name="secure_ids" colspan="4">
+                            <tree string="Secure payment" editable="bottom">
+                                <field name="payment_id" />
+                            </tree>
+                            <form string="Secure payment">
+                                <group colspan="4" col="4">
+                                    <field name="payment_id" />
+                                </group>    
+                            </form>
+                        </field>
+                    </page>
+                </xpath>
             </field>
         </record>
         
@@ -52,7 +44,7 @@
             <field name="inherit_id" ref="sale.view_quotation_tree"/>
             <field name="arch" type="xml">
                 <field name="partner_id" position="before">
-                   <field name="secure_payment" />
+                   <field name="payment_done" />
                 </field>
             </field>
         </record>
@@ -62,7 +54,7 @@
             <field name="inherit_id" ref="sale.view_order_tree"/>
             <field name="arch" type="xml">
                 <field name="partner_id" position="before">
-                   <field name="secure_payment" />
+                   <field name="payment_done" />
                 </field>
             </field>
         </record>
@@ -72,11 +64,11 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <field name="payment_term_id" position="after">
-                   <field name="secure_payment" />
+                   <field name="payment_done" invisible="1"/>
+                   <button name="payment_is_done" string="Payment done!" type="object" colspan="2" class="btn-primary" attrs="{'invisible': [('payment_done','=',True)]}" confirm="Confirm payment done? is so order will start logistic process!"/>
                 </field>
             </field>
         </record>
         
     </data>
 </openerp>
-
