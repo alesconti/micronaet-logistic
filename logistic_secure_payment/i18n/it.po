@@ -1,0 +1,68 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* logistic_secure_payment
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-11-02 09:31+0000\n"
+"PO-Revision-Date: 2018-11-02 10:33+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: logistic_secure_payment
+#: model:ir.model,name:logistic_secure_payment.model_account_fiscal_position
+msgid "Fiscal Position"
+msgstr "Posizione Fiscale"
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,help:logistic_secure_payment.field_sale_order_secure_payment
+msgid ""
+"If order comes from a secure market, as Amazon is secureand direct "
+"confirmed, instead need to be checked"
+msgstr ""
+"Se l'ordine proviene da un mercato sicuro, come Amazon, l'ordine viene "
+"direttamente marcato come sicuro e avviato alla conferma."
+
+#. module: logistic_secure_payment
+#: model:ir.model,name:logistic_secure_payment.model_account_payment_term
+msgid "Payment Terms"
+msgstr "Termini di pagamento"
+
+#. module: logistic_secure_payment
+#: model:ir.model,name:logistic_secure_payment.model_account_payment
+msgid "Payments"
+msgstr "Pagamenti"
+
+#. module: logistic_secure_payment
+#: model:ir.model,name:logistic_secure_payment.model_sale_order
+msgid "Quotation"
+msgstr "Preventivo"
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_account_fiscal_position_secure_payment
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_account_payment_term_secure_payment
+#: model:ir.model.fields,field_description:logistic_secure_payment.field_sale_order_secure_payment
+msgid "Secure Payment"
+msgstr "Pagamento sicuro"
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,help:logistic_secure_payment.field_account_fiscal_position_secure_payment
+msgid "This fiscal position is consider as secure, order direct confirm"
+msgstr ""
+"La posizione fiscale è da considerare sicure, l'ordine viene avviato alla "
+"conferma"
+
+#. module: logistic_secure_payment
+#: model:ir.model.fields,help:logistic_secure_payment.field_account_payment_term_secure_payment
+msgid "This payment is consider as secure, order directly confirmed"
+msgstr ""
+"Questo termine di pagamento viene considerato sicuro, l'ordine viene avviato "
+"alla conferma."
