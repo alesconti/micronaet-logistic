@@ -331,6 +331,7 @@ class SaleOrderLine(models.Model):
             state = False # Used for check if used some pool product
             for used_product in product_list:                    
                 stock_qty = used_product.qty_available
+                assign_quantity = 0.0 # To check is was created
 
                 # -------------------------------------------------------------
                 # Manage mode of use stock: (TODO better available)
@@ -375,7 +376,9 @@ class SaleOrderLine(models.Model):
                     update_db[line]['linked_mode'] = 'similar'
                     update_db[line]['origin_product_id'] = product.id
                     update_db[line]['product_id'] = used_product.id
-        
+                if assign_quantity:
+                    break # no other product was taken
+                    
             # -----------------------------------------------------------------
             # No stock passed in uncovered state:
             # -----------------------------------------------------------------
