@@ -183,20 +183,25 @@ class SaleOrder(models.Model):
         # Search new order:
         payment_order = []
         for order in orders:
-            if order.secure_payment:
+            # 1. Marked as done (script or in form)
+            if order.payment_done:
                 payment_order.append(order)
                 continue
-                
-            try: # problem in not present
-                partner = order.partner_id
-                if partner.property_account_position_id.secure_payment:
+               
+            # 2. Secure market (sale team):    
+            try: # error if not present
+                if order.team_id.secure_payment:
                     payment_order.append(order)
                     continue
             except:   
                 pass
-                
-            try: # error if not present
-                if order.payment_term_id.secure_payment:
+
+            # 3. Secure payment in fiscal position     
+            try: # problem in not present
+                position = order.partner_id.property_account_position_id
+                payment = order.payment_term_id
+                if payment and payment in [
+                        secure.payment_id in position.secure_ids]:
                     payment_order.append(order)
                     continue
             except:   
