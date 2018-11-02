@@ -257,6 +257,7 @@ class SaleOrderLine(models.Model):
         '''
         now = fields.Datetime.now()
 
+        product_pool = self.env['product.product']
         quant_pool = self.env['stock.quant']
         lines = self.search([
             # Filter logistic state:
@@ -312,12 +313,17 @@ class SaleOrderLine(models.Model):
             order_qty = line.product_uom_qty
             
             # -----------------------------------------------------------------
-            # Similar pool, product first of the list:
+            # Similar pool generate:
             # -----------------------------------------------------------------
-            product_list = [product]
-            if product.similar_ids:
-                product_list.extend([
-                    item for item in product.similar_ids]) # XXX Check data!
+            product_list = [product] # Start list first with this product
+            if product.similar_ids: 
+                # Search other product from template list
+                template_ids = [
+                    template.id for template in product.similar_ids]
+                similar_product = product_pool.search([
+                    ('product_tmpl_id', 'in', template_ids),
+                    ]                    
+                product_list.extend([item for item in similar_product])
             
             # -----------------------------------------------------------------
             # Use stock to cover order:
@@ -342,10 +348,10 @@ class SaleOrderLine(models.Model):
                         'company_id': company.id,
                         'in_date': now,
                         'location_id': location_id,
-                        #'lot_id' #'package_id'
                         'product_id': used_product.id,
-                        'product_tmpl_id': used_product.product_tmpl_id.id,
-                        'quantity': assign_quantity,
+                        #'product_tmpl_id': used_product.product_tmpl_id.id,
+                        #'lot_id' #'package_id'
+                        'quantity': - assign_quantity,
 
                         # Link field:
                         'logistic_assigned_id': line.id,
@@ -590,7 +596,7 @@ class SaleOrderLine(models.Model):
                 # -------------------------------------------------------------
                 logistic_covered_qty = 0.0
                 for quant in line.assigned_line_ids:
-                    logistic_covered_qty += quant.quantity
+                    logistic_covered_qty -= quant.quantity
                 line.logistic_covered_qty = logistic_covered_qty
                 
                 # State valuation:
