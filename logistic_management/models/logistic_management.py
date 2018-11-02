@@ -521,7 +521,7 @@ class SaleOrderLine(models.Model):
                     'order_id': purchase.id,
                     'product_id': product.id,
                     'name': product.name,
-                    'product_qty': - purchase_qty,
+                    'product_qty': purchase_qty,
                     'date_planned': now,
                     'product_uom': product.uom_id.id,
                     'price_unit': 1.0, # TODO change product.0.0,
