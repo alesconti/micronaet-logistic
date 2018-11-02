@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <!-- INHERIT: account.payment.term -->
+        <record model="ir.ui.view" id="view_payment_term_secure_tree">
+            <field name="name">account.payment.term.tree</field>
+            <field name="model">account.payment.term</field>
+            <field name="inherit_id" ref="account.view_payment_term_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                   <field name="secure_payment" />
+                </field>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_payment_term_secure_form">
+            <field name="name">account.payment.term.tree</field>
+            <field name="model">account.payment.term</field>
+            <field name="inherit_id" ref="account.view_payment_term_form"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                   <field name="secure_payment" />
+                </field>
+            </field>
+        </record>
+
+        <!-- INHERIT: account.fiscal.position -->        
+        <record model="ir.ui.view" id="view_account_position_secure_tree">
+            <field name="name">account.fiscal.position.tree</field>
+            <field name="model">account.fiscal.position</field>
+            <field name="inherit_id" ref="account.view_account_position_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                   <field name="secure_payment" />
+                </field>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_account_position_secure_form">
+            <field name="name">account.fiscal.position.form</field>
+            <field name="model">account.fiscal.position</field>
+            <field name="inherit_id" ref="account.view_account_position_form"/>
+            <field name="arch" type="xml">
+                <field name="active" position="before">
+                   <field name="secure_payment" />
+                </field>
+            </field>
+        </record>
+        
+        <!-- INHERIT: sale.order -->        
+        <record model="ir.ui.view" id="view_view_quotation_secure_tree">
+            <field name="name">sale.order.quotation.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="before">
+                   <field name="secure_payment" />
+                </field>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_view_order_secure_tree">
+            <field name="name">sale.order.sale.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="before">
+                   <field name="secure_payment" />
+                </field>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_order_secure_form">
+            <field name="name">sale.order.secure.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="payment_term_id" position="after">
+                   <field name="secure_payment" />
+                </field>
+            </field>
+        </record>
+        
+    </data>
+</openerp>
+

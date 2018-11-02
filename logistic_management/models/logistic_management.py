@@ -168,6 +168,46 @@ class SaleOrder(models.Model):
     
     _inherit = 'sale.order'
 
+    # -------------------------------------------------------------------------
+    #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
+    # -------------------------------------------------------------------------
+    # A. Check secure payment:
+    @api.model
+    def check_secure_payment_draft_order(self):
+        ''' Assign logistic_state to secure order
+        '''
+        orders = self.search([
+            ('logistic_state', '=', 'draft'), # new order
+            ])
+            
+        # Search new order:
+        payment_order = []
+        for order in orders:
+            if order.secure_payment:
+                payment_order.append(order)
+                continue
+                
+            try: # problem in not present
+                partner = order.partner_id
+                if partner.property_account_position_id.secure_payment:
+                    payment_order.append(order)
+                    continue
+            except:   
+                pass
+                
+            try: # error if not present
+                if order.payment_term_id.secure_payment:
+                    payment_order.append(order)
+                    continue
+            except:   
+                pass
+        
+        # Force update:        
+        for order in payment_order:
+            order.secure_payment = True
+            order.logistic_state = 'payment'        
+        return payment_order
+
     # State (sort of workflow):
     # TODO
     #dropshipping = fields.Boolean('Dropshipping', 
@@ -196,7 +236,7 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
     
     # -------------------------------------------------------------------------
-    #                    LOGISTIC OPERATION FUNCTION:
+    #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
     # -------------------------------------------------------------------------
     # A. Assign available q.ty in stock assign a stock movement / quants
     @api.model

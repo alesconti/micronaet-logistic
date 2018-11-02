@@ -11,27 +11,31 @@
                   </header>
                   <sheet>                  
                       <group colspan="4" col="2">
-                          <separator string="A. Confirm new order:"/>
+                          <separator string="A. Confirm payment on new order:"/>
+                          <button name="confirm_payment" string="Confirm _payment" type="object" class="btn-primary" />
+                      </group>    
+                      <group colspan="4" col="2">
+                          <separator string="B. Confirm payed order:"/>
                           <button name="confirm_order" string="_Confirm order" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="B. Assign stock to order:"/>
+                          <separator string="C. Assign stock to order:"/>
                           <button name="assign_stock" string="_Assign stock" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="C. Generate purchase:"/>
+                          <separator string="D. Generate purchase:"/>
                           <button name="generate_purchase" string="_Generate purchase" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="D. Generate purchase:"/>
+                          <separator string="E. Generate purchase:"/>
                           <button name="update_ready" string="_Update ready" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="E. Generate purchase:"/>
+                          <separator string="F. Generate purchase:"/>
                           <button name="generate_delivery" string="Generate _Delivery" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="F. Generate purchase:"/>
+                          <separator string="G. Generate purchase:"/>
                           <button name="closed_delivered" string="_Closed Delivered" type="object" class="btn-primary" />
                       </group>    
                   </sheet>

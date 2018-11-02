@@ -38,15 +38,36 @@ class StockChangeStandardPrice(models.TransientModel):
 
     # -------------------------------------------------------------------------
     #                               BUTTON EVENT:    
-    # -------------------------------------------------------------------------
+    # -------------------------------------------------------------------------    
     @api.multi
-    def confirm_order(self):
-        ''' A. Confirm quotation in order (explode kit)
+    def confirm_payment(self):
+        ''' A. Confirm draft order if payment is secure
         '''
         order_pool = self.env['sale.order']
         
-        # TODO put in payment order with sure method here:
+        secure_order = order_pool.check_secure_payment_draft_order()
+        tree_view_id = form_view_id = False
+        selected_order = [order.id for order in secure_order]
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Order confirmed'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            #'res_id': 1,
+            'res_model': 'sale.order',
+            'view_id': tree_view_id,
+            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
+            'domain': [('id', 'in', selected_order)],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
 
+    @api.multi
+    def confirm_order(self):
+        ''' B. Confirm quotation in order (explode kit)
+        '''
+        order_pool = self.env['sale.order']
         
         # Call procedure:
         orders = order_pool.search([
@@ -84,7 +105,7 @@ class StockChangeStandardPrice(models.TransientModel):
 
     @api.multi
     def assign_stock(self):
-        ''' B. Assign stock product to open orders
+        ''' C. Assign stock product to open orders
         '''
         line_pool = self.env['sale.order.line']
         
@@ -93,7 +114,7 @@ class StockChangeStandardPrice(models.TransientModel):
         
     @api.multi
     def generate_purchase(self):
-        ''' C. Generate purchase order for not cover qty
+        ''' D. Generate purchase order for not cover qty
         '''
         line_pool = self.env['sale.order.line']
 
@@ -102,22 +123,20 @@ class StockChangeStandardPrice(models.TransientModel):
         
     @api.multi
     def update_ready(self):
-        ''' D. Update order ready with stock or load
+        ''' E. Update order ready with stock or load
         '''
         return True
 
     @api.multi
     def generate_delivery(self):
-        ''' E. Generate delivery order in draft mode
+        ''' F. Generate delivery order in draft mode
         '''
         return True
 
     @api.multi
     def closed_delivered(self):
-        ''' F. Close delivery order
+        ''' G. Close delivery order
         '''
         return True
         
-
-
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
