@@ -70,11 +70,11 @@ class SaleOrder(models.Model):
         for line in component_new:
             product = component_new[line]
             product_qty = line.product_uom_qty
-            for bom in product.component_ids:
+            for bom in product.component_ids:                
                 line_pool.create({
                     'order_id': order_id,
                     'product_id': bom.component_id.id,
-                    'product_uom_qty': bom.product_qty,
+                    'product_uom_qty': product_qty * bom.product_qty,
                     'price_unit': 0.0, # TODO used price?
                     'tax_id': False, # No Tax (not used in delivery)                    
                     'kit_line_id': line.id, # back reference to kit line        
