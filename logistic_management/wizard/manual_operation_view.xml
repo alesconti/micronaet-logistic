@@ -23,19 +23,19 @@
                           <button name="assign_stock" string="_Assign stock" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="D. Generate purchase:"/>
+                          <separator string="D. Generate supplier purchase:"/>
                           <button name="generate_purchase" string="_Generate purchase" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="E. Generate purchase:"/>
+                          <separator string="E. Update picking in loading:"/>
                           <button name="update_ready" string="_Update ready" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="F. Generate purchase:"/>
+                          <separator string="F. Generate picking out document:"/>
                           <button name="generate_delivery" string="Generate _Delivery" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="G. Generate purchase:"/>
+                          <separator string="G. Close customer order delivered:"/>
                           <button name="closed_delivered" string="_Closed Delivered" type="object" class="btn-primary" />
                       </group>    
                   </sheet>
