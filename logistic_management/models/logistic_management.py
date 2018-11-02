@@ -258,8 +258,7 @@ class SaleOrderLine(models.Model):
         now = fields.Datetime.now()
 
         quant_pool = self.env['stock.quant']
-        line_pool = self.env['sale.order.line']
-        lines = line_pool.search([
+        lines = self.search([
             # Filter logistic state:
             ('order_id.logistic_state', 'in', ('order', )), # ex , 'pending'
             ('logistic_state', '=', 'draft'),
@@ -391,21 +390,21 @@ class SaleOrderLine(models.Model):
                 selected_order.append(line.order_id)                
 
         # ---------------------------------------------------------------------
-        # Update order status:
+        # Update order to 'ready' status:
         # ---------------------------------------------------------------------
         all_ready = set(['ready'])
         for order in selected_order:
             # Generate list of line state, jump not used:                
-            state_list = [
+            line_logistic_state = [
                 line.logistic_state for line in order.order_line\
-                    if line.logistic_state not in ('unused')]
+                    if line.logistic_state != 'unused']
                     
             # -----------------------------------------------------------------        
             # Update order state depend on all line:        
             # -----------------------------------------------------------------        
-            if all_ready == set(state_list):
+            if all_ready == set(line_logistic_state):
                 order.logistic_state = 'ready'
-            else:    
+            else: # All other order stay in pending state:
                 order.logistic_state = 'pending'
             # TODO Manage Dropshipping!!    
             
@@ -441,38 +440,43 @@ class SaleOrderLine(models.Model):
         '''
         now = fields.Datetime.now()
         
-        # Pool:
+        # ---------------------------------------------------------------------
+        # Pool used:
+        # ---------------------------------------------------------------------
         purchase_pool = self.env['purchase.order']
         purchase_line_pool = self.env['purchase.order.line']        
-        line_pool = self.env['sale.order.line']
 
-        lines = line_pool.search([
+        # Update only pending order with uncovered lines
+        lines = self.search([
             # Filter logistic state:
-            ('order_id.logistic_state', 'in', ('pending', )),
+            ('order_id.logistic_state', '=', 'pending'),
+            
             # Filter line state:
             ('logistic_state', '=', 'uncovered'),
             ])
 
+        # ---------------------------------------------------------------------
+        # Parameter from company:
+        # ---------------------------------------------------------------------
         if lines:
             # Access company parameter from first line
             company = lines[0].order_id.company_id
-        else:
+        else: # No lines found:
             return True
 
         # ---------------------------------------------------------------------
         #                 Collect data for purchase order:
         # ---------------------------------------------------------------------
-        purchase_db = {} # supplier key
+        purchase_db = {} # supplier is the key
         for line in lines:
             product = line.product_id
-            order_qty = line.product_uom_qty
             supplier = product.default_supplier_id
             if supplier not in purchase_db:
                 purchase_db[supplier] = []
             purchase_db[supplier].append(line)
 
-        selected_purchase = []
-        for supplier in purchase_db:            
+        selected_purchase = [] # ID: to return view list
+        for supplier in purchase_db:
             # -----------------------------------------------------------------
             # Create header:
             # -----------------------------------------------------------------            
@@ -483,11 +487,11 @@ class SaleOrderLine(models.Model):
                 'partner_id': partner.id,
                 'date_order': now,
                 'date_planned': now,
-                #'name': 
+                #'name': # TODO counter?
                 #'partner_ref': '',
                 #'logistic_state': 'draft',
                 })
-            selected_purchase.append(purchase.id)    
+            selected_purchase.append(purchase.id)
 
             # -----------------------------------------------------------------
             # Create details:
@@ -502,13 +506,13 @@ class SaleOrderLine(models.Model):
 
                 purchase_qty = line.logistic_uncovered_qty
                 if purchase_qty <= 0.0:
-                    continue # no order negativa uncoveder (XXX needed)
+                    continue # no order negative uncoveder (XXX needed)
 
                 purchase_line_pool.create({
                     'order_id': purchase.id,
                     'product_id': product.id,
                     'name': product.name,
-                    'product_qty': purchase_qty,
+                    'product_qty': - purchase_qty,
                     'date_planned': now,
                     'product_uom': product.uom_id.id,
                     'price_unit': 1.0, # TODO change product.0.0,
@@ -516,22 +520,18 @@ class SaleOrderLine(models.Model):
                     # Link to sale:
                     'logistic_sale_id': line.id,
                     })
+
                 # Update line state:    
-                line.logistic_state = 'ordered'
+                line.logistic_state = 'ordered' # XXX needed?
         
-        # XXX Note: Order was yet in pendind state (no other update here)
+        # Sale order still in pending state so no update of logistic status        
         #`TODO Manage dropshipping here?!?
 
         # ---------------------------------------------------------------------
         # Return view:
         # ---------------------------------------------------------------------
         model_pool = self.env['ir.model.data']
-        tree_view_id = False 
-        #model_pool.get_object_reference(
-        #    'logistic_management', 'view_sale_order_line_logistic_tree')[1]
-        form_view_id = False
-        #model_pool.get_object_reference(
-        #    'logistic_management', 'view_sale_order_line_logistic_form')[1]
+        tree_view_id = form_view_id = False
         
         return {
             'type': 'ir.actions.act_window',
@@ -547,7 +547,9 @@ class SaleOrderLine(models.Model):
             'target': 'current', # 'new'
             'nodestroy': False,
             }
-    
+
+
+
 
     # -------------------------------------------------------------------------
     #                            COMPUTE FIELDS FUNCTION:
@@ -558,6 +560,7 @@ class SaleOrderLine(models.Model):
     def _get_logist_status_field(self):
         ''' Manage all data for logistic situation in sale order:
         '''
+        _logger.warning('Update logistic qty fields now')
         for line in self:
             if line.product_id.is_kit:
                 # -------------------------------------------------------------
@@ -663,13 +666,9 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    #                              RELATION MANY 2 ONE
-    # -------------------------------------------------------------------------
+    # RELATION MANY 2 ONE:
+
     # A. Assigned stock:
-    #assigned_line_ids = fields.One2many(
-    #    'stock.move', 'logistic_assigned_id', 'Assign from stock',
-    #    help='Assign all this q. to this line (usually one2one',
-    #    )
     assigned_line_ids = fields.One2many(
         'stock.quant', 'logistic_assigned_id', 'Assign from stock',
         help='Assign all this q. to this line (usually one2one',
