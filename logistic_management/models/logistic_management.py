@@ -322,7 +322,7 @@ class SaleOrderLine(models.Model):
                     template.id for template in product.similar_ids]
                 similar_product = product_pool.search([
                     ('product_tmpl_id', 'in', template_ids),
-                    ]                    
+                    ])
                 product_list.extend([item for item in similar_product])
             
             # -----------------------------------------------------------------
