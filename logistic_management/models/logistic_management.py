@@ -376,6 +376,7 @@ class SaleOrderLine(models.Model):
                     update_db[line]['linked_mode'] = 'similar'
                     update_db[line]['origin_product_id'] = product.id
                     update_db[line]['product_id'] = used_product.id
+                    
                 if assign_quantity:
                     break # no other product was taken
                     

@@ -46,10 +46,13 @@ class ProductTemplateKitBom(models.Model):
     sequence = fields.Integer(
         'Sequence', default=10)
     product_id = fields.Many2one(
-        'product.template', 'Product', index=True)
+        'product.template', 'Product', index=True, 
+        #ondelete='cascade', # TODO correct
+        )
     component_id = fields.Many2one(
         'product.template', 'Component', index=True, 
         domain=[('is_kit', '=', False)], required=True,
+        #ondelete='set null', # TODO correct?
         )
     product_qty = fields.Float(
         'Quantity', required=True, default=1.0,
