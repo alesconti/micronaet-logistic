@@ -59,32 +59,70 @@ class ProductTemplate(models.Model):
     def explode_kit_from_name(self):
         ''' Explode kit product from name (raise error)
         '''
+        # Pool used:
+        template_pool = self.env['product.template']
+        component_pool = self.env['product.template.kit.bom']
+
+        # ---------------------------------------------------------------------
+        # Check if is a kit syntax:
+        # ---------------------------------------------------------------------
         if not self.default_code or '#' not in self.default_code:
             raise exceptions.Warning(_('No "#" char present in default code'))
 
-        # TODO Create product not found! 
-        
+        # ---------------------------------------------------------------------
+        # Code in default_code of the kit:
+        # ---------------------------------------------------------------------
         # Clean extra special char (\t \n ' ')
         default_code = (self.default_code or '').strip()
         code_list = default_code.split('#')
+
+        # ---------------------------------------------------------------------
+        # Search product by code (only present):
+        # ---------------------------------------------------------------------
         components = self.search([('default_code', 'in', code_list)])
-        if len(code_list) != len(components):
-            raise exceptions.Warning(
-                _('Not all code found: \nSearch: %s\nFind only: %s') % (
-                    code_list,
-                    list([item.default_code for item in components]),
-                    ))
-                    
-        # Remove all:
-        self.component_ids = [(5, False, False)] 
+        template_db = {} # ID of template
+        for template in components:
+            template_db[template.default_code] = template.id
+            
         
-        # Create all record:
-        component_pool = self.env['product.template.kit.bom']
-        for component in components:
+        # ---------------------------------------------------------------------
+        # Generate all component extracting from default_code
+        # ---------------------------------------------------------------------
+        # Static fields:
+        product_id = self.id
+        partner_id = self.company_id.partner_id.id
+
+        # Delete all components:        
+        self.component_ids = [(5, False, False)]
+
+        # Re-create all components:
+        for default_code in code_list:
+            # -----------------------------------------------------------------
+            # Get template ID for component:
+            # -----------------------------------------------------------------
+            if default_code in template_db: 
+                # Product yet present:
+                template_id = template_db[default_code]
+            else:
+                # -------------------------------------------------------------
+                # Product create as a service:
+                # -------------------------------------------------------------
+                template_id = template_pool.create({
+                    'name': default_code,
+                    'default_code': default_code,
+                    'default_supplier_id': partner_id,
+                    'type': 'service',
+                    }).id
+                _logger.warning(
+                    'Create a new template as a service: %s' % default_code)
+                    
+            # -----------------------------------------------------------------
+            # Create component in this kit:                
+            # -----------------------------------------------------------------
             component_pool.create({
                 'sequence': 10,
-                'product_id': self.id,
-                'component_id': component.id,
+                'product_id': product_id, # parent
+                'component_id': template_id, # component
                 })
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
