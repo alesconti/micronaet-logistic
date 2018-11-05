@@ -68,6 +68,9 @@ product_ids = product_pool.search([
 import pdb; pdb.set_trace()
 for product in product_pool.browse(product_ids):        
     default_code = product.default_code
-    product.get_default_supplier_from_code()
-    log_file.write('Update: %s' % default_code)
+    try:
+        product.get_default_supplier_from_code()
+        log_file.write('Update: %s' % default_code)
+    except:    
+        log_file.write('Errore nessun fornitore %s' % default_code)
 
