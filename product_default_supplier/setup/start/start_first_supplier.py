@@ -63,7 +63,8 @@ product_ids = product_pool.search([
     ('default_code', 'not =ilike', '%#%'),
     ('default_supplier_id', '=', False),
     ])
-print 'Start update %s product' % len(product_ids)
+    
+print 'Start update product', len(product_ids)
 import pdb; pdb.set_trace()
 for product in product_pool.browse(product_ids):        
     default_code = product.default_code
