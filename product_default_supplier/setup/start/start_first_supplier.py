@@ -59,8 +59,9 @@ product_pool = odoo.model('product.template')
 # Clean trail spaces:
 # -----------------------------------------------------------------------------
 product_ids = product_pool.search([
+    '!',
+    ('default_code', '=ilike', '%#%'),
     ('default_code', '=ilike', '%-%'),
-    ('default_code', 'not =ilike', '%#%'),
     ('default_supplier_id', '=', False),
     ])
     
