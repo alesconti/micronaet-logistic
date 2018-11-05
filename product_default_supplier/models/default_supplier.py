@@ -43,7 +43,8 @@ class ResPartner(models.Model):
     # -------------------------------------------------------------------------
     # COLUMNS:
     # -------------------------------------------------------------------------
-    product_suffix = fields.Char('Product suffix', size=10)
+    product_suffix = fields.Char('Product suffix', size=10, 
+        help='If more than one use | to separate code: SUF1|SUF2')
     # -------------------------------------------------------------------------
 
 class ProductTemplate(models.Model):
@@ -59,11 +60,36 @@ class ProductTemplate(models.Model):
     def get_default_supplier_from_code(self):
         ''' Generate default partner from code if start with partner suffix
         '''
-        if not self.default_code:
-            raise exceptions.Warning(_('No default code present'))
+                
+        if not self.default_code or '-' not in self.default_code:
+            raise exceptions.Warning(
+                _('No default code present or not right format: SUF-CODE'))
 
+        # Pool used:
+        partner_pool = self.env['res.partner']
+        
         # Clean extra special char (\t \n ' ')
         default_code = (self.default_code or '').strip()
+        suffix_code = default_code.split('-')[0]
+        
+        # Only one suffix:
+        suppliers = partner_pool.search([
+            '|', '|', '|', 
+            ('product_suffix', '=ilike', suffix_code), # only one
+            ('product_suffix', '=ilike', '%s|%%' % suffix_code),# first of many
+            ('product_suffix', '=ilike', '%%|%s' % suffix_code),# last of many
+            ('product_suffix', '=ilike', '|%s|' % suffix_code),# middle of many
+            ])
+        if not suppliers:
+            raise exceptions.Warning(
+                _('No supplier for suffix: %s') % suffix_code)
+        elif len(suppliers) > 1:
+            raise exceptions.Warning(
+                _('Many supplier with suffix: %s') % suffix_code)
+        else:
+            self.default_supplier_id = suppliers[0].id
+        return True     
+            
         # TODO Get info about current code
     
     # -------------------------------------------------------------------------

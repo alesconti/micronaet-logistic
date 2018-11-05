@@ -2,13 +2,29 @@
 <openerp>
     <data>
         <!--INHERIT-->  
+        <!--res.partner-->
+        <record model="ir.ui.view" id="view_res_supplier_suffix_form">
+            <field name="name">res.partner.product.suffix.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="ref" position="after">
+                    <separator string="Product suffix" attrs="{'invisible': [('supplier','=',False)]}"/>
+                    <field name="product_suffix" attrs="{'invisible': [('supplier','=',False)]}"/>
+                </field>
+            </field>
+        </record>
+    
+        <!--INHERIT-->  
+        <!--product.template-->
         <record model="ir.ui.view" id="view_product_template_default_supplier_form">
             <field name="name">product.template.supplier.form</field>
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_only_form_view"/>
             <field name="arch" type="xml">
-                 <field name="default_code" position="before">
-                    <field name="default_supplier_id" />
+                 <field name="default_code" position="after">
+                     <field name="default_supplier_id" colspan="1"/>
+                     <button name="get_default_supplier_from_code" class="btn-link" string="&lt;&lt;" help="Generate default supplier from code" type="object" colspan="1"/>
                  </field>
             </field>
         </record>

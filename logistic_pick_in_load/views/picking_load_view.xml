@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-        <!--INHERIT-->  
+        <!--INHERIT
         <record model="ir.ui.view" id="view_product_template_default_supplier_form">
             <field name="name">product.template.supplier.form</field>
             <field name="model">product.template</field>
@@ -21,7 +21,7 @@
                     <field name="default_supplier_id" />
                  </field>
             </field>
-        </record>
+        </record>-->  
         
     </data>
 </openerp>
