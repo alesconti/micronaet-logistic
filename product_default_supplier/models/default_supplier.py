@@ -71,14 +71,14 @@ class ProductTemplate(models.Model):
         # Clean extra special char (\t \n ' ')
         default_code = (self.default_code or '').strip()
         suffix_code = default_code.split('-')[0]
-        
+
         # Only one suffix:
         suppliers = partner_pool.search([
             '|', '|', '|', 
             ('product_suffix', '=ilike', suffix_code), # only one
             ('product_suffix', '=ilike', '%s|%%' % suffix_code),# first of many
             ('product_suffix', '=ilike', '%%|%s' % suffix_code),# last of many
-            ('product_suffix', '=ilike', '|%s|' % suffix_code),# middle of many
+            ('product_suffix', '=ilike', '%%|%s|%%' % suffix_code),# middle of many
             ])
         if not suppliers:
             raise exceptions.Warning(
