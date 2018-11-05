@@ -65,7 +65,6 @@ product_ids = product_pool.search([
     ('default_supplier_id', '=', False),
     ])
     
-import pdb; pdb.set_trace()
 for product in product_pool.browse(product_ids):        
     default_code = product.default_code
     try:
