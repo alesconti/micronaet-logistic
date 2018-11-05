@@ -7,12 +7,13 @@
             <field name="model">product.template.kit.bom</field>
             <field name="priority" eval="30" />
             <field name="arch" type="xml">
-                <tree string="Component" editable="bottom">        
+                <tree string="Component" editable="bottom" decoration-info="product_type=='service'">        
                     <field name="sequence" invisible="1"/>
                     <field name="product_id" />
                     <field name="component_id" />
                     <field name="product_qty" />
                     <field name="uom_id" />
+                    <field name="product_type" />
                 </tree>
             </field>
         </record>
@@ -20,12 +21,13 @@
             <field name="name">product.template.kit.bom.tree</field>
             <field name="model">product.template.kit.bom</field>
             <field name="arch" type="xml">
-                <tree string="Component" editable="bottom">        
+                <tree string="Component" editable="bottom" decoration-info="product_type=='service'">        
                     <field name="sequence" invisible="1"/>
                     <field name="product_id" invisible="1"/> <!--context.get('view_embedded', False)-->
                     <field name="component_id" />
                     <field name="product_qty" />
                     <field name="uom_id" />
+                    <field name="product_type" />
                 </tree>
             </field>
         </record>

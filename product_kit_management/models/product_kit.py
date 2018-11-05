@@ -60,6 +60,8 @@ class ProductTemplateKitBom(models.Model):
     uom_id = fields.Many2one(
         'product.uom', 'Unit of Measure', readonly=True, 
         related='component_id.uom_id')
+    product_type = fields.Selection(
+        string='Type', related='component_id.type', readonly=True)
     
 
 class ProductTemplate(models.Model):
