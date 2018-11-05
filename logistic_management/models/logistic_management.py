@@ -169,6 +169,73 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     # -------------------------------------------------------------------------
+    #                   UTILITY: Extra operation before WF
+    # -------------------------------------------------------------------------
+    @api.model
+    def check_exploded_kit(self):
+        ''' Check if there's kit in product, launch explode operation
+        '''
+        line_pool = self.env['sale.order.line']
+        template_pool = self.env['product.template']
+        
+        lines = line_pool.search([
+            ('order_id.logistic_state', '=', 'draft'), # Draft order
+            ('product_id.default_code', '=ilike', '%#%'), # Kit code
+            # TODO replace with: ('is__kit', '=', True),
+            ])
+        template_ids = [] # ID of template checked
+        update_ids = [] # ID of template updated
+        for line in lines:
+            template = line.product_id.product_tmpl_id
+            if template.id in template_ids:
+                continue
+            template_ids.append(template.id)
+            
+            code_part = template.default_code.split('#')
+            if code_part != len(template.component_ids):
+                template.explode_kit_from_name()
+                update_ids.append(template.id)
+         
+        # Reload product updated:
+        templates = template_pool.search([
+            ('id', 'in', update_ids), # Updated kit
+            ])
+        for template in templates:
+            code_part = template.default_code.split('#')
+            if code_part != len(template.component_ids):
+                template.explode_kit_from_name()
+                update_ids.append(template.id)
+        return True
+        
+    @api.model
+    def check_product_first_supplier(self):
+        ''' Update product without first supplier:
+        '''
+        line_pool = self.env['sale.order.line']
+        template_pool = self.env['product.template']
+        
+        lines = line_pool.search([
+            ('order_id.logistic_state', '=', 'draft'), # Draft order
+            ('product_id.first_supplier_id', '=', False), # No first supplier
+            ])
+        template_ids = []
+        update_ids = []
+        for line in lines:
+            template = line.product_id.product_tmpl_id
+            if template.id in template_check:
+                continue
+            template_check.append(template.id)
+            template.get_default_supplier_from_code()
+            
+        # Check updated record:
+        templates = template_pool.search([
+            ('id', 'in', update_ids), # Updated lines:
+            ('first_supplier_id', '=', False), # Not updated
+            ])
+        #for template in templates:                
+        return True
+    
+    # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
     # -------------------------------------------------------------------------
     # A. Logisticp phase 1: Check secure payment:
@@ -176,6 +243,16 @@ class SaleOrder(models.Model):
     def check_secure_payment_draft_order(self):
         ''' Assign logistic_state to secure order
         '''
+        # ---------------------------------------------------------------------
+        #                               Pre operations:
+        # ---------------------------------------------------------------------
+        # Explode kit if present:
+        self.check_exploded_kit()
+        
+        # Update supplier if present:
+        self.check_product_first_supplier()
+        
+        
         orders = self.search([
             ('logistic_state', '=', 'draft'), # new order
             ])

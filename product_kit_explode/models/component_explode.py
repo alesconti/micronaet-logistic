@@ -62,6 +62,8 @@ class ProductTemplate(models.Model):
         if not self.default_code or '#' not in self.default_code:
             raise exceptions.Warning(_('No "#" char present in default code'))
 
+        # TODO Create product not found! 
+        
         # Clean extra special char (\t \n ' ')
         default_code = (self.default_code or '').strip()
         code_list = default_code.split('#')
@@ -84,6 +86,5 @@ class ProductTemplate(models.Model):
                 'product_id': self.id,
                 'component_id': component.id,
                 })
-        
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
