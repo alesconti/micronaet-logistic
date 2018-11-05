@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-25 14:09+0000\n"
-"PO-Revision-Date: 2018-10-25 16:11+0100\n"
+"POT-Creation-Date: 2018-11-05 10:00+0000\n"
+"PO-Revision-Date: 2018-11-05 11:03+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -29,10 +29,35 @@ msgid "Default supplier"
 msgstr "Fornitore predefinito"
 
 #. module: product_default_supplier
-#: code:addons/product_default_supplier/models/default_supplier.py:63
+#: model:ir.ui.view,arch_db:product_default_supplier.view_product_template_default_supplier_form
+msgid "Generate default supplier from code"
+msgstr "Genera il fornitore primario partendo dal codice"
+
+#. module: product_default_supplier
+#: model:ir.model.fields,help:product_default_supplier.field_res_partner_product_suffix
+#: model:ir.model.fields,help:product_default_supplier.field_res_users_product_suffix
+msgid "If more than one use | to separate code: SUF1|SUF2"
+msgstr ""
+"Se sono presenti più suffissi utilizzare il carattere | per separare i "
+"codici, es.: SUF1|SUF2"
+
+#. module: product_default_supplier
+#: code:addons/product_default_supplier/models/default_supplier.py:88
 #, python-format
-msgid "No default code present"
-msgstr "Nessun codice prodotto presente"
+msgid "Many supplier with suffix: %s"
+msgstr "Più fornitori con il suffisso: %s"
+
+#. module: product_default_supplier
+#: code:addons/product_default_supplier/models/default_supplier.py:66
+#, python-format
+msgid "No default code present or not right format: SUF-CODE"
+msgstr "Non è presente il codice oppure non è nel formato corretto: SUF-CODICE"
+
+#. module: product_default_supplier
+#: code:addons/product_default_supplier/models/default_supplier.py:85
+#, python-format
+msgid "No supplier for suffix: %s"
+msgstr "Nessun fornitore per il suffisso: %s"
 
 #. module: product_default_supplier
 #: model:ir.model,name:product_default_supplier.model_product_template
@@ -42,6 +67,7 @@ msgstr "Modello Prodotto"
 #. module: product_default_supplier
 #: model:ir.model.fields,field_description:product_default_supplier.field_res_partner_product_suffix
 #: model:ir.model.fields,field_description:product_default_supplier.field_res_users_product_suffix
+#: model:ir.ui.view,arch_db:product_default_supplier.view_res_supplier_suffix_form
 msgid "Product suffix"
 msgstr "Suffisso prodotto"
 
