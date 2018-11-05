@@ -92,7 +92,6 @@ class PurchaseOrderLine(models.Model):
         index=True, ondelete='set null',
         )
 
-
 class StockMoveIn(models.Model):
     """ Model name: Stock Move
     """
@@ -175,6 +174,7 @@ class SaleOrder(models.Model):
     def check_exploded_kit(self):
         ''' Check if there's kit in product, launch explode operation
         '''
+        log_message = True # TODO change
         line_pool = self.env['sale.order.line']
         template_pool = self.env['product.template']
         
@@ -192,53 +192,96 @@ class SaleOrder(models.Model):
             template_ids.append(template.id)
             
             code_part = template.default_code.split('#')
-            if code_part != len(template.component_ids):
-                template.explode_kit_from_name()
-                update_ids.append(template.id)
+            if len(code_part) != len(template.component_ids):
+                try:
+                    update_ids.append(template.id)
+                    template.explode_kit_from_name()
+                except:
+                    pass    
          
         # Reload product updated:
         templates = template_pool.search([
             ('id', 'in', update_ids), # Updated kit
             ])
+        res = ''    
         for template in templates:
             code_part = template.default_code.split('#')
-            if code_part != len(template.component_ids):
-                template.explode_kit_from_name()
-                update_ids.append(template.id)
+            if len(code_part) != len(template.component_ids):
+                res += '%s<br/>' % template.default_code
+                
+        if log_message and res:
+            mail_pool = self.env['mail.thread']
+            body = _(
+                '''<div class="o_mail_notification">
+                    Kit not correct exploded:<br/>
+                    %s
+                    </div>
+                ''') % res
+
+            mail_pool.sudo().message_post(
+            #mail_pool.message_post(
+                body=body, 
+                message_type='notification', 
+                subject=_('Kit not found'),
+                )
         return True
         
     @api.model
     def check_product_first_supplier(self):
         ''' Update product without first supplier:
         '''
+        log_message = True # TODO change
         line_pool = self.env['sale.order.line']
         template_pool = self.env['product.template']
         
         lines = line_pool.search([
             ('order_id.logistic_state', '=', 'draft'), # Draft order
-            ('product_id.first_supplier_id', '=', False), # No first supplier
+            ('product_id.default_supplier_id', '=', False), # No first supplier
+            ('product_id.is_kit', '=', False), # No kit line
             ])
         template_ids = []
         update_ids = []
         for line in lines:
-            template = line.product_id.product_tmpl_id
-            if template.id in template_check:
+            template = line.product_id.product_tmpl_id            
+            if template.id in template_ids:
                 continue
-            template_check.append(template.id)
-            template.get_default_supplier_from_code()
+            template_ids.append(template.id)
+            try:
+                update_ids.append(template.id)
+                template.get_default_supplier_from_code()
+            except:
+                pass    
             
         # Check updated record:
         templates = template_pool.search([
             ('id', 'in', update_ids), # Updated lines:
-            ('first_supplier_id', '=', False), # Not updated
+            ('default_supplier_id', '=', False), # Not updated
             ])
-        #for template in templates:                
+        res = ''    
+        for template in templates:
+            res += '%s<br/>' % template.default_code
+            
+        if log_message and res:
+            mail_pool = self.env['mail.thread']
+            body = _(
+                '''<div class="o_mail_notification">
+                    First supplier not found:<br/>
+                    %s
+                    </div>
+                ''') % res
+
+            mail_pool.sudo().message_post(
+            #mail_pool.message_post(
+                body=body, 
+                message_type='notification', 
+                subject=_('Default supplier not found'),
+                )
         return True
     
     # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
     # -------------------------------------------------------------------------
-    # A. Logisticp phase 1: Check secure payment:
+    # A. Logistic phase 1: Check secure payment:
     @api.model
     def check_secure_payment_draft_order(self):
         ''' Assign logistic_state to secure order
@@ -247,7 +290,7 @@ class SaleOrder(models.Model):
         #                               Pre operations:
         # ---------------------------------------------------------------------
         # Explode kit if present:
-        self.check_exploded_kit()
+        self.check_exploded_kit() # first!
         
         # Update supplier if present:
         self.check_product_first_supplier()
