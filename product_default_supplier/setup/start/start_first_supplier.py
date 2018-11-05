@@ -72,5 +72,5 @@ for product in product_pool.browse(product_ids):
         product.get_default_supplier_from_code()
         print ('Update: %s' % default_code)
     except:    
-        print ('Errore nessun fornitore %s' % default_code)
+        print ('Errore nessun fornitore per il codice: %s' % default_code)
 
