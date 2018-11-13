@@ -42,8 +42,8 @@ class StockPicking(models.Model):
         # Pool used:
         # ---------------------------------------------------------------------
         # Temp load document:        
-        header_pool = self.env['mmac_ardo']
-        detail_pool = self.env['mmac_ardoline']
+        header_pool = self.env['mmac_doca']
+        detail_pool = self.env['mmac_doca_line']
         
         # Stock movement:
         move_pool = self.env['stock.move']
@@ -58,25 +58,11 @@ class StockPicking(models.Model):
         company_pool = self.env['res.company']
         
         # ---------------------------------------------------------------------
-        #                         DB from order temp:
-        # ---------------------------------------------------------------------
-        # Read header data:
-        header_db = {}
-        headers = header_pool.search([])
-        for header in headers:
-            header_db[header] = []
-        
-        details = detail_pool.search([])
-        for detail in details:
-            header_db[detail.header_id].append(detail)
-
-
-        # ---------------------------------------------------------------------
         #                          Load parameters
         # ---------------------------------------------------------------------
         company = company.search([])[0]
         logistic_pick_in_type_id = company.logistic_pick_in_type_id.id
-        
+
         # ---------------------------------------------------------------------
         #                          Load order details
         # ---------------------------------------------------------------------
@@ -98,41 +84,43 @@ class StockPicking(models.Model):
                 product_line_db[product] = []
             product_line_db[product].append(
                 [line, line.logistic_undelivered_qty])    
-            
-        # ---------------------------------------------------------------------
-        #                   Create documents depend on loaded data
-        # ---------------------------------------------------------------------
-        for header in header_db:
-            details = header_db[header]
-            
-            partner = partner_pool.search([]) # TODO search partner field
-            scheduled_date = '2018-01-01' # TODO get data
-            origin = False # TODO
-            
-            picking = self.create({                
-                # TODO
-                'partner_id': partner[0].id,
-                'scheduled_date': scheduled_date,
-                'origin': origin,
-                #'move_type': 'direct',
-                'pickin_type_id': logistic_pick_in_type_id,
-                'group_id': False,
-                #'priority': 1,                
-                'state': 'done', # XXX done immediately
-                })
 
-            for detail in details:
-                product = detail.
-                product_qty = detail.product_qty# TODO    
-                loop_again = product_qty > 0.0 # First test
-                while loop_again:
-                    for purchase in product_line_db.get(
-                    move = move.create({
-                        # TODO
-                        'picking_id': picking.id,
-                        'product_id': 
-                        })
-                    # TODO loop_again    
+        # ---------------------------------------------------------------------
+        #                         DB from order temp:
+        # ---------------------------------------------------------------------
+        # Read header data:
+        for header in header_pool.search([]):
+            partner = header.partner
+            scheduled_date = '2018-01-01' # TODO get data
+            
+            for detail in header.line_ids:
+            
+                origin = False # TODO
+                
+                picking = self.create({                
+                    # TODO
+                    'partner_id': partner[0].id,
+                    'scheduled_date': scheduled_date,
+                    'origin': origin,
+                    #'move_type': 'direct',
+                    'pickin_type_id': logistic_pick_in_type_id,
+                    'group_id': False,
+                    #'priority': 1,                
+                    'state': 'done', # XXX done immediately
+                    })
+
+                for detail in details:
+                    product = detail.
+                    product_qty = detail.product_qty# TODO    
+                    loop_again = product_qty > 0.0 # First test
+                    while loop_again:
+                        for purchase in product_line_db.get(
+                        move = move.create({
+                            # TODO
+                            'picking_id': picking.id,
+                            'product_id': 
+                            })
+                        # TODO loop_again    
         
         # ---------------------------------------------------------------------
         #                          Clean temp data:
