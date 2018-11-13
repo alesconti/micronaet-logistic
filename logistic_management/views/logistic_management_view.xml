@@ -17,7 +17,10 @@
                                          <field name="logistic_location_id" widget="selection" domain="[('usage', '!=', 'view')]"/>                                         
                                          
                                          <field name="logistic_assign_mode" />
-                                         <field name="logistic_order_sort" />                                         
+                                         <field name="logistic_order_sort" />
+                                         
+                                         <separator string="Load document:" colspan="4"/>
+                                         <field name="logistic_pick_in_type_id" />
                                      </group>
                                  </page>
                              </notebook>

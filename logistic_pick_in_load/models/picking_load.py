@@ -53,6 +53,10 @@ class StockPicking(models.Model):
         #purchase_pool = self.env['purchase.order']
         line_pool = self.env['purchase.order.line']
         
+        # Partner:
+        partner_pool = self.env['res.partner']
+        company_pool = self.env['res.company']
+        
         # ---------------------------------------------------------------------
         #                         DB from order temp:
         # ---------------------------------------------------------------------
@@ -66,6 +70,13 @@ class StockPicking(models.Model):
         for detail in details:
             header_db[detail.header_id].append(detail)
 
+
+        # ---------------------------------------------------------------------
+        #                          Load parameters
+        # ---------------------------------------------------------------------
+        company = company.search([])[0]
+        logistic_pick_in_type_id = company.logistic_pick_in_type_id.id
+        
         # ---------------------------------------------------------------------
         #                          Load order details
         # ---------------------------------------------------------------------
@@ -77,10 +88,16 @@ class StockPicking(models.Model):
         product_line_db = {}
         for line in purchase_lines.sorted(
                 key=lambda x: x.purchase_id.create_date):
+                
+            logistic_undelivered_qty = line.logistic_undelivered_qty
+            if logistic_undelivered_qty <= 0.0:
+                continue # line was yet completed!
+
             product = line.product_id
             if product not in product_line_db:
                 product_line_db[product] = []
-            product_line_db[product].append([line, ])    
+            product_line_db[product].append(
+                [line, line.logistic_undelivered_qty])    
             
         # ---------------------------------------------------------------------
         #                   Create documents depend on loaded data
@@ -88,16 +105,34 @@ class StockPicking(models.Model):
         for header in header_db:
             details = header_db[header]
             
+            partner = partner_pool.search([]) # TODO search partner field
+            scheduled_date = '2018-01-01' # TODO get data
+            origin = False # TODO
+            
             picking = self.create({                
                 # TODO
-                
+                'partner_id': partner[0].id,
+                'scheduled_date': scheduled_date,
+                'origin': origin,
+                #'move_type': 'direct',
+                'pickin_type_id': logistic_pick_in_type_id,
+                'group_id': False,
+                #'priority': 1,                
+                'state': 'done', # XXX done immediately
                 })
-            for detail in details:    
-                move = move.create({
-                    # TODO
-                    'picking_id': picking.id,
-                    
-                    })
+
+            for detail in details:
+                product = detail.
+                product_qty = detail.product_qty# TODO    
+                loop_again = product_qty > 0.0 # First test
+                while loop_again:
+                    for purchase in product_line_db.get(
+                    move = move.create({
+                        # TODO
+                        'picking_id': picking.id,
+                        'product_id': 
+                        })
+                    # TODO loop_again    
         
         # ---------------------------------------------------------------------
         #                          Clean temp data:

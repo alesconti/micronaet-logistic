@@ -60,6 +60,12 @@ class ResCompany(models.Model):
         help='Stock location for q. created',
         required=True,
         )
+    logistic_pick_in_type_id = fields.Many2one(
+        'stock.picking.type', 'Pick in type', 
+        help='Picking in type for load documents',
+        required=True,
+        )
+        
 
 class PurchaseOrder(models.Model):
     """ Model name: Sale Order
@@ -146,7 +152,7 @@ class PurchaseOrderLine(models.Model):
         _logger.warning('Update logistic qty fields now')
         for line in self:
             logistic_delivered_qty = 0.0
-            for move in line.load_line_ids
+            for move in line.load_line_ids:
                 logistic_delivered_qty += move.product_uom_qty
             # Generate data for fields::
             line.logistic_delivered_qty = logistic_delivered_qty
