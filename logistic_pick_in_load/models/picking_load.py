@@ -34,10 +34,85 @@ class StockPicking(models.Model):
     
     _inherit = 'stock.picking'
 
+    @api.model
+    def generate_bf_picking_document(self):
+        ''' Read temp table where temporary order is
+        '''
+        # ---------------------------------------------------------------------
+        # Pool used:
+        # ---------------------------------------------------------------------
+        # Temp load document:        
+        header_pool = self.env['mmac_ardo']
+        detail_pool = self.env['mmac_ardoline']
+        
+        # Stock movement:
+        move_pool = self.env['stock.move']
+        quant_pool = self.env['stock.quant']
+       
+        # Purchase order detail:
+        #purchase_pool = self.env['purchase.order']
+        line_pool = self.env['purchase.order.line']
+        
+        # ---------------------------------------------------------------------
+        #                         DB from order temp:
+        # ---------------------------------------------------------------------
+        # Read header data:
+        header_db = {}
+        headers = header_pool.search([])
+        for header in headers:
+            header_db[header] = []
+        
+        details = detail_pool.search([])
+        for detail in details:
+            header_db[detail.header_id].append(detail)
+
+        # ---------------------------------------------------------------------
+        #                          Load order details
+        # ---------------------------------------------------------------------
+        purchase_lines = line_pool.search([
+            ('purchase_id.logistic_state', '=', 'confirmed'), # draft, done
+            ])
+            
+        # Sorted with create date (first will be linked first!    
+        product_line_db = {}
+        for line in purchase_lines.sorted(
+                key=lambda x: x.purchase_id.create_date):
+            product = line.product_id
+            if product not in product_line_db:
+                product_line_db[product] = []
+            product_line_db[product].append([line, ])    
+            
+        # ---------------------------------------------------------------------
+        #                   Create documents depend on loaded data
+        # ---------------------------------------------------------------------
+        for header in header_db:
+            details = header_db[header]
+            
+            picking = self.create({                
+                # TODO
+                
+                })
+            for detail in details:    
+                move = move.create({
+                    # TODO
+                    'picking_id': picking.id,
+                    
+                    })
+        
+        # ---------------------------------------------------------------------
+        #                          Clean temp data:
+        # ---------------------------------------------------------------------
+        # Delete detail line:
+        details.unlink()
+        headers.unlink()
+        
+        return True
+        
     # -------------------------------------------------------------------------
     # COLUMNS:
     # -------------------------------------------------------------------------
     #product_suffix = fields.Char('Product suffix', size=10)
     # -------------------------------------------------------------------------
+    
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
