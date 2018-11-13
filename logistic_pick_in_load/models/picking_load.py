@@ -129,7 +129,7 @@ class StockPicking(models.Model):
                         'product_id': product.id, 
                         'date': scheduled_date,
                         'date_expected': scheduled_date,
-                        'location_id': location_from
+                        'location_id': location_from,
                         'location_dest_id': location_to,
                         'logistic_purchase_id': purchase.id,
                         'product_qty': select_qty,
@@ -161,7 +161,7 @@ class StockPicking(models.Model):
                         'product_id': product.id, 
                         'date': scheduled_date,
                         'date_expected': scheduled_date,
-                        'location_id': location_from
+                        'location_id': location_from,
                         'location_dest_id': location_to,
                         #'logistic_purchase_id': purchase.id,
                         'product_qty': product_qty,
