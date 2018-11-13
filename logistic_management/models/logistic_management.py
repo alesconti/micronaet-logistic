@@ -83,9 +83,7 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    #                             RELATIONAL FIELDS:
-    # -------------------------------------------------------------------------    
-    # Relation many 2 one:
+    # RELATIONAL FIELDS:
     logistic_sale_id = fields.Many2one(
         'sale.order.line', 'Link to generator', 
         help='Link generator sale order line: one customer line=one purchase',
@@ -138,9 +136,41 @@ class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
     
     # -------------------------------------------------------------------------
+    # Function fields:
+    # -------------------------------------------------------------------------
+    @api.multi
+    @api.depends('load_line_ids')
+    def _get_logist_status_field(self):
+        ''' Manage all data for logistic situation in sale order:
+        '''
+        _logger.warning('Update logistic qty fields now')
+        for line in self:
+            logistic_delivered_qty = 0.0
+            for move in line.load_line_ids
+                logistic_delivered_qty += move.product_uom_qty
+            # Generate data for fields::
+            line.logistic_delivered_qty = logistic_delivered_qty
+            line.logistic_undelivered_qty = \
+                line.product_qty - logistic_delivered_qty
+
+    # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    # Relation one 2 many:
+    # COMPUTED:
+    logistic_delivered_qty = fields.Float(
+        'Delivered qty', digits=dp.get_precision('Product Price'),
+        help='Qty delivered with load documents',
+        readonly=True, compute='_get_logist_status_field', multi=True,
+        store=False,
+        )
+    logistic_undelivered_qty = fields.Float(
+        'Undelivered qty', digits=dp.get_precision('Product Price'),
+        help='Qty undelivered, remain to load',
+        readonly=True, compute='_get_logist_status_field', multi=True,
+        store=False,
+        )
+
+    # RELATIONAL:
     load_line_ids = fields.One2many(
         'stock.move', 'logistic_purchase_id', 'Linked load to purchase', 
         help='Load linked to this purchase line',
