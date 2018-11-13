@@ -62,6 +62,8 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         company = company.search([])[0]
         logistic_pick_in_type_id = company.logistic_pick_in_type_id.id
+        location_from = logistic_pick_in_type_id.default_location_src_id.id
+        location_to = logistic_pick_in_type_id.default_location_dest_id.id
 
         # ---------------------------------------------------------------------
         #                          Load order details
@@ -89,53 +91,108 @@ class StockPicking(models.Model):
         #                         DB from order temp:
         # ---------------------------------------------------------------------
         # Read header data:
-        for header in header_pool.search([]):
+        headers = header_pool.search([])
+        for header in headers:
             partner = header.partner
-            scheduled_date = '2018-01-01' # TODO get data
+            scheduled_date = header.date_order
+            name = header.name, # same as order_ref
+            origin = _('%s - %s') % (header.order_ref, order.date_order)
             
-            for detail in header.line_ids:
+            picking = self.create({                
+                'partner_id': partner.id,
+                'scheduled_date': scheduled_date,
+                'origin': origin,
+                #'move_type': 'direct',
+                'picking_type_id': logistic_pick_in_type_id,
+                'group_id': False,
+                #'priority': 1,                
+                'state': 'done', # XXX done immediately
+                })
             
-                origin = False # TODO
+            for line in header.line_ids:
+                product = line.product_id
+                product_qty = line.product_qty
+                for purchase in product_line_db.get(product, []):
+                    load_line, logistic_undelivered_qty = purchase
+                    if product_qty > logistic_undelivered_qty:
+                        # Partially covered:
+                        select_qty = logistic_undelivered_qty
+                    else: # covered all
+                        select_qty = product_qty    
+                    product_qty -= select_qty
+                    
+                    # Create movement:
+                    move.create({
+                        'company_id': company.id,
+                        'partner_id': partner.id,
+                        'picking_id': picking.id,
+                        'product_id': product.id, 
+                        'date': scheduled_date,
+                        'date_expected': scheduled_date,
+                        'location_id': location_from
+                        'location_dest_id': location_to,
+                        'logistic_purchase_id': purchase.id,
+                        'product_qty': select_qty,
+                        'product_uom_qty': select_qty,
+                        'product_uom': product.uom_id.id,
+                        'state': 'done',
+                        #'origin': 
+                        # group_id
+                        # reference'
+                        # sale_line_id
+                        # purchase_line_id
+                        # procure_method,
+                        # 
+                        })
+                    if product_qty <= 0.0:
+                        break    
                 
-                picking = self.create({                
-                    # TODO
-                    'partner_id': partner[0].id,
-                    'scheduled_date': scheduled_date,
-                    'origin': origin,
-                    #'move_type': 'direct',
-                    'pickin_type_id': logistic_pick_in_type_id,
-                    'group_id': False,
-                    #'priority': 1,                
-                    'state': 'done', # XXX done immediately
-                    })
+                # -------------------------------------------------------------        
+                # Not covered with orders, load stock directly:
+                # -------------------------------------------------------------        
+                if product_qty > 0.0:
+                    # ---------------------------------------------------------
+                    # Create stock move:
+                    # ---------------------------------------------------------
+                    move.create({
+                        'company_id': company.id,
+                        'partner_id': partner.id,
+                        'picking_id': picking.id,
+                        'product_id': product.id, 
+                        'date': scheduled_date,
+                        'date_expected': scheduled_date,
+                        'location_id': location_from
+                        'location_dest_id': location_to,
+                        #'logistic_purchase_id': purchase.id,
+                        'product_qty': product_qty,
+                        'product_uom_qty': product_qty,
+                        'product_uom': product.uom_id.id,
+                        'state': 'done',
+                        #'origin': 
+                        # group_id
+                        # reference'
+                        # sale_line_id
+                        # purchase_line_id
+                        # procure_method,
+                        })
+                    
+                    # ---------------------------------------------------------
+                    # Create stock quants for remain data
+                    # ---------------------------------------------------------
+                    # TODO link to stock move?
+                    data_pool.create({
+                        'company_id': company.id,
+                        'product_id': product.id, 
+                        'in_date': scheduled_date,
+                        'location_id': location_to,
+                        'quantity': product_qty,
+                        })
 
-                for detail in details:
-                    product = detail.
-                    product_qty = detail.product_qty# TODO    
-                    loop_again = product_qty > 0.0 # First test
-                    while loop_again:
-                        for purchase in product_line_db.get(
-                        move = move.create({
-                            # TODO
-                            'picking_id': picking.id,
-                            'product_id': 
-                            })
-                        # TODO loop_again    
-        
         # ---------------------------------------------------------------------
         #                          Clean temp data:
         # ---------------------------------------------------------------------
         # Delete detail line:
-        details.unlink()
-        headers.unlink()
-        
+        headers.unlink() # line deleted in cascade!
         return True
         
-    # -------------------------------------------------------------------------
-    # COLUMNS:
-    # -------------------------------------------------------------------------
-    #product_suffix = fields.Char('Product suffix', size=10)
-    # -------------------------------------------------------------------------
-    
-
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
