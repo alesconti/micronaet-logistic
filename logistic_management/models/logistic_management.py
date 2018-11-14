@@ -207,7 +207,28 @@ class SaleOrder(models.Model):
     #                   UTILITY: Extra operation before WF
     # -------------------------------------------------------------------------
     @api.model
-    def check_exploded_kit(self):
+    def return_order_view(self):
+        ''' Utility for return selected order in tree view
+        '''
+        tree_view_id = form_view_id = False
+        selected_order = [order.id for order in self]
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Order confirmed'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            #'res_id': 1,
+            'res_model': 'sale.order',
+            'view_id': tree_view_id,
+            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
+            'domain': [('id', 'in', selected_order)],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+            
+    @api.model
+    def check_exploded_product_kit(self):
         ''' Check if there's kit in product, launch explode operation
         '''
         log_message = True # TODO change
@@ -331,19 +352,21 @@ class SaleOrder(models.Model):
         line_pool = self.env['sale.order.line']
         lines = line_pool.search([
             ('order_id.logistic_state', '=', 'draft'), # Draft order
+            ('logistic_state', '=', 'draft'), # Draft line
             ('product_id.type', '=', 'service'), # Direct ready
             ('kit_line_id', '=', False), # Not the kit line (service = mrp)
             ])
         return lines.write({
-            'logistic_state': 'ready',
+            'logistic_state': 'ready', # immediately ready
             })
         
     # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
-    # -------------------------------------------------------------------------
+    # -------------------------------------------------------------------------    
     # A. Logistic phase 1: Check secure payment:
+    # -------------------------------------------------------------------------    
     @api.model
-    def check_secure_payment_draft_order(self):
+    def workflow_order_to_payment(self):
         ''' Assign logistic_state to secure order
         '''
         # ---------------------------------------------------------------------
@@ -355,17 +378,19 @@ class SaleOrder(models.Model):
         # Payment article: 
         self.check_product_service() # Line with service article (not used)
         
-        # Explode kit if present:
-        self.check_exploded_kit() # first!
+        # Explode kit if present (create also product service):
+        self.check_exploded_product_kit()
         
         # Update supplier if present:
         self.check_product_first_supplier()
         
-        
+        # ---------------------------------------------------------------------
+        # Start order payment check:
+        # ---------------------------------------------------------------------
         orders = self.search([
             ('logistic_state', '=', 'draft'), # new order
             ])
-            
+
         # Search new order:
         payment_order = []
         for order in orders:
@@ -375,7 +400,7 @@ class SaleOrder(models.Model):
             if order.payment_done:
                 payment_order.append(order)
                 continue
-               
+
             # -----------------------------------------------------------------
             # 2. Secure market (sale team):    
             # -----------------------------------------------------------------
@@ -400,12 +425,54 @@ class SaleOrder(models.Model):
                 pass
         
         # ---------------------------------------------------------------------
-        # Force update:        
+        # Update state in payment:
         # ---------------------------------------------------------------------
         for order in payment_order:
             order.payment_done = True
             order.logistic_state = 'payment'        
         return payment_order
+
+    # -------------------------------------------------------------------------
+    # B. Logistic phase 2: payment > order
+    # -------------------------------------------------------------------------
+    @api.model
+    def workflow_payment_to_order(self):
+        ''' Confirm payment order (before expand kit)
+        '''
+        orders = self.search([
+            ('logistic_state', '=', 'payment'),
+            ])
+        for order in orders:    
+            # -----------------------------------------------------------------
+            # Generate subelements from kit:
+            # -----------------------------------------------------------------
+            order.explode_kit_in_order_line()
+
+            # -----------------------------------------------------------------
+            # Became real order:
+            # -----------------------------------------------------------------
+            order.logistic_state = 'order'
+
+        # ---------------------------------------------------------------------
+        # Return view:
+        # ---------------------------------------------------------------------
+        tree_view_id = form_view_id = False
+        selected_order = [order.id for order in orders]
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Order confirmed'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            #'res_id': 1,
+            'res_model': 'sale.order',
+            'view_id': tree_view_id,
+            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
+            'domain': [('id', 'in', selected_order)],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+        
 
     # State (sort of workflow):
     # TODO

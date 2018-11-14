@@ -44,8 +44,8 @@ class StockChangeStandardPrice(models.TransientModel):
         ''' A. Confirm draft order if payment is secure
         '''
         order_pool = self.env['sale.order']
-        
-        secure_order = order_pool.check_secure_payment_draft_order()
+
+        secure_order = order_pool.workflow_order_to_payment()
         tree_view_id = form_view_id = False
         selected_order = [order.id for order in secure_order]
         return {
@@ -68,36 +68,7 @@ class StockChangeStandardPrice(models.TransientModel):
         ''' B. Confirm quotation in order (explode kit)
         '''
         order_pool = self.env['sale.order']
-        
-        # Call procedure:
-        orders = order_pool.search([
-            ('logistic_state', '=', 'payment'),
-            ])
-        for order in orders:    
-            # Generate subelements from kit:
-            order.explode_kit_in_order_line()
-            # Became real order:
-            order.logistic_state = 'order'
-
-        # ---------------------------------------------------------------------
-        # Return view:
-        # ---------------------------------------------------------------------
-        tree_view_id = form_view_id = False
-        selected_order = [order.id for order in orders]
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Order confirmed'),
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            #'res_id': 1,
-            'res_model': 'sale.order',
-            'view_id': tree_view_id,
-            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
-            'domain': [('id', 'in', selected_order)],
-            'context': self.env.context,
-            'target': 'current', # 'new'
-            'nodestroy': False,
-            }
+        return order_pool.workflow_payment_to_order()
 
     @api.multi
     def assign_stock(self):
