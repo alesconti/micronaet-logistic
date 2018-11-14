@@ -1,6 +1,64 @@
 <?xml version="1.0"?>
 <openerp>
     <data>         
+         <!--purchase.order-->
+         <record model="ir.ui.view" id="view_purchase_order_logistic_workflow_form">
+             <field name="name">purchase.order.form</field>
+             <field name="model">purchase.order</field>
+             <field name="inherit_id" ref="purchase.purchase_order_form"/>
+             <field name="arch" type="xml">
+                 <field name="state" position="replace">
+                     <field name="state" invisible="1"/>
+                     <field name="logistic_state" widget="statusbar"/>
+                 </field>
+                
+                <!--HIDE WF BUTTON:--> 
+                <button name="action_rfq_send" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </button>
+                <button name="action_rfq_send" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </button>
+                <button name="print_quotation" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </button>
+                <button name="print_quotation" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </button>
+                <button name="button_confirm" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </button>
+                <button name="button_confirm" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </button>
+                <button name="button_approve" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </button>
+                <button name="action_rfq_send" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </button>
+                <button name="action_view_picking" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </button>
+                <button name="button_draft" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </button>
+                <button name="button_cancel" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </button>
+                <button name="button_done" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </button>
+                <button name="button_unlock" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </button>
+    
+                 <field name="state" position="before">                     
+                      <button name="set_logistic_state_confirmed" string="Logistic confirmed" type="object" attrs="{'invisible': [('logistic_state','=','draft')]}"/>
+                 </field>
+             </field>
+         </record>
+         
          <!--res.company-->
          <record model="ir.ui.view" id="view_res_company_logistic_parameter_form">
              <field name="name">res.company.form</field>

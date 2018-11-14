@@ -76,7 +76,7 @@ class PurchaseOrder(models.Model):
     #                           UTILITY:
     # -------------------------------------------------------------------------
     @api.model
-    def purchase_pool.return_purchase_order_list_view(purchase_ids):
+    def return_purchase_order_list_view(self, purchase_ids):
         ''' Return purchase order tree from ids
         '''
         model_pool = self.env['ir.model.data']
@@ -97,6 +97,20 @@ class PurchaseOrder(models.Model):
             'nodestroy': False,
             }
 
+    # -------------------------------------------------------------------------
+    #                                UTILITY:
+    # -------------------------------------------------------------------------
+    @api.multi
+    def set_logistic_state_confirmed(self):
+        ''' Set order as confirmed
+        '''
+        return self.write({
+            'logistic_state': 'confirmed',
+            })
+            
+    # -------------------------------------------------------------------------
+    #                                COLUMNS: 
+    # -------------------------------------------------------------------------
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft purchase
         ('confirmed', 'Confirmed'), # Purchase confirmed

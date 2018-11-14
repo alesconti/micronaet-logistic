@@ -31,7 +31,6 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
-
 class StockChangeStandardPrice(models.TransientModel):
     _name = 'logistic.manual.operation.wizard'
     _description = 'Logistic manual operation'
@@ -44,6 +43,7 @@ class StockChangeStandardPrice(models.TransientModel):
         ''' A. Confirm draft order if payment is secure
         '''
         order_pool = self.env['sale.order']
+        import pdb; pdb.set_trace()
         return order_pool.workflow_order_to_payment()
 
     @api.multi
