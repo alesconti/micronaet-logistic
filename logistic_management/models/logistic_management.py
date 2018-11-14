@@ -249,6 +249,7 @@ class SaleOrder(models.Model):
         ''' Utility for return selected order in tree view
         '''
         tree_view_id = form_view_id = False
+        _logger.info('Return order tree view [# %s]' % len(order_ids))
         return {
             'type': 'ir.actions.act_window',
             'name': _('Order confirmed'),
@@ -278,6 +279,7 @@ class SaleOrder(models.Model):
             ('product_id.product_tmpl_id.default_code', '=ilike', '%#%'), # Kit code
             # TODO replace with: ('is__kit', '=', True),
             ])
+        _logger.info('New order: check explode kit [# %s]' % len(lines))
 
         template_ids = [] # ID of template checked
         update_ids = [] # ID of template updated
@@ -336,6 +338,7 @@ class SaleOrder(models.Model):
             ('product_id.is_kit', '=', False), # No kit line
             ('product_id.type', '!=', 'service'), # No service product
             ])
+        _logger.info('New order: generate first supplier [# %s]' % len(lines))
         template_ids = []
         update_ids = []
         for line in lines:
@@ -380,6 +383,8 @@ class SaleOrder(models.Model):
             ('logistic_state', '=', 'draft'), # Insert order
             ('order_line', '=', False), # Without line
             ])
+        _logger.info('New order: Empty order [# %s]' % len(orders))
+
         return orders.write({
             'logistic_state': 'error',
             })    
@@ -394,6 +399,7 @@ class SaleOrder(models.Model):
             ('product_id.type', '=', 'service'), # Direct ready
             ('kit_line_id', '=', False), # Not the kit line (service = mrp)
             ])
+        _logger.info('New order: Check product-service [# %s]' % len(lines))
         return lines.write({
             'logistic_state': 'ready', # immediately ready
             })
@@ -407,6 +413,7 @@ class SaleOrder(models.Model):
     def workflow_draft_to_payment(self):
         ''' Assign logistic_state to secure order
         '''
+        _logger.info('New order: Start analysis')
         # ---------------------------------------------------------------------
         #                               Pre operations:
         # ---------------------------------------------------------------------
@@ -428,6 +435,7 @@ class SaleOrder(models.Model):
         orders = self.search([
             ('logistic_state', '=', 'draft'), # new order
             ])
+        _logger.info('New order: Selection [# %s]' % len(orders))
 
         # Search new order:
         payment_order = []
@@ -481,6 +489,7 @@ class SaleOrder(models.Model):
     def workflow_payment_to_order(self):
         ''' Confirm payment order (before expand kit)
         '''
+        import pdb; pdb.set_trace()
         orders = self.search([
             ('logistic_state', '=', 'payment'),
             ])
@@ -494,7 +503,7 @@ class SaleOrder(models.Model):
             order.logistic_state = 'order'
 
         # Return view:
-        return orders.return_order_list_view(selected_ids)
+        return self.return_order_list_view(selected_ids)
 
     # State (sort of workflow):
     # TODO
