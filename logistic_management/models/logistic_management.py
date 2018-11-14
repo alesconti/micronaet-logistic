@@ -806,7 +806,6 @@ class SaleOrderLine(models.Model):
         # Return view:
         return purchase_pool.return_purchase_order_list_view(selected_ids)
 
-
     # -------------------------------------------------------------------------
     #                            COMPUTE FIELDS FUNCTION:
     # -------------------------------------------------------------------------
