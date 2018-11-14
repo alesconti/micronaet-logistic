@@ -489,7 +489,6 @@ class SaleOrder(models.Model):
     def workflow_payment_to_order(self):
         ''' Confirm payment order (before expand kit)
         '''
-        import pdb; pdb.set_trace()
         orders = self.search([
             ('logistic_state', '=', 'payment'),
             ])
@@ -568,6 +567,7 @@ class SaleOrderLine(models.Model):
             stock.move or stock.quant movement 
             Evaluate also if we can use alternative product
         '''
+        import pdb; pdb.set_trace()
         now = fields.Datetime.now()
 
         product_pool = self.env['product.product']
