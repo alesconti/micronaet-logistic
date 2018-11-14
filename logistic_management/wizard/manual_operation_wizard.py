@@ -59,19 +59,32 @@ class StockChangeStandardPrice(models.TransientModel):
         '''
         line_pool = self.env['sale.order.line']
         return line_pool.workflok_order_to_uncovered()
-        
+
     @api.multi
     def generate_purchase(self):
         ''' D. Generate purchase order for not cover qty
         '''
         line_pool = self.env['sale.order.line']       
         return line_pool.workflow_uncovered_pending()
+
+    @api.multi
+    def confirm_generated_purchase(self):
+        ''' D2. Confirm purchase order created
+        '''
+        purchase_pool = self.env['purchase.order']       
+        purchases = purchase_pool.search([
+            ('logistic_state', '=', 'draft'),
+            ])
+        return purchases.write({
+            'logistic_state': 'confirmed',
+            })    
         
     @api.multi
     def update_ready(self):
         ''' E. Update order ready with stock or load
         '''
-        return True
+        picking_pool = self.env['stock.picking']        
+        return picking_pool.workflow_ordered_ready()
 
     @api.multi
     def generate_delivery(self):

@@ -65,7 +65,6 @@ class ResCompany(models.Model):
         help='Picking in type for load documents',
         required=True,
         )
-        
 
 class PurchaseOrder(models.Model):
     """ Model name: Sale Order
@@ -349,11 +348,9 @@ class SaleOrder(models.Model):
                 '''<div class="o_mail_notification">
                     First supplier not found:<br/>
                     %s
-                    </div>
-                ''') % res
+                    </div>''') % res
 
             mail_pool.sudo().message_post(
-            #mail_pool.message_post(
                 body=body, 
                 message_type='notification', 
                 subject=_('Default supplier not found'),

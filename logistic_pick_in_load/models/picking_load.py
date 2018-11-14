@@ -34,8 +34,11 @@ class StockPicking(models.Model):
     
     _inherit = 'stock.picking'
 
+    # -------------------------------------------------------------------------
+    #                            WORKFLOW ACTION:
+    # -------------------------------------------------------------------------
     @api.model
-    def generate_bf_picking_document(self):
+    def workflow_ordered_ready(self):
         ''' Read temp table where temporary order is
         '''
         # ---------------------------------------------------------------------
