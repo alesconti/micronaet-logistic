@@ -314,6 +314,30 @@ class SaleOrder(models.Model):
                 )
         return True
     
+    def check_empty_orders(self):
+        ''' Mark empty order as unused
+        '''
+        orders = self.search([
+            ('logistic_state', '=', 'draft'), # Insert order
+            ('order_line', '=', False), # Without line
+            ])
+        return orders.write({
+            'logistic_state': 'error',
+            })    
+    
+    def check_product_service(self):
+        ''' Update line with service to ready state
+        '''
+        line_pool = self.env['sale.order.line']
+        lines = line_pool.search([
+            ('order_id.logistic_state', '=', 'draft'), # Draft order
+            ('product_id.type', '=', 'service'), # Direct ready
+            ('kit_line_id', '=', False), # Not the kit line (service = mrp)
+            ])
+        return lines.write({
+            'logistic_state': 'ready',
+            })
+        
     # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
     # -------------------------------------------------------------------------
@@ -325,6 +349,12 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         #                               Pre operations:
         # ---------------------------------------------------------------------
+        # Empty orders:
+        self.check_empty_orders() # Order without line
+        
+        # Payment article: 
+        self.check_product_service() # Line with service article (not used)
+        
         # Explode kit if present:
         self.check_exploded_kit() # first!
         
@@ -391,6 +421,7 @@ class SaleOrder(models.Model):
         ('pending', 'Pending delivery'), # Waiting for delivery
         ('ready', 'Ready'), # Ready for transfer
         ('done', 'Done'), # Delivered or closed XXX manage partial delivery
+        ('error', 'Error order'), # Order without line
         ], 'Logistic state', default='draft',
         )
 
