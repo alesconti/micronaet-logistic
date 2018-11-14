@@ -73,6 +73,9 @@ class PurchaseOrder(models.Model):
     
     _inherit = 'purchase.order'
 
+    # -------------------------------------------------------------------------
+    #                           UTILITY:
+    # -------------------------------------------------------------------------
     @api.model
     def purchase_pool.return_purchase_order_list_view(purchase_ids):
         ''' Return purchase order tree from ids
