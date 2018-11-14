@@ -44,24 +44,7 @@ class StockChangeStandardPrice(models.TransientModel):
         ''' A. Confirm draft order if payment is secure
         '''
         order_pool = self.env['sale.order']
-
-        secure_order = order_pool.workflow_order_to_payment()
-        tree_view_id = form_view_id = False
-        selected_order = [order.id for order in secure_order]
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Order confirmed'),
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            #'res_id': 1,
-            'res_model': 'sale.order',
-            'view_id': tree_view_id,
-            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
-            'domain': [('id', 'in', selected_order)],
-            'context': self.env.context,
-            'target': 'current', # 'new'
-            'nodestroy': False,
-            }
+        return order_pool.workflow_order_to_payment()
 
     @api.multi
     def confirm_order(self):
@@ -75,18 +58,14 @@ class StockChangeStandardPrice(models.TransientModel):
         ''' C. Assign stock product to open orders
         '''
         line_pool = self.env['sale.order.line']
-        
-        # Call assign stock procedure:
-        return line_pool.logistic_assign_stock_to_customer_order()       
+        return line_pool.workflok_order_to_uncovered()
         
     @api.multi
     def generate_purchase(self):
         ''' D. Generate purchase order for not cover qty
         '''
-        line_pool = self.env['sale.order.line']
-
-        # Call purchase order generator procedure:        
-        return line_pool.logistic_order_uncovered_supplier_order()
+        line_pool = self.env['sale.order.line']       
+        return line_pool.workflow_uncovered_pending()
         
     @api.multi
     def update_ready(self):

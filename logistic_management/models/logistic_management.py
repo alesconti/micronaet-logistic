@@ -73,6 +73,28 @@ class PurchaseOrder(models.Model):
     
     _inherit = 'purchase.order'
 
+    @api.model
+    def purchase_pool.return_purchase_order_list_view(purchase_ids):
+        ''' Return purchase order tree from ids
+        '''
+        model_pool = self.env['ir.model.data']
+        tree_view_id = form_view_id = False
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Purchase order created:'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            #'res_id': 1,
+            'res_model': 'purchase.order',
+            'view_id': tree_view_id,
+            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
+            'domain': [('id', 'in', purchase_ids)],
+            'context': self.env.context,
+            'target': 'current',
+            'nodestroy': False,
+            }
+
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft purchase
         ('confirmed', 'Confirmed'), # Purchase confirmed
@@ -211,7 +233,7 @@ class SaleOrder(models.Model):
         ''' Utility for return selected order in tree view
         '''
         tree_view_id = form_view_id = False
-        selected_order = [order.id for order in self]
+        selected_ids = [order.id for order in self]
         return {
             'type': 'ir.actions.act_window',
             'name': _('Order confirmed'),
@@ -221,7 +243,7 @@ class SaleOrder(models.Model):
             'res_model': 'sale.order',
             'view_id': tree_view_id,
             'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
-            'domain': [('id', 'in', selected_order)],
+            'domain': [('id', 'in', selected_ids)],
             'context': self.env.context,
             'target': 'current', # 'new'
             'nodestroy': False,
@@ -425,12 +447,14 @@ class SaleOrder(models.Model):
                 pass
         
         # ---------------------------------------------------------------------
-        # Update state in payment:
+        # Update state: order >> payment
         # ---------------------------------------------------------------------
         for order in payment_order:
             order.payment_done = True
-            order.logistic_state = 'payment'        
-        return payment_order
+            order.logistic_state = 'payment'
+
+        # Return view tree:
+        return payment_order.return_order_view()
 
     # -------------------------------------------------------------------------
     # B. Logistic phase 2: payment > order
@@ -443,36 +467,14 @@ class SaleOrder(models.Model):
             ('logistic_state', '=', 'payment'),
             ])
         for order in orders:    
-            # -----------------------------------------------------------------
-            # Generate subelements from kit:
-            # -----------------------------------------------------------------
+            # A. Generate subelements from kit:
             order.explode_kit_in_order_line()
 
-            # -----------------------------------------------------------------
-            # Became real order:
-            # -----------------------------------------------------------------
+            # C. Became real order:
             order.logistic_state = 'order'
 
-        # ---------------------------------------------------------------------
         # Return view:
-        # ---------------------------------------------------------------------
-        tree_view_id = form_view_id = False
-        selected_order = [order.id for order in orders]
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Order confirmed'),
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            #'res_id': 1,
-            'res_model': 'sale.order',
-            'view_id': tree_view_id,
-            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
-            'domain': [('id', 'in', selected_order)],
-            'context': self.env.context,
-            'target': 'current', # 'new'
-            'nodestroy': False,
-            }
-        
+        return orders.return_order_view()
 
     # State (sort of workflow):
     # TODO
@@ -499,11 +501,39 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
     
     # -------------------------------------------------------------------------
+    #                           UTILITY:
+    # -------------------------------------------------------------------------
+    @api.model
+    def return_order_line_list_view(self, line_ids):
+        ''' Return order line tree view (selected)
+        '''
+        model_pool = self.env['ir.model.data']
+        tree_view_id = model_pool.get_object_reference(
+            'logistic_management', 'view_sale_order_line_logistic_tree')[1]
+        form_view_id = model_pool.get_object_reference(
+            'logistic_management', 'view_sale_order_line_logistic_form')[1]
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Updated lines'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            #'res_id': 1,
+            'res_model': 'sale.order.line',
+            'view_id': tree_view_id,
+            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
+            'domain': [('id', 'in', line_ids)],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+
+    # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
     # -------------------------------------------------------------------------
     # A. Assign available q.ty in stock assign a stock movement / quants
     @api.model
-    def logistic_assign_stock_to_customer_order(self):
+    def workflok_order_to_uncovered(self):
         ''' Logistic phase 3:
             Assign stock q. available to order product creating a 
             stock.move or stock.quant movement 
@@ -514,8 +544,7 @@ class SaleOrderLine(models.Model):
         product_pool = self.env['product.product']
         quant_pool = self.env['stock.quant']
         lines = self.search([
-            # Filter logistic state:
-            ('order_id.logistic_state', 'in', ('order', )), # ex , 'pending'
+            ('order_id.logistic_state', '=', 'order'), # Logistic state
             ('logistic_state', '=', 'draft'),
             ])
 
@@ -641,15 +670,15 @@ class SaleOrderLine(models.Model):
                 update_db[line] = {
                     'logistic_state': 'uncovered',
                     }
-                
+
         # ---------------------------------------------------------------------
         # Update sale line status:
         # ---------------------------------------------------------------------
-        selected_line = [] # ID, to return view list
+        selected_ids = [] # ID, to return view list
         selected_order = [] # Obj, to update master order status
         for line in update_db:
             line.write(update_db[line])
-            selected_line.append(line.id)
+            selected_ids.append(line.id)
             if line.order_id not in selected_order:
                 selected_order.append(line.order_id)                
 
@@ -660,7 +689,7 @@ class SaleOrderLine(models.Model):
         for order in selected_order:
             # Generate list of line state, jump not used:                
             line_logistic_state = [
-                line.logistic_state for line in order.order_line\
+                line.logistic_state for line in order.order_line \
                     if line.logistic_state != 'unused']
                     
             # -----------------------------------------------------------------        
@@ -672,35 +701,15 @@ class SaleOrderLine(models.Model):
                 order.logistic_state = 'pending'
             # TODO Manage Dropshipping!!    
             
-        # ---------------------------------------------------------------------
         # Return view:
-        # ---------------------------------------------------------------------
-        model_pool = self.env['ir.model.data']
-        tree_view_id = model_pool.get_object_reference(
-            'logistic_management', 'view_sale_order_line_logistic_tree')[1]
-        form_view_id = model_pool.get_object_reference(
-            'logistic_management', 'view_sale_order_line_logistic_form')[1]
-        
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Updated lines'),
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            #'res_id': 1,
-            'res_model': 'sale.order.line',
-            'view_id': tree_view_id,
-            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
-            'domain': [('id', 'in', selected_line)],
-            'context': self.env.context,
-            'target': 'current', # 'new'
-            'nodestroy': False,
-            }
+        return self.return_order_line_list_view(selected_ids)
     
     # A. Assign available q.ty in stock assign a stock movement / quants
     @api.model
-    def logistic_order_uncovered_supplier_order(self):
-        ''' Logistic phasae 2:
+    def workflow_uncovered_pending(self):
+        ''' Logistic phase 2:            
             Order remain uncovered qty to the default supplier            
+            Generate purchase order to supplier linked to product
         '''
         now = fields.Datetime.now()
         
@@ -739,7 +748,7 @@ class SaleOrderLine(models.Model):
                 purchase_db[supplier] = []
             purchase_db[supplier].append(line)
 
-        selected_purchase = [] # ID: to return view list
+        selected_ids = [] # ID: to return view list
         for supplier in purchase_db:
             # -----------------------------------------------------------------
             # Create header:
@@ -755,7 +764,7 @@ class SaleOrderLine(models.Model):
                 #'partner_ref': '',
                 #'logistic_state': 'draft',
                 })
-            selected_purchase.append(purchase.id)
+            selected_ids.append(purchase.id)
 
             # -----------------------------------------------------------------
             # Create details:
@@ -791,28 +800,8 @@ class SaleOrderLine(models.Model):
         # Sale order still in pending state so no update of logistic status        
         #`TODO Manage dropshipping here?!?
 
-        # ---------------------------------------------------------------------
         # Return view:
-        # ---------------------------------------------------------------------
-        model_pool = self.env['ir.model.data']
-        tree_view_id = form_view_id = False
-        
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Purchase order created:'),
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            #'res_id': 1,
-            'res_model': 'purchase.order',
-            'view_id': tree_view_id,
-            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
-            'domain': [('id', 'in', selected_purchase)],
-            'context': self.env.context,
-            'target': 'current', # 'new'
-            'nodestroy': False,
-            }
-
-
+        return purchase_pool.return_purchase_order_list_view(selected_ids)
 
 
     # -------------------------------------------------------------------------
