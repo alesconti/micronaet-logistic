@@ -567,7 +567,6 @@ class SaleOrderLine(models.Model):
             stock.move or stock.quant movement 
             Evaluate also if we can use alternative product
         '''
-        import pdb; pdb.set_trace()
         now = fields.Datetime.now()
 
         product_pool = self.env['product.product']
@@ -740,6 +739,7 @@ class SaleOrderLine(models.Model):
             Order remain uncovered qty to the default supplier            
             Generate purchase order to supplier linked to product
         '''
+        import pdb; pdb.set_trace()
         now = fields.Datetime.now()
         
         # ---------------------------------------------------------------------
