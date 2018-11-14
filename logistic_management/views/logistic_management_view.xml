@@ -9,7 +9,7 @@
              <field name="arch" type="xml">
                  <field name="state" position="replace">
                      <field name="state" invisible="1"/>
-                     <field name="logistic_state" widget="statusbar"/>
+                     <field name="logistic_state" widget="statusbar" statusbar_visible="draft,confirmed,done" />
                  </field>
                 
                 <!--HIDE WF BUTTON:--> 

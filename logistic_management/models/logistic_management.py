@@ -84,7 +84,7 @@ class PurchaseOrder(models.Model):
         
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Purchase order created:'),
+            'name': _('Purchase order selected:'),
             'view_type': 'form',
             'view_mode': 'tree,form',
             #'res_id': 1,
@@ -107,7 +107,7 @@ class PurchaseOrder(models.Model):
         return self.write({
             'logistic_state': 'confirmed',
             })
-            
+
     # -------------------------------------------------------------------------
     #                                COLUMNS: 
     # -------------------------------------------------------------------------
@@ -245,11 +245,10 @@ class SaleOrder(models.Model):
     #                   UTILITY: Extra operation before WF
     # -------------------------------------------------------------------------
     @api.model
-    def return_order_view(self):
+    def return_order_list_view(self, order_ids):
         ''' Utility for return selected order in tree view
         '''
         tree_view_id = form_view_id = False
-        selected_ids = [order.id for order in self]
         return {
             'type': 'ir.actions.act_window',
             'name': _('Order confirmed'),
@@ -259,7 +258,7 @@ class SaleOrder(models.Model):
             'res_model': 'sale.order',
             'view_id': tree_view_id,
             'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
-            'domain': [('id', 'in', selected_ids)],
+            'domain': [('id', 'in', order_ids)],
             'context': self.env.context,
             'target': 'current', # 'new'
             'nodestroy': False,
@@ -275,9 +274,11 @@ class SaleOrder(models.Model):
         
         lines = line_pool.search([
             ('order_id.logistic_state', '=', 'draft'), # Draft order
-            ('product_id.default_code', '=ilike', '%#%'), # Kit code
+            #'|', ('product_id.default_code', '=ilike', '%#%'),
+            ('product_id.product_tmpl_id.default_code', '=ilike', '%#%'), # Kit code
             # TODO replace with: ('is__kit', '=', True),
             ])
+
         template_ids = [] # ID of template checked
         update_ids = [] # ID of template updated
         for line in lines:
@@ -333,6 +334,7 @@ class SaleOrder(models.Model):
             ('order_id.logistic_state', '=', 'draft'), # Draft order
             ('product_id.default_supplier_id', '=', False), # No first supplier
             ('product_id.is_kit', '=', False), # No kit line
+            ('product_id.type', '!=', 'service'), # No service product
             ])
         template_ids = []
         update_ids = []
@@ -402,7 +404,7 @@ class SaleOrder(models.Model):
     # A. Logistic phase 1: Check secure payment:
     # -------------------------------------------------------------------------    
     @api.model
-    def workflow_order_to_payment(self):
+    def workflow_draft_to_payment(self):
         ''' Assign logistic_state to secure order
         '''
         # ---------------------------------------------------------------------
@@ -463,12 +465,14 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Update state: order >> payment
         # ---------------------------------------------------------------------
+        select_ids = []
         for order in payment_order:
+            select_ids.append(order.id)
             order.payment_done = True
             order.logistic_state = 'payment'
 
         # Return view tree:
-        return payment_order.return_order_view()
+        return self.return_order_list_view(select_ids)
 
     # -------------------------------------------------------------------------
     # B. Logistic phase 2: payment > order
@@ -480,7 +484,9 @@ class SaleOrder(models.Model):
         orders = self.search([
             ('logistic_state', '=', 'payment'),
             ])
+        selected_ids = []
         for order in orders:    
+            selected_ids.append(order.id)
             # A. Generate subelements from kit:
             order.explode_kit_in_order_line()
 
@@ -488,7 +494,7 @@ class SaleOrder(models.Model):
             order.logistic_state = 'order'
 
         # Return view:
-        return orders.return_order_view()
+        return orders.return_order_list_view(selected_ids)
 
     # State (sort of workflow):
     # TODO

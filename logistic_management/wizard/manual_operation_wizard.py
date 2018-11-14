@@ -43,8 +43,7 @@ class StockChangeStandardPrice(models.TransientModel):
         ''' A. Confirm draft order if payment is secure
         '''
         order_pool = self.env['sale.order']
-        import pdb; pdb.set_trace()
-        return order_pool.workflow_order_to_payment()
+        return order_pool.workflow_draft_to_payment()
 
     @api.multi
     def confirm_order(self):
