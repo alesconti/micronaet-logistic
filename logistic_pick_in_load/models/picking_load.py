@@ -45,8 +45,8 @@ class StockPicking(models.Model):
         # Pool used:
         # ---------------------------------------------------------------------
         # Temp load document:        
-        header_pool = self.env['mmac_doca']
-        detail_pool = self.env['mmac_doca_line']
+        header_pool = self.env['mmac.doca']
+        detail_pool = self.env['mmac.doca.line']
         
         # Stock movement:
         move_pool = self.env['stock.move']
@@ -59,27 +59,28 @@ class StockPicking(models.Model):
         # Partner:
         partner_pool = self.env['res.partner']
         company_pool = self.env['res.company']
-        import pdb; pdb.set_trace()
         
         # ---------------------------------------------------------------------
         #                          Load parameters
         # ---------------------------------------------------------------------
-        company = company.search([])[0]
-        logistic_pick_in_type_id = company.logistic_pick_in_type_id.id
-        location_from = logistic_pick_in_type_id.default_location_src_id.id
-        location_to = logistic_pick_in_type_id.default_location_dest_id.id
+        company = company_pool.search([])[0]
+        logistic_pick_in_type = company.logistic_pick_in_type_id
+
+        logistic_pick_in_type_id = logistic_pick_in_type.id
+        location_from = logistic_pick_in_type.default_location_src_id.id
+        location_to = logistic_pick_in_type.default_location_dest_id.id
 
         # ---------------------------------------------------------------------
         #                          Load order details
         # ---------------------------------------------------------------------
         purchase_lines = line_pool.search([
-            ('purchase_id.logistic_state', '=', 'confirmed'), # draft, done
+            ('order_id.logistic_state', '=', 'confirmed'), # draft, done
             ])
             
         # Sorted with create date (first will be linked first!    
         product_line_db = {}
         for line in purchase_lines.sorted(
-                key=lambda x: x.purchase_id.create_date):
+                key=lambda x: x.order_id.create_date):
                 
             logistic_undelivered_qty = line.logistic_undelivered_qty
             if logistic_undelivered_qty <= 0.0:
@@ -95,12 +96,13 @@ class StockPicking(models.Model):
         #                         DB from order temp:
         # ---------------------------------------------------------------------
         # Read header data:
+        import pdb; pdb.set_trace()
         headers = header_pool.search([])
         for header in headers:
-            partner = header.partner
+            partner = header.partner_id
             scheduled_date = header.date_order
-            name = header.name, # same as order_ref
-            origin = _('%s - %s') % (header.order_ref, order.date_order)
+            name = header.name # same as order_ref
+            origin = _('%s [%s]') % (header.order_ref, header.date_order[:10])
             
             picking = self.create({                
                 'partner_id': partner.id,
@@ -109,11 +111,13 @@ class StockPicking(models.Model):
                 #'move_type': 'direct',
                 'picking_type_id': logistic_pick_in_type_id,
                 'group_id': False,
+                'location_id': location_from,
+                'location_dest_id': location_to,
                 #'priority': 1,                
                 'state': 'done', # XXX done immediately
                 })
             
-            for line in header.line_ids:
+            for line in header.doca_line:
                 product = line.product_id
                 product_qty = line.product_qty
                 for purchase in product_line_db.get(product, []):
@@ -126,7 +130,7 @@ class StockPicking(models.Model):
                     product_qty -= select_qty
                     
                     # Create movement:
-                    move.create({
+                    move_pool.create({
                         'company_id': company.id,
                         'partner_id': partner.id,
                         'picking_id': picking.id,
@@ -158,7 +162,7 @@ class StockPicking(models.Model):
                     # ---------------------------------------------------------
                     # Create stock move:
                     # ---------------------------------------------------------
-                    move.create({
+                    move_pool.create({
                         'company_id': company.id,
                         'partner_id': partner.id,
                         'picking_id': picking.id,
@@ -184,7 +188,7 @@ class StockPicking(models.Model):
                     # Create stock quants for remain data
                     # ---------------------------------------------------------
                     # TODO link to stock move?
-                    data_pool.create({
+                    quant_pool.create({
                         'company_id': company.id,
                         'product_id': product.id, 
                         'in_date': scheduled_date,

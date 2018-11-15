@@ -33,6 +33,7 @@
         'base',
         'product',
         'purchase',
+        'mmac_base',
         ],
     'data': [
         'views/picking_load_view.xml',
