@@ -120,8 +120,8 @@ class StockPicking(models.Model):
             for line in header.doca_line:
                 product = line.product_id
                 product_qty = line.product_qty
-                for purchase in product_line_db.get(product, []):
-                    load_line, logistic_undelivered_qty = purchase
+                for purchase_line in product_line_db.get(product, []):
+                    load_line, logistic_undelivered_qty = purchase_line
                     if product_qty > logistic_undelivered_qty:
                         # Partially covered:
                         select_qty = logistic_undelivered_qty
@@ -132,6 +132,7 @@ class StockPicking(models.Model):
                     # ---------------------------------------------------------
                     # Create movement (not load stock):
                     # ---------------------------------------------------------
+                    import pdb; pdb.set_trace()
                     move_pool.create({
                         'company_id': company.id,
                         'partner_id': partner.id,
@@ -147,7 +148,7 @@ class StockPicking(models.Model):
                         'state': 'done',
                         'origin': origin,
                         # Sale order line link:
-                        'logistic_load_it': load_line.logistic_sale_id.id,
+                        'logistic_load_id': load_line.logistic_sale_id.id,
                         # Purchase order line line: 
                         'logistic_purchase_id': load_line.id,
                         'purchase_line_id': load_line.id, # XXX needed?
@@ -210,14 +211,11 @@ class StockPicking(models.Model):
                         # procure_method,
                         #'product_qty': select_qty,
                         })
-                    
 
         # ---------------------------------------------------------------------
         #                          Clean temp data:
         # ---------------------------------------------------------------------
-        # Delete detail line:
-        # TODO !!!
-        #headers.unlink() # line deleted in cascade!
+        headers.unlink() # line deleted in cascade!
         return True
         
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
