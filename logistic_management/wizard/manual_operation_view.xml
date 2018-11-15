@@ -24,7 +24,8 @@
                       </group>    
                       <group colspan="4" col="2">
                           <separator string="D. Generate supplier purchase:"/>
-                          <button name="generate_purchase" string="_Generate purchase" type="object" class="btn-primary" />
+                          <button name="generate_purchase" string="_Generate purchase" type="object" class="btn-primary" colspan="1"/>
+                          <button name="confirm_generated_purchase" string="Confirm Draft _Purchase" type="object" class="btn-primary" colspan="1"/>
                       </group>    
                       <group colspan="4" col="2">
                           <separator string="E. Update picking in loading:"/>
@@ -32,8 +33,7 @@
                       </group>    
                       <group colspan="4" col="2">
                           <separator string="F. Generate picking out document:"/>
-                          <button name="generate_delivery" string="Generate _Delivery" type="object" class="btn-primary" colspan="1"/>
-                          <button name="confirm_generated_purchase" string="Confirm _Purchase" type="object" class="btn-primary" colspan="1"/>
+                          <button name="generate_delivery" string="Generate _Delivery" type="object" class="btn-primary" />
                       </group>                          
                       <group colspan="4" col="2">
                           <separator string="G. Close customer order delivered:"/>

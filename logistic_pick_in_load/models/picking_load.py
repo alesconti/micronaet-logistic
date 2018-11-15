@@ -59,6 +59,7 @@ class StockPicking(models.Model):
         # Partner:
         partner_pool = self.env['res.partner']
         company_pool = self.env['res.company']
+        import pdb; pdb.set_trace()
         
         # ---------------------------------------------------------------------
         #                          Load parameters

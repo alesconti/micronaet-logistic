@@ -739,7 +739,6 @@ class SaleOrderLine(models.Model):
             Order remain uncovered qty to the default supplier            
             Generate purchase order to supplier linked to product
         '''
-        import pdb; pdb.set_trace()
         now = fields.Datetime.now()
         
         # ---------------------------------------------------------------------
