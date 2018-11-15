@@ -96,8 +96,8 @@ class StockPicking(models.Model):
         #                         DB from order temp:
         # ---------------------------------------------------------------------
         # Read header data:
-        import pdb; pdb.set_trace()
         headers = header_pool.search([])
+        import pdb; pdb.set_trace()
         for header in headers:
             partner = header.partner_id
             scheduled_date = header.date_order
@@ -135,12 +135,13 @@ class StockPicking(models.Model):
                         'partner_id': partner.id,
                         'picking_id': picking.id,
                         'product_id': product.id, 
+                        'name': product.name or ' ',
                         'date': scheduled_date,
                         'date_expected': scheduled_date,
                         'location_id': location_from,
                         'location_dest_id': location_to,
                         'logistic_purchase_id': purchase.id,
-                        'product_qty': select_qty,
+                        #'product_qty': select_qty,
                         'product_uom_qty': select_qty,
                         'product_uom': product.uom_id.id,
                         'state': 'done',
@@ -167,12 +168,13 @@ class StockPicking(models.Model):
                         'partner_id': partner.id,
                         'picking_id': picking.id,
                         'product_id': product.id, 
+                        'name': product.name or ' ',
                         'date': scheduled_date,
                         'date_expected': scheduled_date,
                         'location_id': location_from,
                         'location_dest_id': location_to,
                         #'logistic_purchase_id': purchase.id,
-                        'product_qty': product_qty,
+                        #'product_qty': product_qty,
                         'product_uom_qty': product_qty,
                         'product_uom': product.uom_id.id,
                         'state': 'done',
@@ -200,7 +202,8 @@ class StockPicking(models.Model):
         #                          Clean temp data:
         # ---------------------------------------------------------------------
         # Delete detail line:
-        headers.unlink() # line deleted in cascade!
+        # TODO !!!
+        #headers.unlink() # line deleted in cascade!
         return True
         
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
