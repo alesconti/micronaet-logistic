@@ -173,6 +173,13 @@ class StockMoveIn(models.Model):
         index=True, ondelete='set null',
         )
 
+    # LOAD WITHOUT SUPPLIER: Load management:
+    logistic_quant_id = fields.Many2one(
+        'stock.quant', 'Stock quant', 
+        help='Link to stock quant generated (load / unoad data).', 
+        index=True, ondelete='cascade',
+        )
+
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
     """

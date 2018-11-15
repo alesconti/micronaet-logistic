@@ -129,7 +129,9 @@ class StockPicking(models.Model):
                         select_qty = product_qty    
                     product_qty -= select_qty
                     
-                    # Create movement:
+                    # ---------------------------------------------------------
+                    # Create movement (not load stock):
+                    # ---------------------------------------------------------
                     move_pool.create({
                         'company_id': company.id,
                         'partner_id': partner.id,
@@ -140,18 +142,22 @@ class StockPicking(models.Model):
                         'date_expected': scheduled_date,
                         'location_id': location_from,
                         'location_dest_id': location_to,
-                        'logistic_purchase_id': purchase.id,
-                        #'product_qty': select_qty,
                         'product_uom_qty': select_qty,
                         'product_uom': product.uom_id.id,
                         'state': 'done',
-                        #'origin': 
+                        'origin': origin,
+                        # Sale order line link:
+                        'logistic_load_it': load_line.logistic_sale_id.id,
+                        # Purchase order line line: 
+                        'logistic_purchase_id': load_line.id,
+                        'purchase_line_id': load_line.id, # XXX needed?
+                        #'logistic_quant_id': quant.id, # XXX no quants here
+
                         # group_id
                         # reference'
                         # sale_line_id
-                        # purchase_line_id
                         # procure_method,
-                        # 
+                        #'product_qty': select_qty,
                         })
                     if product_qty <= 0.0:
                         break    
@@ -161,7 +167,19 @@ class StockPicking(models.Model):
                 # -------------------------------------------------------------        
                 if product_qty > 0.0:
                     # ---------------------------------------------------------
-                    # Create stock move:
+                    # Create stock quants for remain data
+                    # ---------------------------------------------------------
+                    # TODO link to stock move?
+                    quant = quant_pool.create({
+                        'company_id': company.id,
+                        'product_id': product.id, 
+                        'in_date': scheduled_date,
+                        'location_id': location_to,
+                        'quantity': product_qty,
+                        })
+
+                    # ---------------------------------------------------------
+                    # Create stock move (load stock with quants):
                     # ---------------------------------------------------------
                     move_pool.create({
                         'company_id': company.id,
@@ -173,30 +191,26 @@ class StockPicking(models.Model):
                         'date_expected': scheduled_date,
                         'location_id': location_from,
                         'location_dest_id': location_to,
-                        #'logistic_purchase_id': purchase.id,
-                        #'product_qty': product_qty,
                         'product_uom_qty': product_qty,
                         'product_uom': product.uom_id.id,
                         'state': 'done',
-                        #'origin': 
+                        'origin': origin,
+                        'logistic_quant_id': quant.id, # Link 
+                        # XXX Unlinked from purchase and sale order line!
+                        # Sale order line link:
+                        #'logistic_load_it': load_line.logistic_sale_id.id,
+                        # Purchase order line line: 
+                        #'logistic_purchase_id': load_line.id,
+                        #'purchase_line_id': load_line.id, # XXX needed?
+
                         # group_id
                         # reference'
                         # sale_line_id
                         # purchase_line_id
                         # procure_method,
+                        #'product_qty': select_qty,
                         })
                     
-                    # ---------------------------------------------------------
-                    # Create stock quants for remain data
-                    # ---------------------------------------------------------
-                    # TODO link to stock move?
-                    quant_pool.create({
-                        'company_id': company.id,
-                        'product_id': product.id, 
-                        'in_date': scheduled_date,
-                        'location_id': location_to,
-                        'quantity': product_qty,
-                        })
 
         # ---------------------------------------------------------------------
         #                          Clean temp data:
