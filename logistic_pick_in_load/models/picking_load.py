@@ -223,16 +223,16 @@ class StockPicking(models.Model):
                         })
 
         # ---------------------------------------------------------------------
-        # Update Sale order line:
+        # Update Logistic status:
         # ---------------------------------------------------------------------
-        import pdb; pdb.set_trace()
+        # Mark order line ready:
         for line in sale_line_ready:
             line.write({
                 'logistic_state': 'ready',
                 })
                 
-        # TODO check also order complete:
-                
+        # Mark order all line ready:        
+        line_pool.logistic_check_ready_order(sale_line_ready)        
         # ---------------------------------------------------------------------
         #                          Clean temp data:
         # ---------------------------------------------------------------------

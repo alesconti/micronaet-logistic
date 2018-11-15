@@ -539,6 +539,27 @@ class SaleOrderLine(models.Model):
     #                           UTILITY:
     # -------------------------------------------------------------------------
     @api.model
+    def logistic_check_ready_order(self, sale_lines):
+        ''' Mask as done sale order with all ready lines
+        '''
+        order_checked = []
+        for line in sale_lines:
+            order = line.order_id
+            if order in order_checked:
+                continue
+            # Check line status:
+            line_status = set(order.order_line.maps('logistic_status'))
+            line_status.discard('unused') # remove if present
+            if tuple(line_status) == ('ready', ): # All ready
+                order.write({
+                    'logistic_state': 'ready',
+                    })
+                order_check.append(order)    
+            # TODO manage 'done' state for multidelivery order here!!!!    
+        return True            
+            
+            
+    @api.model
     def return_order_line_list_view(self, line_ids):
         ''' Return order line tree view (selected)
         '''
