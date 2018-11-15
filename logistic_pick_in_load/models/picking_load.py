@@ -98,6 +98,8 @@ class StockPicking(models.Model):
         # Read header data:
         headers = header_pool.search([])
         import pdb; pdb.set_trace()
+
+        sale_line_ready = [] # ready line after assign load qty to purchase
         for header in headers:
             partner = header.partner_id
             scheduled_date = header.date_order
@@ -123,16 +125,24 @@ class StockPicking(models.Model):
                 for purchase_line in product_line_db.get(product, []):
                     load_line, logistic_undelivered_qty = purchase_line
                     if product_qty > logistic_undelivered_qty:
+                        # -----------------------------------------------------
                         # Partially covered:
-                        select_qty = logistic_undelivered_qty
-                    else: # covered all
-                        select_qty = product_qty    
+                        # -----------------------------------------------------
+                        select_qty = logistic_undelivered_qty # received
+                    else: 
+                        # -----------------------------------------------------
+                        # Covered all purchase
+                        # -----------------------------------------------------
+                        select_qty = product_qty # all
+                        
+                        # Logistic status for sale order line == ready
+                        sale_line_ready.append(load_line.logistic_sale_id)
+
                     product_qty -= select_qty
                     
                     # ---------------------------------------------------------
                     # Create movement (not load stock):
                     # ---------------------------------------------------------
-                    import pdb; pdb.set_trace()
                     move_pool.create({
                         'company_id': company.id,
                         'partner_id': partner.id,
@@ -212,6 +222,17 @@ class StockPicking(models.Model):
                         #'product_qty': select_qty,
                         })
 
+        # ---------------------------------------------------------------------
+        # Update Sale order line:
+        # ---------------------------------------------------------------------
+        import pdb; pdb.set_trace()
+        for line in sale_line_ready:
+            line.write({
+                'logistic_state': 'ready',
+                })
+                
+        # TODO check also order complete:
+                
         # ---------------------------------------------------------------------
         #                          Clean temp data:
         # ---------------------------------------------------------------------

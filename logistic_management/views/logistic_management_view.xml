@@ -1,6 +1,43 @@
 <?xml version="1.0"?>
 <openerp>
     <data>         
+         <!--stock.move-->
+         <record model="ir.ui.view" id="view_stock_move_logistic_tree">
+             <field name="name">stock.move.tree</field>
+             <field name="model">stock.move</field>
+             <field name="arch" type="xml">
+                 <tree string="Stock move">
+                     <field name="company_id" invisible="1" />
+                     <field name="picking_id" />                     
+                     <field name="origin" />
+                     <field name="product_id" />
+                     <field name="name" />
+                     <field name="product_uom_qty" />
+                     <field name="product_uom" />
+                     <field name="date" />
+                     <field name="date_expected" />
+                     
+                     <field name="location_id" />
+                     <field name="location_dest_id" />
+                     
+                     <field name="logistic_load_id" />
+                     <field name="logistic_unload_id" />
+                     <field name="logistic_purchase_id" />
+                     <field name="logistic_quant_id" />
+                     <field name="state" invisible="1" />
+                 </tree>
+             </field>
+         </record>
+         <record model="ir.actions.act_window" id="action_stock_move_logistic_form">
+             <field name="name">Stock move logistic</field>
+             <field name="res_model">stock.move</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="view_id" ref="view_stock_move_logistic_tree"/>
+             <field name="context">{}</field>
+             <field name="domain">[]</field>
+         </record>
+         
          <!--purchase.order-->
          <record model="ir.ui.view" id="view_purchase_order_logistic_workflow_form">
              <field name="name">purchase.order.form</field>
@@ -248,6 +285,13 @@
                  action="action_sale_order_line_logistic"
                  sequence="10"
                  />
+                                  
+             <menuitem 
+                 id="menu_stock_move_logistic_form" 
+                 parent="menu_logistic_management_root"
+                 action="action_stock_move_logistic_form"
+                 sequence="40"
+                 />
                  
              <menuitem 
                  id="menu_res_company_parameter_configuration"
@@ -255,12 +299,12 @@
                  name="Configuration"
                  sequence="99"
                  />
-             <menuitem 
-                 id="menu_action_res_company_parameter"
-                 parent="menu_res_company_parameter_configuration"
-                 action="action_res_company_parameter"
-                 sequence="10"
-                 />
+                 <menuitem 
+                     id="menu_action_res_company_parameter"
+                     parent="menu_res_company_parameter_configuration"
+                     action="action_res_company_parameter"
+                     sequence="10"
+                     />
     </data>
 </openerp>
 

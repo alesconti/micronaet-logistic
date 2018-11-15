@@ -62,7 +62,6 @@ class ProductTemplateKitBom(models.Model):
         related='component_id.uom_id')
     product_type = fields.Selection(
         string='Type', related='component_id.type', readonly=True)
-    
 
 class ProductTemplate(models.Model):
     """ Model name: ProductTemplate
