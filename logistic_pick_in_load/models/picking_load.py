@@ -124,19 +124,19 @@ class StockPicking(models.Model):
                 product_qty = line.product_qty
                 for purchase_line in product_line_db.get(product, []):
                     load_line, logistic_undelivered_qty = purchase_line
-                    if product_qty > logistic_undelivered_qty:
+                    if product_qty >= logistic_undelivered_qty:
                         # -----------------------------------------------------
-                        # Partially covered:
+                        # Covered all purchase line:
                         # -----------------------------------------------------
                         select_qty = logistic_undelivered_qty # received
+                        # Logistic status for sale order line == ready
+                        sale_line_ready.append(load_line.logistic_sale_id)
                     else: 
                         # -----------------------------------------------------
-                        # Covered all purchase
+                        # Covered Partially purchase line:
                         # -----------------------------------------------------
                         select_qty = product_qty # all
                         
-                        # Logistic status for sale order line == ready
-                        sale_line_ready.append(load_line.logistic_sale_id)
 
                     product_qty -= select_qty
                     

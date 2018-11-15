@@ -55,7 +55,7 @@
         </record>
         <menuitem 
             parent="menu_logistic_management_root"
-            sequence="20"
+            sequence="5"
             id="menu_logistic_manual_operation_wizard" 
             action="action_logistic_manual_operation_wizard"
              />
