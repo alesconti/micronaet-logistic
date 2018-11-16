@@ -1,6 +1,18 @@
 <?xml version="1.0"?>
 <openerp>
     <data>         
+         <!--stock.picking-->
+         <record model="ir.ui.view" id="view_stock_picking_confirm_out_form">
+             <field name="name">stock.picking.form</field>
+             <field name="model">stock.picking</field>
+             <field name="inherit_id" ref="stock.view_picking_form"/>
+             <field name="arch" type="xml">
+                 <field name="state" position="after">
+                      <button name="workflow_ready_to_done_done_picking" string="Confirm delivery" type="object" class="oe_highlight"/>
+                 </field>
+             </field>
+         </record>
+         
          <!--stock.move-->
          <record model="ir.ui.view" id="view_stock_move_logistic_tree">
              <field name="name">stock.move.tree</field>
@@ -116,6 +128,7 @@
                                          
                                          <separator string="Load document:" colspan="4"/>
                                          <field name="logistic_pick_in_type_id" />
+                                         <field name="logistic_pick_out_type_id" />
                                      </group>
                                  </page>
                              </notebook>

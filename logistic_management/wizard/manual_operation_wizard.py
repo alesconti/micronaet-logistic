@@ -38,6 +38,7 @@ class StockChangeStandardPrice(models.TransientModel):
     # -------------------------------------------------------------------------
     #                               BUTTON EVENT:    
     # -------------------------------------------------------------------------    
+    # ORder phase:
     @api.multi
     def confirm_payment(self):
         ''' A. Confirm draft order if payment is secure
@@ -59,6 +60,7 @@ class StockChangeStandardPrice(models.TransientModel):
         line_pool = self.env['sale.order.line']
         return line_pool.workflok_order_to_uncovered()
 
+    # Purchase phase:
     @api.multi
     def generate_purchase(self):
         ''' D. Generate purchase order for not cover qty
@@ -77,7 +79,8 @@ class StockChangeStandardPrice(models.TransientModel):
         return purchases.write({
             'logistic_state': 'confirmed',
             })    
-        
+
+    # BF Load pchase:        
     @api.multi
     def update_ready(self):
         ''' E. Update order ready with stock or load
@@ -85,11 +88,20 @@ class StockChangeStandardPrice(models.TransientModel):
         picking_pool = self.env['stock.picking']        
         return picking_pool.workflow_ordered_ready()
 
+    # DDT Unload phase:
     @api.multi
     def generate_delivery(self):
         ''' F. Generate delivery order in draft mode
         '''
-        return True
+        order_pool = self.env['sale.order']
+        return order_pool.workflow_ready_to_done_draft_picking()
+
+    @api.multi
+    def confirm_delivery(self):
+        ''' F. Generate delivery order in draft mode
+        '''
+        picking_pool = self.env['stock.picking']        
+        return picking_pool.workflow_ready_to_done_all_done_picking()
 
     @api.multi
     def closed_delivered(self):

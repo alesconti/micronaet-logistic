@@ -60,9 +60,16 @@ class ResCompany(models.Model):
         help='Stock location for q. created',
         required=True,
         )
+        
+    # Pick type for load / unload:
     logistic_pick_in_type_id = fields.Many2one(
         'stock.picking.type', 'Pick in type', 
         help='Picking in type for load documents',
+        required=True,
+        )
+    logistic_pick_out_type_id = fields.Many2one(
+        'stock.picking.type', 'Pick out type', 
+        help='Picking in type for unload documents',
         required=True,
         )
 
@@ -227,6 +234,41 @@ class PurchaseOrderLine(models.Model):
         help='Load linked to this purchase line',
         )
 
+class StockPicking(models.Model):
+    """ Model name: Stock pickig
+    """
+    
+    _inherit = 'stock.picking'
+    
+    # -------------------------------------------------------------------------
+    #                                   UTILITY:
+    # -------------------------------------------------------------------------
+    @api.model
+    def workflow_ready_to_done_all_done_picking(self):
+        ''' Confirm draft picking documents
+        '''
+        pickings = self.search([
+            ('state', '=', 'draft'),
+            # TODO out document! (),
+            ])
+        return pickings.workflow_ready_to_done_done_picking()
+
+    # -------------------------------------------------------------------------
+    #                                   BUTTON:
+    # -------------------------------------------------------------------------
+    @api.multi
+    def workflow_ready_to_done_done_picking(self):
+        ''' Confirm draft picking documents
+        '''
+        for picking in self:
+            # TODO check DDT / Invoice management here!:
+            
+            picking.write({
+                'state': 'done',
+                # TODO Invoice sequence
+                # TODO DDT sequence
+                })
+
 class StockQuant(models.Model):
     """ Model name: Stock quant
     """
@@ -249,8 +291,22 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     # -------------------------------------------------------------------------
-    #                   UTILITY: Extra operation before WF
+    #                           UTILITY:
     # -------------------------------------------------------------------------
+    @api.multi
+    def logistic_check_and_set_ready(self):
+        ''' Check if all line are in ready status (excluding unused)
+        '''
+        line_status = set(order.order_line.maps('logistic_status'))
+        line_status.discard('unused') # remove kit line (exploded)
+        line_status.discard('done') # if some line are in done (multidelivery)
+        if tuple(line_status) == ('ready', ): # All ready
+            order.write({
+                'logistic_state': 'ready',
+                })
+        return True
+
+    # Extra operation before WF
     @api.model
     def return_order_list_view(self, order_ids):
         ''' Utility for return selected order in tree view
@@ -515,6 +571,82 @@ class SaleOrder(models.Model):
     # TODO
     #dropshipping = fields.Boolean('Dropshipping', 
     #    help='All order will be managed externally')
+
+    # -------------------------------------------------------------------------
+    # B. Logistic delivery phase: ready > done
+    # -------------------------------------------------------------------------
+    @api.model
+    def workflow_ready_to_done_draft_picking(self):
+        ''' Confirm payment order (before expand kit)
+        '''
+        now = fields.Datetime.now()
+        # Pool used:
+        picking_pool = self.env['stock.picking']
+        move_pool = self.env['stock.move']
+
+        # Parameters:
+        company = company_pool.search([])[0]
+        logistic_pick_out_type = company.logistic_pick_out_type_id
+
+        logistic_pick_out_type_id = logistic_pick_out_type.id
+        location_from = logistic_pick_out_type.default_location_src_id.id
+        location_to = logistic_pick_out_type.default_location_dest_id.id
+
+        orders = self.search([
+            ('logistic_state', '=', 'ready'),
+            ])
+        for order in orders:
+            # Create picking document:
+            partner = order.partner_id
+            name = order.name # same as order_ref
+            origin = _('%s [%s]') % (order.order_ref, header.date_order[:10])
+            
+            picking = picking_pool.create({                
+                'partner_id': partner.id,
+                'scheduled_date': now,
+                'origin': origin,
+                #'move_type': 'direct',
+                'picking_type_id': logistic_pick_out_type_id,
+                'group_id': False,
+                'location_id': location_from,
+                'location_dest_id': location_to,
+                #'priority': 1,                
+                'state': 'draft', # XXX To do manage done phase (for invoice)!!
+                })
+            for line in order.order_line:
+                product = line.product_id
+                product_qty = line.logistic_undelivered_qty
+
+                # ---------------------------------------------------------
+                # Create movement (not load stock):
+                # ---------------------------------------------------------
+                # TODO Check kit!!
+                move_pool.create({
+                    'company_id': company.id,
+                    'partner_id': partner.id,
+                    'picking_id': picking.id,
+                    'product_id': product.id, 
+                    'name': product.name or ' ',
+                    'date': now,
+                    'date_expected': now,
+                    'location_id': location_from,
+                    'location_dest_id': location_to,
+                    'product_uom_qty': product_qty,
+                    'product_uom': product.uom_id.id,
+                    'state': 'done',
+                    'origin': origin,
+                    
+                    # Sale order line link:
+                    'logistic_unload_id': line.id,
+
+                    # group_id
+                    # reference'
+                    # sale_line_id
+                    # procure_method,
+                    #'product_qty': select_qty,
+                    })
+            # TODO check if DDT / INVOICE document:                
+        return True    
         
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft, new order received
@@ -535,28 +667,29 @@ class SaleOrderLine(models.Model):
     
     _inherit = 'sale.order.line'
     
+
     # -------------------------------------------------------------------------
     #                           UTILITY:
     # -------------------------------------------------------------------------
     @api.model
-    def logistic_check_ready_order(self, sale_lines):
+    def logistic_check_ready_order(self, sale_lines=None):
         ''' Mask as done sale order with all ready lines
-        '''
-        order_checked = []
-        for line in sale_lines:
-            order = line.order_id
-            if order in order_checked:
-                continue
-            # Check line status:
-            line_status = set(order.order_line.maps('logistic_status'))
-            line_status.discard('unused') # remove if present
-            if tuple(line_status) == ('ready', ): # All ready
-                order.write({
-                    'logistic_state': 'ready',
-                    })
+            if not present find all order in pending state
+        '''        
+        if sale_lines:
+            # Start from sale order line:
+            order_checked = []
+            for line in sale_lines:
+                order = line.order_id
+                if order in order_checked:
+                    continue
+                order.logistic_check_and_set_ready()
                 order_check.append(order)    
-            # TODO manage 'done' state for multidelivery order here!!!!    
-        return True            
+        else:
+            # Check pending order:
+            orders = order_pool.search([('logistic_state', '=', 'pending')])        
+            orders.logistic_check_and_set_ready()
+        return True
             
             
     @api.model
@@ -636,7 +769,9 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         #                  Modify sale order line status:
         # ---------------------------------------------------------------------
-        update_db = {}
+        update_db = {} # Line to be updated
+        #sale_line_ready = [] # To check if order also is ready
+
         for line in sorted_line:
             product = line.product_id
             
@@ -679,6 +814,7 @@ class SaleOrderLine(models.Model):
                     if stock_qty > order_qty:
                         assign_quantity = order_qty
                         state = 'ready'
+                        #sale_line_ready.append(line)
                     else:    
                         assign_quantity = stock_qty
                         state = 'uncovered'
@@ -739,8 +875,9 @@ class SaleOrderLine(models.Model):
                 selected_order.append(line.order_id)                
 
         # ---------------------------------------------------------------------
-        # Update order to 'ready' status:
+        # Update order to ready / pending status:
         # ---------------------------------------------------------------------
+        # TODO line_pool.logistic_check_ready_order(sale_line_ready)        
         all_ready = set(['ready'])
         for order in selected_order:
             # Generate list of line state, jump not used:                
@@ -952,7 +1089,7 @@ class SaleOrderLine(models.Model):
                 # -------------------------------------------------------------
                 logistic_delivered_qty = 0.0
                 for move in line.delivered_line_ids:
-                    logistic_delivered_qty += move.product_uom_qty # TODO verify
+                    logistic_delivered_qty += move.product_uom_qty #TODO verify
                 line.logistic_delivered_qty = logistic_delivered_qty
                 
                 # -------------------------------------------------------------

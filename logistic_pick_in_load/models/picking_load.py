@@ -97,8 +97,6 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Read header data:
         headers = header_pool.search([])
-        import pdb; pdb.set_trace()
-
         sale_line_ready = [] # ready line after assign load qty to purchase
         for header in headers:
             partner = header.partner_id
@@ -231,8 +229,9 @@ class StockPicking(models.Model):
                 'logistic_state': 'ready',
                 })
                 
-        # Mark order all line ready:        
+        # Check ready order with this line set as ready 
         line_pool.logistic_check_ready_order(sale_line_ready)        
+        
         # ---------------------------------------------------------------------
         #                          Clean temp data:
         # ---------------------------------------------------------------------
