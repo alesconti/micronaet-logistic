@@ -772,6 +772,9 @@ class SaleOrderLine(models.Model):
         update_db = {} # Line to be updated
         #sale_line_ready = [] # To check if order also is ready
 
+        # This fix a bug because stock status don't update immediately
+        quant_used = {} # product quant used during process
+        
         for line in sorted_line:
             product = line.product_id
             
@@ -804,7 +807,9 @@ class SaleOrderLine(models.Model):
             # -----------------------------------------------------------------
             state = False # Used for check if used some pool product
             for used_product in product_list:                    
-                stock_qty = used_product.qty_available
+                # Remove used qty during assign process:
+                stock_qty = used_product.qty_available - \
+                    quant_used.get(product, 0.0)
                 assign_quantity = 0.0 # To check is was created
 
                 # -------------------------------------------------------------
@@ -833,6 +838,12 @@ class SaleOrderLine(models.Model):
                         'logistic_assigned_id': line.id,
                         }            
                     quant_pool.create(data)
+                    
+                    # Save used stock for next elements:
+                    if product not in quant_used:
+                        quant_used[product] = assign_quantity
+                    else:    
+                        quant_used[product] += assign_quantity
                     
                     # Update line if quant created                
                     update_db[line] = {
