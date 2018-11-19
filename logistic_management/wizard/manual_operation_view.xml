@@ -34,12 +34,12 @@
                       <group colspan="4" col="2">
                           <separator string="F. Generate picking out document:"/>
                           <button name="generate_delivery" string="Generate _Delivery" type="object" class="btn-primary" />
-                          <button name="confirm_delivery" string="Confirm delivery document" type="object" />
+                          <!--<button name="confirm_delivery" string="Confirm delivery document" type="object" />-->
                       </group>                          
-                      <group colspan="4" col="2">
+                      <!--<group colspan="4" col="2">
                           <separator string="G. Close customer order delivered:"/>
                           <button name="closed_delivered" string="_Closed Delivered" type="object" class="btn-primary" />
-                      </group>    
+                      </group>-->
                   </sheet>
               </form>
             </field>
