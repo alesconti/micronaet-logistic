@@ -14,8 +14,8 @@
                 </tree>
             </field>
         </record>
-        <record model="ir.ui.view" id="view_mmac_doca_order_tree">
-            <field name="name">mmac.doca.tree</field>
+        <record model="ir.ui.view" id="view_mmac_doca_order_form">
+            <field name="name">mmac.doca.form</field>
             <field name="model">mmac.doca</field>
             <field name="arch" type="xml">
                 <form string="Purchase line">
@@ -56,19 +56,20 @@
                 </form>
             </field>
         </record>
-        <record model="ir.actions.act_window" id="action_temp_mmac_doca_order">
+        <record model="ir.actions.act_window" id="action_temp_mmac_doca_order_document">
             <field name="name">Temp load document</field>
             <field name="res_model">mmac.doca</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_mmac_doca_order_tree"/>
+            <field name="context">{'form_view_ref':'logistic_pick_in_load.view_mmac_doca_order_form'}</field>
         </record>
         
         <menuitem
              id="menu_logistic_left_temp_pick_in_document" 
              parent="logistic_management.menu_logistic_left_pick_in_root"
              name="Temp load document"
-             action="action_temp_mmac_doca_order"
+             action="action_temp_mmac_doca_order_document"
              sequence="5"             
              />
                  
