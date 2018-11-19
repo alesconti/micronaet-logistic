@@ -328,7 +328,7 @@ class SaleOrder(models.Model):
             'target': 'current', # 'new'
             'nodestroy': False,
             }
-            
+
     @api.model
     def check_exploded_product_kit(self):
         ''' Check if there's kit in product, launch explode operation
@@ -685,8 +685,9 @@ class SaleOrderLine(models.Model):
                 order = line.order_id
                 if order in order_checked:
                     continue
+                # Check sale.order logistic status (once):    
                 order.logistic_check_and_set_ready()
-                order_check.append(order)    
+                order_checked.append(order)    
         else:
             # Check pending order:
             orders = order_pool.search([('logistic_state', '=', 'pending')])        

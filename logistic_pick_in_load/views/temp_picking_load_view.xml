@@ -20,7 +20,7 @@
             <field name="arch" type="xml">
                 <form string="Purchase line">
                     <header>
-                             <field name="state" /> <!--widget-->
+                             <field name="state" widget="statusbar"/> 
                     </header>
                     <sheet>
                         <group colspan="4" col="4">
