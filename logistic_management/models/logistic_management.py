@@ -274,7 +274,7 @@ class StockPicking(models.Model):
         ''' Assign invoice number depend on fiscal position and parameter in
             partner configuration
         '''
-        # TODO Manage configuration
+        # TODO Manage sequence from fiscal position
         for picking in self:
             picking.write({
                 'invoice_number': self.env['ir.sequence'].next_by_code(
@@ -287,7 +287,7 @@ class StockPicking(models.Model):
         ''' Assign DDt number depend on fiscal position and parameter in
             partner configuration
         '''
-        # TODO Manage configuration
+        # TODO Manage sequence from fiscal position
         for picking in self:
             picking.write({
                 'ddt_number': self.env['ir.sequence'].next_by_code(
@@ -692,6 +692,9 @@ class SaleOrder(models.Model):
         orders = self.search([
             ('logistic_state', '=', 'ready'),
             ])
+            
+        ddt_list = []
+        invoice_list = []    
         for order in orders:
             # Create picking document:
             partner = order.partner_id
@@ -711,6 +714,13 @@ class SaleOrder(models.Model):
                 #'priority': 1,                
                 'state': 'draft', # XXX To do manage done phase (for invoice)!!
                 })
+                
+            # Sequence to be assigned:
+            if partner.need_ddt or order.need_ddt:
+                invoice_list.append(picking)
+            if partner.need_ddt or order.need_ddt:
+                ddt_list.append(picking)
+                   
             for line in order.order_line:
                 product = line.product_id
                 product_qty = line.logistic_undelivered_qty
@@ -747,6 +757,15 @@ class SaleOrder(models.Model):
                     #'product_qty': select_qty,
                     })
             # TODO check if DDT / INVOICE document:
+
+        # ---------------------------------------------------------------------
+        # Invoice and DDT assign
+        # ---------------------------------------------------------------------
+        for picking in ddt_list:
+            picking.assign_ddt_number()
+            
+        for picking in invoice_list:
+            picking.assign_invoice_number()
             
         # ---------------------------------------------------------------------
         # Order status:    
