@@ -291,6 +291,18 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     # -------------------------------------------------------------------------
+    #                           BUTTON EVENTS:
+    # -------------------------------------------------------------------------
+    # Extra operation before WF
+    @api.multi
+    def return_order_line_list_view(self):
+        ''' Return order line in a tree view
+        '''
+        line_ids = self[0].order_line.mapped('id')
+        return self.env['sale.order.line'].return_order_line_list_view(
+            line_ids)
+
+    # -------------------------------------------------------------------------
     #                           UTILITY:
     # -------------------------------------------------------------------------
     @api.multi # XXX not api.one?!?
@@ -698,6 +710,7 @@ class SaleOrderLine(models.Model):
     def return_order_line_list_view(self, line_ids):
         ''' Return order line tree view (selected)
         '''
+        # Gef view
         model_pool = self.env['ir.model.data']
         tree_view_id = model_pool.get_object_reference(
             'logistic_management', 'view_sale_order_line_logistic_tree')[1]
