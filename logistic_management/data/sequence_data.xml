@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <openerp>
-    <data>
-        <record model="ir.sequence" id="data_sequence_stock_picking_invoice" noupdate="1">
+    <data noupdate="1">
+        <record model="ir.sequence" id="data_sequence_stock_picking_invoice">
             <field name="name">Picking Invoice 1</field>
             <field name="code">stock.picking.invoice.sequence</field>
             <field name="implementation">no_gap</field>
@@ -13,7 +13,7 @@
             <field name="padding">6</field>
             <field name="use_data_range">1</field>
         </record>
-        <record model="ir.sequence" id="data_sequence_stock_picking_ddt" noupdate="1">
+        <record model="ir.sequence" id="data_sequence_stock_picking_ddt">
             <field name="name">Picking DDT 1</field>
             <field name="code">stock.picking.ddt.sequence</field>
             <field name="implementation">no_gap</field>

@@ -329,8 +329,8 @@ class ResPartner(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    need_invoice = fields.boolean('Always invoice')
-    need_ddt = fields.boolean('Always DDT')
+    need_invoice = fields.Boolean('Always invoice')
+    need_ddt = fields.Boolean('Always DDT')
 
 
 class StockQuant(models.Model):
@@ -756,8 +756,8 @@ class SaleOrder(models.Model):
         return True    
 
     # Only for this order:        
-    need_invoice = fields.boolean('Always invoice')
-    need_ddt = fields.boolean('Always DDT')
+    need_invoice = fields.Boolean('Always invoice')
+    need_ddt = fields.Boolean('Always DDT')
 
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft, new order received

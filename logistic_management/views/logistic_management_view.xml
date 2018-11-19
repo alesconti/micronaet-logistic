@@ -1,6 +1,18 @@
 <?xml version="1.0"?>
 <openerp>
     <data>         
+         <!--res.partner-->
+         <record model="ir.ui.view" id="view_res_partner_form">
+             <field name="name">res.partner.form</field>
+             <field name="model">res.partner</field>
+             <field name="inherit_id" ref="base.view_partner_form"/>
+             <field name="arch" type="xml">
+                 <field name="name" position="after">
+                     <field name="need_ddt" />
+                     <field name="need_invoice" />
+                 </field>
+             </field>
+         </record>
          <!--stock.picking-->
          <record model="ir.ui.view" id="view_stock_picking_confirm_out_form">
              <field name="name">stock.picking.form</field>
@@ -10,8 +22,8 @@
                  <field name="state" position="after">
                       <button name="workflow_ready_to_done_done_picking" string="Confirm delivery" type="object" class="oe_highlight"/>
                       
-                      <button name="assign_ddt_number" string="Assign DDT" type="object" class="oe_highlight" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
-                      <button name="assign_invoice_number" string="Assign Invoice" type="object" class="oe_highlight" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
+                      <button name="assign_ddt_number" string="Assign DDT" type="object" class="oe_highlight" attrs="{'invisible': ['|',('sale_order_id','=',False),('ddt_number','!=',False)]}"/>
+                      <button name="assign_invoice_number" string="Assign Invoice" type="object" class="oe_highlight" attrs="{'invisible': ['|',('sale_order_id','=',False),('invoice_number','!=',False)]}"/>
                  </field>
                  <field name="origin" position="after">
                     <field name="sale_order_id" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
@@ -20,6 +32,20 @@
                  </field>
              </field>
          </record>
+
+         <record model="ir.ui.view" id="view_stock_picking_confirm_out_tree">
+             <field name="name">stock.picking.tree</field>
+             <field name="model">stock.picking</field>
+             <field name="inherit_id" ref="stock.vpicktree"/>
+             <field name="arch" type="xml">
+                 <field name="state" position="before">
+                    <field name="sale_order_id" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
+                    <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}"/>
+                    <field name="ddt_number" attrs="{'invisible': [('ddt_number','=',False)]}"/>
+                 </field>
+             </field>
+         </record>
+                
          
          <!--stock.move-->
          <record model="ir.ui.view" id="view_stock_move_logistic_tree">
@@ -186,6 +212,10 @@
                  </field>
                  <field name="partner_id" position="after">
                      <field name="logistic_state" readonly="1"/>
+                 </field>
+                 <field name="payment_term_id" position="after">
+                     <field name="need_ddt" />
+                     <field name="need_invoice" />
                  </field>
              </field>
          </record>    
