@@ -9,6 +9,9 @@
              <field name="arch" type="xml">
                  <field name="state" position="after">
                       <button name="workflow_ready_to_done_done_picking" string="Confirm delivery" type="object" class="oe_highlight"/>
+                      
+                      <button name="assign_ddt_number" string="Assign DDT" type="object" class="oe_highlight" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
+                      <button name="assign_invoice_number" string="Assign Invoice" type="object" class="oe_highlight" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
                  </field>
                  <field name="origin" position="after">
                     <field name="sale_order_id" attrs="{'invisible': [('sale_order_id','=',False)]}"/>

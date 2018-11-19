@@ -269,12 +269,69 @@ class StockPicking(models.Model):
                 # TODO DDT sequence
                 })
 
+    @api.multi
+    def assign_invoice_number(self):
+        ''' Assign invoice number depend on fiscal position and parameter in
+            partner configuration
+        '''
+        # TODO Manage configuration
+        for picking in self:
+            picking.write({
+                'invoice_number': self.env['ir.sequence'].next_by_code(
+                    'stock.picking.invoice.sequence')
+                })
+        return True
+                
+    @api.multi
+    def assign_ddt_number(self):
+        ''' Assign DDt number depend on fiscal position and parameter in
+            partner configuration
+        '''
+        # TODO Manage configuration
+        for picking in self:
+            picking.write({
+                'ddt_number': self.env['ir.sequence'].next_by_code(
+                    'stock.picking.ddt.sequence')
+                })
+        return True
+        
     # -------------------------------------------------------------------------
-    #                                   UTILITY:
+    #                                   COLUMNS:
     # -------------------------------------------------------------------------
     sale_order_id = fields.Many2one(
         'sale.order', 'Sale order', help='Sale order generator')
+        
+    # Fiscal number:    
+    invoice_number = fields.Char('Invoice number') 
+    ddt_number = fields.Char('DDT number') 
     
+    
+class AccountFiscalPosition(models.Model):
+    """ Model name: Stock quant
+    """
+    
+    _inherit = 'account.fiscal.position'
+    
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
+    invoice_id = fields.Many2one(
+        'ir.sequence', 'Invoice sequence', help='Invoice sequence default')        
+    ddt_id = fields.Many2one(
+        'ir.sequence', 'DDT sequence', help='DDT sequence default')
+        
+class ResPartner(models.Model):
+    """ Model name: Res Partner
+    """
+    
+    _inherit = 'res.partner'
+    
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
+    need_invoice = fields.boolean('Always invoice')
+    need_ddt = fields.boolean('Always DDT')
+
 
 class StockQuant(models.Model):
     """ Model name: Stock quant
@@ -697,7 +754,11 @@ class SaleOrder(models.Model):
         # Change status order ready > done
         orders.logistic_check_and_set_done()
         return True    
-        
+
+    # Only for this order:        
+    need_invoice = fields.boolean('Always invoice')
+    need_ddt = fields.boolean('Always DDT')
+
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft, new order received
         ('payment', 'Payment confirmed'), # Payment confirmed

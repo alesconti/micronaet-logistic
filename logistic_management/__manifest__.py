@@ -44,8 +44,12 @@
         #'security/crm_security.xml',
         #'security/ir.model.access.csv',
 
+        # Views:
         'views/logistic_management_view.xml',
         'wizard/manual_operation_view.xml',
+        
+        # Data:
+        'data/sequence_data.xml',
         ],
     'demo': [],
     'css': [],
