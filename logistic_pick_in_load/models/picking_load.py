@@ -137,7 +137,6 @@ class StockPicking(models.Model):
                         # Covered Partially purchase line:
                         # -----------------------------------------------------
                         select_qty = product_qty # all
-                        
 
                     product_qty -= select_qty
                     
@@ -176,7 +175,7 @@ class StockPicking(models.Model):
                 
                 # -------------------------------------------------------------        
                 # Not covered with orders, load stock directly:
-                # -------------------------------------------------------------        
+                # -------------------------------------------------------------       
                 if product_qty > 0.0:
                     # ---------------------------------------------------------
                     # Create stock quants for remain data

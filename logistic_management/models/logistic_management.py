@@ -269,6 +269,13 @@ class StockPicking(models.Model):
                 # TODO DDT sequence
                 })
 
+    # -------------------------------------------------------------------------
+    #                                   UTILITY:
+    # -------------------------------------------------------------------------
+    sale_order_id = fields.Many2one(
+        'sale.order', 'Sale order', help='Sale order generator')
+    
+
 class StockQuant(models.Model):
     """ Model name: Stock quant
     """
@@ -316,6 +323,19 @@ class SaleOrder(models.Model):
             if tuple(line_state) == ('ready', ): # All ready
                 order.write({
                     'logistic_state': 'ready',
+                    })
+        return True
+
+    @api.multi
+    def logistic_check_and_set_done(self):
+        ''' Check if all line are in done state (excluding unused)
+        '''
+        for order in self:
+            line_state = set(order.order_line.mapped('logistic_state'))
+            line_state.discard('unused') # remove kit line (exploded)
+            if tuple(line_state) == ('done', ): # All ready
+                order.write({
+                    'logistic_state': 'done',
                     })
         return True
 
@@ -593,11 +613,15 @@ class SaleOrder(models.Model):
         ''' Confirm payment order (before expand kit)
         '''
         now = fields.Datetime.now()
+        
         # Pool used:
         picking_pool = self.env['stock.picking']
         move_pool = self.env['stock.move']
+        company_pool = self.env['res.company']
 
+        # ---------------------------------------------------------------------
         # Parameters:
+        # ---------------------------------------------------------------------
         company = company_pool.search([])[0]
         logistic_pick_out_type = company.logistic_pick_out_type_id
 
@@ -605,6 +629,9 @@ class SaleOrder(models.Model):
         location_from = logistic_pick_out_type.default_location_src_id.id
         location_to = logistic_pick_out_type.default_location_dest_id.id
 
+        # ---------------------------------------------------------------------
+        # Select order to prepare:
+        # ---------------------------------------------------------------------
         orders = self.search([
             ('logistic_state', '=', 'ready'),
             ])
@@ -612,9 +639,10 @@ class SaleOrder(models.Model):
             # Create picking document:
             partner = order.partner_id
             name = order.name # same as order_ref
-            origin = _('%s [%s]') % (order.order_ref, header.date_order[:10])
+            origin = _('%s [%s]') % (order.name, order.create_date[:10])
             
             picking = picking_pool.create({                
+                'sale_order_id': order.id, # Link to order
                 'partner_id': partner.id,
                 'scheduled_date': now,
                 'origin': origin,
@@ -629,6 +657,9 @@ class SaleOrder(models.Model):
             for line in order.order_line:
                 product = line.product_id
                 product_qty = line.logistic_undelivered_qty
+                
+                # Update line status:
+                line.write({'logistic_state': 'done',})
 
                 # ---------------------------------------------------------
                 # Create movement (not load stock):
@@ -658,7 +689,13 @@ class SaleOrder(models.Model):
                     # procure_method,
                     #'product_qty': select_qty,
                     })
-            # TODO check if DDT / INVOICE document:                
+            # TODO check if DDT / INVOICE document:
+            
+        # ---------------------------------------------------------------------
+        # Order status:    
+        # ---------------------------------------------------------------------
+        # Change status order ready > done
+        orders.logistic_check_and_set_done()
         return True    
         
     logistic_state = fields.Selection([
@@ -940,7 +977,7 @@ class SaleOrderLine(models.Model):
         purchase_pool = self.env['purchase.order']
         purchase_line_pool = self.env['purchase.order.line']        
 
-        # Update only pending order with uncovered lines
+        # Update only pending order with uncovworkflow_ered lines
         lines = self.search([
             # Filter logistic state:
             ('order_id.logistic_state', '=', 'pending'),
