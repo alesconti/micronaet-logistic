@@ -293,17 +293,18 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     #                           UTILITY:
     # -------------------------------------------------------------------------
-    @api.multi
+    @api.multi # XXX not api.one?!?
     def logistic_check_and_set_ready(self):
-        ''' Check if all line are in ready status (excluding unused)
+        ''' Check if all line are in ready state (excluding unused)
         '''
-        line_status = set(order.order_line.maps('logistic_status'))
-        line_status.discard('unused') # remove kit line (exploded)
-        line_status.discard('done') # if some line are in done (multidelivery)
-        if tuple(line_status) == ('ready', ): # All ready
-            order.write({
-                'logistic_state': 'ready',
-                })
+        for order in self:
+            line_state = set(order.order_line.mapped('logistic_state'))
+            line_state.discard('unused') # remove kit line (exploded)
+            line_state.discard('done') # if some line are in done (multidelivery)
+            if tuple(line_state) == ('ready', ): # All ready
+                order.write({
+                    'logistic_state': 'ready',
+                    })
         return True
 
     # Extra operation before WF
@@ -676,6 +677,7 @@ class SaleOrderLine(models.Model):
         ''' Mask as done sale order with all ready lines
             if not present find all order in pending state
         '''        
+        order_pool = self.env['sale.order']
         if sale_lines:
             # Start from sale order line:
             order_checked = []
@@ -690,7 +692,6 @@ class SaleOrderLine(models.Model):
             orders = order_pool.search([('logistic_state', '=', 'pending')])        
             orders.logistic_check_and_set_ready()
         return True
-            
             
     @api.model
     def return_order_line_list_view(self, line_ids):
@@ -807,14 +808,14 @@ class SaleOrderLine(models.Model):
             # -----------------------------------------------------------------
             state = False # Used for check if used some pool product
             for used_product in product_list:                    
-                # Remove used qty during assign process:
+                # XXX Remove used qty during assign process:
                 stock_qty = used_product.qty_available - \
                     quant_used.get(product, 0.0)
-                assign_quantity = 0.0 # To check is was created
 
                 # -------------------------------------------------------------
                 # Manage mode of use stock: (TODO better available)
                 # -------------------------------------------------------------
+                assign_quantity = 0.0 # To check is was created
                 if mode == 'first_available' and stock_qty:
                     if stock_qty > order_qty:
                         assign_quantity = order_qty
@@ -839,7 +840,9 @@ class SaleOrderLine(models.Model):
                         }            
                     quant_pool.create(data)
                     
+                    # ---------------------------------------------------------
                     # Save used stock for next elements:
+                    # ---------------------------------------------------------
                     if product not in quant_used:
                         quant_used[product] = assign_quantity
                     else:    

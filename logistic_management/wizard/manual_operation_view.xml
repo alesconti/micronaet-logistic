@@ -54,10 +54,17 @@
             <field name="view_id" ref="view_logistic_manual_operation_wizard"/>
             <field name="target">new</field>
         </record>
+        
         <menuitem 
             parent="menu_logistic_management_root"
             sequence="5"
             id="menu_logistic_manual_operation_wizard" 
+            action="action_logistic_manual_operation_wizard"
+             />
+        <menuitem 
+            parent="menu_logistic_left_configuration_root"
+            sequence="5"
+            id="menu_logistic_manual_operation_wizard_master" 
             action="action_logistic_manual_operation_wizard"
              />
         

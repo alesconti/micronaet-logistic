@@ -286,6 +286,307 @@
              <field name="context">{'form_view_ref': 'logistic_management.view_sale_order_line_logistic_form'}</field>
              <field name="domain">[]</field>
          </record>
+         
+         
+         <!--MASTER ACTION:-->
+         <!--sale.order action:-->
+         <record model="ir.actions.act_window" id="action_sale_order_all_form">
+             <field name="name">Sale order all</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_sale_order_draft_form">
+             <field name="name">Sale order draft</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'draft')]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_sale_order_payment_form">
+             <field name="name">Sale order payment</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'payment')]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_sale_order_order_form">
+             <field name="name">Sale order order</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'order')]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_sale_order_pending_form">
+             <field name="name">Sale order pending</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'pending')]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_sale_order_ready_form">
+             <field name="name">Sale order ready</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'ready')]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_sale_order_done_form">
+             <field name="name">Sale order done</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'done')]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_sale_order_error_form">
+             <field name="name">Sale order error</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'error')]</field>
+         </record>
+
+         <!--purchase.order action:-->
+         <record model="ir.actions.act_window" id="action_purchase_order_all">
+             <field name="name">Purchase order all</field>
+             <field name="res_model">purchase.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_purchase_order_draft">
+             <field name="name">Purchase order draft</field>
+             <field name="res_model">purchase.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'draft')]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_purchase_order_confirmed">
+             <field name="name">Purchase order confirmed</field>
+             <field name="res_model">purchase.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'confirmed')]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_purchase_order_done">
+             <field name="name">Purchase order closed</field>
+             <field name="res_model">purchase.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'done')]</field>
+         </record>
+         
+         <!--stock.picking action:-->
+         <record model="ir.actions.act_window" id="action_stock_picking_in">
+             <field name="name">Load document</field>
+             <field name="res_model">stock.picking</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('picking_type_code', '=', 'incoming')]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_stock_picking_out">
+             <field name="name">Unload document</field>
+             <field name="res_model">stock.picking</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('picking_type_code', '=', 'outgoing')]</field>
+         </record>
+
+         <!--MASTER MENU:-->
+         <menuitem
+             id="menu_logistic_header_root" 
+             name="Logistic"
+             sequence="0"             
+             />
+             <menuitem
+                 id="menu_logistic_left_order_root" 
+                 parent="menu_logistic_header_root"
+                 name="Sale order"
+                 sequence="10"             
+                 />
+                 <menuitem
+                     id="menu_logistic_left_order_all" 
+                     parent="menu_logistic_left_order_root"
+                     name="Order all"
+                     action="action_sale_order_all_form"
+                     sequence="10"
+                     />
+                 <menuitem
+                     id="menu_logistic_left_order_draft" 
+                     parent="menu_logistic_left_order_root"
+                     name="Logistic state draft"
+                     action="action_sale_order_draft_form"
+                     sequence="20"
+                     />
+                 <menuitem
+                     id="menu_logistic_left_order_payment" 
+                     parent="menu_logistic_left_order_root"
+                     name="Logistic stater payment"
+                     action="action_sale_order_payment_form"
+                     sequence="30"
+                     />
+                 <menuitem
+                     id="menu_logistic_left_order_order" 
+                     parent="menu_logistic_left_order_root"
+                     name="Logistic state order"
+                     action="action_sale_order_order_form"
+                     sequence="40"
+                     />
+                 <menuitem
+                     id="menu_logistic_left_order_pending" 
+                     parent="menu_logistic_left_order_root"
+                     name="Logistic state pending"
+                     action="action_sale_order_pending_form"
+                     sequence="50"
+                     />
+                 <menuitem
+                     id="menu_logistic_left_order_ready" 
+                     parent="menu_logistic_left_order_root"
+                     name="Logistic state ready"
+                     action="action_sale_order_ready_form"
+                     sequence="60"
+                     />
+                 <menuitem
+                     id="menu_logistic_left_order_done" 
+                     parent="menu_logistic_left_order_root"
+                     name="Logistic state done"
+                     action="action_sale_order_done_form"
+                     sequence="70"
+                     />
+                 <menuitem
+                     id="menu_logistic_left_order_error" 
+                     parent="menu_logistic_left_order_root"
+                     name="Logistic state error"
+                     action="action_sale_order_error_form"
+                     sequence="80"
+                     />
+                 
+             <menuitem
+                 id="menu_logistic_left_order_line_root" 
+                 parent="menu_logistic_header_root"
+                 name="Sale order line"
+                 sequence="15"             
+                 />
+                 <menuitem
+                     id="menu_logistic_left_order_line_all" 
+                     parent="menu_logistic_left_order_line_root"
+                     name="Sale order line all"
+                     action="action_sale_order_line_logistic"
+                     sequence="10" 
+                     />
+                 
+             <menuitem
+                 id="menu_logistic_left_purchase_root" 
+                 parent="menu_logistic_header_root"
+                 name="Purchase order"
+                 sequence="20"
+                 />
+                 <menuitem
+                     id="menu_logistic_left_purchase_all" 
+                     parent="menu_logistic_left_purchase_root"
+                     name="Purchase order all"
+                     sequence="10"
+                     />
+                 <menuitem
+                     id="menu_logistic_left_purchase_draft" 
+                     parent="menu_logistic_left_purchase_root"
+                     name="Purchase order draft"
+                     action="action_purchase_order_draft"
+                     sequence="10"
+                     />
+                 <menuitem
+                     id="menu_logistic_left_purchase_confirmed" 
+                     parent="menu_logistic_left_purchase_root"
+                     name="Purchase order confirmed"
+                     action="action_purchase_order_confirmed"
+                     sequence="10"
+                     />
+                 <menuitem
+                     id="menu_logistic_left_purchase_done" 
+                     parent="menu_logistic_left_purchase_root"
+                     name="Purchase order done"
+                     action="action_purchase_order_done"
+                     sequence="10"
+                     />
+             <menuitem
+                 id="menu_logistic_left_purchase_line_root" 
+                 parent="menu_logistic_header_root"
+                 name="Purchase order line"
+                 sequence="25"
+                 />
+                 
+             <menuitem
+                 id="menu_logistic_left_pick_in_root" 
+                 parent="menu_logistic_header_root"
+                 name="BF load document"
+                 sequence="30"             
+                 />
+                 <menuitem
+                     id="menu_logistic_left_pick_in_document" 
+                     parent="menu_logistic_left_pick_in_root"
+                     name="BF load document"
+                     action="action_stock_picking_in"
+                     sequence="10"             
+                     />
+                 
+             <menuitem
+                 id="menu_logistic_left_pick_out_root" 
+                 parent="menu_logistic_header_root"
+                 name="BC unload document"
+                 sequence="40"             
+                 />
+                 <menuitem
+                     id="menu_logistic_left_pick_out_document" 
+                     parent="menu_logistic_left_pick_out_root"
+                     name="BC unload document"
+                     action="action_stock_picking_out"
+                     sequence="10"             
+                     />
+
+             <menuitem
+                 id="menu_logistic_left_stock_move_root" 
+                 parent="menu_logistic_header_root"
+                 name="Stock move"
+                 sequence="50"             
+                 />
+                 <menuitem
+                     id="menu_logistic_left_stock_move_all" 
+                     parent="menu_logistic_left_stock_move_root"
+                     name="Stock move all"
+                     action="action_stock_move_logistic_form"
+                     sequence="10"             
+                     />
+
+             <menuitem
+                 id="menu_logistic_left_configuration_root" 
+                 parent="menu_logistic_header_root"
+                 name="Configuration"
+                 sequence="99"             
+                 />
+                 <menuitem 
+                     id="menu_logistic_left_configuration_parameter"
+                     parent="menu_logistic_left_configuration_root"
+                     action="action_res_company_parameter"
+                     sequence="10"
+                     />
+             
+             
+         <!--ODOO MENU:-->
          <menuitem 
              id="menu_logistic_management_root" 
              parent="stock.menu_stock_root" 

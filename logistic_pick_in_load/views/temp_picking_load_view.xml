@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_mmac_doca_order_tree">
+            <field name="name">mmac.doca.tree</field>
+            <field name="model">mmac.doca</field>
+            <field name="arch" type="xml">
+                <tree string="Temp BF pick in" >
+                     <field name="name" />
+                     <field name="order_ref" />
+                     <field name="date_order" />
+                     <field name="partner_id" />                     
+                     <field name="state" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_mmac_doca_order_tree">
+            <field name="name">mmac.doca.tree</field>
+            <field name="model">mmac.doca</field>
+            <field name="arch" type="xml">
+                <form string="Purchase line">
+                    <header>
+                             <field name="state" /> <!--widget-->
+                    </header>
+                    <sheet>
+                        <group colspan="4" col="4">
+                             <field name="name" />
+                             <field name="order_ref" />
+                             <field name="date_order" />
+                             <field name="partner_id" />                     
+                             <separator string="Detail:" colspan="4"/>
+                             <field name="doca_line" colspan="4" nolabel="1">
+                                 <tree string="Detail:" editable="bottom"> 
+                                     <field name="name" />
+                                     <field name="product_id" />
+                                     <field name="product_qty" />
+                                     <field name="progressivo" />
+                                     <field name="operatore" />
+                                     <field name="state" />                                     
+                                 </tree>
+                                 <form string="Detail"> 
+                                    <sheet>
+                                        <group colspan="4" col="4">                                     
+                                             <field name="name" />
+                                             <field name="product_id" />
+                                             <field name="product_qty" />
+                                             <field name="progressivo" />
+                                             <field name="operatore" />
+                                             <field name="state" />                                     
+                                        </group>
+                                    </sheet>         
+                                 </form>
+                             </field>
+                        </group>     
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_temp_mmac_doca_order">
+            <field name="name">Temp load document</field>
+            <field name="res_model">mmac.doca</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_mmac_doca_order_tree"/>
+        </record>
+        
+        <menuitem
+             id="menu_logistic_left_temp_pick_in_document" 
+             parent="logistic_management.menu_logistic_left_pick_in_root"
+             name="Temp load document"
+             action="action_temp_mmac_doca_order"
+             sequence="5"             
+             />
+                 
+    </data>
+</openerp>

@@ -37,6 +37,7 @@
         ],
     'data': [
         'views/picking_load_view.xml',
+        'views/temp_picking_load_view.xml',
         ],
     'demo': [],
     'css': [],

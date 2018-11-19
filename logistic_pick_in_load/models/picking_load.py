@@ -51,6 +51,9 @@ class StockPicking(models.Model):
         # Stock movement:
         move_pool = self.env['stock.move']
         quant_pool = self.env['stock.quant']
+
+        # Sale order detail:
+        sale_line_pool = self.env['sale.order.line']
        
         # Purchase order detail:
         #purchase_pool = self.env['purchase.order']
@@ -230,7 +233,7 @@ class StockPicking(models.Model):
                 })
                 
         # Check ready order with this line set as ready 
-        line_pool.logistic_check_ready_order(sale_line_ready)        
+        sale_line_pool.logistic_check_ready_order(sale_line_ready)        
         
         # ---------------------------------------------------------------------
         #                          Clean temp data:
