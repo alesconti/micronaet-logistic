@@ -137,7 +137,7 @@ class PurchaseOrder(models.Model):
             '''
             col = 0
             for item in row_data:    
-                WS.write(row, col, item, format_cell)
+                WS.write(row, col, item)
                 col += 1
             return True
 
@@ -216,12 +216,13 @@ class PurchaseOrder(models.Model):
                 # -------------------------------------------------------------                
                 #                              Excel:
                 # -------------------------------------------------------------                
-                WB = xlsxwriter.Workbook(file_out)
+                WB = xlsxwriter.Workbook(fullname)
                 WS = WB.add_worksheet(purchase.name)
                 
                 row = 0
+                import pdb; pdb.set_trace()
                 if export.header:
-                    WS.xls_write_row(WS, row, expor.header.split('|'))
+                    xls_write_row(WS, row, export.header.split('|'))
                     row += 1
                 
                 for line in purchase.order_line:
