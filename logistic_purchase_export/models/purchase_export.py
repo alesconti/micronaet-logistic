@@ -24,6 +24,7 @@
 import os
 import sys
 import logging
+import xlsxwriter
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
@@ -130,6 +131,16 @@ class PurchaseOrder(models.Model):
         # ---------------------------------------------------------------------
         # Utility:
         # ---------------------------------------------------------------------
+        # Excel:
+        def xls_write_row(WS, row, row_data):
+            ''' Print line in XLS file            
+            '''
+            col = 0
+            for item in row_data:    
+                WS.write(row, col, item, format_cell)
+                col += 1
+            return True
+
         def clean(name):
             ''' Clean name for write in file system
             '''
@@ -176,6 +187,9 @@ class PurchaseOrder(models.Model):
                 ))
             fullname = os.path.join(fullpath, filename)
             if export.mode == 'csv':
+                # -------------------------------------------------------------                
+                #                               CSV:
+                # -------------------------------------------------------------                
                 f_out = open(fullname, 'w')
 
                 # -------------------------------------------------------------                
@@ -199,7 +213,24 @@ class PurchaseOrder(models.Model):
                         ))
                 f_out.close()
             else: # 'xlsx'
-                #WB = xlrd.
-                pass
+                # -------------------------------------------------------------                
+                #                              Excel:
+                # -------------------------------------------------------------                
+                WB = xlsxwriter.Workbook(file_out)
+                WS = WB.add_worksheet(purchase.name)
                 
+                row = 0
+                if export.header:
+                    WS.xls_write_row(WS, row, expor.header.split('|'))
+                    row += 1
+                
+                for line in purchase.order_line:
+                    field_ids = get_field_list(line, export.field_name)
+                    xls_write_row(WS, row, field_ids)
+                    row += 1
+                    
+                try:
+                    WB.close()
+                except:    
+                    _logger.error('Error closing XLSX file')
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
