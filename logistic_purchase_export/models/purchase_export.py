@@ -220,7 +220,6 @@ class PurchaseOrder(models.Model):
                 WS = WB.add_worksheet(purchase.name)
                 
                 row = 0
-                import pdb; pdb.set_trace()
                 if export.header:
                     xls_write_row(WS, row, export.header.split('|'))
                     row += 1

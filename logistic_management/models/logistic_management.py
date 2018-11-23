@@ -1134,10 +1134,19 @@ class SaleOrderLine(models.Model):
 
                 # Update line state:    
                 line.logistic_state = 'ordered' # XXX needed?
-        
+                
+            # -----------------------------------------------------------------
+            # Export if needed:
+            # -----------------------------------------------------------------
+            # Only supplier with setup of folder and file format
+            purchase.export_purchase_order()
+            
         # Sale order still in pending state so no update of logistic status        
         #`TODO Manage dropshipping here?!?
 
+        # ---------------------------------------------------------------------
+        # ---------------------------------------------------------------------
+        
         # Return view:
         return purchase_pool.return_purchase_order_list_view(selected_ids)
 
