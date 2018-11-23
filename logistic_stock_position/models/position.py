@@ -32,12 +32,28 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
-class StockPositionSlot(models.Model):
-    """ Model name: Stock Position Slot
+class StockLocationTable(models.Model):
+    """ Model name: Location Table
     """
     
-    _name = 'stock.position.slot'
-    _description = 'Stock Slot Position '
+    _name = 'stock.location.table'
+    _description = 'Delivery table'
+    _rec_name = 'name'
+    _order = 'code'
+    
+    # -------------------------------------------------------------------------    
+    # Columns:
+    # -------------------------------------------------------------------------
+    code = fields.Integer('Code', required=True)
+    name = fields.Integer('Name', required=True)
+
+
+class StockLocationSlot(models.Model):
+    """ Model name: Stock Location Slot
+    """
+    
+    _name = 'stock.location.slot'
+    _description = 'Stock Location Slot'
     _rec_name = 'name'
     _order = 'name'
 
@@ -77,18 +93,17 @@ class StockPositionSlot(models.Model):
         ('supplier', 'Supplier ready'), # Delivered today (order ready)
         ('pending', 'Supplier pending'), # Delivered tomorrow (order pending)        
         ], string='Mode', default='stock')
-    partner_id = fields.Many2one('res.partner', 'Supplier')    
     description = fields.Char('Description', size=180,
         compute='_get_slot_description',
         help='Explode description depend on mode and name', 
         )
 
-class ResPartnerPendingSlot(models.Model):
-    """ Model name: Res Partner
+class StockTableSlotRel(models.Model):
+    """ Model name: Table relation
     """
     
-    _name = 'res.partner.pending.slot'
-    _description = 'Partner pending'
+    _name = 'stock.table.slot.rel'
+    _description = 'Table-slot relation'
     _rec_name = 'slot_id'
     _order = 'sequence'
 
@@ -96,9 +111,9 @@ class ResPartnerPendingSlot(models.Model):
     # Columns:
     # -------------------------------------------------------------------------
     sequence = fields.Integer('Sequence')
-    partner_id = fields.Many2one(
-        'res.partner', 'Partner', ondelete='cascade')
-    slot_id = fields.Many2one('stock.position.slot', 'Pending slot',
+    table_id = fields.Many2one(
+        'stock.location.table', 'Table', ondelete='cascade')
+    slot_id = fields.Many2one('stock.location.slot', 'Pending slot',
         domain='[("mode", "=", "pending")]', ondelete='cascade',
         context='{"default_mode": "pending"}')
     note = fields.Text('Note')
@@ -111,7 +126,28 @@ class ResPartnerPendingSlot(models.Model):
         'UNIQUE(slot_id)', 
         'Slot jet used in another partner!',
         )]
-        
+
+class StockLocationTable(models.Model):
+    """ Model name: Res Partner table (pre delivery)
+    """
+    
+    _inherit = 'stock.location.table'
+    
+    # -------------------------------------------------------------------------    
+    # Columns:
+    # -------------------------------------------------------------------------
+    # Ready slot:
+    default_slot_id = fields.Many2one(
+        'stock.location.slot', 'Table ready location', 
+        domain='[("mode", "=", "supplier")]', 
+        context='{"default_mode": "supplier"}'
+        )
+
+    # Pending Slots:    
+    pending_slot_ids = fields.One2many(
+         'stock.table.slot.rel', 'table_id', 'Pending slots')
+            
+
 class ResPartner(models.Model):
     """ Model name: Res Partner
     """
@@ -121,20 +157,7 @@ class ResPartner(models.Model):
     # -------------------------------------------------------------------------    
     # Columns:
     # -------------------------------------------------------------------------
-    default_slot_id = fields.Many2one(
-        'stock.position.slot', 'Supplier location', 
-        domain='[("mode", "=", "supplier")]', 
-        context='{"default_mode": "supplier"}')
-    pending_slot_ids = fields.One2many(
-         'res.partner.pending.slot', 'partner_id', 'Pending slot')
+    delivery_table_id = fields.Many2one(
+        'stock.location.table', 'Delivery table')
 
-    # -------------------------------------------------------------------------
-    # SQL Constraints:
-    # -------------------------------------------------------------------------
-    _sql_constraints = [(
-        'slot_id_unique', 
-        'UNIQUE(default_slot_id)', 
-        'Partner slot jet used from another supplier!',
-        )]
-        
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

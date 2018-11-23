@@ -1,4 +1,5 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
-access_stock_position_slot_user,stock.position.slot,model_stock_position_slot,base.group_user,1,1,1,1
-access_res_partner_pending_slot_user,res.partner.pending.slot,model_res_partner_pending_slot,base.group_user,1,1,1,1
+access_stock_location_table_user,stock.location.table,model_stock_location_table,base.group_user,1,1,1,1
+access_stock_location_slot_user,stock.location.slot,model_stock_location_slot,base.group_user,1,1,1,1
+access_stock_table_slot_rel_user,stock.table.slot.rel,model_stock_table_slot_rel,base.group_user,1,1,1,1
 
