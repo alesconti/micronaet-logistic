@@ -70,17 +70,23 @@ class StockLocationSlot(models.Model):
         mask = _('[Mode %s] [Col %s] [Row %s] [Drawer %s] [Side %s] [Slot %s]')
         for slot in self:
             name = slot.name
+            mode = slot.mode
             if not name:
                 slot.description = ''
                 continue
-            slot.description = mask % (
-                mapping.get(slot.mode, ''),
-                name[:1],
-                name[1:2],
-                name[2:3],
-                name[3:4],
-                name[4:5],
-                )
+            if mode == 'stock':    
+                slot.description = mask % (
+                    mapping.get(slot.mode, ''),
+                    name[:1],
+                    name[1:2],
+                    name[2:3],
+                    name[3:4],
+                    name[4:5],
+                    )
+            elif mode == 'supplier':
+                slot.description = ''        
+            elif mode == 'pending':
+                slot.description = ''
         return True
     
     # -------------------------------------------------------------------------    

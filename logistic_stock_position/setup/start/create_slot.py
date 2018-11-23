@@ -60,23 +60,23 @@ rel_pool = odoo.model('stock.table.slot.rel')
 
 # Supplier, suffix, defauls, SL x 5
 database = [
-    ['ACSUD', 'AC-', 'T1', 'T1.UP1', 'T1.UP2', 'APT.1', 'APT.2', 'APT.T'],
-    ['LAMPA', 'LA-', 'T2', 'T2.UP1', 'T2.UP2', 'APT.1', 'APT.2', 'APT.T'],
-    ['SPARMART', 'SP-', 'T3', 'T3.UP1', 'T3.UP2', 'APT.1', 'APT.2', 'APT.T'],
-    ['GIVI', 'GV-', 'T4', 'T4.UP1', 'T4.UP2', 'APT.1', 'APT.2', 'APT.T'],
-    ['KAPPA', 'KK-', 'T4', 'T4.UP1', 'T4.UP2', 'APT.1', 'APT.2', 'APT.T'],
-    ['CAMAMOTO', 'CA-', 'T5', 'T5.UP1', 'T5.UP2', 'APT.1', 'APT.2', 'APT.T'],
-    ['SGR', 'SG-', 'T6', 'T6.UP1', 'T6.UP2', 'APT.1', 'APT.2', 'APT.T'],
-    ['BERGAMASCHI', 'BG-', 'T6', 'T6.UP1', 'T6.UP2', 'APT.1', 'APT.2', 'APT.T'],
-    ['RMS', 'RM-', 'T6', 'T6.UP1', 'T6.UP2', 'APT.1', 'APT.2', 'APT.T'],
-    ['ATHENA', 'AT-', 'T7', 'T7.UP1', 'T7.UP2', 'APT.1', 'APT.2', 'APT.T'],
-    ['LARSSON', 'LR-', 'T7', 'T7.UP1', 'T7.UP2', 'APT.1', 'APT.2', 'APT.T'],
-    ['RICAMBIO', 'RR-', 'T7', 'T7.UP1', 'T7.UP2', 'APT.1', 'APT.2', 'APT.T'],
-    ['MANDELLI', 'MN-', 'T8', 'T8.UP1', 'T8.UP2', 'APT.1', 'APT.2', 'APT.T'],
-    ['FACO', 'FC-', 'T8', 'T8.UP1', 'T8.UP2', 'APT.1', 'APT.2', 'APT.T'],
+    ['ACSUD', 'AC-', 'T1', 'T1.UP1', 'T1.UP2', 'T1.APT.1', 'T1.APT.2', 'T1.APT.T'],
+    ['LAMPA', 'LA-', 'T2', 'T2.UP1', 'T2.UP2', 'T2.APT.1', 'T2.APT.2', 'T2.APT.T'],
+    ['SPARMART', 'SP-', 'T3', 'T3.UP1', 'T3.UP2', 'T3.APT.1', 'T3.APT.2', 'T3.APT.T'],
+    ['GIVI', 'GV-', 'T4', 'T4.UP1', 'T4.UP2', 'T4.APT.1', 'T4.APT.2', 'T4.APT.T'],
+    ['CAMAMOTO', 'CA-', 'T5', 'T5.UP1', 'T5.UP2', 'T5.APT.1', 'T5.APT.2', 'T5.APT.T'],
+    ['SGR', 'SG-', 'T6', 'T6.UP1', 'T6.UP2', 'T6.APT.1', 'T6.APT.2', 'T6.APT.T'],
+    ['ATHENA', 'AT-', 'T7', 'T7.UP1', 'T7.UP2', 'T7.APT.1', 'T7.APT.2', 'T7.APT.T'],
+    ['MANDELLI', 'MN-', 'T8', 'T8.UP1', 'T8.UP2', 'T8.APT.1', 'T8.APT.2', 'T8.APT.T'],
+
+    ['KAPPA', 'KK-', 'T4', 'T4.UP1', 'T4.UP2', 'T4.APT.1', 'T4.APT.2', 'T4.APT.T'],
+    ['BERGAMASCHI', 'BG-', 'T6', 'T6.UP1', 'T6.UP2', 'T6.APT.1', 'T6.APT.2', 'T6.APT.T'],
+    ['RMS', 'RM-', 'T6', 'T6.UP1', 'T6.UP2', 'T6.APT.1', 'T6.APT.2', 'T6.APT.T'],
+    ['LARSSON', 'LR-', 'T7', 'T7.UP1', 'T7.UP2', 'T7.APT.1', 'T7.APT.2', 'T7.APT.T'],
+    ['RICAMBIO', 'RR-', 'T7', 'T7.UP1', 'T7.UP2', 'T7.APT.1', 'T7.APT.2', 'T7.APT.T'],
+    ['FACO', 'FC-', 'T8', 'T8.UP1', 'T8.UP2', 'T8.APT.1', 'T8.APT.2', 'T8.APT.T'],
     ]
 
-import pdb; pdb.set_trace()
 for record in database:
     supplier = record[0]
     prefix = record[1]
@@ -94,7 +94,7 @@ for record in database:
             'name': supplier,
             'supplier': True,
             'is_company': True,
-            'product_suffix': prefix.strip('-'),
+            #'product_suffix': prefix.strip('-'),
             }).id
     
     # -------------------------------------------------------------------------
