@@ -128,6 +128,7 @@ class PurchaseOrder(models.Model):
     def export_purchase_order(self):
         ''' Export purchase order
         '''
+                    
         # ---------------------------------------------------------------------
         # Utility:
         # ---------------------------------------------------------------------
@@ -158,7 +159,26 @@ class PurchaseOrder(models.Model):
         def get_field_list(line, field_name, all_string=False):
             ''' Extract and load data, return a list of values
             '''
+            def formatLang(field, date=True, date_time=False):
+                ''' Fake function for format Format date passed
+                '''
+                # Change italian mode:
+                if not field:
+                    return field
+                res = '%s/%s/%s%s' % (
+                    field[8:10],
+                    field[5:7],
+                    field[:4],
+                    field[10:],                    
+                    )
+                if date_time:
+                    return res
+                elif date:
+                    return res[:10]    
+            
+            # Start procedure:        
             res = []
+
             for f in field_name.split('|'):
                 if all_string:
                     res.append('%s' % eval(f))
@@ -173,6 +193,8 @@ class PurchaseOrder(models.Model):
             partner = purchase.partner_id
             if not partner.purchase_export_id or \
                     not partner.purchase_folder_id:
+                _logger.warning(
+                    'No export needed for purchase: %s' % purchase.name)
                 continue
                 
             # Get export path:
