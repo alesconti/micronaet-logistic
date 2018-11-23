@@ -44,8 +44,8 @@ class StockLocationTable(models.Model):
     # -------------------------------------------------------------------------    
     # Columns:
     # -------------------------------------------------------------------------
-    code = fields.Integer('Code', required=True)
-    name = fields.Integer('Name', required=True)
+    code = fields.Char('Code', size=15, required=True)
+    name = fields.Char('Name', size=40, required=True)
 
 
 class StockLocationSlot(models.Model):
@@ -124,7 +124,7 @@ class StockTableSlotRel(models.Model):
     _sql_constraints = [(
         'slot_id_unique', 
         'UNIQUE(slot_id)', 
-        'Slot jet used in another partner!',
+        'Slot yet used in another partner!',
         )]
 
 class StockLocationTable(models.Model):
