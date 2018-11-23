@@ -76,9 +76,8 @@ class StockChangeStandardPrice(models.TransientModel):
         purchases = purchase_pool.search([
             ('logistic_state', '=', 'draft'),
             ])
-        return purchases.write({
-            'logistic_state': 'confirmed',
-            })    
+        # Lauch action button for change state and export:    
+        return purchases.set_logistic_state_confirmed()
 
     # BF Load pchase:        
     @api.multi

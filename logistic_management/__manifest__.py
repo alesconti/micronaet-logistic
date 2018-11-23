@@ -39,7 +39,7 @@
         'order_line_explode_kit', # Sale kit explode
         'order_line_change_product', # Replaced link product
         'product_default_supplier', # First supplier management
-        'logistic_purchase_export', # Export files
+        #'logistic_purchase_export', # Export files
         ],
     'data': [
         #'security/crm_security.xml',

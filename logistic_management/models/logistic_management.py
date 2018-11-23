@@ -105,12 +105,16 @@ class PurchaseOrder(models.Model):
             }
 
     # -------------------------------------------------------------------------
-    #                                UTILITY:
+    #                            BUTTON:
     # -------------------------------------------------------------------------
+    # Workflow button:
     @api.multi
     def set_logistic_state_confirmed(self):
         ''' Set order as confirmed
         '''
+        # Export if needed the purchase order:
+        self.export_purchase_order()
+        
         return self.write({
             'logistic_state': 'confirmed',
             })
@@ -192,7 +196,7 @@ class PurchaseOrderLine(models.Model):
     """
     
     _inherit = 'purchase.order.line'
-    
+
     # -------------------------------------------------------------------------
     # Function fields:
     # -------------------------------------------------------------------------
@@ -1135,15 +1139,8 @@ class SaleOrderLine(models.Model):
                 # Update line state:    
                 line.logistic_state = 'ordered' # XXX needed?
                 
-            # -----------------------------------------------------------------
-            # Export if needed:
-            # -----------------------------------------------------------------
-            # Only supplier with setup of folder and file format
-            purchase.export_purchase_order()
-            
         # Sale order still in pending state so no update of logistic status        
         #`TODO Manage dropshipping here?!?
-
         # ---------------------------------------------------------------------
         # ---------------------------------------------------------------------
         
