@@ -158,7 +158,7 @@ for record in database:
                         'slot_id': slot_id,
                         })
                 except:        
-                    print 'Error table_id %s slot_id %s' % (table_id, slot_id)
+                    pass#print 'Error table_id %s slot_id %s' % (table_id, slot_id)
 
         mode = 'pending' # other is pending    
         sequence += 1
