@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>         
+          <!--res.partner-->
+          <record model="ir.ui.view" id="view_supplier_position_slot_tree">
+              <field name="name">res.partner.tree</field>
+              <field name="model">res.partner</field>
+              <field name="priority" eval="40" />
+              <field name="arch" type="xml">
+                  <tree string="Supplier slot">        
+                      <field name="name" />
+                      <field name="default_slot_id" />
+                      <field name="pending_slot_ids" />
+                  </tree>
+              </field>
+          </record>
+          <record model="ir.ui.view" id="view_supplier_position_slot_form">
+              <field name="name">res.partner.form</field>
+              <field name="model">res.partner</field>
+              <field name="priority" eval="40" />
+              <field name="arch" type="xml">
+                  <form string="Slot" editable="top">  
+                      <sheet>      
+                          <group colspan="4" col="4">
+                              <field name="image" widget="image" class="oe_avatar" options="{'preview_image': 'image_medium', 'size': [90, 90]}" nolabel="1"/>
+                              <div class="oe_title">
+	                              <h1 modifiers="{}">
+		                              <field name="name" default_focus="1" placeholder="Nome" readonly="1"/>
+	                              </h1>
+                              </div>                              
+                              <separator string="Ready slot:" colspan="4"/>
+                              <field name="default_slot_id" />
+                              <newline/>
+                              <separator string="Pending slot:" colspan="4"/>
+                              <field name="pending_slot_ids" colspan="4" nolabel="1">
+                                  <tree string="Pending slot" editable="bottom">
+                                       <field name="sequence" />
+                                       <field name="slot_id" />
+                                       <field name="note" />
+                                  </tree>
+                                  <form string="Pending slot">
+                                       <sheet>
+                                           <group colspan="4" col="4">
+                                               <field name="sequence" />
+                                               <field name="slot_id" />
+                                               <separator string="Note" colspan="4"/>
+                                               <field name="note" colspan="4" nolabel="1"/>
+                                           </group>    
+                                       </sheet>
+                                  </form>
+                              </field>
+                          </group>
+                      </sheet>
+                  </form>
+              </field>
+          </record>
+          <record model="ir.actions.act_window" id="action_supplier_position_slot_form">
+              <field name="name">Supplier stock slot</field>
+              <field name="res_model">res.partner</field>
+              <field name="view_type">form</field>
+              <field name="view_mode">tree,form</field>
+              <field name="view_id" ref="view_supplier_position_slot_tree"/>
+              <field name="context">{'form_view_ref': 'logistic_stock_position.view_supplier_position_slot_form'}</field>
+              <field name="domain">[('supplier', '=', True)]</field>
+          </record>
+          
+          <!--stock.position.slot-->
+          <record model="ir.ui.view" id="view_stock_position_slot_tree">
+              <field name="name">stock.position.slot.tree</field>
+              <field name="model">stock.position.slot</field>
+              <field name="arch" type="xml">
+                  <tree string="Slot" editable="bottom">
+                      <field name="mode" />
+                      <field name="name" />
+                      <field name="description" readonly="1" />
+                  </tree>
+              </field>
+          </record>
+          <record model="ir.ui.view" id="view_stock_position_slot_form">
+              <field name="name">stock.position.slot.form</field>
+              <field name="model">stock.position.slot</field>
+              <field name="arch" type="xml">
+                  <form string="Slot" editable="top">  
+                      <sheet>      
+                          <group colspan="4" col="4">
+                              <field name="mode" />
+                              <field name="name" />
+                              <field name="description" readonly="1" colspan="4"/>
+                          </group>
+                      </sheet>
+                  </form>
+              </field>
+          </record>
+          <record model="ir.actions.act_window" id="action_stock_position_slot_form">
+              <field name="name">Stock position slot</field>
+              <field name="res_model">stock.position.slot</field>
+              <field name="view_type">form</field>
+              <field name="view_mode">tree,form</field>
+              <field name="view_id" ref="view_stock_position_slot_tree"/>
+              <field name="context">{}</field>
+              <field name="domain">[]</field>
+          </record>
+          
+          <menuitem 
+              id="menu_stock_position_slot_root"
+              parent="logistic_management.menu_logistic_left_configuration_root"
+              sequence="50"
+              name="Stock location"
+              />
+              <menuitem 
+                  id="menu_stock_position_slot_form_slot"
+                  parent="menu_stock_position_slot_root"
+                  action="action_stock_position_slot_form"
+                  sequence="10"
+                  />
+              <menuitem 
+                  id="menu_stock_position_slot_form_supplier"
+                  parent="menu_stock_position_slot_root"
+                  action="action_supplier_position_slot_form"
+                  sequence="20"
+                  />
+          
+    </data>
+</openerp>
+
