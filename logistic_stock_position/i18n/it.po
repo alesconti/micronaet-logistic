@@ -1,0 +1,226 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* logistic_stock_position
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-11-26 10:34+0000\n"
+"PO-Revision-Date: 2018-11-26 11:39+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_table_code
+msgid "Code"
+msgstr "Codice"
+
+#. module: logistic_stock_position
+#: model:ir.model,name:logistic_stock_position.model_res_partner
+msgid "Contact"
+msgstr "Contatto"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_slot_create_uid
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_table_create_uid
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_table_slot_rel_create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_slot_create_date
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_table_create_date
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_table_slot_rel_create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: logistic_stock_position
+#: model:ir.actions.act_window,name:logistic_stock_position.action_view_stock_location_table
+#: model:ir.model,name:logistic_stock_position.model_stock_location_table
+#: model:ir.model.fields,field_description:logistic_stock_position.field_res_partner_delivery_table_id
+#: model:ir.model.fields,field_description:logistic_stock_position.field_res_users_delivery_table_id
+#: model:ir.ui.menu,name:logistic_stock_position.menu_view_stock_location_table
+#: model:ir.ui.view,arch_db:logistic_stock_position.view_stock_location_table_form
+#: model:ir.ui.view,arch_db:logistic_stock_position.view_stock_location_table_tree
+msgid "Delivery table"
+msgstr "Tavolo consegne"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_slot_description
+msgid "Description"
+msgstr "Descrizione"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_slot_display_name
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_table_display_name
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_table_slot_rel_display_name
+msgid "Display Name"
+msgstr "Nome Completo"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,help:logistic_stock_position.field_stock_location_slot_description
+msgid "Explode description depend on mode and name"
+msgstr "Esplode la descrizione in funzione della modalità e del nome"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_slot_id
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_table_id
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_table_slot_rel_id
+msgid "ID"
+msgstr "ID"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_slot___last_update
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_table___last_update
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_table_slot_rel___last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_slot_write_uid
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_table_write_uid
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_table_slot_rel_write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_slot_write_date
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_table_write_date
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_table_slot_rel_write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_slot_mode
+msgid "Mode"
+msgstr "Modo"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_slot_name
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_table_name
+msgid "Name"
+msgstr "Nome"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_table_slot_rel_note
+#: model:ir.ui.view,arch_db:logistic_stock_position.view_stock_location_table_form
+msgid "Note"
+msgstr "Nota"
+
+#. module: logistic_stock_position
+#: model:ir.model,name:logistic_stock_position.model_res_partner_pending_slot
+msgid "Partner pending"
+msgstr "Partner pendenti"
+
+#. module: logistic_stock_position
+#: model:ir.actions.act_window,name:logistic_stock_position.action_view_res_partner_table
+#: model:ir.ui.menu,name:logistic_stock_position.menu_view_res_partner_table
+#: model:ir.ui.view,arch_db:logistic_stock_position.view_res_partner_table_tree
+msgid "Partner table"
+msgstr "Tavolo partner"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_table_slot_rel_slot_id
+#: model:ir.ui.view,arch_db:logistic_stock_position.view_stock_location_table_form
+msgid "Pending slot"
+msgstr "Slot pendenti"
+
+#. module: logistic_stock_position
+#: model:ir.ui.view,arch_db:logistic_stock_position.view_stock_location_table_form
+msgid "Pending slot:"
+msgstr "Slot pendenti:"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_table_pending_slot_ids
+msgid "Pending slots"
+msgstr "Slot pendenti"
+
+#. module: logistic_stock_position
+#: model:ir.ui.view,arch_db:logistic_stock_position.view_stock_location_table_form
+msgid "Ready slot:"
+msgstr "Slot pronto:"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_table_slot_rel_sequence
+msgid "Sequence"
+msgstr "Sequenza"
+
+#. module: logistic_stock_position
+#: model:ir.ui.view,arch_db:logistic_stock_position.view_stock_location_slot_form
+#: model:ir.ui.view,arch_db:logistic_stock_position.view_stock_location_slot_tree
+msgid "Slot"
+msgstr "Slot"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,help:logistic_stock_position.field_stock_location_slot_name
+msgid "Slot code"
+msgstr "Codice slot"
+
+#. module: logistic_stock_position
+#: sql_constraint:stock.table.slot.rel:0
+msgid "Slot yet used in another partner!"
+msgstr "Slot già utilizzato da un altro partner!"
+
+#. module: logistic_stock_position
+#: selection:stock.location.slot,mode:0
+msgid "Stock"
+msgstr "Magazzino"
+
+#. module: logistic_stock_position
+#: model:ir.model,name:logistic_stock_position.model_stock_location_slot
+msgid "Stock Location Slot"
+msgstr "Magazzino: Localizzazione slot"
+
+#. module: logistic_stock_position
+#: model:ir.model,name:logistic_stock_position.model_stock_position_slot
+msgid "Stock Slot Position "
+msgstr "Magazzino: Posizione slot"
+
+#. module: logistic_stock_position
+#: model:ir.ui.menu,name:logistic_stock_position.menu_stock_position_slot_root
+msgid "Stock location"
+msgstr "Localizzazione magazzino"
+
+#. module: logistic_stock_position
+#: model:ir.actions.act_window,name:logistic_stock_position.action_stock_location_slot_form
+#: model:ir.ui.menu,name:logistic_stock_position.menu_stock_location_slot_form
+msgid "Stock location slot"
+msgstr "Posizione slot magazzino"
+
+#. module: logistic_stock_position
+#: selection:stock.location.slot,mode:0
+msgid "Supplier pending"
+msgstr "Fornitore pendente"
+
+#. module: logistic_stock_position
+#: selection:stock.location.slot,mode:0
+msgid "Supplier ready"
+msgstr "Fornitore pronto"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_table_slot_rel_table_id
+msgid "Table"
+msgstr "Tavolo"
+
+#. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_stock_location_table_default_slot_id
+msgid "Table ready location"
+msgstr "Tavolo posizione pronta"
+
+#. module: logistic_stock_position
+#: model:ir.model,name:logistic_stock_position.model_stock_table_slot_rel
+msgid "Table-slot relation"
+msgstr "Relazione tavolo-slot"
+
+#. module: logistic_stock_position
+#: code:addons/logistic_stock_position/models/position.py:70
+#, python-format
+msgid "[Mode %s] [Col %s] [Row %s] [Drawer %s] [Side %s] [Slot %s]"
+msgstr "[Modo %s] [Col %s] [Riga %s] [Cassetto %s] [Lato %s] [Slot %s]"
