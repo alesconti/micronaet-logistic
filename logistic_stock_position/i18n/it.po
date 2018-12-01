@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-26 10:34+0000\n"
-"PO-Revision-Date: 2018-11-26 11:39+0100\n"
+"POT-Creation-Date: 2018-12-01 12:33+0000\n"
+"PO-Revision-Date: 2018-12-01 13:35+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -143,6 +143,11 @@ msgid "Pending slots"
 msgstr "Slot pendenti"
 
 #. module: logistic_stock_position
+#: model:ir.model,name:logistic_stock_position.model_product_template
+msgid "Product Template"
+msgstr "Modello prodotto"
+
+#. module: logistic_stock_position
 #: model:ir.ui.view,arch_db:logistic_stock_position.view_stock_location_table_form
 msgid "Ready slot:"
 msgstr "Slot pronto:"
@@ -195,6 +200,12 @@ msgid "Stock location slot"
 msgstr "Posizione slot magazzino"
 
 #. module: logistic_stock_position
+#: model:ir.model.fields,field_description:logistic_stock_position.field_product_product_default_slot_id
+#: model:ir.model.fields,field_description:logistic_stock_position.field_product_template_default_slot_id
+msgid "Stock slot"
+msgstr "Slot magazzino"
+
+#. module: logistic_stock_position
 #: selection:stock.location.slot,mode:0
 msgid "Supplier pending"
 msgstr "Fornitore pendente"
@@ -220,7 +231,37 @@ msgid "Table-slot relation"
 msgstr "Relazione tavolo-slot"
 
 #. module: logistic_stock_position
-#: code:addons/logistic_stock_position/models/position.py:70
+#: code:addons/logistic_stock_position/models/position.py:79
 #, python-format
 msgid "[Mode %s] [Col %s] [Row %s] [Drawer %s] [Side %s] [Slot %s]"
-msgstr "[Modo %s] [Col %s] [Riga %s] [Cassetto %s] [Lato %s] [Slot %s]"
+msgstr "[Modo %s] [Camp. %s] [Riga %s] [Cassetto %s] [Lato %s] [Slot %s]"
+
+#. module: logistic_stock_position
+#: code:addons/logistic_stock_position/models/position.py:72
+#, python-format
+msgid "back"
+msgstr "post."
+
+#. module: logistic_stock_position
+#: code:addons/logistic_stock_position/models/position.py:66
+#, python-format
+msgid "bottom"
+msgstr "terra"
+
+#. module: logistic_stock_position
+#: code:addons/logistic_stock_position/models/position.py:71
+#, python-format
+msgid "front"
+msgstr "anter."
+
+#. module: logistic_stock_position
+#: code:addons/logistic_stock_position/models/position.py:67
+#, python-format
+msgid "middle"
+msgstr "mezzo"
+
+#. module: logistic_stock_position
+#: code:addons/logistic_stock_position/models/position.py:68
+#, python-format
+msgid "top"
+msgstr "alto"

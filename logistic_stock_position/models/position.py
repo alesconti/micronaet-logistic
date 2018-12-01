@@ -62,6 +62,15 @@ class StockLocationSlot(models.Model):
     def _get_slot_description(self, ):
         ''' Update description
         '''        
+        row_map = {
+            '0': _('bottom'),
+            '1': _('middle'),
+            '2': _('top'),
+            }
+        drawer_map = {
+            'A': _('front'),
+            'B': _('back'),
+            }
         mapping = {
             'stock': 'MAGA',
             'supplier': 'FORN',
@@ -74,14 +83,31 @@ class StockLocationSlot(models.Model):
             if not name:
                 slot.description = ''
                 continue
-            if mode == 'stock':    
+            if mode == 'stock':
+                # Block split:
+                name = name.upper()    
+                slot_part = name.split('.')
+                block = len(slot_part)
+                
+                # Extract part (mandatory):
+                col = slot_part[0][:2] # Campata
+                row = slot_part[0][2:] # Ripiano
+                
+                # Extract part (not mandatory):
+                drawer = ''
+                part = ''
+                if block > 1:
+                    drawer = slot_part[1]
+                    if block > 2:
+                        part = slot_part[2]
+                
                 slot.description = mask % (
                     mapping.get(slot.mode, ''),
-                    name[:1],
-                    name[1:2],
-                    name[2:3],
-                    name[3:4],
-                    name[4:5],
+                    col, # Campata
+                    row_map.get(row, row),
+                    drawer[1:2],
+                    drawer_map.get(drawer[:1], drawer[:1]),
+                    part,
                     )
             elif mode == 'supplier':
                 slot.description = ''        
@@ -165,5 +191,17 @@ class ResPartner(models.Model):
     # -------------------------------------------------------------------------
     delivery_table_id = fields.Many2one(
         'stock.location.table', 'Delivery table')
+
+class ProductTemplate(models.Model):
+    """ Model name: Product template
+    """
+    
+    _inherit = 'product.template'
+
+    # -------------------------------------------------------------------------    
+    # Columns:
+    # -------------------------------------------------------------------------
+    default_slot_id = fields.Many2one(
+        'stock.location.slot', 'Stock slot')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
