@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
@@ -64,18 +65,27 @@ def clean(value):
     ''' Clean value
     '''
     value = value or ''
-    return value.strip().strip('"').strip()
+    return value.strip().strip('\'').strip('"').strip()
 
-import pdb; pdb.set_trace()
-for line in open('./product.slot.csv'):
+i = 0
+for line in open('./link.csv'):
+    i += 1
+    if i == 1:
+        continue
+        
     row = line.split(',')
     default_code = clean(row[1])
     slot = clean(row[3])
     if slot not in slot_db:
-        print 'Error slot not found: %s' % slot
+        print '%s. [ERROR] slot not found: %s' % (i, slot)
+        continue
     template_ids = template_pool.search([
         ('default_code', '=', default_code)])
     if not template_ids:
-        print 'Error product code not found: %s' % slot
+        print '%s. [ERROR] product code not found: %s' % (i, default_code)
+        continue
     template_pool.write(template_ids, {
         'default_stock_id': slot_db[slot]})
+    print '%s. [INFO] Link %s to slot %s' % (i, default_code, slot)
+    continue
+
