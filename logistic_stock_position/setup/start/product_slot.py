@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
@@ -88,4 +88,3 @@ for line in open('./link.csv'):
         'default_stock_id': slot_db[slot]})
     print '%s. [INFO] Link %s to slot %s' % (i, default_code, slot)
     continue
-
