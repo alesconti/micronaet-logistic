@@ -68,6 +68,7 @@ def clean(value):
     return value.strip().strip('\'').strip('"').strip()
 
 i = 0
+import pdb; pdb.set_trace()
 for line in open('./link.csv'):
     i += 1
     if i == 1:
