@@ -34,6 +34,7 @@
         'product',
         'purchase',
         'mmac_base',
+        'logistic_stock_position', # Position on stock (for load)
         ],
     'data': [
         'views/picking_load_view.xml',

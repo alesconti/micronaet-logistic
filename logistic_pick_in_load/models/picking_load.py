@@ -101,6 +101,7 @@ class StockPicking(models.Model):
         # Read header data:
         headers = header_pool.search([])
         sale_line_ready = [] # ready line after assign load qty to purchase
+        move_position = [] # stock move to set supplier position
         for header in headers:
             partner = header.partner_id
             scheduled_date = header.date_order
@@ -143,7 +144,7 @@ class StockPicking(models.Model):
                     # ---------------------------------------------------------
                     # Create movement (not load stock):
                     # ---------------------------------------------------------
-                    move_pool.create({
+                    move_position.append(move_pool.create({
                         'company_id': company.id,
                         'partner_id': partner.id,
                         'picking_id': picking.id,
@@ -169,7 +170,7 @@ class StockPicking(models.Model):
                         # sale_line_id
                         # procure_method,
                         #'product_qty': select_qty,
-                        })
+                        }))
                     if product_qty <= 0.0:
                         break    
                 
@@ -192,7 +193,7 @@ class StockPicking(models.Model):
                     # ---------------------------------------------------------
                     # Create stock move (load stock with quants):
                     # ---------------------------------------------------------
-                    move_pool.create({
+                    move_position.append(move_pool.create({
                         'company_id': company.id,
                         'partner_id': partner.id,
                         'picking_id': picking.id,
@@ -220,7 +221,7 @@ class StockPicking(models.Model):
                         # purchase_line_id
                         # procure_method,
                         #'product_qty': select_qty,
-                        })
+                        }))
 
         # ---------------------------------------------------------------------
         # Update Logistic status:
@@ -232,8 +233,15 @@ class StockPicking(models.Model):
                 })
                 
         # Check ready order with this line set as ready 
-        sale_line_pool.logistic_check_ready_order(sale_line_ready)        
+        sale_line_pool.logistic_check_ready_order(sale_line_ready)
+
+        # ---------------------------------------------------------------------
+        # Update stock position for stock move BF
+        # ---------------------------------------------------------------------
+        for move in move_position:
+            pass
         
+
         # ---------------------------------------------------------------------
         #                          Clean temp data:
         # ---------------------------------------------------------------------

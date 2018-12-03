@@ -178,19 +178,18 @@ class StockLocationTable(models.Model):
     # Pending Slots:    
     pending_slot_ids = fields.One2many(
          'stock.table.slot.rel', 'table_id', 'Pending slots')
-            
 
 class ResPartner(models.Model):
     """ Model name: Res Partner
     """
-    
+
     _inherit = 'res.partner'
 
     # -------------------------------------------------------------------------    
     # Columns:
     # -------------------------------------------------------------------------
     delivery_table_id = fields.Many2one(
-        'stock.location.table', 'Delivery table')
+        'stock.location.table', 'Delivery table')        
 
 class ProductTemplate(models.Model):
     """ Model name: Product template
@@ -203,5 +202,47 @@ class ProductTemplate(models.Model):
     # -------------------------------------------------------------------------
     default_slot_id = fields.Many2one(
         'stock.location.slot', 'Stock slot')
+    slot_needed = fields.Boolean('Slot needed', 
+        help='Slot not present but need for position')
+
+class StockMoveIn(models.Model):
+    """ Model name: Stock Move
+    """
+    
+    _inherit = 'stock.move'
+
+    @api.multi
+    def set_stock_move_position(self):
+        ''' Set stock move position:
+            Ready order on supplier table
+            Pending order on pending supplier table
+            Stock product stock position
+        '''
+        line = self.logistic_load_id
+        logistic_load_id = line.id
+        if logistic_load_id: # With sale order
+            supplier = self.picking_id.partner_id
+            table = supplier.delivery_table_id
+            order = line.order_id
+            if order.logistic_state == 'pending':
+                # Ready order:
+                default_slot_id.id
+            elif order.logistic_state == 'ready':
+                # Pending order:
+                pending_slot_ids[0].slot_id.id
+        else:
+            product = self.product_id
+            default_slot_id = product.default_slot_id
+            if not default_slot_id and not product.slot_needed:
+                # Mark as needed:
+                product.slot_needed = True
+        return True
+        
+    # -------------------------------------------------------------------------    
+    # Columns:
+    # -------------------------------------------------------------------------
+    slot_id = fields.Many2one(
+        'stock.location.slot', 'Stock slot', 
+        help='Supplier position, ready for ready order instead of pending')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
