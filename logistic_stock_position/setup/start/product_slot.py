@@ -77,14 +77,14 @@ for line in open('./link.csv'):
     default_code = clean(row[1])
     slot = clean(row[3])
     if slot not in slot_db:
-        print '%s. [ERROR] slot not found: %s' % (i, slot)
+        '{}. [ERROR] slot not found: {}'.format(i, slot)
         continue
     template_ids = template_pool.search([
         ('default_code', '=', default_code)])
     if not template_ids:
-        print '%s. [ERROR] product code not found: %s' % (i, default_code)
+        '{}. [ERROR] product code not found: {}'.format(i, default_code)
         continue
     template_pool.write(template_ids, {
         'default_stock_id': slot_db[slot]})
-    print '%s. [INFO] Link %s to slot %s' % (i, default_code, slot)
+    '{}. [INFO] Link {} to slot {}'.format(i, default_code, slot)
     continue
