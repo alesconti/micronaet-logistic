@@ -68,7 +68,6 @@ def clean(value):
     return value.strip().strip('\'').strip('"').strip()
 
 i = 0
-import pdb; pdb.set_trace()
 for line in open('./link.csv'):
     i += 1
     if i == 1:
@@ -86,6 +85,6 @@ for line in open('./link.csv'):
         '{}. [ERROR] product code not found: {}'.format(i, default_code)
         continue
     template_pool.write(template_ids, {
-        'default_stock_id': slot_db[slot]})
+        'default_slot_id': slot_db[slot]})
     '{}. [INFO] Link {} to slot {}'.format(i, default_code, slot)
     continue
