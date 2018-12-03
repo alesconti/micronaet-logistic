@@ -228,7 +228,8 @@ class StockMoveIn(models.Model):
                 # Ready order:
                 default_slot_id.id
             elif order.logistic_state == 'ready':
-                # Pending order:
+                # Pending order (XXX take first):
+                # TODO create an assign procedure!
                 pending_slot_ids[0].slot_id.id
         else:
             product = self.product_id
@@ -244,5 +245,46 @@ class StockMoveIn(models.Model):
     slot_id = fields.Many2one(
         'stock.location.slot', 'Stock slot', 
         help='Supplier position, ready for ready order instead of pending')
+
+class SaleOrderLine(models.Model):
+    """ Model name: Sale Order Line
+    """
+    
+    _inherit = 'sale.order.line'
+    
+    @api.multi
+    def _get_slot_position(self):
+        ''' Text description for position
+        '''        
+        for line in self:
+            res = ''
+            
+            # -----------------------------------------------------------------
+            # Assigned q.:
+            # -----------------------------------------------------------------
+            for assigned in self.assigned_line_ids: # Assigned quants:
+                res += _('ASS.: %s >> %s') % (
+                    assigned.quantity,
+                    line.product_id.default_slot_id.name or _('(to assign)'),
+                    )
+
+            # -----------------------------------------------------------------
+            # Loading q.:
+            # -----------------------------------------------------------------
+            for move in self.load_line_ids: # BF document
+                res += _('CONS.: %s >> %s') % (
+                    move.product_uom_qty,
+                    move.slot_id.name or _('(not loaded)'),
+                    )
+            line.position_slot = res
+        return True
+         
+    # -------------------------------------------------------------------------    
+    # Columns:
+    # -------------------------------------------------------------------------
+    'position_slot': fields.Text(
+        #'stock.location.slot', 
+        string='Slot position', 
+        compute='_get_slot_position', )
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -227,20 +227,22 @@ class StockPicking(models.Model):
         # Update Logistic status:
         # ---------------------------------------------------------------------
         # Mark order line ready:
+        _logger.info('Update sale order line as ready:')
         for line in sale_line_ready:
             line.write({
                 'logistic_state': 'ready',
                 })
                 
         # Check ready order with this line set as ready 
+        _logger.info('Update sale order as ready:')
         sale_line_pool.logistic_check_ready_order(sale_line_ready)
 
         # ---------------------------------------------------------------------
         # Update stock position for stock move BF
         # ---------------------------------------------------------------------
+        _logger.info('Update stock position loading product:')
         for move in move_position:
-            pass
-        
+            move.set_stock_move_position()
 
         # ---------------------------------------------------------------------
         #                          Clean temp data:
