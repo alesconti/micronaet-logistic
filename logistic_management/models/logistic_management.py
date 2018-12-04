@@ -1067,6 +1067,9 @@ class SaleOrderLine(models.Model):
             
             # Filter line state:
             ('logistic_state', '=', 'uncovered'),
+
+            # Not select lavoration line:
+            ('mrp_state', '!=', False),
             ])
 
         # ---------------------------------------------------------------------
@@ -1091,6 +1094,14 @@ class SaleOrderLine(models.Model):
 
         selected_ids = [] # ID: to return view list
         for supplier in purchase_db:
+            # -----------------------------------------------------------------
+            # Lavoration order
+            # -----------------------------------------------------------------
+            if supplier == company.partner_id:
+                for line in purchase_db[supplier]:
+                    line.mrp_state = 'draft'
+                continue
+
             # -----------------------------------------------------------------
             # Create header:
             # -----------------------------------------------------------------            
