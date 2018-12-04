@@ -266,8 +266,52 @@
                      <field name="logistic_remain_qty" />
                      <field name="logistic_delivered_qty" />
                      <field name="logistic_undelivered_qty" />
+                     <field name="mrp_state" />
                      <field name="logistic_state" />
                  </tree>
+             </field>
+         </record>
+         <record model="ir.ui.view" id="view_sale_order_line_logistic_mrp_tree">
+             <field name="name">sale.order.line.logistic.mrp.tree</field>
+             <field name="model">sale.order.line</field>
+             <field name="priority" eval="40" />
+             <field name="arch" type="xml">
+                 <tree string="MRP lavoration" decoration-muted="mrp_state=='draft'" decoration-warning="mrp_state=='progress'">
+                     <field name="order_id" />
+                     <field name="product_id" />
+                     <field name="origin_product_id" />
+                     <field name="linked_mode" />
+                     <field name="name" />
+                     <field name="product_uom_qty" />
+                     <field name="logistic_covered_qty" />
+                     <field name="logistic_uncovered_qty" />
+                     <field name="mrp_state" />
+                     <field name="logistic_state" />
+                 </tree>
+             </field>
+         </record>
+         <record model="ir.ui.view" id="view_sale_order_line_mrp_search">
+             <field name="name">sale.order.line.search</field>
+             <field name="model">sale.order.line</field>
+             <field name="arch" type="xml">
+                 <search string="Lavoration sale" version="7.0">        
+                     <field name="name" />
+                     
+                     <field name="product_id" filter_domain="[('product_id','=',self)]"/>
+                     <field name="order_id" filter_domain="[('order_id','=',self)]"/>            
+                     <!--<field name="partner_id" filter_domain="[('order_id.partner_id','=',self)]"/>-->
+                     
+                     <filter name="state_draft" string="Draft state" domain="[('mrp_state','=','draft')]"/>
+                     <filter name="state_progress" string="Draft state" domain="[('mrp_state','=','progress')]"/>
+                     <filter name="state_done" string="Draft state" domain="[('mrp_state','=','done')]"/>
+
+                     <group expand="0" string="Group By...">
+                         <filter name="group_order" string="Order" context="{'group_by': 'order_id'}"/>
+                         <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
+                         <filter name="group_logistic" string="Logistic" context="{'group_by': 'logistic_state'}"/>
+                         <filter name="group_mrp" string="MRP" context="{'group_by': 'mrp_state'}"/>
+                     </group>
+                 </search>
              </field>
          </record>
          <record model="ir.ui.view" id="view_sale_order_line_logistic_form">
@@ -291,6 +335,8 @@
 
                              <field name="origin_product_id" />
                              <field name="linked_mode" />
+                             
+                             <field name="mrp_state" />
                          </group>                         
                          <notebook colspan="4">
                              <page string="Quantity">
@@ -306,7 +352,7 @@
                                      <field name="logistic_remain_qty" />
                                      
                                      <field name="logistic_delivered_qty" />
-                                     <field name="logistic_undelivered_qty" />                                     
+                                     <field name="logistic_undelivered_qty" />
                                  </group>    
                              </page>
                          
@@ -339,6 +385,40 @@
                  </form>
              </field>
          </record>
+         
+         <!--Lavoration action:-->
+         <record model="ir.actions.act_window" id="action_sale_order_line_logistic_mrp_all">
+             <field name="name">Sale line MRP</field>
+             <field name="res_model">sale.order.line</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="view_id" ref="view_sale_order_line_logistic_mrp_tree"/>
+             <field name="search_view_id" ref="view_sale_order_line_mrp_search"/>             
+             <field name="context">{'form_view_ref': 'logistic_management.view_sale_order_line_logistic_form'}</field>
+             <field name="domain">[('mrp_state', '!=', False)]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_sale_order_line_logistic_mrp_draft">
+             <field name="name">Sale line MRP draft</field>
+             <field name="res_model">sale.order.line</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="view_id" ref="view_sale_order_line_logistic_mrp_tree"/>
+             <field name="search_view_id" ref="view_sale_order_line_mrp_search"/>             
+             <field name="context">{'form_view_ref': 'logistic_management.view_sale_order_line_logistic_form'}</field>
+             <field name="domain">[('mrp_state', '=', 'draft')]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_sale_order_line_logistic_mrp_pending">
+             <field name="name">Sale line MRP pending</field>
+             <field name="res_model">sale.order.line</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="view_id" ref="view_sale_order_line_logistic_mrp_tree"/>
+             <field name="search_view_id" ref="view_sale_order_line_mrp_search"/>             
+             <field name="context">{'form_view_ref': 'logistic_management.view_sale_order_line_logistic_form'}</field>
+             <field name="domain">[('mrp_state', '=', 'pending')]</field>
+         </record>
+         
+         <!--Logistic sale order line-->
          <record model="ir.actions.act_window" id="action_sale_order_line_logistic">
              <field name="name">Sale line logistic</field>
              <field name="res_model">sale.order.line</field>
@@ -548,7 +628,7 @@
                      action="action_sale_order_error_form"
                      sequence="80"
                      />
-                 
+
              <menuitem
                  id="menu_logistic_left_order_line_root" 
                  parent="menu_logistic_header_root"
@@ -562,7 +642,36 @@
                      action="action_sale_order_line_logistic"
                      sequence="10" 
                      />
-                 
+
+             <menuitem
+                 id="menu_logistic_left_order_line_mrp_root" 
+                 parent="menu_logistic_header_root"
+                 name="Lavoration order"
+                 sequence="17"             
+                 />
+                 <menuitem
+                     id="menu_sale_order_line_logistic_mrp_all" 
+                     parent="menu_logistic_left_order_line_mrp_root"
+                     name="Lavoration all"
+                     action="action_sale_order_line_logistic_mrp_all"
+                     sequence="10" 
+                     />
+                 <menuitem
+                     id="menu_sale_order_line_logistic_mrp_draft" 
+                     parent="menu_logistic_left_order_line_mrp_root"
+                     name="Lavoration draft"
+                     action="action_sale_order_line_logistic_mrp_draft"
+                     sequence="20" 
+                     />
+                 <menuitem
+                     id="menu_sale_order_line_logistic_mrp_pending" 
+                     parent="menu_logistic_left_order_line_mrp_root"
+                     name="Lavoration pending"
+                     action="action_sale_order_line_logistic_mrp_pending"
+                     sequence="30" 
+                     />
+
+
              <menuitem
                  id="menu_logistic_left_purchase_root" 
                  parent="menu_logistic_header_root"

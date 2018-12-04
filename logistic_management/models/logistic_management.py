@@ -1331,6 +1331,14 @@ class SaleOrderLine(models.Model):
         readonly=True, compute='_get_logist_status_field', multi=True,
         store=False,
         )
+
+    # MRP state:
+    mrp_state = fields.Selection([
+        ('draft', 'Internal lavoration'),
+        ('progress', 'In progress'),
+        ('done', 'Done'),
+        ], 'Lavoration state',
+        )
     
     # State (sort of workflow):
     logistic_state = fields.Selection([

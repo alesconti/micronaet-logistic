@@ -276,15 +276,16 @@ class SaleOrderLine(models.Model):
                     move.product_uom_qty,
                     move.slot_id.name or _('(not loaded)'),
                     )
+
             line.position_slot = res
         return True
          
     # -------------------------------------------------------------------------    
     # Columns:
     # -------------------------------------------------------------------------
-    'position_slot': fields.Text(
+    position_slot = fields.Text(
         #'stock.location.slot', 
         string='Slot position', 
-        compute='_get_slot_position', )
+        compute='_get_slot_position')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
