@@ -283,12 +283,11 @@
                      <field name="linked_mode" />
                      <field name="name" />
                      <field name="product_uom_qty" />
-                     <field name="logistic_covered_qty" />
-                     <field name="logistic_uncovered_qty" />
+                     <!--<field name="logistic_covered_qty" />
+                     <field name="logistic_uncovered_qty" />-->
                      <field name="mrp_state" />
-                     <button name="workflow_mrp_draft_to_progress" string="Lavoration Progress" type="object" attrs="{'invisible': [('mrp_state','=','progress')]}" icon="fa_calendar"/>
-                     <button name="workflow_mrp_progress_to_done" string="Lavoration Done" type="object" attrs="{'invisible': [('mrp_state','=','done')]}" icon="fa-check-square"/>
-
+                     <button name="workflow_mrp_draft_to_progress" string="Lavoration Progress" type="object" attrs="{'invisible': [('mrp_state','!=','draft')]}" icon="fa-calendar"/>
+                     <button name="workflow_mrp_progress_to_done" string="Lavoration Done" type="object" attrs="{'invisible': [('mrp_state','!=','progress')]}" icon="fa-check-square"/>
                      <field name="logistic_state" />                     
                  </tree>
              </field>
@@ -432,7 +431,7 @@
              <field name="view_id" ref="view_sale_order_line_logistic_mrp_tree"/>
              <field name="search_view_id" ref="view_sale_order_line_mrp_search"/>             
              <field name="context">{'form_view_ref': 'logistic_management.view_sale_order_line_logistic_form'}</field>
-             <field name="domain">[('mrp_state', '=', 'pending')]</field>
+             <field name="domain">[('mrp_state', '=', 'progress')]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_line_logistic_mrp_done">
              <field name="name">Sale line MRP done</field>

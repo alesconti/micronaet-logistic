@@ -822,7 +822,7 @@ class SaleOrderLine(models.Model):
                 order_checked.append(order)    
         else:
             # Check pending order:
-            orders = order_pool.search([('logistic_state', '=', 'pending')])        
+            orders = order_pool.search([('logistic_state', '=', 'pending')])            
             orders.logistic_check_and_set_ready()
         return True
             
@@ -869,14 +869,17 @@ class SaleOrderLine(models.Model):
         '''
         line_pool = self.env['sale.order.line']
         
+        #line_ids = []
         for line in self:
-            self.mrp_state = 'done'
+            #line_ids.append(line.id)
+            line.mrp_state = 'done'
             
             # Update also logistic state to ready:
-            self.logistic_state == 'ready'
+            line.logistic_state = 'ready'
             
-            # Check master order:
-            line_pool.logistic_check_ready_order(self.mapping('id'))
+        # Check master order (reload lines for updated status):
+        #sale_lines = line_pool.search([('id', 'in', line_ids)])
+        line_pool.logistic_check_ready_order(self)#sale_lines)
 
     # -------------------------------------------------------------------------    
 
@@ -1190,7 +1193,7 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     @api.depends('assigned_line_ids', 'purchase_line_ids', 'load_line_ids',
-        'delivered_line_ids')
+        'delivered_line_ids', 'mrp_state')
     def _get_logist_status_field(self):
         ''' Manage all data for logistic situation in sale order:
         '''
@@ -1237,8 +1240,14 @@ class SaleOrderLine(models.Model):
                 # PUR: Purchase (order done):
                 # -------------------------------------------------------------
                 logistic_purchase_qty = 0.0
-                for purchase in line.purchase_line_ids:
-                    logistic_purchase_qty += purchase.product_qty
+                
+                if line.mrp_state in ('draft', 'progress'):
+                    # Lavoration product (internal):
+                    logistic_purchase_qty = logistic_order_qty
+                else:
+                    # Purchase product:
+                    for purchase in line.purchase_line_ids:
+                        logistic_purchase_qty += purchase.product_qty
                 line.logistic_purchase_qty = logistic_purchase_qty
                 
                 # -------------------------------------------------------------
@@ -1257,8 +1266,13 @@ class SaleOrderLine(models.Model):
                 # BF: Received (loaded in stock):
                 # -------------------------------------------------------------
                 logistic_received_qty = 0.0
-                for move in line.load_line_ids:
-                    logistic_received_qty += move.product_uom_qty # TODO verify
+                if line.mrp_state == 'done':
+                    # Lavoration product (internal):
+                    logistic_received_qty = logistic_order_qty
+                else:
+                    # Purchase product:
+                    for move in line.load_line_ids:
+                        logistic_received_qty += move.product_uom_qty # TODO verify
                 line.logistic_received_qty = logistic_received_qty
                 
                 # -------------------------------------------------------------
