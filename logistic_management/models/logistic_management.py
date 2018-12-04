@@ -853,6 +853,34 @@ class SaleOrderLine(models.Model):
             }
 
     # -------------------------------------------------------------------------
+    #                   WORKFLOW: [LAVORATION OPERATION TRIGGER]
+    # -------------------------------------------------------------------------    
+    # A. Draft > Progress
+    @api.multi
+    def workflow_mrp_draft_to_progress(self):
+        ''' Update mrp_state
+        '''
+        for line in self:
+            self.mrp_state = 'progress'
+        
+    # B. Progress > Done
+    def workflow_mrp_progress_to_done(self):
+        ''' Update mrp_state
+        '''
+        line_pool = self.env['sale.order.line']
+        
+        for line in self:
+            self.mrp_state = 'done'
+            
+            # Update also logistic state to ready:
+            self.logistic_state == 'ready'
+            
+            # Check master order:
+            line_pool.logistic_check_ready_order(self.mapping('id'))
+
+    # -------------------------------------------------------------------------    
+
+    # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
     # -------------------------------------------------------------------------
     # A. Assign available q.ty in stock assign a stock movement / quants
@@ -1069,7 +1097,7 @@ class SaleOrderLine(models.Model):
             ('logistic_state', '=', 'uncovered'),
 
             # Not select lavoration line:
-            ('mrp_state', '!=', False),
+            ('mrp_state', '=', False),
             ])
 
         # ---------------------------------------------------------------------

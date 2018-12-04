@@ -286,7 +286,10 @@
                      <field name="logistic_covered_qty" />
                      <field name="logistic_uncovered_qty" />
                      <field name="mrp_state" />
-                     <field name="logistic_state" />
+                     <button name="workflow_mrp_draft_to_progress" string="Lavoration Progress" type="object" attrs="{'invisible': [('mrp_state','=','progress')]}" icon="fa_calendar"/>
+                     <button name="workflow_mrp_progress_to_done" string="Lavoration Done" type="object" attrs="{'invisible': [('mrp_state','=','done')]}" icon="fa-check-square"/>
+
+                     <field name="logistic_state" />                     
                  </tree>
              </field>
          </record>
@@ -300,6 +303,20 @@
                      <field name="product_id" filter_domain="[('product_id','=',self)]"/>
                      <field name="order_id" filter_domain="[('order_id','=',self)]"/>            
                      <!--<field name="partner_id" filter_domain="[('order_id.partner_id','=',self)]"/>-->
+
+					<!--<field name="data_ordine"/>
+					<field name="sku"/>
+					<field name="ordine"/>
+					<filter string="Today" domain="[('data_ordine', '&gt;=', datetime.datetime.now().strftime('%Y-%m-%d 00:00:00')),('data_ordine', '&lt;=', datetime.datetime.now().strftime('%Y-%m-%d 23:23:59'))]"/>
+					<filter string="Giallo" domain="[('sku', 'ilike', '%YE%')]"/>
+					<filter string="Blue" domain="[('sku', 'ilike', '%BL%')]"/>
+					<filter string="Verde" domain="[('sku', 'ilike', '%GR%')]"/>
+					<filter string="Arancio" domain="[('sku', 'ilike', '%OR%')]"/>
+					<filter string="Oro" domain="[('sku', 'ilike', '%GO%')]"/>
+					<filter string="Argento" domain="[('sku', 'ilike', '%SI%')]"/>
+					<filter string="Rosso" domain="[('sku', 'ilike', '%RE%')]"/>
+					<filter string="Nero" domain="[('sku', 'ilike', '%BK%')]"/>
+					<filter string="Bianco" domain="[('sku', 'ilike', '%WH%')]"/>-->
                      
                      <filter name="state_draft" string="Draft state" domain="[('mrp_state','=','draft')]"/>
                      <filter name="state_progress" string="Progress state" domain="[('mrp_state','=','progress')]"/>
@@ -418,7 +435,7 @@
              <field name="domain">[('mrp_state', '=', 'pending')]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_line_logistic_mrp_done">
-             <field name="name">Sale line MRP pending</field>
+             <field name="name">Sale line MRP done</field>
              <field name="res_model">sale.order.line</field>
              <field name="view_type">form</field>
              <field name="view_mode">tree,form</field>
