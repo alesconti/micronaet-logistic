@@ -36,6 +36,7 @@
         'product',
         'stock',
         'purchase',
+        'logistic_stock_position', # Stock position
         'order_line_explode_kit', # Sale kit explode
         'order_line_change_product', # Replaced link product
         'product_default_supplier', # First supplier management

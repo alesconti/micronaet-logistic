@@ -31,7 +31,7 @@
     'website': 'https://micronaet.com',
     'depends': [
         'base',
-        'logistic_management',
+        #'logistic_management',
         'purchase',
         'stock',
         ],

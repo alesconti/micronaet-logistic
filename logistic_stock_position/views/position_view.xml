@@ -123,10 +123,10 @@
               <field name="domain">[('supplier', '=', True)]</field>
           </record>
           
-          
+          <!--Inventory configuration menu -->
           <menuitem 
               id="menu_stock_position_slot_root"
-              parent="logistic_management.menu_logistic_left_configuration_root"
+              parent="stock.menu_stock_config_settings"
               sequence="50"
               name="Stock location"
               />

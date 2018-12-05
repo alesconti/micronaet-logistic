@@ -220,6 +220,7 @@ class StockMoveIn(models.Model):
         '''
         line = self.logistic_load_id
         logistic_load_id = line.id
+        import pdb; pdb.set_trace()
         if logistic_load_id: # With sale order
             supplier = self.picking_id.partner_id
             table = supplier.delivery_table_id
@@ -304,5 +305,4 @@ class SaleOrderLine(models.Model):
         #'stock.location.slot', 
         string='Slot position', 
         compute='_get_slot_position')
-
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -73,6 +73,7 @@
                      <field name="logistic_unload_id" />
 
                      <field name="logistic_quant_id" />
+                     <field name="slot_id" />
                      <field name="state" invisible="1" />
                  </tree>
              </field>
@@ -371,8 +372,13 @@
                                      <field name="logistic_delivered_qty" />
                                      <field name="logistic_undelivered_qty" />
                                  </group>    
+                             </page>                         
+                             <page string="Position">
+                                 <group colspan="4" col="4">
+                                     <separator string="Stock position:" colspan="4"/>
+                                     <field name="logistic_position" nolabel="1" colspan="4"/>
+                                 </group>    
                              </page>
-                         
                              <page string="Assigned">
                                  <group colspan="4" col="4">
                                      <separator string="Assigned from stock:" colspan="4"/>
@@ -388,7 +394,17 @@
                              <page string="Load move">
                                  <group colspan="4" col="4">
                                      <separator string="Supplier loaded:" colspan="4"/>
-                                     <field name="load_line_ids" nolabel="1" colspan="4" />
+                                     <field name="load_line_ids" nolabel="1" colspan="4">
+                                         <tree string="Load line:">
+                                              <field name="reference" />
+                                              <field name="date" />
+                                              <field name="origin" />
+                                              <field name="product_uom_qty" />
+                                              <field name="location_dest_id" />
+                                              <field name="slot_id" />
+                                              <field name="state" />
+                                         </tree>                                         
+                                     </field>
                                  </group>    
                              </page>
                              <page string="Delivered move">
@@ -843,6 +859,35 @@
                      action="action_res_company_parameter"
                      sequence="10"
                      />
+
+
+          <!--Inventory configuration menu -->          
+          <!--Stock position:-->
+          <menuitem 
+              id="menu_stock_position_slot_root"
+              parent="menu_logistic_left_configuration_root"
+              sequence="50"
+              name="Stock location"
+              />
+              <menuitem 
+                  id="menu_stock_location_slot_form"
+                  parent="menu_stock_position_slot_root"
+                  action="logistic_stock_position.action_stock_location_slot_form"
+                  sequence="10"
+                  />
+              <menuitem 
+                  id="menu_view_stock_location_table"
+                  parent="menu_stock_position_slot_root"
+                  action="logistic_stock_position.action_view_stock_location_table"
+                  sequence="20"
+                  />
+              <menuitem 
+                  id="menu_view_res_partner_table"
+                  parent="menu_stock_position_slot_root"
+                  action="logistic_stock_position.action_view_res_partner_table"
+                  sequence="30"
+                  />
+                     
     </data>
 </openerp>
 

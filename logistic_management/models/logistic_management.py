@@ -202,7 +202,7 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     @api.depends('load_line_ids')
-    def _get_logist_status_field(self):
+    def _get_logistic_status_field(self):
         ''' Manage all data for logistic situation in sale order:
         '''
         _logger.warning('Update logistic qty fields now')
@@ -222,13 +222,13 @@ class PurchaseOrderLine(models.Model):
     logistic_delivered_qty = fields.Float(
         'Delivered qty', digits=dp.get_precision('Product Price'),
         help='Qty delivered with load documents',
-        readonly=True, compute='_get_logist_status_field', multi=True,
+        readonly=True, compute='_get_logistic_status_field', multi=True,
         store=False,
         )
     logistic_undelivered_qty = fields.Float(
         'Undelivered qty', digits=dp.get_precision('Product Price'),
         help='Qty undelivered, remain to load',
-        readonly=True, compute='_get_logist_status_field', multi=True,
+        readonly=True, compute='_get_logistic_status_field', multi=True,
         store=False,
         )
 
@@ -1194,7 +1194,7 @@ class SaleOrderLine(models.Model):
     @api.multi
     @api.depends('assigned_line_ids', 'purchase_line_ids', 'load_line_ids',
         'delivered_line_ids', 'mrp_state')
-    def _get_logist_status_field(self):
+    def _get_logistic_status_field(self):
         ''' Manage all data for logistic situation in sale order:
         '''
         _logger.warning('Update logistic qty fields now')
@@ -1212,11 +1212,15 @@ class SaleOrderLine(models.Model):
                 line.logistic_delivered_qty = 0.0
                 line.logistic_undelivered_qty = 0.0
                 #line.logistic_state = 'unused'
+                line.logistic_position = '' # TODO explode component?
             else:
                 # -------------------------------------------------------------
                 #                       NORMAL PRODUCT:
                 # -------------------------------------------------------------
                 #state = 'draft'
+                product = line.product_id
+                logistic_position = ''
+                
                 # -------------------------------------------------------------
                 # OC: Ordered qty:
                 # -------------------------------------------------------------
@@ -1228,6 +1232,10 @@ class SaleOrderLine(models.Model):
                 logistic_covered_qty = 0.0
                 for quant in line.assigned_line_ids:
                     logistic_covered_qty -= quant.quantity
+                    logistic_position += _('[MAG] Q. %s > %s\n') % (
+                        -quant.quantity,
+                        product.default_slot_id.name or ''
+                        )
                 line.logistic_covered_qty = logistic_covered_qty
                 
                 # State valuation:
@@ -1269,10 +1277,18 @@ class SaleOrderLine(models.Model):
                 if line.mrp_state == 'done':
                     # Lavoration product (internal):
                     logistic_received_qty = logistic_order_qty
+                    logistic_position += _('[PROD] Q. %s > %s\n') % (
+                        logistic_order_qty,
+                        '',
+                        )
                 else:
                     # Purchase product:
                     for move in line.load_line_ids:
                         logistic_received_qty += move.product_uom_qty # TODO verify
+                        logistic_position += _('[TAV] Q. %s > %s\n') % (
+                            move.product_uom_qty,
+                            move.slot_id.name or ''
+                            )
                 line.logistic_received_qty = logistic_received_qty
                 
                 # -------------------------------------------------------------
@@ -1310,6 +1326,7 @@ class SaleOrderLine(models.Model):
                 # Write data:
                 # -------------------------------------------------------------
                 #line.logistic_state = state
+                line.logistic_position = logistic_position
 
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
@@ -1345,43 +1362,50 @@ class SaleOrderLine(models.Model):
     logistic_covered_qty = fields.Float(
         'Covered qty', digits=dp.get_precision('Product Price'),
         help='Qty covered with internal stock',
-        readonly=True, compute='_get_logist_status_field', multi=True,
+        readonly=True, compute='_get_logistic_status_field', multi=True,
         store=False,
         )
     logistic_uncovered_qty = fields.Float(
         'Uncovered qty', digits=dp.get_precision('Product Price'),
         help='Qty not covered with internal stock (so to be purchased)',
-        readonly=True, compute='_get_logist_status_field', multi=True,
+        readonly=True, compute='_get_logistic_status_field', multi=True,
         store=False,
         )
     logistic_purchase_qty = fields.Float(
         'Purchase qty', digits=dp.get_precision('Product Price'),
         help='Qty order to supplier',
-        readonly=True, compute='_get_logist_status_field', multi=True,
+        readonly=True, compute='_get_logistic_status_field', multi=True,
         store=False,
         )
     logistic_received_qty = fields.Float(
         'Received qty', digits=dp.get_precision('Product Price'),
         help='Qty received with pick in delivery',
-        readonly=True, compute='_get_logist_status_field', multi=True,
+        readonly=True, compute='_get_logistic_status_field', multi=True,
         store=False,
         )
     logistic_remain_qty = fields.Float(
         'Remain qty', digits=dp.get_precision('Product Price'),
         help='Qty remain to receive to complete ordered',
-        readonly=True, compute='_get_logist_status_field', multi=True,
+        readonly=True, compute='_get_logistic_status_field', multi=True,
         store=False,
         )
     logistic_delivered_qty = fields.Float(
         'Delivered qty', digits=dp.get_precision('Product Price'),
         help='Qty deliverer  to final customer',
-        readonly=True, compute='_get_logist_status_field', multi=True,
+        readonly=True, compute='_get_logistic_status_field', multi=True,
         store=False,
         )
     logistic_undelivered_qty = fields.Float(
         'Not delivered qty', digits=dp.get_precision('Product Price'),
         help='Qty not deliverer to final customer',
-        readonly=True, compute='_get_logist_status_field', multi=True,
+        readonly=True, compute='_get_logistic_status_field', multi=True,
+        store=False,
+        )
+    
+    # Position:
+    logistic_position = fields.Text(
+        'Position', help='Stock position',
+        readonly=True, compute='_get_logistic_status_field', multi=True,
         store=False,
         )
 
@@ -1404,7 +1428,7 @@ class SaleOrderLine(models.Model):
         ('done', 'Done'), # Delivered qty (order will be closed)
         ], 'Logistic state', default='draft',
         #readonly=True, 
-        #compute='_get_logist_status_field', multi=True,
+        #compute='_get_logistic_status_field', multi=True,
         #store=True, # TODO store True # for create columns
         )
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
