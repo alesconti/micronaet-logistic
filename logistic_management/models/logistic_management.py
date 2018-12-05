@@ -577,7 +577,7 @@ class SaleOrder(models.Model):
         # Empty orders:
         self.check_empty_orders() # Order without line
         
-        # Payment article: 
+        # Payment article (not kit now):
         self.check_product_service() # Line with service article (not used)
         
         # Explode kit if present (create also product service):
