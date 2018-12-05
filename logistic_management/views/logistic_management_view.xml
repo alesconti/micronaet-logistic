@@ -299,23 +299,24 @@
                  <search string="Lavoration sale">
                      <field name="name" />
                      
-                     <field name="product_id" filter_domain="[('product_id','=',self)]"/>
+                     <field name="product_id" domain="[('product_id.product_tmpl_id.default_code', 'ilike', self)]" />
+                     <!--<field name="product_id" filter_domain="[('product_id','=',self)]"/>-->
                      <field name="order_id" filter_domain="[('order_id','=',self)]"/>            
-                     <!--<field name="partner_id" filter_domain="[('order_id.partner_id','=',self)]"/>-->
+                     <!--<field name="partner_name" filter_domain="[('order_id.partner_id.name','ilike',self)]"/>-->
 
-					<!--<field name="data_ordine"/>
-					<field name="sku"/>
-					<field name="ordine"/>
-					<filter string="Today" domain="[('data_ordine', '&gt;=', datetime.datetime.now().strftime('%Y-%m-%d 00:00:00')),('data_ordine', '&lt;=', datetime.datetime.now().strftime('%Y-%m-%d 23:23:59'))]"/>
-					<filter string="Giallo" domain="[('sku', 'ilike', '%YE%')]"/>
-					<filter string="Blue" domain="[('sku', 'ilike', '%BL%')]"/>
-					<filter string="Verde" domain="[('sku', 'ilike', '%GR%')]"/>
-					<filter string="Arancio" domain="[('sku', 'ilike', '%OR%')]"/>
-					<filter string="Oro" domain="[('sku', 'ilike', '%GO%')]"/>
-					<filter string="Argento" domain="[('sku', 'ilike', '%SI%')]"/>
-					<filter string="Rosso" domain="[('sku', 'ilike', '%RE%')]"/>
-					<filter string="Nero" domain="[('sku', 'ilike', '%BK%')]"/>
-					<filter string="Bianco" domain="[('sku', 'ilike', '%WH%')]"/>-->
+                     <!--<field name="data_ordine"/>
+                     <field name="sku"/>-->
+                     <filter string="Today" domain="[('order_id.date_order', '&gt;=', datetime.datetime.now().strftime('%Y-%m-%d 00:00:00')),('order_id.date_order', '&lt;=', datetime.datetime.now().strftime('%Y-%m-%d 23:23:59'))]"/>
+
+                     <filter string="Yellow" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'YE')]" />
+                     <filter string="Blue" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'BL')]" />
+                     <filter string="Green" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'GR')]" />
+                     <filter string="Orange" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'OR')]" />
+                     <filter string="Gold" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'GO')]" />
+                     <filter string="Silver" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'SI')]" />
+                     <filter string="Red" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'RE')]" />
+                     <filter string="Black" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'BK')]" />
+                     <filter string="White" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'WH')]" />
                      
                      <filter name="state_draft" string="Draft state" domain="[('mrp_state','=','draft')]"/>
                      <filter name="state_progress" string="Progress state" domain="[('mrp_state','=','progress')]"/>
@@ -423,7 +424,7 @@
              <field name="context">{'form_view_ref': 'logistic_management.view_sale_order_line_logistic_form'}</field>
              <field name="domain">[('mrp_state', '=', 'draft')]</field>
          </record>
-         <record model="ir.actions.act_window" id="action_sale_order_line_logistic_mrp_pending">
+         <record model="ir.actions.act_window" id="action_sale_order_line_logistic_mrp_progress">
              <field name="name">Sale line MRP pending</field>
              <field name="res_model">sale.order.line</field>
              <field name="view_type">form</field>
@@ -690,16 +691,16 @@
                      sequence="20" 
                      />
                  <menuitem
-                     id="menu_sale_order_line_logistic_mrp_pending" 
+                     id="menu_sale_order_line_logistic_mrp_progress" 
                      parent="menu_logistic_left_order_line_mrp_root"
-                     name="Lavoration pending"
-                     action="action_sale_order_line_logistic_mrp_pending"
+                     name="Lavoration progress"
+                     action="action_sale_order_line_logistic_mrp_progress"
                      sequence="30" 
                      />
                  <menuitem
                      id="menu_sale_order_line_logistic_mrp_done" 
                      parent="menu_logistic_left_order_line_mrp_root"
-                     name="Lavoration pending"
+                     name="Lavoration done"
                      action="action_sale_order_line_logistic_mrp_done"
                      sequence="40" 
                      />

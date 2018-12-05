@@ -218,6 +218,7 @@ class StockMoveIn(models.Model):
             Pending order on pending supplier table
             Stock product stock position
         '''
+        import pdb; pdb.set_trace()
         line = self.logistic_load_id
         logistic_load_id = line.id
         if logistic_load_id: # With sale order
