@@ -396,7 +396,7 @@ msgstr "Logistica"
 #. module: logistic_management
 #: model:ir.ui.view,arch_db:logistic_management.view_purchase_order_logistic_workflow_form
 msgid "Logistic confirmed"
-msgstr "Logistica: confermato"
+msgstr "Logistica: Confermato"
 
 #. module: logistic_management
 #: model:ir.ui.menu,name:logistic_management.menu_logistic_management_root
@@ -406,7 +406,7 @@ msgstr "Gestione logistica"
 #. module: logistic_management
 #: model:ir.model,name:logistic_management.model_logistic_manual_operation_wizard
 msgid "Logistic manual operation"
-msgstr "Logistica: operazione manuale"
+msgstr "Logistica: Operazione manuale"
 
 #. module: logistic_management
 #: model:ir.ui.view,arch_db:logistic_management.view_logistic_manual_operation_wizard
