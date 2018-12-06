@@ -316,7 +316,6 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Extra data:
         # ---------------------------------------------------------------------
-        import pdb; pdb.set_trace()
         now = fields.Datetime.now()
 
         row = 0
