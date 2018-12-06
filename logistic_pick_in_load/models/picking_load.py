@@ -253,6 +253,7 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Export on file (report)?
         # ---------------------------------------------------------------------
+        _logger.info('Extract report for BF:')
         for picking in pickings:
             picking.export_excel_picking_report()
 

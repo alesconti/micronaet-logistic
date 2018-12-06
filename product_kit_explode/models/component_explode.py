@@ -69,6 +69,8 @@ class ProductTemplate(models.Model):
         if not self.default_code or '#' not in self.default_code:
             raise exceptions.Warning(_('No "#" char present in default code'))
 
+        template.is_kit = True # Always update is_kit if present
+
         # ---------------------------------------------------------------------
         # Code in default_code of the kit:
         # ---------------------------------------------------------------------
@@ -83,7 +85,6 @@ class ProductTemplate(models.Model):
         template_db = {} # ID of template
         for template in components:
             template_db[template.default_code] = template.id
-            
         
         # ---------------------------------------------------------------------
         # Generate all component extracting from default_code
