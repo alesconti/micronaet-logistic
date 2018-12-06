@@ -181,6 +181,9 @@
                                          <field name="logistic_assign_mode" />
                                          <field name="logistic_order_sort" />
                                          
+                                         <separator string="Output folder:" colspan="4"/>
+                                         <field name="logistic_root_folder" colspan="4"/>
+                                         
                                          <separator string="Load document:" colspan="4"/>
                                          <field name="logistic_pick_in_type_id" />
                                          <field name="logistic_pick_out_type_id" />

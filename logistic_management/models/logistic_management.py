@@ -25,6 +25,7 @@ import os
 import sys
 import logging
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
+from odoo import exceptions
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
 
@@ -37,6 +38,20 @@ class ResCompany(models.Model):
     
     _inherit = 'res.company'
 
+    @api.model
+    def get_subfolder_from_root(self, name):
+        ''' Get subfolder from root
+        '''
+        folder = os.path.expanduser(
+            os.path.join(self.logistic_root_folder, name))
+        
+        # Create in not present
+        try:
+            os.system('mkdir -p %s' % folder)
+        except:
+            exceptions.Warnings(_('Error creating output folder: %s') % folder)    
+        return folder
+        
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
@@ -72,6 +87,11 @@ class ResCompany(models.Model):
         help='Picking in type for unload documents',
         required=True,
         )
+    logistic_root_folder = fields.Text(
+        'Output root folder', 
+        help='Master root folder for output',
+        required=True,
+        )    
 
 class PurchaseOrder(models.Model):
     """ Model name: Sale Order
@@ -262,6 +282,11 @@ class StockPicking(models.Model):
     def export_excel_picking_report(self):
         """ Export excel picking data
         """
+        import pdb; pdb.set_trace()
+        folder = 'Carichi'
+        folder = self.env['res.company'].search(
+            [])[0].get_subfolder_from_root(folder)
+            
         excel_pool = self.env['excel.writer']
 
         ws_name = 'Carichi'
@@ -320,8 +345,7 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         now = fields.Datetime.now()
         now = now.replace(':', '_').replace('-', '_')
-        filename = os.path.expanduser('~/load_%s.xlsx' % now)        
-        filename = os.path.expandusr(filename)
+        filename = os.path.join(folder, 'load_%s.xlsx' % now)        
         excel_pool.save_file_as(filename)
         return True
 
