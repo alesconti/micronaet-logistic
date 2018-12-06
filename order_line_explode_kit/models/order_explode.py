@@ -67,15 +67,26 @@ class SaleOrder(models.Model):
         
         # Post: Create Extra line for kit
         order_id = self.id
+        template_done = []
         for line in component_new:
             product = component_new[line]
             product_qty = line.product_uom_qty
             
-            for bom in product.component_ids:                
-                template_id = bom.component_id.id
+            for bom in product.component_ids:    
+                template = bom.component_id.id                
+                
+                # Update supplier if not present:
+                if not template.default_supplier_id and \
+                        template not in template_done:
+                    template.get_default_supplier_from_code()
+                    template_done.append(template)
+                    
+                # Get product form template ID:            
                 product_ids = product_pool.search([
-                    ('product_tmpl_id', '=', template_id)])
+                    ('product_tmpl_id', '=', template.id)])
                 product_id = product_ids[0].id
+               
+                # Create line: 
                 line_pool.create({
                     'order_id': order_id,
                     'product_id': product_id,
@@ -84,6 +95,7 @@ class SaleOrder(models.Model):
                     'tax_id': False, # No Tax (not used in delivery)                    
                     'kit_line_id': line.id, # back reference to kit line        
                     })
+                    
         return True            
 
 class SaleOrderLine(models.Model):

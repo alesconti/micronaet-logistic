@@ -755,6 +755,8 @@ class SaleOrder(models.Model):
             # C. Became real order:
             order.logistic_state = 'order'
 
+        # Update default supplier for exploded component:
+        
         # Return view:
         return self.return_order_list_view(selected_ids)
 

@@ -34,6 +34,7 @@
         'product',
         'sale',
         'product_kit_management',
+        'product_default_supplier', # For first supplier update
         ],
     'data': [
         'views/order_explode_view.xml',
