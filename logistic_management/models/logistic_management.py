@@ -282,7 +282,6 @@ class StockPicking(models.Model):
     def export_excel_picking_report(self):
         """ Export excel picking data
         """
-        import pdb; pdb.set_trace()
         folder = 'Carichi'
         folder = self.env['res.company'].search(
             [])[0].get_subfolder_from_root(folder)
@@ -317,6 +316,9 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Extra data:
         # ---------------------------------------------------------------------
+        import pdb; pdb.set_trace()
+        now = fields.Datetime.now()
+
         row = 0
         excel_pool.write_xls_line(ws_name, row, [
              'Carichi del giorno: %s' % now], default_format=f_title)
@@ -343,7 +345,6 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Save file:
         # ---------------------------------------------------------------------
-        now = fields.Datetime.now()
         now = now.replace(':', '_').replace('-', '_')
         filename = os.path.join(folder, 'load_%s.xlsx' % now)        
         excel_pool.save_file_as(filename)

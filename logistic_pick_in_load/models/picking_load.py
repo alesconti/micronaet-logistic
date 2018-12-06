@@ -260,7 +260,6 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         #                          Clean temp data:
         # ---------------------------------------------------------------------
-        headers.unlink() # line deleted in cascade!
-        
+        headers.unlink() # line deleted in cascade!        
         return True        
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
