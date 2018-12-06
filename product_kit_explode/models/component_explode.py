@@ -59,6 +59,7 @@ class ProductTemplate(models.Model):
     def explode_kit_from_name(self):
         ''' Explode kit product from name (raise error)
         '''
+        import pdb; pdb.set_trace()
         # Pool used:
         template_pool = self.env['product.template']
         component_pool = self.env['product.template.kit.bom']
@@ -69,7 +70,7 @@ class ProductTemplate(models.Model):
         if not self.default_code or '#' not in self.default_code:
             raise exceptions.Warning(_('No "#" char present in default code'))
 
-        template.is_kit = True # Always update is_kit if present
+        self.is_kit = True # Always update is_kit if present
 
         # ---------------------------------------------------------------------
         # Code in default_code of the kit:
