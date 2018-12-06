@@ -44,8 +44,8 @@ class SaleOrder(models.Model):
     def explode_kit_in_order_line(self):
         ''' Explode kit in order line
         '''
+        product_pool = self.env['product.product']
         line_pool = self.env['sale.order.line']
-        
         delete_line = []
         component_new = {} # Creation after read data
         for line in self.order_line:
@@ -70,10 +70,15 @@ class SaleOrder(models.Model):
         for line in component_new:
             product = component_new[line]
             product_qty = line.product_uom_qty
+            
             for bom in product.component_ids:                
+                template_id = bom.component_id.id
+                product_ids = product_pool.search([
+                    ('product_tmpl_id', '=', template_id)])
+                product_id = product_ids[0].id
                 line_pool.create({
                     'order_id': order_id,
-                    'product_id': bom.component_id.id,
+                    'product_id': product_id,
                     'product_uom_qty': product_qty * bom.product_qty,
                     'price_unit': 0.0, # TODO used price?
                     'tax_id': False, # No Tax (not used in delivery)                    

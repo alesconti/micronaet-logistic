@@ -59,7 +59,6 @@ class ProductTemplate(models.Model):
     def explode_kit_from_name(self):
         ''' Explode kit product from name (raise error)
         '''
-        import pdb; pdb.set_trace()
         # Pool used:
         template_pool = self.env['product.template']
         component_pool = self.env['product.template.kit.bom']

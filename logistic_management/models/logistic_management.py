@@ -494,7 +494,6 @@ class SaleOrder(models.Model):
     def check_exploded_product_kit(self):
         ''' Check if there's kit in product, launch explode operation
         '''
-        import pdb; pdb.set_trace()
         log_message = True # TODO change
         line_pool = self.env['sale.order.line']
         template_pool = self.env['product.template']
