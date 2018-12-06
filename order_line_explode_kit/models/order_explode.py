@@ -73,7 +73,7 @@ class SaleOrder(models.Model):
             product_qty = line.product_uom_qty
             
             for bom in product.component_ids:    
-                template = bom.component_id.id                
+                template = bom.component_id
                 
                 # Update supplier if not present:
                 if not template.default_supplier_id and \
