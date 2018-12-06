@@ -1,6 +1,25 @@
 <?xml version="1.0"?>
 <openerp>
     <data>         
+         <!--product.template-->
+         <record model="ir.actions.act_window" id="action_product_template_form">
+             <field name="name">Product template</field>
+             <field name="res_model">product.template</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <!--<field name="view_id" ref="view_model_name_form"/>-->
+             <field name="context">{}</field>
+             <field name="domain">[]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_product_template_no_supplier_form">
+             <field name="name">Product no supplier</field>
+             <field name="res_model">product.template</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('default_supplier_id', '=', False)]</field>
+         </record>
+
          <!--res.partner-->
          <record model="ir.ui.view" id="view_res_partner_form">
              <field name="name">res.partner.form</field>
@@ -814,6 +833,26 @@
                      action="action_stock_move_logistic_form"
                      sequence="10"             
                      />
+
+             <menuitem
+                 id="menu_logistic_left_configuration_anagrafic_root" 
+                 parent="menu_logistic_header_root"
+                 name="Anagrafic"
+                 sequence="90"             
+                 />
+                 <menuitem 
+                     id="menu_logistic_left_configuration_anagrafic_template"
+                     parent="menu_logistic_left_configuration_anagrafic_root"
+                     action="action_product_template_form"
+                     sequence="10"
+                     />
+                 <menuitem 
+                     id="menu_logistic_left_configuration_anagrafic_template_no_supplier"
+                     parent="menu_logistic_left_configuration_anagrafic_root"
+                     action="action_product_template_no_supplier_form"
+                     sequence="20"
+                     />
+                     
 
              <menuitem
                  id="menu_logistic_left_configuration_root" 
