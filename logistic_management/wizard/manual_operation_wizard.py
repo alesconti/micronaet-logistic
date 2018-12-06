@@ -107,5 +107,19 @@ class StockChangeStandardPrice(models.TransientModel):
         ''' G. Close delivery order
         '''
         return True
+
+    # Report test:
+    @api.multi
+    def load_position_print(self):
+        """ Print load position
+        """
+        self.ensure_one()
+        
+        move_pool = self.env['stock.move']    
+        moves = move_pool.search([]) # TODO Change
+
+        return self.env.ref(
+            'logistic_management.load_stock_move_position').report_action(
+                moves)
         
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

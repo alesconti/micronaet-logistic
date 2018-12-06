@@ -50,6 +50,9 @@
         'views/logistic_management_view.xml',
         'wizard/manual_operation_view.xml',
         
+        # Report:
+        'report/load_position_report.xml',
+        
         # Data:
         'data/sequence_data.xml',
         ],

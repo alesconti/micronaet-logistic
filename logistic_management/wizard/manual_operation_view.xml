@@ -40,6 +40,14 @@
                           <separator string="G. Close customer order delivered:"/>
                           <button name="closed_delivered" string="_Closed Delivered" type="object" class="btn-primary" />
                       </group>-->
+
+                      <group colspan="4" col="2">
+                          <separator string="Report: Load position"/>
+                          <button name="load_position_print" string="Load position report" type="object" class="btn-primary" />
+                      </group>                          
+
+
+
                   </sheet>
               </form>
             </field>
