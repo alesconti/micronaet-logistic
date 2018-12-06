@@ -19,6 +19,22 @@
              <field name="context">{}</field>
              <field name="domain">[('default_supplier_id', '=', False)]</field>
          </record>
+         <record model="ir.actions.act_window" id="action_res_partner_customer_form">
+             <field name="name">Customer</field>
+             <field name="res_model">res.partner</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('customer', '=', True)]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_res_partner_supplier_form">
+             <field name="name">Supplier</field>
+             <field name="res_model">res.partner</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('supplier', '=', True)]</field>
+         </record>
 
          <!--res.partner-->
          <record model="ir.ui.view" id="view_res_partner_form">
@@ -852,7 +868,20 @@
                      action="action_product_template_no_supplier_form"
                      sequence="20"
                      />
-                     
+
+                 <menuitem 
+                     id="menu_logistic_left_configuration_partner_customer"
+                     parent="menu_logistic_left_configuration_anagrafic_root"
+                     action="action_res_partner_customer_form"
+                     sequence="30"
+                     />
+                 <menuitem 
+                     id="menu_logistic_left_configuration_partner_supplier"
+                     parent="menu_logistic_left_configuration_anagrafic_root"
+                     action="action_res_partner_supplier_form"
+                     sequence="40"
+                     />
+
 
              <menuitem
                  id="menu_logistic_left_configuration_root" 
