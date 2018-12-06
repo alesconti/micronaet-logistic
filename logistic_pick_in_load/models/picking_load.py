@@ -106,13 +106,14 @@ class StockPicking(models.Model):
         headers = header_pool.search([])
         sale_line_ready = [] # ready line after assign load qty to purchase
         move_position = [] # stock move to set supplier position
+        pickings = []#self.env['stock.picking']
         for header in headers:
             partner = header.partner_id
             scheduled_date = header.date_order
             name = header.name # same as order_ref
             origin = _('%s [%s]') % (header.order_ref, header.date_order[:10])
             
-            picking = self.create({                
+            picking = self.create({       
                 'partner_id': partner.id,
                 'scheduled_date': scheduled_date,
                 'origin': origin,
@@ -124,6 +125,7 @@ class StockPicking(models.Model):
                 #'priority': 1,                
                 'state': 'done', # XXX done immediately
                 })
+            pickings.append(picking)
             
             for line in header.doca_line:
                 product = line.product_id
@@ -249,8 +251,15 @@ class StockPicking(models.Model):
             move.set_stock_move_position()
 
         # ---------------------------------------------------------------------
+        # Export on file (report)?
+        # ---------------------------------------------------------------------
+        for picking in pickings:
+            picking.export_excel_picking_report()
+
+        # ---------------------------------------------------------------------
         #                          Clean temp data:
         # ---------------------------------------------------------------------
         headers.unlink() # line deleted in cascade!
+        
         return True        
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

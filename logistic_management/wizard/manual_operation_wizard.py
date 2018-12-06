@@ -108,11 +108,24 @@ class StockChangeStandardPrice(models.TransientModel):
         '''
         return True
 
+    # -------------------------------------------------------------------------
     # Report test:
+    # -------------------------------------------------------------------------
     @api.multi
     def load_position_print(self):
         """ Print load position
         """
+        import pdb; pdb.set_trace()
+        excel_pool = self.env['excel.writer']
+
+        ws_name = 'Carichi'
+        excel_pool.create_worksheet(ws_name)
+        
+        excel_pool.save_file_as('/home/thebrush/position.xlsx')
+        return True
+        #return excel_pool.return_attachment('prova_report')
+
+        
         self.ensure_one()
         
         move_pool = self.env['stock.move']    

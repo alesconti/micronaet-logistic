@@ -34,12 +34,14 @@ _logger = logging.getLogger(__name__)
 class LoadMovePositionReport(models.AbstractModel):
     ''' Load move report:
     '''
-    _name = 'report.logistic_management.load_stock_move_position'
+    #_name = 'report.logistic_management.load_stock_move_position'
+    _name = 'report.logistic_management.report_load_position'
     
     @api.model
     def render_html(self, docids, data=None):
         ''' Render report parser:
         '''
+        import pdb; pdb.set_trace()
         report_obj = self.env['report']
         report = report_obj._get_report_from_name(
             'logistic_management.report_load_position')
@@ -48,6 +50,9 @@ class LoadMovePositionReport(models.AbstractModel):
         moves = move_pool.search([]) # TODO Change
         
         docids = moves.ids # list of IDs
+        if not moves: #.exists()
+             raise Warning(
+                 _('No movement to print!'))
         
         docargs = {
             'doc_ids': docids,

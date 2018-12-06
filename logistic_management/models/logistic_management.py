@@ -257,6 +257,74 @@ class StockPicking(models.Model):
             ])
         return pickings.workflow_ready_to_done_done_picking()
 
+    # Export Excel file with loaded picking:
+    @api.multi
+    def export_excel_picking_report(self):
+        """ Export excel picking data
+        """
+        excel_pool = self.env['excel.writer']
+
+        ws_name = 'Carichi'
+        excel_pool.create_worksheet(ws_name)
+        
+        # ---------------------------------------------------------------------
+        # Format:
+        # ---------------------------------------------------------------------
+        excel_pool.set_format()
+        f_title = excel_pool.get_format('title')
+        f_header = excel_pool.get_format('header')
+
+        f_white_text = excel_pool.get_format('text')
+        f_green_text = excel_pool.get_format('bg_green')
+        f_yellow_text = excel_pool.get_format('bg_yellow')
+        
+        f_white_number = excel_pool.get_format('number')
+        f_green_number = excel_pool.get_format('bg_green_number')
+        f_yellow_number = excel_pool.get_format('bg_yellow_number')
+        
+        # ---------------------------------------------------------------------
+        # Setup page:
+        # ---------------------------------------------------------------------
+        excel_pool.column_width(ws_name, [
+            40, 20, 40, 10, 10,
+            ])
+        
+        # ---------------------------------------------------------------------
+        # Extra data:
+        # ---------------------------------------------------------------------
+        row = 0
+        excel_pool.write_xls_line(ws_name, row, [
+             'Carichi del giorno: %s' % now], default_format=f_title)
+        row += 1
+        excel_pool.write_xls_line(ws_name, row, [
+             'Foto', 'Codice', 'Nome', 'Q.', 'Posizione'
+             ], default_format=f_title)
+        
+        for picking in self:
+            for move in picking.move_lines:
+                row +=1 
+                product = move.product_id
+                template = product.product_tmpl_id
+                
+                excel_pool.write_xls_line(ws_name, row, [
+                     '', 
+                     template.default_code,
+                     template.name,
+                     move.product_uom_qty,
+                     move.slot_id.name or '',
+                     ], default_format=f_title)
+                     
+             
+        # ---------------------------------------------------------------------
+        # Save file:
+        # ---------------------------------------------------------------------
+        now = fields.Datetime.now()
+        now = now.replace(':', '_').replace('-', '_')
+        filename = os.path.expanduser('~/load_%s.xlsx' % now)        
+        filename = os.path.expandusr(filename)
+        excel_pool.save_file_as(filename)
+        return True
+
     # -------------------------------------------------------------------------
     #                                   BUTTON:
     # -------------------------------------------------------------------------
