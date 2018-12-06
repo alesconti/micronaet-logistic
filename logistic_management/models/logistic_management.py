@@ -514,6 +514,9 @@ class SaleOrder(models.Model):
                 continue
             template_ids.append(template.id)
             
+            if '#' not in template.default_code: # Not a kit
+                continue
+                
             code_part = template.default_code.split('#')
             if len(code_part) != len(template.component_ids):
                 try:
@@ -521,7 +524,9 @@ class SaleOrder(models.Model):
                     template.explode_kit_from_name()
                 except:
                     pass    
-         
+            else:
+                template.is_kit = True
+
         # Reload product updated:
         templates = template_pool.search([
             ('id', 'in', update_ids), # Updated kit
