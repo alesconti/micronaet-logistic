@@ -24,6 +24,7 @@
 import os
 import sys
 import logging
+import odoo
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo import exceptions
 from odoo.addons import decimal_precision as dp
@@ -41,15 +42,15 @@ class ResCompany(models.Model):
     @api.model
     def get_subfolder_from_root(self, name):
         ''' Get subfolder from root
-        '''
-        folder = os.path.expanduser(
-            os.path.join(self.logistic_root_folder, name))
-        
-        # Create in not present
+        '''        
         try:
+            folder = os.path.expanduser(
+                os.path.join(self.logistic_root_folder, name))
+            # Create in not present
             os.system('mkdir -p %s' % folder)
         except:
-            exceptions.Warnings(_('Error creating output folder: %s') % folder)    
+            raise odoo.exceptions.Warning(
+                _('Error creating output folder (check param)'))
         return folder
         
     # -------------------------------------------------------------------------
@@ -92,6 +93,20 @@ class ResCompany(models.Model):
         help='Master root folder for output',
         required=True,
         )    
+
+class ProductTemplate(models.Model):
+    ''' Template add fields
+    '''
+    _inherit = 'product.template'
+
+    @api.model
+    def _get_root_image_folder(self):
+        ''' Use filestrore folder and subfolder images
+        '''
+        company_pool = self.env['res.company']
+        companys = company_pool.search([])
+        installation_root = companys.get_subfolder_from_root('images')
+        return installation_root
 
 class PurchaseOrder(models.Model):
     """ Model name: Sale Order

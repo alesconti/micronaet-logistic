@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 ###############################################################################
 #
 # ODOO (ex OpenERP) 
@@ -22,45 +22,29 @@
 ###############################################################################
 
 {
-    'name': 'Logistic Management',
-    'version': '1.0',
-    'category': 'Logistic',
-    'sequence': 5,
-    'summary': 'Logistic Management, Sale, Supplier order and delivery',
-    #'description': '',
+    'name': 'Product folder image',
+    'summary': 'Product, image folder',
+        
+    'author': 'Micronaet S.r.l. - Nicola Riolini',
+    'license': 'AGPL-3',
     'website': 'https://micronaet.com',
+    
+    'category': 'Product',
+    'version': '0.1',
+    
     'depends': [
         'base',
-        'sale',
-        'sale_management',
         'product',
-        'stock',
-        'purchase',
-        'logistic_stock_position', # Stock position
-        'order_line_explode_kit', # Sale kit explode
-        'order_line_change_product', # Replaced link product
-        'product_default_supplier', # First supplier management
-        'product_folder_image', # For image management
-        'excel_export', # Export in Excel
-        #'logistic_purchase_export', # Export files
         ],
     'data': [
-        #'security/crm_security.xml',
-        #'security/ir.model.access.csv',
-
-        # Views:
-        'views/logistic_management_view.xml',
-        'wizard/manual_operation_view.xml',
-        
-        # Report:
-        'report/load_position_report.xml',
-        
-        # Data:
-        'data/sequence_data.xml',
+        'views/folder_image_view.xml',
         ],
     'demo': [],
-    'css': [],
-    'installable': True,
-    'application': True,
+    
+    'active': False,
     'auto_install': False,
+    'installable': True,
+    'application': False,
     }
+
+
