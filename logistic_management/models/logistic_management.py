@@ -1230,9 +1230,10 @@ class SaleOrderLine(models.Model):
         #                 Check if order are present:
         # ---------------------------------------------------------------------
         purchase_pending = {}
-        for purchase in purchase_pool.search([('mrp_state', '=', 'draft')]):
+        for purchase in purchase_pool.search([
+                ('logistic_state', '=', 'draft')]):
             supplier_id = purchase.partner_id.id
-            if supplier_id not in puchase_pending:
+            if supplier_id not in purchase_pending:
                 purchase_pending[supplier_id] = purchase # link order
 
         # ---------------------------------------------------------------------
