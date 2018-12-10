@@ -94,6 +94,7 @@ class StockChangeStandardPrice(models.TransientModel):
         '''
         
         # Create draft document:
+        import pdb; pdb.set_trace()
         order_pool = self.env['sale.order']
         order_pool.workflow_ready_to_done_draft_picking()
         

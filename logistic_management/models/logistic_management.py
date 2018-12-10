@@ -382,6 +382,7 @@ class StockPicking(models.Model):
     def workflow_ready_to_done_done_picking(self):
         ''' Confirm draft picking documents
         '''
+        import pdb; pdb.set_trace()
         # ---------------------------------------------------------------------
         # Confirm pickign for DDT and Invoice:
         # ---------------------------------------------------------------------
@@ -856,8 +857,8 @@ class SaleOrder(models.Model):
             ('logistic_state', '=', 'ready'),
             ])
             
-        ddt_list = []
-        invoice_list = []    
+        #ddt_list = []
+        #invoice_list = []    
         for order in orders:
             # Create picking document:
             partner = order.partner_id
@@ -879,17 +880,17 @@ class SaleOrder(models.Model):
                 })
                 
             # Sequence to be assigned:
-            if partner.need_ddt or order.need_ddt:
-                invoice_list.append(picking)
-            if partner.need_ddt or order.need_ddt:
-                ddt_list.append(picking)
+            #if partner.need_ddt or order.need_ddt:
+            #    invoice_list.append(picking)
+            #if partner.need_ddt or order.need_ddt:
+            #    ddt_list.append(picking)
                    
             for line in order.order_line:
                 product = line.product_id
                 product_qty = line.logistic_undelivered_qty
                 
                 # Update line status:
-                line.write({'logistic_state': 'done',})
+                line.write({'logistic_state': 'done', })
 
                 # ---------------------------------------------------------
                 # Create movement (not load stock):
@@ -924,11 +925,11 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Invoice and DDT assign
         # ---------------------------------------------------------------------
-        for picking in ddt_list:
-            picking.assign_ddt_number()
+        #for picking in ddt_list:
+        #    picking.assign_ddt_number()
             
-        for picking in invoice_list:
-            picking.assign_invoice_number()
+        #for picking in invoice_list:
+        #    picking.assign_invoice_number()
             
         # ---------------------------------------------------------------------
         # Order status:    
