@@ -92,13 +92,14 @@ class StockChangeStandardPrice(models.TransientModel):
     def generate_delivery(self):
         ''' F. Generate delivery order in draft mode
         '''
-        order_pool = self.env['sale.order']
         
         # Create draft document:
+        order_pool = self.env['sale.order']
         order_pool.workflow_ready_to_done_draft_picking()
         
         # Confirm draft document immediately:
-        return order_pool.workflow_ready_to_done_all_done_picking()
+        picking_pool = self.env['stock.picking']
+        return picking_pool.workflow_ready_to_done_all_done_picking()
 
     @api.multi
     def closed_delivered(self):

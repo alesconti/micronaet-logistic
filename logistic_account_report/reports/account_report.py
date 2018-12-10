@@ -58,6 +58,8 @@ class StockPicking(models.AbstractModel):
         f_pdf = open(fullname, 'wb')
         f_pdf.write(pdf[0])
         f_pdf.close()
+        _logger.info('Extract DDT: %s' % fullname)
+        return fullname
     
 class ReportDdtLangParser(models.AbstractModel):
     ''' Load move report:

@@ -286,7 +286,8 @@ class StockPicking(models.Model):
     def get_default_folder_path(self):
         ''' Override default extract DDT function:
         '''        
-        folder = self.env['res.company'].get_subfolder_from_root('DDT')
+        companys = self.env['res.company'].search([])
+        folder = companys.get_subfolder_from_root('DDT')
         return folder
     
     # -------------------------------------------------------------------------
@@ -396,18 +397,29 @@ class StockPicking(models.Model):
             
             picking.write({
                 'state': 'done',
-                # TODO Invoice sequence
-                # TODO DDT sequence
                 })
                 
         # ---------------------------------------------------------------------
         # DDT extra operations: (require reload)        
         # ---------------------------------------------------------------------
+        companys = self.env['res.company'].search([])
+        folder = companys.get_subfolder_from_root('DDT')
+
         for picking in self.search([('id', 'in', ddt_ids)]):
+        
             # DDT Extract procedure:
-            picking.extract_account_ddt_report()            
+            original_fullname = picking.extract_account_ddt_report()
+            import pdb; pdb.set_trace()
             
             # DDT Symlink procedure:
+            original_base = os.path.basename(original_fullname)
+            date = picking.scheduled_date
+            month_path = os.path.join(folder, date[:4], date[5:7])
+            os.system('mkdir -p %s' % month_path)
+            symlink = os.system('ln -s "%s" "%s"' % (
+                original_fullname,
+                os.path.join(month_path, original_base)
+                ))
             
             # DDT Print procedure:
             # TODO 
