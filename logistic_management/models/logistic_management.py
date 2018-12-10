@@ -410,7 +410,6 @@ class StockPicking(models.Model):
         
             # DDT Extract procedure:
             original_fullname = picking.extract_account_ddt_report()
-            import pdb; pdb.set_trace()
             
             # DDT Symlink procedure:
             original_base = os.path.basename(original_fullname)
