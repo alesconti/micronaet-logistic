@@ -47,7 +47,7 @@ class ProductTemplate(models.Model):
             try:
                 f_data = open(filename, 'rb')
                 product.new_image = base64.encodestring(f_data.read())
-                f_data.close()                 
+                f_data.close()
                 _logger.info('Product image loaded: %s' % filename)
             except:
                 product.new_image = False    
