@@ -31,10 +31,9 @@ from odoo.tools.translate import _
 _logger = logging.getLogger(__name__)
 
 
-class LoadMovePositionReport(models.AbstractModel):
+"""class LoadMovePositionReport(models.AbstractModel):
     ''' Load move report:
     '''
-    #_name = 'report.logistic_management.load_stock_move_position'
     _name = 'report.logistic_management.report_load_position'
     
     @api.model
@@ -63,5 +62,5 @@ class LoadMovePositionReport(models.AbstractModel):
             'logistic_management.report_load_position', 
             docargs,
             )
-
+"""
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

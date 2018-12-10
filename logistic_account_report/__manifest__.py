@@ -22,41 +22,25 @@
 ###############################################################################
 
 {
-    'name': 'Logistic Management',
+    'name': 'Logistic Account Report',
     'version': '1.0',
     'category': 'Logistic',
     'sequence': 5,
-    'summary': 'Logistic Management, Sale, Supplier order and delivery',
+    'summary': 'Logistic, Accounting report',
     #'description': '',
     'website': 'https://micronaet.com',
     'depends': [
         'base',
-        'sale',
-        'sale_management',
-        'product',
+        'account',
         'stock',
-        'purchase',
-        'logistic_stock_position', # Stock position
-        'order_line_explode_kit', # Sale kit explode
-        'order_line_change_product', # Replaced link product
-        'product_default_supplier', # First supplier management
         'product_folder_image', # For image management
-        'excel_export', # Export in Excel
-        #'logistic_purchase_export', # Export files
         ],
     'data': [
-        #'security/crm_security.xml',
-        #'security/ir.model.access.csv',
-
         # Views:
-        'views/logistic_management_view.xml',
-        'wizard/manual_operation_view.xml',
+        #'views/logistic_management_view.xml',
         
         # Report:
-        'reports/load_position_report.xml',
-        
-        # Data:
-        'data/sequence_data.xml',
+        'reports/account_report.xml',
         ],
     'demo': [],
     'css': [],

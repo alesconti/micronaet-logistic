@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+   <data>
+        <!--Report template:-->
+        <template id="report_account_ddt">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                             <!-- HEADER: -->
+                            <div class="oe_structure"/>                            
+                            <div class="row">
+                                <div class="col-xs-2">
+                                    <!--LOGO-->
+                                    <img t-att-src="'data:image/png;base64,%s' % res_company.logo" style="max-height: 45px;"/>                                   
+                                </div>
+                                <div class="col-xs-4">
+                                    <span f-field="res_company.partner_id.name" />                                    
+                                </div>    
+                                <div class="col-xs-6">
+                                </div>    
+                            </div>                            
+                            <div class="oe_structure"/>
+                            <hr />
+                            
+                             <!-- DESTINATION BOX: -->
+                            <div class="oe_structure"/>                            
+                            <div class="row">
+                                <div class="col-xs-5">
+                                    Destinatario
+                                </div>    
+                                <div class="col-xs-1">
+                                </div>                                
+                                <div class="col-xs-6">
+                                    Destinazione
+                                </div>    
+                            </div>    
+                            <div class="oe_structure"/>
+                            <div class="row">
+                                <div class="col-xs-5" style="height: 150px; border: 1px solid black;">
+                                    <span f-field="o.partner_id.name" />
+                                </div>    
+                                <div class="col-xs-1">
+                                </div>                                
+                                <div class="col-xs-6" style="height: 150px; border: 1px solid black;">
+                                    <span f-field="o.partner_id.name" />
+                                </div>    
+                            </div>    
+                            <div class="oe_structure"/>
+                            
+                            <!-- DETAIL: -->
+                            <br />
+                            <div class="oe_structure"/>                            
+                            <div class="row">
+                                <div class="col-xs-1">
+                                    Q.ta'
+                                </div>    
+                                <div class="col-xs-5">
+                                    Cod art.
+                                </div>    
+                                <div class="col-xs-6">
+                                    Descrizione
+                                </div>    
+                            </div>    
+                            <div class="oe_structure"/>
+
+                            <t t-foreach="o.move_lines" t-as="move">
+                                <div class="row">
+                                    <div class="col-xs-1">
+                                        <span t-field="move.product_uom_qty" />
+                                    </div>    
+                                    <div class="col-xs-5">
+                                        <img t-if="move.product_id.new_image"
+                                            t-att-src="'data:image/png;base64,%s' % move.product_id.new_image" style="max-height: 45px;" />
+
+                                        <span t-field="move.product_id.product_tmpl_id.default_code" />
+                                    </div>    
+                                    <div class="col-xs-6">
+                                        <span t-field="move.product_id.name" />
+                                    </div>    
+                                </div> 
+                            </t>
+                            
+                            <!-- END OF PAGE: -->
+                            <br />
+                            <div class="oe_structure"/>                            
+                            <div class="row">
+                                <div class="col-xs-6" style="height: 60px; border: 1px solid black;">
+                                    Incaricato del trasporto
+                                    
+                                </div>
+                                <div class="col-xs-3" style="height: 60px; border: 1px solid black;">
+                                    Causale del trasporto
+                                    
+                                </div>
+                                <div class="col-xs-3" style="height: 60px; border: 1px solid black;">
+                                    Firma incaricato del trasporto
+                                    
+                                </div>
+                            </div>    
+                            <div class="row">
+                                <div class="col-xs-1" style="height: 60px; border: 1px solid black;">
+                                    Nr. colli
+                                    
+                                </div>
+                                <div class="col-xs-1" style="height: 60px; border: 1px solid black;">
+                                    Peso
+                                    
+                                </div>
+                                <div class="col-xs-2" style="height: 60px; border: 1px solid black;">
+                                    Aspetto esteriore dei beni
+                                    
+                                </div>
+                                <div class="col-xs-2" style="height: 60px; border: 1px solid black;">
+                                    Porto
+                                    
+                                </div>
+                                <div class="col-xs-3" style="height: 60px; border: 1px solid black;">
+                                    Data e ora inizio trasporto
+                                    
+                                </div>
+                                <div class="col-xs-3" style="height: 60px; border: 1px solid black;">
+                                    Firma destinatario
+                                    
+                                </div>
+                            </div>    
+
+                            <!-- IMPORTANT: -->
+                            <br />
+                            <div class="oe_structure"/>                            
+                            <div class="row">
+                                <div class="col-xs-12" style="border: 1px solid black;">
+                                    IMPORTANTE: Lo staff Brixia Moto ringrazia per l’acquisto e la fiducia prestata.
+                                    Ogni nostra spedizione è accompagnata da regolare DDT di vendita, il quale fa fede in termini di data di
+                                    acquisto e garanzia del prodotto ordinato. Questo rapporto di vendita non e' soggetto ne' all'obbligo di emissione
+                                    della fattura (a meno che non sia richiesta dal cliente, non oltre il momento di effettuazione dell'operazione) come
+                                    stabilito dall'art.22 DPR 633/1972. ne' a quello di certificazione tramite scontrino o ricevuta fiscale fiscale ex art.2
+                                    co.1 lett. oo DPR 696/1996.
+                                    Restano salve tutte le garanzie di vendita, tra cui il diritto di recesso, come illustrato nelle condizioni generali di
+                                    vendita (a cui si rimanda) pubblicate sul sito.
+                                </div>    
+                            </div>    
+                            <div class="oe_structure"/>
+
+                            <!-- PRIVACY: -->
+                            <br />
+                             
+                                                        
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>   
+        <!--
+        <template id="report_saleorder_document">
+            <t t-set="doc" t-value="doc.with_context({'lang':user.partner_id.lang})" />
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <div class="oe_structure"/>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <strong t-if="doc.partner_shipping_id == doc.partner_invoice_id">Invoice and shipping address:</strong>
+                            <strong t-if="doc.partner_shipping_id != doc.partner_invoice_id">Invoice address:</strong>
+                            <div t-field="doc.partner_invoice_id" t-options="{&quot;no_marker&quot;: True}"/>
+                        <...>
+                    <div class="oe_structure"/>
+                </div>
+            </t>
+        </template>
+        
+        <img t-att-src="'/report/barcode/?type=%s&value=%s&width=%s&height=%s'%('QR', 'text', 200, 200)"/>
+        <img t-att-src="'/report/barcode/QR/%s' % 'My text in qr code'"/>
+       
+        <template id="report_saleorder_style" inherit_id="report.style">
+          <xpath expr=".">
+            <t>
+              .example-css-class {
+                background-color: red;
+              }
+            </t>
+          </xpath>
+        </template>
+        -->
+        <template id="report_ddt_lang">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="logistic_account_report.report_account_ddt" t-lang="user.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+
+        <record id="paperformat_DDT" model="report.paperformat">
+            <field name="name">Account report</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">297</field>
+            <field name="page_width">210</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">3</field>
+            <field name="dpi">80</field>
+        </record>
+        
+        <!--Report action:-->
+        <report
+            id="action_report_ddt_lang"
+            model="stock.picking"
+            string="Account DDT report"
+            report_type="qweb-pdf"
+            name="logistic_account_report.report_ddt_lang"
+            file="logistic_account_report.report_ddt_lang"
+            attachment_use="True"
+            attachment="'%s.pdf' % (object.ddt_number or 'draft').replace('/', '_')"
+            print_report_name="'%s.pdf' % (object.ddt_number or 'draft').replace('/', '_')"
+            paperformat="paperformat_DDT"
+        />
+
+   </data>
+</openerp>
