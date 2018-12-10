@@ -31,9 +31,9 @@
                             <field name="similar_id" domain="[('id', 'not in', similar_ids)]"/>
                             <button name="add_similar_product_in_pool" string="Add in pool" type="object" class="btn-primary" />
 
-                            <separator string="Similar pool" colspan="4" />
+                            <separator string="Alternative pool" colspan="4" />
                             <field name="similar_ids" colspan="4" nolabel="1"><!--NOT FOR o2m options="{'no_create': True, 'no_edit': True}"-->
-                               <tree string="Similar">
+                               <tree string="Alternative">
                                    <field name="name" />
                                    <field name="default_code" />
                                </tree>
@@ -44,9 +44,9 @@
                             <field name="alternative_id" domain="[('id', 'not in', alternative_ids)]"/>
                             <button name="add_alternative_product_in_pool" string="Add in pool" type="object" class="btn-primary" />
 
-                            <separator string="Alternative pool" colspan="4" />
+                            <separator string="Substituvive pool" colspan="4" />
                             <field name="alternative_ids" colspan="4" nolabel="1">
-                               <tree string="Alternative">
+                               <tree string="Substitutive">
                                    <field name="name" />
                                    <field name="default_code" />
                                </tree>
@@ -62,7 +62,7 @@
             </field>
         </record>  
         <record model="ir.actions.act_window" id="action_product_template_pool_similar_linked">
-            <field name="name">Similar pool</field>
+            <field name="name">Alternative pool</field>
             <field name="res_model">product.template.pool.linked</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
@@ -71,7 +71,7 @@
             <field name="domain">[('mode', '=', 'similar')]</field>
         </record>    
         <record model="ir.actions.act_window" id="action_product_template_pool_alternative_linked">
-            <field name="name">Alternative pool</field>
+            <field name="name">Substitutive pool</field>
             <field name="res_model">product.template.pool.linked</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
@@ -90,12 +90,12 @@
                     <page string="Linked">
                         <group colspan="4" col="4">
                             <group colspan="2" col="4">
-                                 <separator string="Similar management" colspan="4"/>
-                                 <button name="create_similar_pool" string="Manage similar" type="object" class="btn-primary" colspan="2" context="{'open_mode': 'new'}"/>
+                                 <separator string="Alternative management" colspan="4"/>
+                                 <button name="create_similar_pool" string="Manage alternative" type="object" class="btn-primary" colspan="2" context="{'open_mode': 'new'}"/>
                                  <button name="unlink_similar_pool" string="Remove from pool" type="object" attrs="{'invisible': [('similar_id', '=', False)]}" colspan="2"/> 
                                  
                                  <field name="similar_ids" colspan="4" nolabel="1" readonly="1" attrs="{'invisible': [('similar_id', '=', False)]}">
-                                     <tree string="Product similar" editable="bottom">
+                                     <tree string="Product alternative" editable="bottom">
                                          <field name="name" />
                                          <field name="default_code" />
                                      </tree>
@@ -104,12 +104,12 @@
                             </group>                        
 
                             <group colspan="2" col="4">
-                                 <separator string="Alternative management" colspan="4"/>
-                                 <button name="create_alternative_pool" string="Manage alternative" type="object" class="btn-primary" colspan="2" context="{'open_mode': 'new'}"/>
+                                 <separator string="Substitutive management" colspan="4"/>
+                                 <button name="create_alternative_pool" string="Manage substitutive" type="object" class="btn-primary" colspan="2" context="{'open_mode': 'new'}"/>
                                  <button name="unlink_alternative_pool" string="Remove from pool" type="object" attrs="{'invisible': [('alternative_id', '=', False)]}" colspan="2"/> 
                                  
                                  <field name="alternative_ids" colspan="4" nolabel="1" readonly="1" attrs="{'invisible': [('alternative_id', '=', False)]}">
-                                     <tree string="Product alternative" editable="bottom">
+                                     <tree string="Product substitutive" editable="bottom">
                                          <field name="name" />
                                          <field name="default_code" />
                                      </tree>

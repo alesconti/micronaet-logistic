@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-24 16:15+0000\n"
-"PO-Revision-Date: 2018-10-24 18:18+0100\n"
+"POT-Creation-Date: 2018-12-07 17:17+0000\n"
+"PO-Revision-Date: 2018-12-07 18:20+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Generator: Poedit 1.6.10\n"
 
 #. module: product_pool_linked
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_alternative_id
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_similar_id
 msgid "Add alternative"
 msgstr "Aggiungi alternativo"
 
@@ -28,13 +28,13 @@ msgid "Add in pool"
 msgstr "Aggiungi nel pool"
 
 #. module: product_pool_linked
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_similar_id
-msgid "Add similar"
-msgstr "Aggiungi simile"
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_alternative_id
+msgid "Add substitutive"
+msgstr "Aggiungi sostitutivo"
 
 #. module: product_pool_linked
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_product_alternative_id
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_alternative_id
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_product_similar_id
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_similar_id
 #: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_pool_linked_form
 #: selection:product.template.pool.linked,mode:0
 msgid "Alternative"
@@ -46,17 +46,17 @@ msgid "Alternative management"
 msgstr "Gestione prodotti alternativi"
 
 #. module: product_pool_linked
-#: model:ir.actions.act_window,name:product_pool_linked.action_product_template_pool_alternative_linked
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_product_alternative_ids
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_alternative_ids
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_alternative_ids
-#: model:ir.ui.menu,name:product_pool_linked.menu_product_template_pool_alternative_linked
+#: model:ir.actions.act_window,name:product_pool_linked.action_product_template_pool_similar_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_product_similar_ids
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_similar_ids
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_similar_ids
+#: model:ir.ui.menu,name:product_pool_linked.menu_product_template_pool_similar_linked
 #: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_pool_linked_form
 msgid "Alternative pool"
 msgstr "Pool alternativi"
 
 #. module: product_pool_linked
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_alternative_text
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_similar_text
 msgid "Alternative product"
 msgstr "Prodotto alternativo"
 
@@ -113,8 +113,8 @@ msgstr "Gestisci prodotti alternativi"
 
 #. module: product_pool_linked
 #: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
-msgid "Manage similar"
-msgstr "Gestisci prodotti simili"
+msgid "Manage substitutive"
+msgstr "Gestione prodotti sostitutivi"
 
 #. module: product_pool_linked
 #: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_mode
@@ -122,16 +122,16 @@ msgid "Mode"
 msgstr "Modo"
 
 #. module: product_pool_linked
-#: code:addons/product_pool_linked/models/product_linked.py:242
+#: code:addons/product_pool_linked/models/product_linked.py:209
 #, python-format
 msgid "New alternative pool"
 msgstr "Nuovo pool alternativo"
 
 #. module: product_pool_linked
-#: code:addons/product_pool_linked/models/product_linked.py:209
+#: code:addons/product_pool_linked/models/product_linked.py:242
 #, python-format
-msgid "New similar pool"
-msgstr "Nuovo pool simili"
+msgid "New subsitutive pool"
+msgstr "Nuovo prodotto sostitutivo"
 
 #. module: product_pool_linked
 #: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_note
@@ -152,14 +152,9 @@ msgid "Pool of linked product"
 msgstr "Pool dei prodotti collegati"
 
 #. module: product_pool_linked
-#: model:ir.model,name:product_pool_linked.model_product_template_pool_similar
-msgid "Pool of similar product"
-msgstr "Pool dei prodotti simili"
-
-#. module: product_pool_linked
 #: model:ir.model,name:product_pool_linked.model_product_template
 msgid "Product Template"
-msgstr "Modello Prodotto"
+msgstr "Modello prodotto"
 
 #. module: product_pool_linked
 #: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
@@ -168,8 +163,8 @@ msgstr "Prodotto alternativo"
 
 #. module: product_pool_linked
 #: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
-msgid "Product similar"
-msgstr "Prodotto simile"
+msgid "Product substitutive"
+msgstr "Prodotto sostitutivo"
 
 #. module: product_pool_linked
 #: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
@@ -177,29 +172,37 @@ msgid "Remove from pool"
 msgstr "Rimuovi dal pool"
 
 #. module: product_pool_linked
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_product_similar_id
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_similar_id
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_product_alternative_ids
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_alternative_ids
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_alternative_ids
+msgid "Substitute pool"
+msgstr "Pool sostitutivi"
+
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_product_alternative_id
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_alternative_id
 #: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_pool_linked_form
 #: selection:product.template.pool.linked,mode:0
-msgid "Similar"
-msgstr "Simile"
+msgid "Substitutive"
+msgstr "Sostitutivo"
 
 #. module: product_pool_linked
 #: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_linked_page_form
-msgid "Similar management"
-msgstr "Gestione prodotti simili"
+msgid "Substitutive management"
+msgstr "Gestione sostitutivo"
 
 #. module: product_pool_linked
-#: model:ir.actions.act_window,name:product_pool_linked.action_product_template_pool_similar_linked
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_product_similar_ids
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_similar_ids
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_similar_ids
-#: model:ir.ui.menu,name:product_pool_linked.menu_product_template_pool_similar_linked
+#: model:ir.actions.act_window,name:product_pool_linked.action_product_template_pool_alternative_linked
+#: model:ir.ui.menu,name:product_pool_linked.menu_product_template_pool_alternative_linked
+msgid "Substitutive pool"
+msgstr "Pool sostitutivo"
+
+#. module: product_pool_linked
+#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_alternative_text
+msgid "Substitutive product"
+msgstr "Prodotto sostitutivo"
+
+#. module: product_pool_linked
 #: model:ir.ui.view,arch_db:product_pool_linked.view_product_template_pool_linked_form
-msgid "Similar pool"
-msgstr "Pool simili"
-
-#. module: product_pool_linked
-#: model:ir.model.fields,field_description:product_pool_linked.field_product_template_pool_linked_similar_text
-msgid "Similar product"
-msgstr "Prodotto simile"
+msgid "Substituvive pool"
+msgstr "Pool sostitutivo"

@@ -45,7 +45,7 @@ class ProductTemplatePoolLinked(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def add_similar_product_in_pool(self):
-        ''' Add selected product in similar pool 
+        ''' Add selected product in alternative pool 
             depend on open mode selection
         '''
         product = self.similar_id
@@ -133,17 +133,17 @@ class ProductTemplatePoolLinked(models.Model):
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     mode = fields.Selection([
-        ('alternative', 'Alternative'),
-        ('similar', 'Similar'),
+        ('alternative', 'Substitutive'),
+        ('similar', 'Alternative'),
         ], 'Mode', default='similar')
         
-    similar_id = fields.Many2one('product.template', 'Add similar')
-    alternative_id = fields.Many2one('product.template', 'Add alternative')
+    similar_id = fields.Many2one('product.template', 'Add alternative')
+    alternative_id = fields.Many2one('product.template', 'Add substitutive')
     
     similar_text = fields.Text(
-        'Similar product', compute='_get_product_similar_text', store=False)
+        'Alternative product', compute='_get_product_similar_text', store=False)
     alternative_text = fields.Text(
-        'Alternative product', compute='_get_product_alternative_text', 
+        'Substitutive product', compute='_get_product_alternative_text', 
         store=False)
 
     note = fields.Text('Note')
@@ -159,9 +159,9 @@ class ProductTemplate(models.Model):
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     similar_id = fields.Many2one(
-        'product.template.pool.linked', 'Similar', ondelete='set null')
-    alternative_id = fields.Many2one(
         'product.template.pool.linked', 'Alternative', ondelete='set null')
+    alternative_id = fields.Many2one(
+        'product.template.pool.linked', 'Substitutive', ondelete='set null')
 
 class ProductTemplatePoolLinked(models.Model):
     """ Model name: ProductTemplatePoolLinked
@@ -173,9 +173,9 @@ class ProductTemplatePoolLinked(models.Model):
     #                                   COLUMNS:
     # -------------------------------------------------------------------------    
     similar_ids = fields.One2many(
-        'product.template', 'similar_id', 'Similar pool')
+        'product.template', 'similar_id', 'Alternative pool')
     alternative_ids = fields.One2many(
-        'product.template', 'alternative_id', 'Alternative pool')
+        'product.template', 'alternative_id', 'Substitute pool')
 
 class ProductTemplate(models.Model):
     """ Model name: ProductTemplate
@@ -188,7 +188,7 @@ class ProductTemplate(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def create_similar_pool(self):
-        ''' Create a new pool of similar product, start adding this product
+        ''' Create a new pool of alternative product, start adding this product
             in it
         '''
         linked_pool = self.env['product.template.pool.linked']
@@ -206,7 +206,7 @@ class ProductTemplate(models.Model):
 
         return {
             'type': 'ir.actions.act_window',
-            'name': _('New similar pool'),
+            'name': _('New alternative pool'),
             'view_type': 'form',
             'view_mode': 'form', # tree
             'res_id': linked_id,
@@ -239,7 +239,7 @@ class ProductTemplate(models.Model):
 
         return {
             'type': 'ir.actions.act_window',
-            'name': _('New alternative pool'),
+            'name': _('New subsitutive pool'),
             'view_type': 'form',
             'view_mode': 'form', # tree
             'res_id': linked_id,
@@ -284,7 +284,7 @@ class ProductTemplate(models.Model):
     # TODO unificare le due procedure:
     @api.one
     def _compute_product_template_similar_ids(self):
-        ''' Return pool of product present in similar pool:
+        ''' Return pool of product present in alternative pool:
             It's a related field but maybe modified in the future
         '''
         res = []
@@ -296,7 +296,7 @@ class ProductTemplate(models.Model):
 
     @api.one
     def _compute_product_template_alternative_ids(self):
-        ''' Return pool of product present in alternative pool:
+        ''' Return pool of product present in subsitutive pool:
             It's a related field but maybe modified in the future
         '''
         res = []
@@ -313,11 +313,11 @@ class ProductTemplate(models.Model):
     similar_ids = fields.One2many(
         'product.template', 
         compute='_compute_product_template_similar_ids',
-        string='Similar pool')
+        string='Alternative pool')
 
     alternative_ids = fields.One2many(
         'product.template', 
         compute='_compute_product_template_alternative_ids',
-        string='Alternative pool')
+        string='Substitute pool')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
