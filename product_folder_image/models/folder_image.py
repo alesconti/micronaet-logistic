@@ -40,14 +40,15 @@ class ProductTemplate(models.Model):
         for product in self:
             filename = product.mmac_url_image
             if not folder or not filename:
-                self.new_image = False
+                product.new_image = False
                 continue
             filename = os.path.join(folder, filename)
             try:
-                self.new_image = base64.encodestring(open(filename, 'rb').read())
+                product.new_image = base64.encodestring(
+                    open(filename, 'rb').read())
                 _logger.warning('Product image loaded: %s' % filename)
             except:
-                self.new_image = False    
+                product.new_image = False    
                 _logger.error('Product image not found: %s' % filename)
 
     # -------------------------------------------------------------------------
