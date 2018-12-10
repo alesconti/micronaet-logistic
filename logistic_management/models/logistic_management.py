@@ -1227,6 +1227,15 @@ class SaleOrderLine(models.Model):
             return True
 
         # ---------------------------------------------------------------------
+        #                 Check if order are present:
+        # ---------------------------------------------------------------------
+        purchase_pending = {}
+        for purchase in purchase_pool.search([('mrp_state', '=', 'draft')]):
+            supplier_id = purchase.partner_id.id
+            if supplier_id not in puchase_pending:
+                purchase_pending[supplier_id] = purchase # link order
+
+        # ---------------------------------------------------------------------
         #                 Collect data for purchase order:
         # ---------------------------------------------------------------------
         purchase_db = {} # supplier is the key
@@ -1253,14 +1262,17 @@ class SaleOrderLine(models.Model):
             partner = supplier or company.partner_id # Use company 
             # TODO if order was deleted restore logistic_state to uncovered
 
-            purchase = purchase_pool.create({
-                'partner_id': partner.id,
-                'date_order': now,
-                'date_planned': now,
-                #'name': # TODO counter?
-                #'partner_ref': '',
-                #'logistic_state': 'draft',
-                })
+            if partner.id in purchase_pending:
+                purchase = purchase_pending[partner.id]
+            else:    
+                purchase = purchase_pool.create({
+                    'partner_id': partner.id,
+                    'date_order': now,
+                    'date_planned': now,
+                    #'name': # TODO counter?
+                    #'partner_ref': '',
+                    #'logistic_state': 'draft',
+                    })
             selected_ids.append(purchase.id)
 
             # -----------------------------------------------------------------
