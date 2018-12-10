@@ -45,10 +45,9 @@ class ProductTemplate(models.Model):
                 continue
             filename = os.path.join(folder, filename)
             try:
-                import pdb; pdb.set_trace()
-                binary_data = open(filename, 'rb').read()
-                product.new_image = base64.encodestring(binary_data)
-                binary_data.close()                    
+                f_data = open(filename, 'rb')
+                product.new_image = base64.encodestring(f_data.read())
+                f_data.close()                 
                 _logger.info('Product image loaded: %s' % filename)
             except:
                 product.new_image = False    
