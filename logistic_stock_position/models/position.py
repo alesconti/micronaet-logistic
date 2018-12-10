@@ -61,9 +61,6 @@ class StockLocationSlot(models.Model):
     def slot_detail(self):
         ''' Open detail view:
         '''
-        #model_pool = self.env['ir.model.data']
-        #view_id = model_pool.get_object_reference('module_name', 'view_name')[1]
-    
         return {
             'type': 'ir.actions.act_window',
             'name': _('Slot detail'),
