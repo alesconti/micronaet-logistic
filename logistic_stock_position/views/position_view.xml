@@ -70,7 +70,9 @@
                       <field name="mode" />
                       <field name="name" />
                       <field name="description" readonly="1" />
-                  </tree>
+                      <field name="product_ids" />
+                      <button name="slot_detail" string="Slot detail" type="object" icon="fa-file-text-o"/>
+                  </tree>                  
               </field>
           </record>
           <record model="ir.ui.view" id="view_stock_location_slot_form">
@@ -83,6 +85,22 @@
                               <field name="mode" />
                               <field name="name" />
                               <field name="description" readonly="1" colspan="4"/>
+                              <separator string="Product:" colspan="4"/>
+                              <field name="product_ids" nolabel="1" colspan="4">
+                                  <tree string="Product:">
+                                       <field name="default_code" />
+                                       <field name="name" />
+                                       <field name="list_price" />
+	                                   <field name="standard_price" />
+	                                   <!--<field name="categ_id" />-->
+	                                   <field name="default_supplier_id" />
+	                                   <!--<field name="type" />-->
+	                                   <field name="qty_available" />
+	                                   <!--<field name="virtual_available" />-->
+	                                   <field name="uom_id" />
+	                                   <field name="active" invisible="1" />
+                                 </tree>
+                              </field>
                           </group>
                       </sheet>
                   </form>

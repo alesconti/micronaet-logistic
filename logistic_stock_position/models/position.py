@@ -57,6 +57,28 @@ class StockLocationSlot(models.Model):
     _rec_name = 'name'
     _order = 'name'
 
+    @api.multi
+    def slot_detail(self):
+        ''' Open detail view:
+        '''
+        #model_pool = self.env['ir.model.data']
+        #view_id = model_pool.get_object_reference('module_name', 'view_name')[1]
+    
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Slot detail'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': self.id,
+            'res_model': 'stock.location.slot',
+            #'view_id': view_id, # False
+            'views': [(False, 'form'), (False, 'tree')],
+            'domain': [],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+        
     #@api.depends('name', 'mode')
     @api.multi
     def _get_slot_description(self, ):
@@ -120,6 +142,8 @@ class StockLocationSlot(models.Model):
     # -------------------------------------------------------------------------
     name = fields.Char('Name', size=40, required=True,
         help='Slot code')    
+    product_ids = fields.One2many(
+        'product.template', 'default_slot_id', 'Product')    
     mode = fields.Selection([
         ('stock', 'Stock'), # Load stock
         ('supplier', 'Supplier ready'), # Delivered today (order ready)
