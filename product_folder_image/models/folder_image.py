@@ -45,6 +45,7 @@ class ProductTemplate(models.Model):
                 continue
             filename = os.path.join(folder, filename)
             try:
+                import pdb; pdb.set_trace()
                 binary_data = open(filename, 'rb').read()
                 product.new_image = base64.encodestring(binary_data)
                 binary_data.close()                    
