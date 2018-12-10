@@ -32,9 +32,8 @@
                           <button name="update_ready" string="_Update ready" type="object" class="btn-primary" />
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="F. Generate picking out document:"/>
+                          <separator string="F. Generate picking out document (and confirm):"/>
                           <button name="generate_delivery" string="Generate _Delivery" type="object" class="btn-primary" />
-                          <!--<button name="confirm_delivery" string="Confirm delivery document" type="object" />-->
                       </group>                          
                       <!--<group colspan="4" col="2">
                           <separator string="G. Close customer order delivered:"/>

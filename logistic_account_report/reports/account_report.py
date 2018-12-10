@@ -24,7 +24,6 @@
 import os
 import sys
 import logging
-import base64
 from odoo import api, models
 from odoo import tools
 from odoo.tools.translate import _
@@ -37,16 +36,28 @@ class StockPicking(models.AbstractModel):
     '''
     _inherit = 'stock.picking'
     
-    @api.model
+    @api.multi
+    def get_default_folder_path(self):
+        '''
+        '''
+        path = os.path.expanduser('~/Account/DDT')
+        os.system('mkdir -p %s' % path)
+        return path
+
+    @api.multi
     def extract_account_ddt_report(self):
         ''' Extract PDF report
         '''
-        import pdb; pdb.set_trace()
+        folder = self.get_default_folder_path()
+        # TODO Sanitize file name:
+        filename = (self.ddt_number or 'not_confirmed.pdf').replace('/', '_')
+        fullname = os.path.join(folder, filename)
+        
         REPORT_ID = 'logistic_account_report.action_report_ddt_lang'        
         pdf = self.env.ref(REPORT_ID).render_qweb_pdf(self.ids)
-        b64_pdf = base64.b64encode(pdf[0])
-        f_pdf = open('/home/thebrush/prova.pdf', 'wb')
-        f_pdf.write(b64.pdf)
+        f_pdf = open(fullname, 'wb')
+        f_pdf.write(pdf[0])
+        f_pdf.close()
     
 class ReportDdtLangParser(models.AbstractModel):
     ''' Load move report:
@@ -58,11 +69,13 @@ class ReportDdtLangParser(models.AbstractModel):
     # EX: def render_html(self, docids, data=None):
         ''' Render report parser:
         '''
-        REPORT_NAME = 'logistic_account_report.report_ddt_lang'
-        report_pool = self.env['ir.actions.report']
-        report = report_pool._get_report_from_name(REPORT_NAME)
-
-        picking_pool = self.env['stock.picking']    
+        return {
+            'doc_ids': docids,#self.ids,
+            'doc_model': 'stock.picking',#picking_pool.model,#holidays_report.model,
+            'docs': self.env['stock.picking'].search([('id', 'in', docids)]),
+            }
+        
+        '''picking_pool = self.env['stock.picking']    
         pickings = picking_pool.search([]) # TODO Change filter here
         
         if not pickings.exists():
@@ -75,14 +88,11 @@ class ReportDdtLangParser(models.AbstractModel):
             'doc_model': 'stock.picking',
             'docs': pickings,
             }
-        
-        if not data.get('form'):
-            raise UserError(
-                _('Form content is missing, this report cannot be printed.'))
-
         return {
             'doc_ids': docids,#self.ids,
-            'doc_model': picking_pool.mode,#holidays_report.model,
+            'doc_model': 'stock.picking',#picking_pool.model,#holidays_report.model,
             'docs': pickings,
             }
+        '''
+        
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

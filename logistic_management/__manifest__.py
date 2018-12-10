@@ -42,6 +42,7 @@
         'product_default_supplier', # First supplier management
         'product_folder_image', # For image management
         'excel_export', # Export in Excel
+        'logistic_account_report', # DDT Report
         #'logistic_purchase_export', # Export files
         ],
     'data': [

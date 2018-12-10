@@ -41,6 +41,7 @@
         
         # Report:
         'reports/account_report.xml',
+        'reports/button_ddt_view.xml',
         ],
     'demo': [],
     'css': [],

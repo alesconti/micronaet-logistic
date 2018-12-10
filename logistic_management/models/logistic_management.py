@@ -274,10 +274,20 @@ class PurchaseOrderLine(models.Model):
         )
 
 class StockPicking(models.Model):
-    """ Model name: Stock pickig
+    """ Model name: Stock picking
     """
     
     _inherit = 'stock.picking'
+    
+    # -------------------------------------------------------------------------
+    # Override DDT folder selection path: (module: logistic_account_report)
+    # -------------------------------------------------------------------------
+    @api.multi
+    def get_default_folder_path(self):
+        ''' Override default extract DDT function:
+        '''        
+        folder = self.env['res.company'].get_subfolder_from_root('DDT')
+        return folder
     
     # -------------------------------------------------------------------------
     #                                   UTILITY:
@@ -371,14 +381,37 @@ class StockPicking(models.Model):
     def workflow_ready_to_done_done_picking(self):
         ''' Confirm draft picking documents
         '''
+        # ---------------------------------------------------------------------
+        # Confirm pickign for DDT and Invoice:
+        # ---------------------------------------------------------------------
+        ddt_ids = [] # For extra operation after
         for picking in self:
-            # TODO check DDT / Invoice management here!:
+            # Assign always DDT number:
+            picking.assign_ddt_number()
+            ddt_ids.append(picking.id)
+            
+            # Invoice procedure (check rules):
+            if False: # TODO add rule here!
+                picking.assign_invoice_number()
             
             picking.write({
                 'state': 'done',
                 # TODO Invoice sequence
                 # TODO DDT sequence
                 })
+                
+        # ---------------------------------------------------------------------
+        # DDT extra operations: (require reload)        
+        # ---------------------------------------------------------------------
+        for picking in self.search([('id', 'in', ddt_ids)]):
+            # DDT Extract procedure:
+            picking.extract_account_ddt_report()            
+            
+            # DDT Symlink procedure:
+            
+            # DDT Print procedure:
+            # TODO 
+
 
     @api.multi
     def assign_invoice_number(self):
