@@ -201,10 +201,10 @@ class PurchaseOrder(models.Model):
             fullpath = partner.purchase_folder_id.fullpath
             
             export = partner.purchase_export_id
-            filename = clean('%s_%s_%s.%s' % (
+            filename = clean('%s_%s.%s' % (
                 partner.name,
                 purchase.name,
-                purchase.date_order,
+                #purchase.date_order,
                 export.mode,
                 ))
             fullname = os.path.join(fullpath, filename)
