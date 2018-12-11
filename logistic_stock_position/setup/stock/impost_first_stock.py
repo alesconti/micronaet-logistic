@@ -73,6 +73,10 @@ except:
 
 WS = WB.sheet_by_index(0)
 
+not_found = {
+    'product': [], 
+    'slot': [],
+    }
 row_start = 1
 i = 0
 for row in range(row_start, WS.nrows):
@@ -96,6 +100,8 @@ for row in range(row_start, WS.nrows):
     # -------------------------------------------------------------------------    
     if slot not in slot_db:
         print('{}. Slot non trovato: {}'.format(i, slot))
+        if slot not in not_found['slot']:
+            not_found['slot'].append(slot)
         continue
 
     # TODO Create slot:
@@ -113,6 +119,7 @@ for row in range(row_start, WS.nrows):
     product_ids = product_pool.search([('default_code', '=', default_code)])
     if not product_ids:
         print('{}. Prodotto non trovato: {}'.format(i, default_code))
+        not_found['product'].append(default_code)
         continue
         
     if len(product_ids) > 1:
@@ -133,4 +140,4 @@ for row in range(row_start, WS.nrows):
     # Create quant for gap:
     # TODO
     
-
+print not_found
