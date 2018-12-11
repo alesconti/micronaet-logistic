@@ -139,7 +139,7 @@ for row in range(row_start, WS.nrows):
             slot_id = slot_pool.create({ 
                 'name': slot_clean,
                 'mode': 'stock',
-                })
+                }).id
 
     if not slot_id:
         print('{}. Slot non trovato: {} o {}'.format(i, slot, slot_clean))
