@@ -98,8 +98,10 @@ class StockChangeStandardPrice(models.TransientModel):
         order_pool.workflow_ready_to_done_draft_picking()
         
         # Confirm draft document immediately:
-        picking_pool = self.env['stock.picking']
-        return picking_pool.workflow_ready_to_done_all_done_picking()
+        #picking_pool = self.env['stock.picking']
+        #picking_pool.search([
+        #    ('id', 'in', picking_ids),
+        #    ]).workflow_ready_to_done_all_done_picking()
 
     @api.multi
     def closed_delivered(self):

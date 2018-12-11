@@ -56,7 +56,7 @@
                                     Q.ta'
                                 </div>    
                                 <div class="col-xs-5">
-                                    Cod art.
+                                    Cod. Art.
                                 </div>    
                                 <div class="col-xs-6">
                                     Descrizione
@@ -67,13 +67,11 @@
                             <t t-foreach="o.move_lines" t-as="move">
                                 <div class="row">
                                     <div class="col-xs-1">
-                                        <span t-field="move.product_uom_qty" />
+                                        <span t-esc="int(move.product_uom_qty)" />
                                     </div>    
                                     <div class="col-xs-5">
-                                        <img t-if="move.product_id.new_image"
-                                            t-att-src="'data:image/png;base64,%s' % move.product_id.new_image" style="max-height: 45px;" />
-
-                                        <span t-field="move.product_id.product_tmpl_id.default_code" />
+                                        <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('Code128', move.product_id.product_tmpl_id.default_code, 300, 30)"/><br/>
+                                        <span f-field="move.product_id.product_tmpl_id.default_code" />
                                     </div>    
                                     <div class="col-xs-6">
                                         <span t-field="move.product_id.name" />

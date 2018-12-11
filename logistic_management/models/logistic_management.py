@@ -293,6 +293,7 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     #                                   UTILITY:
     # -------------------------------------------------------------------------
+    # TODO remove!!!
     @api.model
     def workflow_ready_to_done_all_done_picking(self):
         ''' Confirm draft picking documents
@@ -382,7 +383,6 @@ class StockPicking(models.Model):
     def workflow_ready_to_done_done_picking(self):
         ''' Confirm draft picking documents
         '''
-        import pdb; pdb.set_trace()
         # ---------------------------------------------------------------------
         # Confirm pickign for DDT and Invoice:
         # ---------------------------------------------------------------------
@@ -397,7 +397,7 @@ class StockPicking(models.Model):
                 picking.assign_invoice_number()
             
             picking.write({
-                'state': 'done',
+                'state': 'done', # TODO needed?
                 })
                 
         # ---------------------------------------------------------------------
@@ -405,6 +405,7 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         companys = self.env['res.company'].search([])
         folder = companys.get_subfolder_from_root('DDT')
+        history_folder = companys.get_subfolder_from_root('DDT_History')
 
         for picking in self.search([('id', 'in', ddt_ids)]):
         
@@ -414,7 +415,7 @@ class StockPicking(models.Model):
             # DDT Symlink procedure:
             original_base = os.path.basename(original_fullname)
             date = picking.scheduled_date
-            month_path = os.path.join(folder, date[:4], date[5:7])
+            month_path = os.path.join(history_folder, date[:4], date[5:7])
             os.system('mkdir -p %s' % month_path)
             symlink = os.system('ln -s "%s" "%s"' % (
                 original_fullname,
@@ -858,6 +859,7 @@ class SaleOrder(models.Model):
             
         #ddt_list = []
         #invoice_list = []    
+        picking_ids = [] # return value
         for order in orders:
             # Create picking document:
             partner = order.partner_id
@@ -877,6 +879,7 @@ class SaleOrder(models.Model):
                 #'priority': 1,                
                 'state': 'draft', # XXX To do manage done phase (for invoice)!!
                 })
+            picking_ids.append(picking.id)    
                 
             # Sequence to be assigned:
             #if partner.need_ddt or order.need_ddt:
@@ -930,12 +933,16 @@ class SaleOrder(models.Model):
         #for picking in invoice_list:
         #    picking.assign_invoice_number()
             
+        # Confirm picking   
+        picking_pool.search([
+            ('id', 'in', picking_ids),
+            ]).workflow_ready_to_done_done_picking()
         # ---------------------------------------------------------------------
         # Order status:    
         # ---------------------------------------------------------------------
         # Change status order ready > done
         orders.logistic_check_and_set_done()
-        return True    
+        return picking_ids    
 
     # Only for this order:        
     need_invoice = fields.Boolean('Always invoice')
