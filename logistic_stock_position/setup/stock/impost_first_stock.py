@@ -27,7 +27,7 @@ import erppeek
 # Parameters:
 company_id = 1
 now = '2018-12-04 12:36:45'
-location_id = 14
+location_id = 14 # WH internal (5 inventory)
 
 remove_char = ('\t', '\n')
 inventory_xls = 'inventario_esportat.xlsx'
@@ -133,7 +133,6 @@ for row in range(row_start, WS.nrows):
     if not slot_id:
         slot_clean = clean_slot(slot)
         slot_id = slot_db.get(slot_clean, False)
-        import pdb; pdb.set_trace()
         if slot_clean and not slot_id:
             # Create new slo:            
             slot_id = slot_pool.create({ 
@@ -177,7 +176,6 @@ for row in range(row_start, WS.nrows):
     # -------------------------------------------------------------------------    
     gap_qty = new_qty - qty_available
     print('{}. [{}] Da creare quant: {}'.format(i, default_code, gap_qty))
-    import pdb; pdb.set_trace()
     quant_pool.create({
         'company_id': company_id,
         'in_date': now,
