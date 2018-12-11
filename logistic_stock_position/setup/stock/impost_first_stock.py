@@ -75,7 +75,6 @@ WS = WB.sheet_by_index(0)
 
 row_start = 1
 i = 0
-import pdb; pdb.set_trace()
 for row in range(row_start, WS.nrows):
     i += 1
     
@@ -84,7 +83,7 @@ for row in range(row_start, WS.nrows):
     new_qty = WS.cell(row, 1).value
     slot = WS.cell(row, 2).value
 
-    if not default_code or not new_qty or not slot:
+    if not default_code or not slot:
         print('{}. Dati mancanti riga {}'.format(i, row))
         continue
 
