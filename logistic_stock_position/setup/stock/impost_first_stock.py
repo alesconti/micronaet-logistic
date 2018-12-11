@@ -21,8 +21,8 @@
 ###############################################################################
 import os
 import sys
-import erppeek
 import xlrd
+import erppeek
 
 # Parameters:
 company_id = 1
@@ -84,6 +84,7 @@ not_found = {
     }
 row_start = 1
 i = 0
+import pdb; pdb.set_trace()
 for row in range(row_start, WS.nrows):
     i += 1
     
@@ -150,5 +151,5 @@ for row in range(row_start, WS.nrows):
         'location_id': location_id,
         'product_id': product_ids[0],
         'quantity': gap_qty,
-        }            
+        }) 
 print(not_found)
