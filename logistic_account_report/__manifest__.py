@@ -41,8 +41,8 @@
         
         # Report:
         'reports/account_DDT_report.xml',
-        'reports/account_invoice_report',
-        'reports/button_ddt_view.xml',
+        'reports/account_invoice_report.xml',
+        'reports/button_account_view.xml',
         ],
     'demo': [],
     'css': [],

@@ -1100,7 +1100,7 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     # A. Assign available q.ty in stock assign a stock movement / quants
     @api.model
-    def workflok_order_to_uncovered(self):
+    def workflow_order_to_uncovered(self):
         ''' Logistic phase 3:
             Assign stock q. available to order product creating a 
             stock.move or stock.quant movement 

@@ -38,7 +38,7 @@ class StockChangeStandardPrice(models.TransientModel):
     # -------------------------------------------------------------------------
     #                               BUTTON EVENT:    
     # -------------------------------------------------------------------------    
-    # ORder phase:
+    # Order phase:
     @api.multi
     def confirm_payment(self):
         ''' A. Confirm draft order if payment is secure
@@ -58,7 +58,7 @@ class StockChangeStandardPrice(models.TransientModel):
         ''' C. Assign stock product to open orders
         '''
         line_pool = self.env['sale.order.line']
-        return line_pool.workflok_order_to_uncovered()
+        return line_pool.workflow_order_to_uncovered()
 
     # Purchase phase:
     @api.multi

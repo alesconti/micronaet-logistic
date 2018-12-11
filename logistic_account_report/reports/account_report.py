@@ -48,7 +48,7 @@ class StockPicking(models.AbstractModel):
     def get_default_folder_invoice_path(self):
         '''
         '''
-        path = os.path.expanduser('~/Account/DDT')
+        path = os.path.expanduser('~/Account/Invoice')
         os.system('mkdir -p %s' % path)
         return path
 

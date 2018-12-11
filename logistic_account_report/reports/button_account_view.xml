@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="/form/header/button[1]" position="before">
                     <button name="extract_account_ddt_report" string="Extract DDT" type="object" /><!--TODO ddt_number test-->
+                    <button name="extract_account_invoice_report" string="Extract Invoice" type="object" /><!--TODO ddt_number test-->
                 </xpath>
             </field>
         </record>
