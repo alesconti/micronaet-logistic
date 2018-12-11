@@ -27,7 +27,7 @@ import erppeek
 # Parameters:
 company_id = 1
 now = '2018-12-04 12:36:45'
-location_id = 5 #14
+location_id = 14
 
 remove_char = ('\t', '\n')
 inventory_xls = 'inventario_esportat.xlsx'
