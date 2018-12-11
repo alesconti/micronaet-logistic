@@ -69,7 +69,7 @@ for slot in slot_pool.browse(slot_ids):
 try:
     WB = xlrd.open_workbook(inventory_xls)
 except:
-    print '[ERROR] Cannot read XLS file: %s' % inventory_xls
+    print('[ERROR] Cannot read XLS file: %s' % inventory_xls)
 
 WS = WB.sheet_by_index(0)
 
