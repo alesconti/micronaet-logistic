@@ -22,12 +22,12 @@
 import os
 import sys
 import erppeek
+import xlrd
 
 remove_char = ('\t', '\n')
-inventory_file = 'inventory.csv'
+inventory_xls = 'inventario_esportat.xlsx'
 
 cfg_file = os.path.expanduser('../odoo.cfg')
-
 try: # Pyton 2.7
     import ConfigParser
     config = ConfigParser.ConfigParser()
@@ -63,18 +63,29 @@ slot_ids = slot_pool.search([])
 for slot in slot_pool.browse(slot_ids):
     slot_db[slot.name] = slot.id
 
+# -----------------------------------------------------------------------------
+# Load origin name from XLS
+# -----------------------------------------------------------------------------
+try:
+    WB = xlrd.open_workbook(inventory_xls)
+except:
+    print '[ERROR] Cannot read XLS file: %s' % inventory_xls
+
+WS = WB.sheet_by_index(0)
+
 i = 0
 import pdb; pdb.set_trace()
-for line in open(inventory_file):
+for row in range(row_start, WS.nrows):
     i += 1
-    row = line.split(',')
-    if len(row) != 3:
-        print('{}. Jump line (not 3 columns)'.format(i))
     
     # Parameter:
-    default_code = row[1].strip()   
-    new_qty = row[2].strip()
-    slot = row[3].strip()
+    default_code = WS.cell(row, 0).value
+    new_qty = WS.cell(row, 1).value
+    slot = WS.cell(row, 2).value
+
+    if not default_code or not new_qty or not slot:
+        print('{}. Dati mancanti riga {}'.format(i, row))
+        continue
 
     if '#' in default_code:
         print('{}. Prodotto kit (non importato): {}'.format(i, default_code))
