@@ -45,6 +45,14 @@ class StockPicking(models.AbstractModel):
         return path
 
     @api.multi
+    def get_default_folder_invoice_path(self):
+        '''
+        '''
+        path = os.path.expanduser('~/Account/DDT')
+        os.system('mkdir -p %s' % path)
+        return path
+
+    @api.multi
     def extract_account_ddt_report(self):
         ''' Extract PDF report
         '''
@@ -59,6 +67,24 @@ class StockPicking(models.AbstractModel):
         f_pdf.write(pdf[0])
         f_pdf.close()
         _logger.info('Extract DDT: %s' % fullname)
+        return fullname
+
+    @api.multi
+    def extract_account_invoice_report(self):
+        ''' Extract PDF report
+        '''
+        folder = self.get_default_folder_invoice_path()
+        # TODO Sanitize file name:
+        filename = (
+            self.invoice_number or 'not_confirmed.pdf').replace('/', '_')
+        fullname = os.path.join(folder, filename)
+        
+        REPORT_ID = 'logistic_account_report.action_report_invoice_lang'        
+        pdf = self.env.ref(REPORT_ID).render_qweb_pdf(self.ids)
+        f_pdf = open(fullname, 'wb')
+        f_pdf.write(pdf[0])
+        f_pdf.close()
+        _logger.info('Extract Invoice: %s' % fullname)
         return fullname
     
 class ReportDdtLangParser(models.AbstractModel):
@@ -96,5 +122,20 @@ class ReportDdtLangParser(models.AbstractModel):
             'docs': pickings,
             }
         '''
+
+class ReportInvoiceLangParser(models.AbstractModel):
+    ''' Load move report:
+    '''
+    _name = 'report.logistic_account_report.report_invoice_lang'
+    
+    @api.model
+    def get_report_values(self, docids, data=None):
+        ''' Render report invoice parser:
+        '''
+        return {
+            'doc_ids': docids,
+            'doc_model': 'stock.picking',
+            'docs': self.env['stock.picking'].search([('id', 'in', docids)]),
+            }
         
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -40,7 +40,8 @@
         #'views/logistic_management_view.xml',
         
         # Report:
-        'reports/account_report.xml',
+        'reports/account_DDT_report.xml',
+        'reports/account_invoice_report',
         'reports/button_ddt_view.xml',
         ],
     'demo': [],

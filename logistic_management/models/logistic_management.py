@@ -289,6 +289,14 @@ class StockPicking(models.Model):
         companys = self.env['res.company'].search([])
         folder = companys.get_subfolder_from_root('DDT')
         return folder
+
+    @api.multi
+    def get_default_folder_invoice_path(self):
+        ''' Override default extract Invoice function:
+        '''        
+        companys = self.env['res.company'].search([])
+        folder = companys.get_subfolder_from_root('Invoice')
+        return folder
     
     # -------------------------------------------------------------------------
     #                                   UTILITY:
@@ -376,6 +384,14 @@ class StockPicking(models.Model):
         excel_pool.save_file_as(filename)
         return True
 
+    # Check if invoice is needed:
+    @api.multi
+    def picking_need_invoice(self):
+        ''' Rules for invoice procedure:
+        '''
+        # TODO 
+        return False
+
     # -------------------------------------------------------------------------
     #                                   BUTTON:
     # -------------------------------------------------------------------------
@@ -387,14 +403,16 @@ class StockPicking(models.Model):
         # Confirm pickign for DDT and Invoice:
         # ---------------------------------------------------------------------
         ddt_ids = [] # For extra operation after
+        invoice_ids = [] # For extra operation after
         for picking in self:
             # Assign always DDT number:
             picking.assign_ddt_number()
             ddt_ids.append(picking.id)
             
             # Invoice procedure (check rules):
-            if False: # TODO add rule here!
+            if picking.picking_need_invoice():
                 picking.assign_invoice_number()
+                invoice_ids.append(picking.id)
             
             picking.write({
                 'state': 'done', # TODO needed?
@@ -408,11 +426,13 @@ class StockPicking(models.Model):
         history_folder = companys.get_subfolder_from_root('DDT_History')
 
         for picking in self.search([('id', 'in', ddt_ids)]):
-        
-            # DDT Extract procedure:
+            # -----------------------------------------------------------------
+            #                 DDT Extract:
+            # -----------------------------------------------------------------        
+            # 1. DDT Extract procedure:
             original_fullname = picking.extract_account_ddt_report()
             
-            # DDT Symlink procedure:
+            # 2. DDT Symlink procedure:
             original_base = os.path.basename(original_fullname)
             date = picking.scheduled_date
             month_path = os.path.join(history_folder, date[:4], date[5:7])
@@ -422,7 +442,33 @@ class StockPicking(models.Model):
                 os.path.join(month_path, original_base)
                 ))
             
-            # DDT Print procedure:
+            # 3. DDT Print procedure:
+            # TODO 
+
+        # ---------------------------------------------------------------------
+        # Invoice extra operations: (require reload)        
+        # ---------------------------------------------------------------------
+        folder = companys.get_subfolder_from_root('Invoice')
+        history_folder = companys.get_subfolder_from_root('Invoice_History')
+
+        for picking in self.search([('id', 'in', invoice_ids)]):
+            # -----------------------------------------------------------------
+            #                 Invoice Extract:
+            # -----------------------------------------------------------------        
+            # 1. Invoice Extract procedure:
+            original_fullname = picking.extract_account_invoice_report()
+            
+            # 2. Invoice Symlink procedure:
+            original_base = os.path.basename(original_fullname)
+            date = picking.scheduled_date
+            month_path = os.path.join(history_folder, date[:4], date[5:7])
+            os.system('mkdir -p %s' % month_path)
+            symlink = os.system('ln -s "%s" "%s"' % (
+                original_fullname,
+                os.path.join(month_path, original_base)
+                ))
+            
+            # 3. Invoice Print procedure:
             # TODO 
 
 
