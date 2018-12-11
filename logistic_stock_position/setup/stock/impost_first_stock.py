@@ -25,6 +25,7 @@ import xlrd
 import erppeek
 
 # Parameters:
+create_quant = False
 company_id = 1
 now = '2018-12-04 12:36:45'
 location_id = 14 # WH internal (5 inventory)
@@ -108,6 +109,13 @@ def clean_slot(value):
 
     if len_res == 5 and '.' not in res:
         return '{}.{}'.format(value[:3], value[3:])
+
+    if len_res == 6 and '.' not in res:
+        return '{}.{}.{}'.format(value[:3], value[3:5], value[5:])
+
+    if len_res == 8 and res[3:4] == '.' and res[6:7] == '.':
+        return res
+        
     return False        
 
 for row in range(row_start, WS.nrows):
@@ -176,11 +184,12 @@ for row in range(row_start, WS.nrows):
     # -------------------------------------------------------------------------    
     gap_qty = new_qty - qty_available
     print('{}. [{}] Da creare quant: {}'.format(i, default_code, gap_qty))
-    quant_pool.create({
-        'company_id': company_id,
-        'in_date': now,
-        'location_id': location_id,
-        'product_id': product_ids[0],
-        'quantity': gap_qty,
-        }) 
+    if create_quant:
+        quant_pool.create({
+            'company_id': company_id,
+            'in_date': now,
+            'location_id': location_id,
+            'product_id': product_ids[0],
+            'quantity': gap_qty,
+            }) 
 print(not_found)
