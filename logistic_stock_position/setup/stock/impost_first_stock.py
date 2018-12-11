@@ -59,7 +59,7 @@ odoo = erppeek.Client(
     user=user,
     password=pwd,
     )
-product_pool = odoo.model('product.template')
+product_pool = odoo.model('product.product')
 slot_pool = odoo.model('stock.location.slot')
 quant_pool = odoo.model('stock.quant')
 
@@ -84,7 +84,32 @@ not_found = {
     }
 row_start = 1
 i = 0
-import pdb; pdb.set_trace()
+
+def clean_slot(value):
+    '''
+    '''
+    res = (value or '').upper()
+    res = value.replace('-', '.').replace('/', '')
+    len_res = len(res)
+    if len_res == 1:
+        return ''
+        
+    if len_res == 3:
+        return res
+        
+    if len_res > 8:
+        return False
+        
+    if res[:1] == 'T':
+        return value
+
+    if len_res == 6 and res[3:4] == '.':
+        return res
+
+    if len_res == 5 and '.' not in res:
+        return '{}.{}'.format(value[:3], value[3:])
+    return False        
+
 for row in range(row_start, WS.nrows):
     i += 1
     
@@ -106,8 +131,15 @@ for row in range(row_start, WS.nrows):
     # -------------------------------------------------------------------------
     slot_id = slot_db.get(slot, False)
     if not slot_id:
-        slot_clean = slot.replace('.', '')
+        slot_clean = clean_slot(slot)
         slot_id = slot_db.get(slot_clean, False)
+        import pdb; pdb.set_trace()
+        if slot_clean and not slot_id:
+            # Create new slo:            
+            slot_id = slot_pool.create({ 
+                'name': slot_clean,
+                'mode': 'stock',
+                })
 
     if not slot_id:
         print('{}. Slot non trovato: {} o {}'.format(i, slot, slot_clean))
@@ -115,15 +147,11 @@ for row in range(row_start, WS.nrows):
             not_found['slot'].append(slot)
         continue
 
-    # Update product slot:
-    product_pool.write(product_ids, {
-        'default_slot_id': slot_id,
-        })
-
     # -------------------------------------------------------------------------    
     # Product check:    
     # -------------------------------------------------------------------------    
-    product_ids = product_pool.search([('default_code', '=', default_code)])
+    product_ids = product_pool.search([
+        ('product_tmpl_id.default_code', '=', default_code)])
     if not product_ids:
         print('{}. Prodotto non trovato: {}'.format(i, default_code))
         not_found['product'].append(default_code)
@@ -131,6 +159,11 @@ for row in range(row_start, WS.nrows):
         
     if len(product_ids) > 1:
         print('{}. Prodotto doppio (preso primo): {}'.format(i, default_code))
+
+    # Update product slot:
+    product_pool.write(product_ids, {
+        'default_slot_id': slot_id,
+        })
         
     product_proxy = product_pool.browse(product_ids)[0]
     qty_available = product_proxy.qty_available
@@ -144,7 +177,7 @@ for row in range(row_start, WS.nrows):
     # -------------------------------------------------------------------------    
     gap_qty = new_qty - qty_available
     print('{}. [{}] Da creare quant: {}'.format(i, default_code, gap_qty))
-    
+    import pdb; pdb.set_trace()
     quant_pool.create({
         'company_id': company_id,
         'in_date': now,
