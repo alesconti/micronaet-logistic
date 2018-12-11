@@ -49,7 +49,7 @@ port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 # Connect to ODOO:
 # -----------------------------------------------------------------------------
 odoo = erppeek.Client(
-    'http://%s:%s' % (server, port), 
+    'http://{}:{}'.format(server, port), 
     db=dbname,
     user=user,
     password=pwd,
@@ -59,7 +59,8 @@ slot_pool = odoo.model('stock.location.slot')
 quant_pool = odoo.model('stock.quant')
 
 slot_db = {}
-for slot in slot_pool.search([]):
+slot_ids = slot_pool.search([])
+for slot in slot_pool.browse(slot_ids):
     slot_db[slot.name] = slot.id
 
 i = 0
@@ -68,18 +69,22 @@ for line in open(inventory_file):
     i += 1
     row = line.split(',')
     if len(row) != 3:
-        print '%s. Jump line (not 3 columns)'
+        print '{}. Jump line (not 3 columns)'.format(i)
     
     # Parameter:
     default_code = row[1].strip()   
     new_qty = row[2].strip()
     slot = row[3].strip()
 
+    if '#' in default_code:
+        print '{}. Prodotto kit (non importato): {}'.format(i, default_code)
+        continue
+        
     # -------------------------------------------------------------------------    
     # Slot check:
     # -------------------------------------------------------------------------    
     if slot not in slot_db:
-        print '%s. Slot non trovato: %s' % (i, slot)
+        print '{}. Slot non trovato: {}'.format(i, slot)
         continue
 
     # TODO Create slot:
@@ -96,23 +101,23 @@ for line in open(inventory_file):
     # -------------------------------------------------------------------------    
     product_ids = product_pool.search([('default_code', '=', default_code)])
     if not product_ids:
-        print '%s. Prodotto non trovato: %s' % (i, default_code)
+        print '{}. Prodotto non trovato: {}'.format(i, default_code)
         continue
         
     if len(product_ids) > 1:
-        print '%s. Prodotto doppio (preso primo): %s' % (i, default_code)
+        print '{}. Prodotto doppio (preso primo): {}'.format(i, default_code)
         
     product_proxy = product_pool.browse(product_id)[0]
     qty_available = product_proxy.qty_available
     if qty_available == new_qty:
-        print '%s. Q. corretta [Old: %s] [New: %s]' % (
+        print '{}. Q. corretta [Old: {}] [New: {}]'.format(
             i, qty_available, new_qty)
         continue
 
     # -------------------------------------------------------------------------    
     # -------------------------------------------------------------------------    
     gap_qty = new_qty - qty_available
-    print '%s. [%s] Da creare quant: %s' % (i, default_code, gap_qty)
+    print '{}. [{}] Da creare quant: {}'.format(i, default_code, gap_qty)
     
     # Create quant for gap:
     # TODO
