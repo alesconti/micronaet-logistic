@@ -24,6 +24,11 @@ import sys
 import erppeek
 import xlrd
 
+# Parameters:
+company_id = 1
+now = '2018-12-04 12:36:45'
+location_id = 5 #14
+
 remove_char = ('\t', '\n')
 inventory_xls = 'inventario_esportat.xlsx'
 
@@ -97,22 +102,23 @@ for row in range(row_start, WS.nrows):
         
     # -------------------------------------------------------------------------    
     # Slot check:
-    # -------------------------------------------------------------------------    
-    if slot not in slot_db:
-        print('{}. Slot non trovato: {}'.format(i, slot))
+    # -------------------------------------------------------------------------
+    slot_id = slot_db.get(slot, False)
+    if not slot_id:
+        slot_clean = slot.replace('.', '')
+        slot_id = slot_db.get(slot_clean, False)
+
+    if not slot_id:
+        print('{}. Slot non trovato: {} o {}'.format(i, slot, slot_clean))
         if slot not in not_found['slot']:
             not_found['slot'].append(slot)
         continue
 
-    # TODO Create slot:
-    #    partner_id = partner_pool.create({
-    #        'name': supplier,
-    #        'supplier': True,
-    #        'is_company': True,
-    #        #'product_suffix': prefix.strip('-'),
-    #        }).id
-    # TODO update product position
-        
+    # Update product slot:
+    product_pool.write(product_ids, {
+        'default_slot_id': slot_id,
+        })
+
     # -------------------------------------------------------------------------    
     # Product check:    
     # -------------------------------------------------------------------------    
@@ -133,11 +139,16 @@ for row in range(row_start, WS.nrows):
         continue
 
     # -------------------------------------------------------------------------    
+    # Create quant for gap:
     # -------------------------------------------------------------------------    
     gap_qty = new_qty - qty_available
     print('{}. [{}] Da creare quant: {}'.format(i, default_code, gap_qty))
     
-    # Create quant for gap:
-    # TODO
-    
+    quant_pool.create({
+        'company_id': company_id,
+        'in_date': now,
+        'location_id': location_id,
+        'product_id': product_ids[0],
+        'quantity': gap_qty,
+        }            
 print(not_found)
