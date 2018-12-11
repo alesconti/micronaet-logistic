@@ -119,7 +119,7 @@ for row in range(row_start, WS.nrows):
     if len(product_ids) > 1:
         print('{}. Prodotto doppio (preso primo): {}'.format(i, default_code))
         
-    product_proxy = product_pool.browse(product_id)[0]
+    product_proxy = product_pool.browse(product_ids)[0]
     qty_available = product_proxy.qty_available
     if qty_available == new_qty:
         print('{}. Q. corretta [Old: {}] [New: {}]'.format(
