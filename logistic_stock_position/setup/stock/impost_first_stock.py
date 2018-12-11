@@ -183,7 +183,8 @@ for row in range(row_start, WS.nrows):
     # Create quant for gap:
     # -------------------------------------------------------------------------    
     gap_qty = new_qty - qty_available
-    print('{}. [{}] Da creare quant: {}'.format(i, default_code, gap_qty))
+    print('{}. [{}] Da creare quant [Mode: {}]: {}'.format(
+        i, default_code, create_quant, gap_qty))
     if create_quant:
         quant_pool.create({
             'company_id': company_id,
