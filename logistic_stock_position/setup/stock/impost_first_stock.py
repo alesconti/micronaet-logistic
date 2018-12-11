@@ -73,6 +73,7 @@ except:
 
 WS = WB.sheet_by_index(0)
 
+row_start = 1
 i = 0
 import pdb; pdb.set_trace()
 for row in range(row_start, WS.nrows):
