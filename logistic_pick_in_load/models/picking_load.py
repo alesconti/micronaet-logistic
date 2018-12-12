@@ -105,7 +105,7 @@ class StockPicking(models.Model):
         # Read header data:
         headers = header_pool.search([])
         sale_line_ready = [] # ready line after assign load qty to purchase
-        move_position = [] # stock move to set supplier position
+        position_move_ids = [] # ID move to update
         pickings = []#self.env['stock.picking']
         for header in headers:
             partner = header.partner_id
@@ -150,7 +150,7 @@ class StockPicking(models.Model):
                     # ---------------------------------------------------------
                     # Create movement (not load stock):
                     # ---------------------------------------------------------
-                    move_position.append(move_pool.create({
+                    position_move_ids.append(move_pool.create({
                         'company_id': company.id,
                         'partner_id': partner.id,
                         'picking_id': picking.id,
@@ -176,7 +176,7 @@ class StockPicking(models.Model):
                         # sale_line_id
                         # procure_method,
                         #'product_qty': select_qty,
-                        }))
+                        }.id))
                     if product_qty <= 0.0:
                         break    
                 
@@ -199,7 +199,7 @@ class StockPicking(models.Model):
                     # ---------------------------------------------------------
                     # Create stock move (load stock with quants):
                     # ---------------------------------------------------------
-                    move_position.append(move_pool.create({
+                    position_move_ids.append(move_pool.create({
                         'company_id': company.id,
                         'partner_id': partner.id,
                         'picking_id': picking.id,
@@ -227,7 +227,7 @@ class StockPicking(models.Model):
                         # purchase_line_id
                         # procure_method,
                         #'product_qty': select_qty,
-                        }))
+                        }.id))
 
         # ---------------------------------------------------------------------
         # Update Logistic status:
@@ -248,7 +248,7 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         _logger.info('Update stock position loading product:')
         move_pool.search([
-            ('id', 'in', move_position.ids),
+            ('id', 'in', position_move_ids),
             ]).set_stock_move_position()
 
         # ---------------------------------------------------------------------
