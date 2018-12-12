@@ -347,7 +347,7 @@ class StockPicking(models.Model):
         # Setup page:
         # ---------------------------------------------------------------------
         excel_pool.column_width(ws_name, [
-            20, 20, 20, 25, 10, 10, 10,
+            20, 20, 20, 25, 10, 10, 15,
             ])
         
         # ---------------------------------------------------------------------
@@ -412,7 +412,7 @@ class StockPicking(models.Model):
                 origin
                 )
         filename = filename.replace(
-            ':', '_').replace(' ', '').replace('[', '').replace(']', '')
+            ':', '_').replace(' ', '').replace('[', '_').replace(']', '')
         #now = now.replace(':', '_').replace('-', '_')
         fullname = os.path.join(folder, filename)
 
