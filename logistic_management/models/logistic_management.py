@@ -318,7 +318,7 @@ class StockPicking(models.Model):
         """ Export excel picking data
             line
         """
-        folder = 'Carichi'
+        folder = 'bolle_fornitore'
         folder = self.env['res.company'].search(
             [])[0].get_subfolder_from_root(folder)
             
@@ -362,7 +362,9 @@ class StockPicking(models.Model):
              'Foto', 'Codice', 'Nome', 'Ordine', 'Stato', 'Q.', 'Posizione'
              ], default_format=f_header)
         
-        for picking in self:
+        for picking in self: # XXX only one!
+            partner = picking.partner_id.name
+            origin = picking.origin
             for move in picking.move_lines:
                 row +=1 
                 product = move.product_id
@@ -398,9 +400,16 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Save file:
         # ---------------------------------------------------------------------
-        now = now.replace(':', '_').replace('-', '_')
-        filename = os.path.join(folder, 'load_%s.xlsx' % now)        
-        excel_pool.save_file_as(filename)
+        filename = 'BF_%s_%s.xlsx' % (
+                partner,
+                origin
+                )
+        filename = filename.replace(
+            ':', '_').replace(' ', '').replace('[', '').replace(']', '')
+        #now = now.replace(':', '_').replace('-', '_')
+        fullname = os.path.join(folder, filename)
+
+        excel_pool.save_file_as(fullname)
         return True
 
     # Check if invoice is needed:
