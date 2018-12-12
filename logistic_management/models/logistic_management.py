@@ -316,6 +316,7 @@ class StockPicking(models.Model):
     @api.multi
     def export_excel_picking_report(self):
         """ Export excel picking data
+            line
         """
         folder = 'Carichi'
         folder = self.env['res.company'].search(
@@ -367,7 +368,7 @@ class StockPicking(models.Model):
                 product = move.product_id
                 template = product.product_tmpl_id
                 sale_line = move.logistic_load_id
-                order = line.order_id
+                order = sale_line.order_id
                 if order:
                     if order.logistic_state == 'pending':
                         f_text = f_yellow_text
