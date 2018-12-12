@@ -232,6 +232,9 @@ class StockMoveIn(models.Model):
     
     _inherit = 'stock.move'
 
+    # -------------------------------------------------------------------------
+    # Utility:
+    # -------------------------------------------------------------------------
     @api.multi
     def set_stock_move_position(self):
         ''' Set stock move position:
@@ -239,44 +242,45 @@ class StockMoveIn(models.Model):
             Pending order on pending supplier table
             Stock product stock position
         '''
-        # Use stock.move load line:
-        line = self.logistic_load_id
-        logistic_load_id = line.id
-        if logistic_load_id: # With sale order
-            supplier = self.picking_id.partner_id
-            table = supplier.delivery_table_id
-            order = line.order_id
+        import pdb; pdb.set_trace()
+        for move in self:
+            # Use stock.move in BF load line:
+            line = move.logistic_load_id
+            logistic_load_id = line.id
+            if logistic_load_id: # With sale order
+                supplier = self.picking_id.partner_id
+                table = supplier.delivery_table_id
+                order = line.order_id
 
-            if order.logistic_state == 'pending':
-                # -------------------------------------------------------------
-                # Ready order position:
-                # -------------------------------------------------------------
-                try:  
-                    line.slot_id = table.pending_slot_ids[0].slot_id.id
-                except:
-                    _logger.error('No table for supplier: {}'.format(
-                        supplier.name))
-                        
-            elif order.logistic_state == 'ready':
-                # -------------------------------------------------------------
-                # Pending order position (XXX take first pending slot now):
-                # -------------------------------------------------------------
-                # TODO create an assign procedure!
-                try:
-                    line.slot_id = table.default_slot_id.id
-                except:
-                    _logger.error('No table for supplier: {}'.format(
-                        supplier.name))
-        else:
-            # -----------------------------------------------------------------
-            # Stock position
-            # -----------------------------------------------------------------
-            product = self.product_id
-            default_slot_id = product.default_slot_id
-            if not default_slot_id and not product.slot_needed:
-                # Mark as needed:
-                product.slot_needed = True
-        return True
+                if order.logistic_state == 'pending':
+                    # -------------------------------------------------------------
+                    # Ready order position:
+                    # -------------------------------------------------------------
+                    try:  
+                        line.slot_id = table.pending_slot_ids[0].slot_id.id
+                    except:
+                        _logger.error('No table for supplier: {}'.format(
+                            supplier.name))
+                            
+                elif order.logistic_state == 'ready':
+                    # -------------------------------------------------------------
+                    # Pending order position (XXX take first pending slot now):
+                    # -------------------------------------------------------------
+                    # TODO create an assign procedure!
+                    try:
+                        line.slot_id = table.default_slot_id.id
+                    except:
+                        _logger.error('No table for supplier: {}'.format(
+                            supplier.name))
+            else:
+                # -----------------------------------------------------------------
+                # Stock position
+                # -----------------------------------------------------------------
+                product = self.product_id
+                default_slot_id = product.default_slot_id
+                if not default_slot_id and not product.slot_needed:
+                    # Mark as needed:
+                    product.slot_needed = True
 
     # -------------------------------------------------------------------------    
     # Columns:

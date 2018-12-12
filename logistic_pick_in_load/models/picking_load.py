@@ -247,8 +247,9 @@ class StockPicking(models.Model):
         # Update stock position for stock move BF
         # ---------------------------------------------------------------------
         _logger.info('Update stock position loading product:')
-        for move in move_position:
-            move.set_stock_move_position()
+        move_pool.search([
+            ('id', 'in', move_position.ids),
+            ]).set_stock_move_position()
 
         # ---------------------------------------------------------------------
         # Export on file (report)?
