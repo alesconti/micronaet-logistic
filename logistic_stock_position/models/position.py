@@ -35,7 +35,7 @@ _logger = logging.getLogger(__name__)
 class StockLocationTable(models.Model):
     """ Model name: Location Table
     """
-    
+
     _name = 'stock.location.table'
     _description = 'Delivery table'
     _rec_name = 'name'

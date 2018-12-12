@@ -318,6 +318,7 @@ class StockPicking(models.Model):
         """ Export excel picking data
             line
         """
+        self.ensure_one()
         folder = 'BF'
         folder = self.env['res.company'].search(
             [])[0].get_subfolder_from_root(folder)
@@ -346,55 +347,62 @@ class StockPicking(models.Model):
         # Setup page:
         # ---------------------------------------------------------------------
         excel_pool.column_width(ws_name, [
-            25, 20, 30, 15, 15, 10, 10,
+            20, 20, 20, 25, 1, 10, 10,
             ])
         
         # ---------------------------------------------------------------------
         # Extra data:
         # ---------------------------------------------------------------------
         now = fields.Datetime.now()
-
+        
+        #for picking in self:
+        picking = self
+        partner = picking.partner_id.name
+        origin = picking.origin
         row = 0
         excel_pool.write_xls_line(ws_name, row, [
-             'Carichi del giorno: %s' % now], default_format=f_title)
+            'Fornitore: %s Documento di origine: %s [%s]' % (
+                partner,
+                origin,    
+                now,
+                )], default_format=f_title)
         row += 1
         excel_pool.write_xls_line(ws_name, row, [
              'Foto', 'Codice', 'Nome', 'Ordine', 'Stato', 'Q.', 'Posizione'
              ], default_format=f_header)
-        
-        for picking in self: # XXX only one!
-            partner = picking.partner_id.name
-            origin = picking.origin
-            for move in picking.move_lines:
-                row +=1 
-                product = move.product_id
-                template = product.product_tmpl_id
-                sale_line = move.logistic_load_id
-                order = sale_line.order_id
-                if order:
-                    if order.logistic_state == 'pending':
-                        f_text = f_yellow_text
-                        f_number = f_yellow_number
-                    else: # done
-                        f_text = f_green_text
-                        f_number = f_green_number
-                             
-                else:
-                    f_text = f_white_text
-                    f_number = f_white_number
-                            
-                
-                excel_pool.write_xls_line(ws_name, row, [
-                     '', 
-                     template.default_code,
-                     template.name,
-                     
-                     order.name if order else _('MAGAZZINO'),
-                     order.logistic_state if order else '',
+        for move in picking.move_lines:
+            row +=1 
+            product = move.product_id
+            template = product.product_tmpl_id
+            sale_line = move.logistic_load_id
+            order = sale_line.order_id
+            if order:
+                if order.logistic_state == 'pending':
+                    f_text = f_yellow_text
+                    f_number = f_yellow_number
+                else: # done
+                    f_text = f_green_text
+                    f_number = f_green_number
+                slot_name = move.slot_id.name    
+                         
+            else:
+                f_text = f_white_text
+                f_number = f_white_number
+                slot_name = product.default_slot_id.name \
+                    if product.default_slot_id else 'Manca per il prodotto'
+                        
+            
+            excel_pool.write_xls_line(ws_name, row, [
+                 '', 
+                 template.default_code,
+                 template.name,
+                 
+                 order.name if order else _('MAGAZZINO'),
+                 order.logistic_state if order else '',
 
-                     (move.product_uom_qty, f_number),                     
-                     move.slot_id.name or '',
-                     ], default_format=f_text)
+                 (move.product_uom_qty, f_number),                     
+                 slot_name,
+                 ], default_format=f_text)
              
         # ---------------------------------------------------------------------
         # Save file:
