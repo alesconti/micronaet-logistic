@@ -368,7 +368,7 @@ class StockPicking(models.Model):
                 template = product.product_tmpl_id
                 sale_line = move.logistic_load_id
                 order = line.order_id
-                if order
+                if order:
                     if order.logistic_state == 'pending':
                         f_text = f_yellow_text
                         f_number = f_yellow_number
