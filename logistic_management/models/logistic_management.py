@@ -395,7 +395,6 @@ class StockPicking(models.Model):
                      (move.product_uom_qty, f_number),                     
                      move.slot_id.name or '',
                      ], default_format=f_text)
-                     
              
         # ---------------------------------------------------------------------
         # Save file:
