@@ -345,7 +345,7 @@ class StockPicking(models.Model):
         # Setup page:
         # ---------------------------------------------------------------------
         excel_pool.column_width(ws_name, [
-            40, 20, 40, 10, 10,
+            25, 20, 30, 15, 15, 10, 10,
             ])
         
         # ---------------------------------------------------------------------
@@ -358,22 +358,40 @@ class StockPicking(models.Model):
              'Carichi del giorno: %s' % now], default_format=f_title)
         row += 1
         excel_pool.write_xls_line(ws_name, row, [
-             'Foto', 'Codice', 'Nome', 'Q.', 'Posizione'
-             ], default_format=f_title)
+             'Foto', 'Codice', 'Nome', 'Ordine', 'Stato', 'Q.', 'Posizione'
+             ], default_format=f_header)
         
         for picking in self:
             for move in picking.move_lines:
                 row +=1 
                 product = move.product_id
                 template = product.product_tmpl_id
+                sale_line = move.logistic_load_id
+                order = line.order_id
+                if order
+                    if order.logistic_state == 'pending':
+                        f_text = f_yellow_text
+                        f_number = f_yellow_number
+                    else: # done
+                        f_text = f_green_text
+                        f_number = f_green_number
+                             
+                else:
+                    f_text = f_white_text
+                    f_number = f_white_number
+                            
                 
                 excel_pool.write_xls_line(ws_name, row, [
                      '', 
                      template.default_code,
                      template.name,
-                     move.product_uom_qty,
+                     
+                     order.name if order else _('MAGAZZINO'),
+                     order.logistic_state if order else '',
+
+                     (move.product_uom_qty, f_number),                     
                      move.slot_id.name or '',
-                     ], default_format=f_title)
+                     ], default_format=f_text)
                      
              
         # ---------------------------------------------------------------------
