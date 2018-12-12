@@ -318,7 +318,7 @@ class StockPicking(models.Model):
         """ Export excel picking data
             line
         """
-        folder = 'bolle_fornitore'
+        folder = 'BF'
         folder = self.env['res.company'].search(
             [])[0].get_subfolder_from_root(folder)
             
