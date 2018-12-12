@@ -253,29 +253,29 @@ class StockMoveIn(models.Model):
                 order = line.order_id
 
                 if order.logistic_state == 'pending':
-                    # -------------------------------------------------------------
+                    # ---------------------------------------------------------
                     # Ready order position:
-                    # -------------------------------------------------------------
+                    # ---------------------------------------------------------
                     try:  
-                        line.slot_id = table.pending_slot_ids[0].slot_id.id
+                        move.slot_id = table.pending_slot_ids[0].slot_id.id
                     except:
                         _logger.error('No table for supplier: {}'.format(
                             supplier.name))
                             
                 elif order.logistic_state == 'ready':
-                    # -------------------------------------------------------------
+                    # ---------------------------------------------------------
                     # Pending order position (XXX take first pending slot now):
-                    # -------------------------------------------------------------
+                    # ---------------------------------------------------------
                     # TODO create an assign procedure!
                     try:
-                        line.slot_id = table.default_slot_id.id
+                        move.slot_id = table.default_slot_id.id
                     except:
                         _logger.error('No table for supplier: {}'.format(
                             supplier.name))
             else:
-                # -----------------------------------------------------------------
+                # -------------------------------------------------------------
                 # Stock position
-                # -----------------------------------------------------------------
+                # -------------------------------------------------------------
                 product = self.product_id
                 default_slot_id = product.default_slot_id
                 if not default_slot_id and not product.slot_needed:
