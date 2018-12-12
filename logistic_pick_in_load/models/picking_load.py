@@ -176,7 +176,7 @@ class StockPicking(models.Model):
                         # sale_line_id
                         # procure_method,
                         #'product_qty': select_qty,
-                        }.id))
+                        }).id)
                     if product_qty <= 0.0:
                         break    
                 
@@ -227,7 +227,7 @@ class StockPicking(models.Model):
                         # purchase_line_id
                         # procure_method,
                         #'product_qty': select_qty,
-                        }.id))
+                        }).id)
 
         # ---------------------------------------------------------------------
         # Update Logistic status:
