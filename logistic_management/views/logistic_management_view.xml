@@ -184,10 +184,10 @@
          </record>
 
          <!--purchase.order-->         
-         <record model="ir.ui.view" id="view_purchase_order_logistic_workflow_form">
+         <record model="ir.ui.view" id="view_purchase_order_logistic_workflow_tree">
              <field name="name">purchase.order.form</field>
              <field name="model">purchase.order</field>
-             <field name="inherit_id" ref="purchase.purchase.purchase_order_tree"/>
+             <field name="inherit_id" ref="purchase.purchase_order_tree"/>
              <field name="arch" type="xml">
                  <field name="state" position="before">
                      <field name="logistic_state" />
