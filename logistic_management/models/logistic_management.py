@@ -142,6 +142,33 @@ class PurchaseOrder(models.Model):
     # -------------------------------------------------------------------------
     #                            BUTTON:
     # -------------------------------------------------------------------------
+    @api.multi
+    def open_purchase_line(self):
+        ''' Open purchase line detail view:
+        '''
+        model_pool = self.env['ir.model.data']
+        tree_view_id = model_pool.get_object_reference(
+            'logistic_management', 'view_purchase_order_line_tree')[1]
+        form_view_id = model_pool.get_object_reference(
+            'logistic_management', 'view_purchase_order_line_form')[1]
+
+        line_ids = [item.id for item in self.order_line]
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Purchase line'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            #'res_id': 1,
+            'res_model': 'purchase.order.line',
+            'view_id': tree_view_id,
+            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
+            'domain': [('id', '=', line_ids)],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+        
     # Workflow button:
     @api.multi
     def set_logistic_state_confirmed(self):
@@ -236,7 +263,7 @@ class PurchaseOrderLine(models.Model):
     # Function fields:
     # -------------------------------------------------------------------------
     @api.multi
-    @api.depends('load_line_ids')
+    @api.depends('load_line_ids', )
     def _get_logistic_status_field(self):
         ''' Manage all data for logistic situation in sale order:
         '''
@@ -267,6 +294,8 @@ class PurchaseOrderLine(models.Model):
         store=False,
         )
 
+    # TODO logistic state?
+    
     # RELATIONAL:
     load_line_ids = fields.One2many(
         'stock.move', 'logistic_purchase_id', 'Linked load to purchase', 

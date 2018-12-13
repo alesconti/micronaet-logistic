@@ -89,10 +89,16 @@ class StockPicking(models.Model):
         for line in purchase_lines.sorted(
                 key=lambda x: x.order_id.create_date):
                 
+            # -----------------------------------------------------------------
+            # Line was completed:    
+            # -----------------------------------------------------------------
             logistic_undelivered_qty = line.logistic_undelivered_qty
             if logistic_undelivered_qty <= 0.0:
-                continue # line was yet completed!
+                continue
 
+            # -----------------------------------------------------------------
+            # Product of purchase line not receiced:
+            # -----------------------------------------------------------------
             product = line.product_id
             if product not in product_line_db:
                 product_line_db[product] = []
@@ -106,13 +112,16 @@ class StockPicking(models.Model):
         headers = header_pool.search([])
         sale_line_ready = [] # ready line after assign load qty to purchase
         position_move_ids = [] # ID move to update
-        pickings = []#self.env['stock.picking']
+        pickings = [] # Picking created
         for header in headers:
             partner = header.partner_id
             scheduled_date = header.date_order
             name = header.name # same as order_ref
             origin = _('%s [%s]') % (header.order_ref, header.date_order[:10])
             
+            # -----------------------------------------------------------------
+            # Create new picking:
+            # -----------------------------------------------------------------
             picking = self.create({       
                 'partner_id': partner.id,
                 'scheduled_date': scheduled_date,
@@ -126,18 +135,26 @@ class StockPicking(models.Model):
                 'state': 'done', # XXX done immediately
                 })
             pickings.append(picking)
-            
+
+            # -----------------------------------------------------------------
+            # Append stock.move detail (or quants if in stock)
+            # -----------------------------------------------------------------            
             for line in header.doca_line:
                 product = line.product_id
-                product_qty = line.product_qty
+                product_qty = line.product_qty # received
+                
+                # -------------------------------------------------------------
+                # Link received to order:
+                # -------------------------------------------------------------
                 for purchase_line in product_line_db.get(product, []):
                     load_line, logistic_undelivered_qty = purchase_line
+                    
                     if product_qty >= logistic_undelivered_qty:
                         # -----------------------------------------------------
                         # Covered all purchase line:
                         # -----------------------------------------------------
-                        select_qty = logistic_undelivered_qty # received
-                        # Logistic status for sale order line == ready
+                        select_qty = logistic_undelivered_qty # Received
+                        # To update as ready:
                         sale_line_ready.append(load_line.logistic_sale_id)
                     else: 
                         # -----------------------------------------------------
@@ -145,7 +162,7 @@ class StockPicking(models.Model):
                         # -----------------------------------------------------
                         select_qty = product_qty # all
 
-                    product_qty -= select_qty
+                    product_qty -= select_qty # Remain q.
                     
                     # ---------------------------------------------------------
                     # Create movement (not load stock):
@@ -164,11 +181,14 @@ class StockPicking(models.Model):
                         'product_uom': product.uom_id.id,
                         'state': 'done',
                         'origin': origin,
+                        
                         # Sale order line link:
                         'logistic_load_id': load_line.logistic_sale_id.id,
+                        
                         # Purchase order line line: 
                         'logistic_purchase_id': load_line.id,
-                        'purchase_line_id': load_line.id, # XXX needed?
+                        
+                        #'purchase_line_id': load_line.id, # XXX needed?
                         #'logistic_quant_id': quant.id, # XXX no quants here
 
                         # group_id
