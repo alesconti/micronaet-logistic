@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_account_position_sequence_form">
+            <field name="name">account.fiscal.position.form</field>
+            <field name="model">account.fiscal.position</field>            
+            <field name="inherit_id" ref="account.view_account_position_form"/>
+            <field name="arch" type="xml">
+                <field name="active" position="after">
+                    <field name="sequence_id" domain="[('prefix', '=ilike', 'FT%%')]"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>
+

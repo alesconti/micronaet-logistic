@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 ###############################################################################
 #
 # ODOO (ex OpenERP) 
 # Open Source Management Solution
-# Copyright (C) 2001-2018 Micronaet S.r.l. (<https://micronaet.com>)
+# Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -20,6 +20,34 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
+import os
+import sys
+import openerp
+import logging
+from openerp import models, fields
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+from openerp.tools.translate import _
+from openerp.tools import (
+    DEFAULT_SERVER_DATE_FORMAT, 
+    DEFAULT_SERVER_DATETIME_FORMAT, 
+    DATETIME_FORMATS_MAP, 
+    float_compare,
+    )
 
-from . import logistic_management
-from . import account_parameter
+
+_logger = logging.getLogger(__name__)
+
+class AccountFiscalPosition(models.Model):
+    """ Model name: account fiscal position
+    """
+    
+    _inherit = 'account.fiscal.position'
+    
+    # -------------------------------------------------------------------------
+    # Columns:
+    # -------------------------------------------------------------------------
+    sequence_id = fields.Many2one('ir.sequence', 'Sequence', required=True)
+
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+

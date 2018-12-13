@@ -34,6 +34,7 @@
         'sale',
         'sale_management',
         'product',
+        'account',
         'stock',
         'purchase',
         'logistic_stock_position', # Stock position
@@ -52,6 +53,7 @@
         # Views:
         'views/logistic_management_view.xml',
         'wizard/manual_operation_view.xml',
+        'views/account_parameter_view.xml',
         
         # Report:
         'reports/load_position_report.xml',
