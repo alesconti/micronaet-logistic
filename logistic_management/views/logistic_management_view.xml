@@ -44,7 +44,6 @@
              <field name="arch" type="xml">
                  <field name="ref" position="after">
                      <separator string="Account document" />
-                     <field name="need_ddt" />
                      <field name="need_invoice" />
                  </field>
              </field>
@@ -252,10 +251,6 @@
                  </field>
                  <field name="partner_id" position="after">
                      <field name="logistic_state" readonly="1"/>
-                 </field>
-                 <field name="payment_term_id" position="after">
-                     <field name="need_ddt" />
-                     <field name="need_invoice" />
                  </field>
              </field>
          </record>    

@@ -419,14 +419,6 @@ class StockPicking(models.Model):
         excel_pool.save_file_as(fullname)
         return True
 
-    # Check if invoice is needed:
-    @api.multi
-    def picking_need_invoice(self):
-        ''' Rules for invoice procedure:
-        '''
-        # TODO 
-        return False
-
     # -------------------------------------------------------------------------
     #                                   BUTTON:
     # -------------------------------------------------------------------------
@@ -445,7 +437,7 @@ class StockPicking(models.Model):
             ddt_ids.append(picking.id)
             
             # Invoice procedure (check rules):
-            if picking.picking_need_invoice():
+            if picking.partner_id.need_invoice:
                 picking.assign_invoice_number()
                 invoice_ids.append(picking.id)
             
@@ -511,7 +503,6 @@ class StockPicking(models.Model):
         ''' Assign invoice number depend on fiscal position and parameter in
             partner configuration
         '''
-        # TODO Manage sequence from fiscal position
         for picking in self:
             # Load partner sequence (depend on fiscal position)
             sequence = picking.property_account_position_id.sequence_id
@@ -568,7 +559,6 @@ class ResPartner(models.Model):
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     need_invoice = fields.Boolean('Always invoice')
-    need_ddt = fields.Boolean('Always DDT')
 
 
 class StockQuant(models.Model):
@@ -962,12 +952,6 @@ class SaleOrder(models.Model):
                 })
             picking_ids.append(picking.id)    
                 
-            # Sequence to be assigned:
-            #if partner.need_ddt or order.need_ddt:
-            #    invoice_list.append(picking)
-            #if partner.need_ddt or order.need_ddt:
-            #    ddt_list.append(picking)
-                   
             for line in order.order_line:
                 product = line.product_id
                 product_qty = line.logistic_undelivered_qty
@@ -1024,10 +1008,6 @@ class SaleOrder(models.Model):
         # Change status order ready > done
         orders.logistic_check_and_set_done()
         return picking_ids    
-
-    # Only for this order:        
-    need_invoice = fields.Boolean('Always invoice')
-    need_ddt = fields.Boolean('Always DDT')
 
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft, new order received
