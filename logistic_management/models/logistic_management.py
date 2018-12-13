@@ -151,6 +151,7 @@ class PurchaseOrder(models.Model):
         
         for purchase in purchases:
             done = True
+            
             for line in purchase.order_line:
                 if line.logistic_undelivered_qty > 0:
                     done = False
