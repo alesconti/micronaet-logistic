@@ -514,9 +514,10 @@ class StockPicking(models.Model):
         '''
         # TODO Manage sequence from fiscal position
         for picking in self:
+            # Load partner sequence (depend on fiscal position)
+            sequence = picking.property_account_position_id.sequence_id
             picking.write({
-                'invoice_number': self.env['ir.sequence'].next_by_code(
-                    'stock.picking.invoice.sequence')
+                'invoice_number': sequence.next_by_id()
                 })
         return True
                 
