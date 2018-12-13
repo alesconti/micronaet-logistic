@@ -10,6 +10,16 @@
                     <field name="sequence_id" domain="[('prefix', '=ilike', 'FT%%')]"/>
                 </field>
             </field>
+        </record>        
+        <record model="ir.ui.view" id="view_account_position_sequence_tree">
+            <field name="name">account.fiscal.position.tree</field>
+            <field name="model">account.fiscal.position</field>            
+            <field name="inherit_id" ref="account.view_account_position_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="sequence_id" domain="[('prefix', '=ilike', 'FT%%')]"/>
+                </field>
+            </field>
         </record>
     </data>
 </openerp>
