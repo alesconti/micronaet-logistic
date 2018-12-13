@@ -60,7 +60,7 @@ class StockPicking(models.Model):
         sale_line_pool = self.env['sale.order.line']
        
         # Purchase order detail:
-        #purchase_pool = self.env['purchase.order']
+        purchase_pool = self.env['purchase.order']
         line_pool = self.env['purchase.order.line']
         
         # Partner:
@@ -86,9 +86,14 @@ class StockPicking(models.Model):
             
         # Sorted with create date (first will be linked first!    
         product_line_db = {}
+        purchase_order_touched = []
         for line in purchase_lines.sorted(
                 key=lambda x: x.order_id.create_date):
-                
+            
+            purchase_id = line.order_id.id
+            if purchase.id not in purchase_order_touched:
+                purchase_order_touched.append(purchase_id)
+
             # -----------------------------------------------------------------
             # Line was completed:    
             # -----------------------------------------------------------------
@@ -250,16 +255,16 @@ class StockPicking(models.Model):
                         }).id)
 
         # ---------------------------------------------------------------------
-        # Update Logistic status:
+        # Sale order: Update Logistic status:
         # ---------------------------------------------------------------------
-        # Mark order line ready:
+        # Mark Sale Order Line ready:
         _logger.info('Update sale order line as ready:')
         for line in sale_line_ready:
             line.write({
                 'logistic_state': 'ready',
                 })
                 
-        # Check ready order with this line set as ready 
+        # Check Sale Order with all line ready:
         _logger.info('Update sale order as ready:')
         sale_line_pool.logistic_check_ready_order(sale_line_ready)
 
@@ -278,6 +283,12 @@ class StockPicking(models.Model):
         for picking in pickings:
             picking.export_excel_picking_report()
 
+        # ---------------------------------------------------------------------
+        # Check Purchase order ready
+        # ---------------------------------------------------------------------
+        _logger.info('Check purchase order closed:')
+        purchase_pool.check_order_confirmed_done(purchase_order_touched)
+        
         # ---------------------------------------------------------------------
         #                          Clean temp data:
         # ---------------------------------------------------------------------

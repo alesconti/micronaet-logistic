@@ -139,6 +139,27 @@ class PurchaseOrder(models.Model):
             'nodestroy': False,
             }
 
+    @api.model
+    def check_order_confirmed_done(self, purchase_ids=None):
+        ''' Check passed purchase IDs passed or all confirmed order
+            if not present
+        '''
+        if purchase_ids: 
+            purchases = self.search([('id', 'in', purchase_ids)])
+        else:
+            purchases = self.search([('logistic_state', '=', 'confirmed')])
+        
+        for purchase in purchases:
+            done = True
+            for line in purchase.order_line:
+                if line.logistic_undelivered_qty > 0:
+                    done = False
+                    break
+            # Update if all line hasn't undelivered qty        
+            if done:
+                purchase.logistic_state = 'done'
+        return True        
+                
     # -------------------------------------------------------------------------
     #                            BUTTON:
     # -------------------------------------------------------------------------

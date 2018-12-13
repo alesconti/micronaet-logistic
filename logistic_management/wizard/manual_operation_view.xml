@@ -30,7 +30,10 @@
                       <group colspan="4" col="2">
                           <separator string="E. Update picking in loading:"/>
                           <button name="update_ready" string="_Update ready" type="object" class="btn-primary" />
+                          <!--Not necessary (work after update_ready)-->
+                          <button name="update_ready_purchase_check" string="Update ready purchase check" type="object" class="btn-primary" />                          
                       </group>    
+                      
                       <group colspan="4" col="2">
                           <separator string="F. Generate picking out document (and confirm):"/>
                           <button name="generate_delivery" string="Generate _Delivery" type="object" class="btn-primary" />
