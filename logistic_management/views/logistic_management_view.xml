@@ -183,7 +183,24 @@
              </field>
          </record>
 
-         <!--purchase.order-->
+         <!--purchase.order-->         
+         <record model="ir.ui.view" id="view_purchase_order_logistic_workflow_form">
+             <field name="name">purchase.order.form</field>
+             <field name="model">purchase.order</field>
+             <field name="inherit_id" ref="purchase.purchase.purchase_order_tree"/>
+             <field name="arch" type="xml">
+                 <field name="state" position="before">
+                     <field name="logistic_state" />
+                 </field>
+                 <field name="state" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </field>
+                 <field name="invoice_status" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </field>
+             </field>
+         </record>
+         
          <record model="ir.ui.view" id="view_purchase_order_logistic_workflow_form">
              <field name="name">purchase.order.form</field>
              <field name="model">purchase.order</field>
