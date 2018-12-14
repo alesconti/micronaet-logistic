@@ -91,7 +91,7 @@ class StockPicking(models.Model):
                 key=lambda x: x.order_id.create_date):
             
             purchase_id = line.order_id.id
-            if purchase.id not in purchase_order_touched:
+            if purchase_id not in purchase_order_touched:
                 purchase_order_touched.append(purchase_id)
 
             # -----------------------------------------------------------------
