@@ -313,6 +313,23 @@
              <field name="model">sale.order</field>
              <field name="inherit_id" ref="sale.view_order_form"/>
              <field name="arch" type="xml">
+                 <xpath expr="//page[1]" position="after">
+                     <page string="Picking">
+                         <group colspan="4" col="4">
+                             <separator string="Picking out:" colspan="4"/>
+                             <field name="logistic_picking_ids" nolabel="1" colspan="4">
+                                 <tree string="Picking:">
+                                     <field name="name" />
+                                     <field name="date" invisible="1" modifiers="{'column_invisible':true,'readonly':[['state','in',['cancel','done']]]}"/>
+                                     <field name="scheduled_date" modifiers="{'readonly':[['state','in',['cancel','done']]]}"/>
+                                     <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}" modifiers="{'invisible':[['invoice_number','=',false]]}"/>
+                                     <field name="ddt_number" attrs="{'invisible': [('ddt_number','=',False)]}" modifiers="{'invisible':[['ddt_number','=',false]]}"/>
+                                     <field name="state" invisible="1"/>
+                                 </tree>
+                             </field>
+                         </group>    
+                     </page>
+                 </xpath>
                  <field name="state" position="after">
                      <button name="return_order_line_list_view" string="Logistic detail" type="object" class="oe_highlight"/>
                  </field>

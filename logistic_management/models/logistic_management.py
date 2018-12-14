@@ -1059,6 +1059,9 @@ class SaleOrder(models.Model):
         orders.logistic_check_and_set_done()
         return picking_ids    
 
+    logistic_picking_ids = fields.One2many(
+        'stock.picking', 'sale_order_id', 'Picking')
+
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft, new order received
         ('payment', 'Payment confirmed'), # Payment confirmed

@@ -85,7 +85,7 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
         # ---------------------------------------------------------------------
         # Body part:
         # ---------------------------------------------------------------------
-        for self.invoice_line_ids:
+        for line in self.invoice_line_ids:
             pass
         f_invoice.write('</FatturaElettronicaBody>')
         f_invoice.write('</p:FatturaElettronica>')
