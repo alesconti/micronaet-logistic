@@ -1043,18 +1043,12 @@ class SaleOrder(models.Model):
             # TODO check if DDT / INVOICE document:
 
         # ---------------------------------------------------------------------
-        # Invoice and DDT assign
+        # Confirm picking (DDT and INVOICE)
         # ---------------------------------------------------------------------
-        #for picking in ddt_list:
-        #    picking.assign_ddt_number()
-            
-        #for picking in invoice_list:
-        #    picking.assign_invoice_number()
-            
-        # Confirm picking   
         picking_pool.search([
             ('id', 'in', picking_ids),
             ]).workflow_ready_to_done_done_picking()
+
         # ---------------------------------------------------------------------
         # Order status:    
         # ---------------------------------------------------------------------
