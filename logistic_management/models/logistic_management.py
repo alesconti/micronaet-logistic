@@ -70,7 +70,10 @@ class ResCompany(models.Model):
     def _logistic_folder(self, document, mode='default', extra=False):
         ''' Return full path of folder request:
         '''
-        folder_block = self._logistic_folder_db[document][mode]    
+        # Get master path:
+        folder_block = self._logistic_folder_db[document][mode]
+        
+        # Manage extra path:
         if extra:
             if type(extra) == str:
                 extra = [extra]
