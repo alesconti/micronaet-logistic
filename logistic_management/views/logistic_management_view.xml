@@ -743,63 +743,63 @@
                  <menuitem
                      id="menu_logistic_left_order_all" 
                      parent="menu_logistic_left_order_root"
-                     name="Order all"
+                     name="Logistic: All"
                      action="action_sale_order_all_form"
                      sequence="10"
                      />
                  <menuitem
                      id="menu_logistic_left_order_draft" 
                      parent="menu_logistic_left_order_root"
-                     name="Logistic state draft"
+                     name="Logistic: Draft"
                      action="action_sale_order_draft_form"
                      sequence="20"
                      />
                  <menuitem
                      id="menu_logistic_left_order_payment" 
                      parent="menu_logistic_left_order_root"
-                     name="Logistic stater payment"
+                     name="Logistic: Payment"
                      action="action_sale_order_payment_form"
                      sequence="30"
                      />
                  <menuitem
                      id="menu_logistic_left_order_order" 
                      parent="menu_logistic_left_order_root"
-                     name="Logistic state order"
+                     name="Logistic: Order"
                      action="action_sale_order_order_form"
                      sequence="40"
                      />
                  <menuitem
                      id="menu_logistic_left_order_pending" 
                      parent="menu_logistic_left_order_root"
-                     name="Logistic state pending"
+                     name="Logistic: Pending"
                      action="action_sale_order_pending_form"
                      sequence="50"
                      />
                  <menuitem
                      id="menu_logistic_left_order_ready" 
                      parent="menu_logistic_left_order_root"
-                     name="Logistic state ready"
+                     name="Logistic: Ready"
                      action="action_sale_order_ready_form"
                      sequence="60"
                      />
                  <menuitem
                      id="menu_logistic_left_order_delivering" 
                      parent="menu_logistic_left_order_root"
-                     name="Logistic state done"
+                     name="Logistic: Delivering"
                      action="action_sale_order_delivering_form"
                      sequence="70"
                      />
                  <menuitem
                      id="menu_logistic_left_order_done" 
                      parent="menu_logistic_left_order_root"
-                     name="Logistic state done"
+                     name="Logistic: Done"
                      action="action_sale_order_done_form"
                      sequence="80"
                      />
                  <menuitem
                      id="menu_logistic_left_order_error" 
                      parent="menu_logistic_left_order_root"
-                     name="Logistic state error"
+                     name="Logistic: Error"
                      action="action_sale_order_error_form"
                      sequence="90"
                      />

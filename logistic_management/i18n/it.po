@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-05 13:28+0000\n"
-"PO-Revision-Date: 2018-12-05 14:35+0100\n"
+"POT-Creation-Date: 2018-12-14 11:05+0000\n"
+"PO-Revision-Date: 2018-12-14 12:12+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,13 +18,13 @@ msgstr ""
 "X-Generator: Poedit 1.6.10\n"
 
 #. module: logistic_management
-#: code:addons/logistic_management/models/logistic_management.py:706
+#: code:addons/logistic_management/models/logistic_management.py:993
 #, python-format
 msgid "%s [%s]"
 msgstr "%s [%s]"
 
 #. module: logistic_management
-#: code:addons/logistic_management/models/logistic_management.py:523
+#: code:addons/logistic_management/models/logistic_management.py:807
 #, python-format
 msgid ""
 "<div class=\"o_mail_notification\">\n"
@@ -38,7 +38,7 @@ msgstr ""
 "                    </div>"
 
 #. module: logistic_management
-#: code:addons/logistic_management/models/logistic_management.py:469
+#: code:addons/logistic_management/models/logistic_management.py:753
 #, python-format
 msgid ""
 "<div class=\"o_mail_notification\">\n"
@@ -54,6 +54,11 @@ msgstr ""
 "                "
 
 #. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.report_load_position
+msgid "<strong>Product name:</strong>"
+msgstr "<strong>Nome prodotto:</strong>"
+
+#. module: logistic_management
 #: model:ir.ui.view,arch_db:logistic_management.view_logistic_manual_operation_wizard
 msgid "A. Confirm payment on new order:"
 msgstr "A. Conferma pagamento su nuovo ordine:"
@@ -64,18 +69,15 @@ msgid "Account document"
 msgstr "Documento contabile"
 
 #. module: logistic_management
-#: model:ir.model.fields,field_description:logistic_management.field_res_partner_need_ddt
-#: model:ir.model.fields,field_description:logistic_management.field_res_users_need_ddt
-#: model:ir.model.fields,field_description:logistic_management.field_sale_order_need_ddt
-msgid "Always DDT"
-msgstr "Sempre DDT"
-
-#. module: logistic_management
 #: model:ir.model.fields,field_description:logistic_management.field_res_partner_need_invoice
 #: model:ir.model.fields,field_description:logistic_management.field_res_users_need_invoice
-#: model:ir.model.fields,field_description:logistic_management.field_sale_order_need_invoice
 msgid "Always invoice"
 msgstr "Sempre fattura"
+
+#. module: logistic_management
+#: model:ir.ui.menu,name:logistic_management.menu_logistic_left_configuration_anagrafic_root
+msgid "Anagrafic"
+msgstr "Anagrafica"
 
 #. module: logistic_management
 #: model:ir.ui.view,arch_db:logistic_management.view_stock_picking_confirm_out_form
@@ -128,6 +130,11 @@ msgstr "B. Conferma ordini pagati:"
 #: model:ir.ui.menu,name:logistic_management.menu_logistic_left_pick_out_root
 msgid "BC unload document"
 msgstr "BC Documento di scarico"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_purchase_order_line_form
+msgid "BF lines:"
+msgstr "BF dettaglio:"
 
 #. module: logistic_management
 #: model:ir.ui.menu,name:logistic_management.menu_logistic_left_pick_in_document
@@ -229,6 +236,12 @@ msgid "Custom order"
 msgstr "Ordine cliente"
 
 #. module: logistic_management
+#: model:ir.actions.act_window,name:logistic_management.action_res_partner_customer_form
+#: model:ir.ui.menu,name:logistic_management.menu_logistic_left_configuration_partner_customer
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: logistic_management
 #: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_form
 msgid "Customer delivered:"
 msgstr "Consegnato a cliente:"
@@ -254,7 +267,7 @@ msgid "DDT sequence default"
 msgstr "Sequenza DDT predefinita"
 
 #. module: logistic_management
-#: code:addons/logistic_management/models/logistic_management.py:532
+#: code:addons/logistic_management/models/logistic_management.py:816
 #, python-format
 msgid "Default supplier not found"
 msgstr "Fornitore predefinito non trovato"
@@ -274,6 +287,11 @@ msgstr "Movimenti di consegna"
 #: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_delivered_qty
 msgid "Delivered qty"
 msgstr "Q. Consegnata"
+
+#. module: logistic_management
+#: selection:sale.order,logistic_state:0
+msgid "Delivering"
+msgstr "In consegna"
 
 #. module: logistic_management
 #: model:ir.ui.menu,name:logistic_management.menu_view_stock_location_table
@@ -309,14 +327,20 @@ msgid "E. Update picking in loading:"
 msgstr "E. Aggiorna carichi di magazzino"
 
 #. module: logistic_management
+#: code:addons/logistic_management/models/logistic_management.py:53
+#, python-format
+msgid "Error creating output folder (check param)"
+msgstr "Errore creando la cartella di output (controllare i parametri)"
+
+#. module: logistic_management
 #: selection:sale.order,logistic_state:0
 msgid "Error order"
 msgstr "Ordini errati"
 
 #. module: logistic_management
 #: model:ir.ui.view,arch_db:logistic_management.view_logistic_manual_operation_wizard
-msgid "F. Generate picking out document:"
-msgstr "F. Genera documenti di consegna"
+msgid "F. Generate picking out document (and confirm):"
+msgstr "F. Genera i documenti di consegna (e conferma):"
 
 #. module: logistic_management
 #: selection:res.company,logistic_assign_mode:0
@@ -379,7 +403,7 @@ msgid "Invoice sequence default"
 msgstr "Sequenza fattura predefinita"
 
 #. module: logistic_management
-#: code:addons/logistic_management/models/logistic_management.py:480
+#: code:addons/logistic_management/models/logistic_management.py:764
 #, python-format
 msgid "Kit not found"
 msgstr "KIT non trovato"
@@ -402,7 +426,7 @@ msgstr "Ultima modifica il"
 #. module: logistic_management
 #: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_mrp_tree
 msgid "Lavoration Done"
-msgstr "Lavorazione: Fatta"
+msgstr "Lavorazione: Completato"
 
 #. module: logistic_management
 #: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_mrp_tree
@@ -548,6 +572,16 @@ msgid "Load move"
 msgstr "Movimenti di carico"
 
 #. module: logistic_management
+#: model:ir.actions.report,name:logistic_management.load_stock_move_position
+msgid "Load move position"
+msgstr "Carica posizione movimento"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_logistic_manual_operation_wizard
+msgid "Load position report"
+msgstr "Report posizionamento"
+
+#. module: logistic_management
 #: model:ir.model.fields,help:logistic_management.field_sale_order_line_load_line_ids
 msgid "Loaded movement in picking in documents"
 msgstr "Movimenti di carico nei documenti di pick in"
@@ -594,6 +628,11 @@ msgid "Logistic parameters:"
 msgstr "Parametri logistica:"
 
 #. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_purchase_order_logistic_workflow_form
+msgid "Logistic purchase line"
+msgstr "Righe ordine di acquisto"
+
+#. module: logistic_management
 #: model:ir.model.fields,field_description:logistic_management.field_purchase_order_logistic_state
 #: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_state
 #: model:ir.model.fields,field_description:logistic_management.field_sale_order_logistic_state
@@ -601,39 +640,55 @@ msgid "Logistic state"
 msgstr "Stato logistica"
 
 #. module: logistic_management
+#: model:ir.ui.menu,name:logistic_management.menu_logistic_left_order_all
+msgid "Logistic: All"
+msgstr "Logistica: Tutti"
+
+#. module: logistic_management
+#: model:ir.ui.menu,name:logistic_management.menu_logistic_left_order_delivering
+msgid "Logistic: Delivering"
+msgstr "Logistic: In consegna"
+
+#. module: logistic_management
 #: model:ir.ui.menu,name:logistic_management.menu_logistic_left_order_done
-msgid "Logistic state done"
-msgstr "Logistica: completato"
+msgid "Logistic: Done"
+msgstr "Logistic: Completi"
 
 #. module: logistic_management
 #: model:ir.ui.menu,name:logistic_management.menu_logistic_left_order_draft
-msgid "Logistic state draft"
-msgstr "Logistica: bozza"
+msgid "Logistic: Draft"
+msgstr "Logistic: Bozza"
 
 #. module: logistic_management
 #: model:ir.ui.menu,name:logistic_management.menu_logistic_left_order_error
-msgid "Logistic state error"
-msgstr "Logistica: Errato"
+msgid "Logistic: Error"
+msgstr "Logistic: Errati"
 
 #. module: logistic_management
 #: model:ir.ui.menu,name:logistic_management.menu_logistic_left_order_order
-msgid "Logistic state order"
-msgstr "Logistica: ordine attivo"
-
-#. module: logistic_management
-#: model:ir.ui.menu,name:logistic_management.menu_logistic_left_order_pending
-msgid "Logistic state pending"
-msgstr "Listica: Pendente"
-
-#. module: logistic_management
-#: model:ir.ui.menu,name:logistic_management.menu_logistic_left_order_ready
-msgid "Logistic state ready"
-msgstr "Logistica: Pronto"
+msgid "Logistic: Order"
+msgstr "Logistic: Ordine"
 
 #. module: logistic_management
 #: model:ir.ui.menu,name:logistic_management.menu_logistic_left_order_payment
-msgid "Logistic stater payment"
-msgstr "Logistica: Pagamento"
+msgid "Logistic: Payment"
+msgstr "Logistic: Pagamento"
+
+#. module: logistic_management
+#: model:ir.ui.menu,name:logistic_management.menu_logistic_left_order_pending
+msgid "Logistic: Pending"
+msgstr "Logistic: Pendente"
+
+#. module: logistic_management
+#: model:ir.ui.menu,name:logistic_management.menu_logistic_left_order_ready
+msgid "Logistic: Ready"
+msgstr "Logistic: Pronti"
+
+#. module: logistic_management
+#: code:addons/logistic_management/models/logistic_management.py:451
+#, python-format
+msgid "MAGAZZINO"
+msgstr "MAGAZZINO"
 
 #. module: logistic_management
 #: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_mrp_search
@@ -643,7 +698,12 @@ msgstr "MRP"
 #. module: logistic_management
 #: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_mrp_tree
 msgid "MRP lavoration"
-msgstr "MRP lavoration"
+msgstr "Lavorazione interna"
+
+#. module: logistic_management
+#: model:ir.model.fields,help:logistic_management.field_res_company_logistic_root_folder
+msgid "Master root folder for output"
+msgstr "Cartella principale per output"
 
 #. module: logistic_management
 #: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_undelivered_qty
@@ -661,12 +721,7 @@ msgid "Order"
 msgstr "Ordine"
 
 #. module: logistic_management
-#: model:ir.ui.menu,name:logistic_management.menu_logistic_left_order_all
-msgid "Order all"
-msgstr "Ordini tutti"
-
-#. module: logistic_management
-#: code:addons/logistic_management/models/logistic_management.py:412
+#: code:addons/logistic_management/models/logistic_management.py:691
 #: selection:sale.order,logistic_state:0
 #, python-format
 msgid "Order confirmed"
@@ -687,6 +742,16 @@ msgstr "Ordini ordinamento"
 #: selection:sale.order.line,logistic_state:0
 msgid "Ordered"
 msgstr "Ordinata"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_res_company_logistic_parameter_form
+msgid "Output folder:"
+msgstr "Cartella di output:"
+
+#. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_res_company_logistic_root_folder
+msgid "Output root folder"
+msgstr "Cartella principale output:"
 
 #. module: logistic_management
 #: model:ir.ui.menu,name:logistic_management.menu_view_res_partner_table
@@ -714,6 +779,12 @@ msgid "Pick out type"
 msgstr "Tipo documento consegna"
 
 #. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_sale_order_logistic_picking_ids
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_logistic_form
+msgid "Picking"
+msgstr "Picking"
+
+#. module: logistic_management
 #: model:ir.model.fields,help:logistic_management.field_res_company_logistic_pick_in_type_id
 msgid "Picking in type for load documents"
 msgstr "Tipo consegna per documenti di carico"
@@ -722,6 +793,16 @@ msgstr "Tipo consegna per documenti di carico"
 #: model:ir.model.fields,help:logistic_management.field_res_company_logistic_pick_out_type_id
 msgid "Picking in type for unload documents"
 msgstr "Tipo consegna per documenti di scarico"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_logistic_form
+msgid "Picking out:"
+msgstr "Picking out:"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_sale_order_logistic_form
+msgid "Picking:"
+msgstr "Picking:"
 
 #. module: logistic_management
 #: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_position
@@ -733,6 +814,23 @@ msgstr "Posizione"
 #: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_mrp_search
 msgid "Product"
 msgstr "Prodotto"
+
+#. module: logistic_management
+#: model:ir.model,name:logistic_management.model_product_template
+msgid "Product Template"
+msgstr "Modello prodotto"
+
+#. module: logistic_management
+#: model:ir.actions.act_window,name:logistic_management.action_product_template_no_supplier_form
+#: model:ir.ui.menu,name:logistic_management.menu_logistic_left_configuration_anagrafic_template_no_supplier
+msgid "Product no supplier"
+msgstr "Prodotto senza fornitore"
+
+#. module: logistic_management
+#: model:ir.actions.act_window,name:logistic_management.action_product_template_form
+#: model:ir.ui.menu,name:logistic_management.menu_logistic_left_configuration_anagrafic_template
+msgid "Product template"
+msgstr "Modello di prodotto"
 
 #. module: logistic_management
 #: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_mrp_search
@@ -750,7 +848,9 @@ msgid "Purchase Order Line"
 msgstr "Riga Ordine d'Acquisto"
 
 #. module: logistic_management
+#: code:addons/logistic_management/models/logistic_management.py:181
 #: model:ir.actions.act_window,name:logistic_management.action_purchase_order_line
+#, python-format
 msgid "Purchase line"
 msgstr "Righe ordine fornitore"
 
@@ -795,7 +895,7 @@ msgid "Purchase order line"
 msgstr "Righe ordine acquisto"
 
 #. module: logistic_management
-#: code:addons/logistic_management/models/logistic_management.py:94
+#: code:addons/logistic_management/models/logistic_management.py:129
 #, python-format
 msgid "Purchase order selected:"
 msgstr "Righe ordine acquisto selezionate"
@@ -803,7 +903,7 @@ msgstr "Righe ordine acquisto selezionate"
 #. module: logistic_management
 #: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_purchase_qty
 msgid "Purchase qty"
-msgstr "Q. ordinata a fornitore"
+msgstr "Q. acquisto"
 
 #. module: logistic_management
 #: model:ir.model.fields,help:logistic_management.field_sale_order_line_logistic_covered_qty
@@ -858,7 +958,7 @@ msgstr "Quantità"
 #. module: logistic_management
 #: model:ir.model,name:logistic_management.model_stock_quant
 msgid "Quants"
-msgstr "Quantità"
+msgstr "Quanti"
 
 #. module: logistic_management
 #: model:ir.model,name:logistic_management.model_sale_order
@@ -885,6 +985,16 @@ msgstr "Rosso"
 #: model:ir.model.fields,field_description:logistic_management.field_sale_order_line_logistic_remain_qty
 msgid "Remain qty"
 msgstr "Q. rimanente"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.report_load_position
+msgid "Report load position"
+msgstr "Stampa posizioni di carico"
+
+#. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_logistic_manual_operation_wizard
+msgid "Report: Load position"
+msgstr "Stampa: posizioni di carico"
 
 #. module: logistic_management
 #: model:ir.actions.act_window,name:logistic_management.action_sale_order_line_logistic_mrp_all
@@ -924,6 +1034,11 @@ msgstr "Ordini cliente"
 #: model:ir.actions.act_window,name:logistic_management.action_sale_order_all_form
 msgid "Sale order all"
 msgstr "Ordini tutti"
+
+#. module: logistic_management
+#: model:ir.actions.act_window,name:logistic_management.action_sale_order_delivering_form
+msgid "Sale order delivering"
+msgstr "Consegne"
 
 #. module: logistic_management
 #: model:ir.actions.act_window,name:logistic_management.action_sale_order_done_form
@@ -981,6 +1096,11 @@ msgid "Sales Order Line"
 msgstr "Riga Ordine di Vendita"
 
 #. module: logistic_management
+#: model:ir.model.fields,field_description:logistic_management.field_account_fiscal_position_sequence_id
+msgid "Sequence"
+msgstr "Sequenza"
+
+#. module: logistic_management
 #: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_mrp_search
 msgid "Silver"
 msgstr "Argento"
@@ -993,7 +1113,7 @@ msgstr "Ordinamento per assegnazione magazzino"
 #. module: logistic_management
 #: model:ir.model.fields,field_description:logistic_management.field_res_company_logistic_location_id
 msgid "Stock Location IN"
-msgstr "Magazzino IN"
+msgstr "Location IN"
 
 #. module: logistic_management
 #: model:ir.model,name:logistic_management.model_stock_move
@@ -1048,9 +1168,16 @@ msgid "Stock quant"
 msgstr "Q. magazzino"
 
 #. module: logistic_management
+#: model:ir.ui.view,arch_db:logistic_management.view_purchase_order_line_form
 #: model:ir.ui.view,arch_db:logistic_management.view_purchase_order_line_tree
 msgid "String"
 msgstr "Stringa"
+
+#. module: logistic_management
+#: model:ir.actions.act_window,name:logistic_management.action_res_partner_supplier_form
+#: model:ir.ui.menu,name:logistic_management.menu_logistic_left_configuration_partner_supplier
+msgid "Supplier"
+msgstr "Fornitore"
 
 #. module: logistic_management
 #: model:ir.ui.view,arch_db:logistic_management.view_sale_order_line_logistic_form
@@ -1103,7 +1230,12 @@ msgid "Unused"
 msgstr "Non usata"
 
 #. module: logistic_management
-#: code:addons/logistic_management/models/logistic_management.py:842
+#: model:ir.ui.view,arch_db:logistic_management.view_logistic_manual_operation_wizard
+msgid "Update ready purchase check"
+msgstr "Controllo ordini fornitore pronti"
+
+#. module: logistic_management
+#: code:addons/logistic_management/models/logistic_management.py:1123
 #, python-format
 msgid "Updated lines"
 msgstr "Aggiorna righe"
@@ -1124,19 +1256,19 @@ msgid "Yellow"
 msgstr "Giallo"
 
 #. module: logistic_management
-#: code:addons/logistic_management/models/logistic_management.py:1235
+#: code:addons/logistic_management/models/logistic_management.py:1529
 #, python-format
 msgid "[MAG] Q. %s > %s\n"
 msgstr "[MAG] Q. %s > %s\n"
 
 #. module: logistic_management
-#: code:addons/logistic_management/models/logistic_management.py:1280
+#: code:addons/logistic_management/models/logistic_management.py:1574
 #, python-format
 msgid "[PROD] Q. %s > %s\n"
 msgstr "[PROD] Q. %s > %s\n"
 
 #. module: logistic_management
-#: code:addons/logistic_management/models/logistic_management.py:1288
+#: code:addons/logistic_management/models/logistic_management.py:1582
 #, python-format
 msgid "[TAV] Q. %s > %s\n"
 msgstr "[TAV] Q. %s > %s\n"
