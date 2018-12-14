@@ -39,13 +39,51 @@ class ResCompany(models.Model):
     
     _inherit = 'res.company'
 
+    # -------------------------------------------------------------------------
+    # Parameters:
+    # -------------------------------------------------------------------------
+    # Database structure:
+    _logistic_folder_db = {
+            'ddt': {
+                'default': ('DDT', 'Originali'),
+                'history': ('DDT', 'Storico'),
+                'supplier': ('DDT', 'Fornitori'),
+                },
+
+            'invoice': {
+                'default': ('Invoice', 'Originali'),
+                'history': ('Invoice', 'Storico'),
+                },
+
+            'bf': {
+                'default': 'BF',
+                },
+
+            'images': {
+                'default': 'images',
+                },
+            }
+
+    # Get path name:
+    @api.model
+    def _logistic_folder(self, document, mode='default'):
+        ''' Return full path of folder request:
+        '''    
+        folder_block = self._logistic_folder_db[document][mode]    
+        self.get_subfolder_from_root(folder_block)
+        
+
     @api.model
     def get_subfolder_from_root(self, name):
         ''' Get subfolder from root
-        '''        
+            if str only one folder, instead multipath
+        '''
         try:
+            if type(name) == str:
+                name = (name, )                
             folder = os.path.expanduser(
-                os.path.join(self.logistic_root_folder, name))
+                os.path.join(self.logistic_root_folder, *name))
+
             # Create in not present
             os.system('mkdir -p %s' % folder)
         except:
@@ -105,8 +143,7 @@ class ProductTemplate(models.Model):
         '''
         company_pool = self.env['res.company']
         companys = company_pool.search([])
-        installation_root = companys.get_subfolder_from_root('images')
-        return installation_root
+        return companys._logistic_folder('images')
 
     # -------------------------------------------------------------------------
     # Columns:
@@ -346,16 +383,14 @@ class StockPicking(models.Model):
         ''' Override default extract DDT function:
         '''        
         companys = self.env['res.company'].search([])
-        folder = companys.get_subfolder_from_root('DDT')
-        return folder
+        return companys._logistic_folder('ddt')
 
     @api.multi
     def get_default_folder_invoice_path(self):
         ''' Override default extract Invoice function:
         '''        
         companys = self.env['res.company'].search([])
-        folder = companys.get_subfolder_from_root('Invoice')
-        return folder
+        return companys._logistic_folder('invoice')
     
     # -------------------------------------------------------------------------
     #                                   UTILITY:
@@ -378,10 +413,8 @@ class StockPicking(models.Model):
             line
         """
         self.ensure_one()
-        folder = 'BF'
-        folder = self.env['res.company'].search(
-            [])[0].get_subfolder_from_root(folder)
-            
+        companys = self.env['res.company'].search([])
+        folder = companys._logistic_folder('bf')
         excel_pool = self.env['excel.writer']
 
         ws_name = 'Carichi'
@@ -508,8 +541,8 @@ class StockPicking(models.Model):
         # DDT extra operations: (require reload)        
         # ---------------------------------------------------------------------
         companys = self.env['res.company'].search([])
-        folder = companys.get_subfolder_from_root('DDT')
-        history_folder = companys.get_subfolder_from_root('DDT_History')
+        folder = companys._logistic_folder('ddt')
+        history_folder = companys._logistic_folder('ddt', 'history')
 
         for picking in self.search([('id', 'in', ddt_ids)]):
             # -----------------------------------------------------------------
@@ -534,8 +567,8 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Invoice extra operations: (require reload)        
         # ---------------------------------------------------------------------
-        folder = companys.get_subfolder_from_root('Invoice')
-        history_folder = companys.get_subfolder_from_root('Invoice_History')
+        folder = companys._logistic_folder('invoice')
+        history_folder = companys._logistic_folder('invoice', 'history')
 
         for picking in self.search([('id', 'in', invoice_ids)]):
             # -----------------------------------------------------------------
