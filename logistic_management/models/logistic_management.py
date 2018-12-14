@@ -550,7 +550,7 @@ class StockPicking(models.Model):
             # TODO 
 
             # 4. Extract electronic invoice:
-            picking.extract_account_electronic_invoice()
+            #picking.extract_account_electronic_invoice()
 
     @api.multi
     def assign_invoice_number(self):

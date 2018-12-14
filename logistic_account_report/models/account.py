@@ -35,7 +35,13 @@ class StockPicking(models.AbstractModel):
     ''' Stock picking extract
     '''
     _inherit = 'stock.picking'
-    
+
+    @api.multi
+    def extract_account_electronic_invoice(self):
+        ''' Extract electronic invoice (or interchange file)
+        '''
+        
+        
     # TODO create fields for write DDT / Invoice lines:
     #report_move_ids = fields.one2many('', 'field_id', 'Label', required=True),
 
