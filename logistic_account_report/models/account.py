@@ -39,6 +39,17 @@ class StockPicking(models.AbstractModel):
     # TODO create fields for write DDT / Invoice lines:
 
     # -------------------------------------------------------------------------
+    # Default path (to be overrided)
+    # -------------------------------------------------------------------------
+    @api.multi
+    def get_default_folder_xml_invoice(self):
+        '''
+        '''
+        path = os.path.expanduser('~/Account/Invoice/XML')
+        os.system('mkdir -p %s' % path)
+        return path
+
+    # -------------------------------------------------------------------------
     # Electronic Invoice extract:
     # -------------------------------------------------------------------------
     @api.multi
@@ -49,8 +60,7 @@ class StockPicking(models.AbstractModel):
         # ---------------------------------------------------------------------
         # Generate filename for invoice:
         # ---------------------------------------------------------------------
-        companys = company_pool.search([])
-        path = companys._logistic_folder('invoice', 'xml')
+        path = self.get_default_folder_xml_invoice()
 
         filename = ('%s' % self.name).replace('/', '_')
         fullname = os.path.join(path, filename)

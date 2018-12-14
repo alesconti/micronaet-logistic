@@ -69,9 +69,9 @@ class ResCompany(models.Model):
     @api.model
     def _logistic_folder(self, document, mode='default'):
         ''' Return full path of folder request:
-        '''    
+        '''
         folder_block = self._logistic_folder_db[document][mode]    
-        self.get_subfolder_from_root(folder_block)
+        return self.get_subfolder_from_root(folder_block)
         
 
     @api.model
@@ -144,7 +144,7 @@ class ProductTemplate(models.Model):
         '''
         company_pool = self.env['res.company']
         companys = company_pool.search([])
-        return companys._logistic_folder('images')
+        return companys[0]._logistic_folder('images')
 
     # -------------------------------------------------------------------------
     # Columns:
@@ -377,21 +377,30 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
     
     # -------------------------------------------------------------------------
-    # Override DDT folder selection path: (module: logistic_account_report)
+    # Override path function:
     # -------------------------------------------------------------------------
+    # Path: DDT, Invoice (module: logistic_account_report)
     @api.multi
     def get_default_folder_path(self):
         ''' Override default extract DDT function:
         '''        
         companys = self.env['res.company'].search([])
-        return companys._logistic_folder('ddt')
+        return companys[0]._logistic_folder('ddt')
 
     @api.multi
     def get_default_folder_invoice_path(self):
         ''' Override default extract Invoice function:
         '''        
         companys = self.env['res.company'].search([])
-        return companys._logistic_folder('invoice')
+        return companys[0]._logistic_folder('invoice')
+
+    # Path: XML Invoice
+    @api.multi
+    def get_default_folder_xml_invoice(self):
+        ''' Override default extract XML Invoice
+        '''
+        companys = self.env['res.company'].search([])
+        return companys[0]._logistic_folder('invoice', 'xml')
     
     # -------------------------------------------------------------------------
     #                                   UTILITY:
@@ -415,7 +424,7 @@ class StockPicking(models.Model):
         """
         self.ensure_one()
         companys = self.env['res.company'].search([])
-        folder = companys._logistic_folder('bf')
+        folder = companys[0]._logistic_folder('bf')
         excel_pool = self.env['excel.writer']
 
         ws_name = 'Carichi'
@@ -542,8 +551,8 @@ class StockPicking(models.Model):
         # DDT extra operations: (require reload)        
         # ---------------------------------------------------------------------
         companys = self.env['res.company'].search([])
-        folder = companys._logistic_folder('ddt')
-        history_folder = companys._logistic_folder('ddt', 'history')
+        folder = companys[0]._logistic_folder('ddt')
+        history_folder = companys[0]._logistic_folder('ddt', 'history')
 
         for picking in self.search([('id', 'in', ddt_ids)]):
             # -----------------------------------------------------------------
@@ -568,8 +577,8 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Invoice extra operations: (require reload)        
         # ---------------------------------------------------------------------
-        folder = companys._logistic_folder('invoice')
-        history_folder = companys._logistic_folder('invoice', 'history')
+        folder = companys[0]._logistic_folder('invoice')
+        history_folder = companys[0]._logistic_folder('invoice', 'history')
 
         for picking in self.search([('id', 'in', invoice_ids)]):
             # -----------------------------------------------------------------
