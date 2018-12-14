@@ -62,8 +62,8 @@
                  </field>
                  <field name="origin" position="after">
                     <field name="sale_order_id" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
-                    <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}"/>
                     <field name="ddt_number" attrs="{'invisible': [('ddt_number','=',False)]}"/>
+                    <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}"/>
                  </field>
              </field>
          </record>
@@ -320,10 +320,10 @@
                              <field name="logistic_picking_ids" nolabel="1" colspan="4">
                                  <tree string="Picking:">
                                      <field name="name" />
-                                     <field name="date" invisible="1" modifiers="{'column_invisible':true,'readonly':[['state','in',['cancel','done']]]}"/>
-                                     <field name="scheduled_date" modifiers="{'readonly':[['state','in',['cancel','done']]]}"/>
-                                     <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}" modifiers="{'invisible':[['invoice_number','=',false]]}"/>
-                                     <field name="ddt_number" attrs="{'invisible': [('ddt_number','=',False)]}" modifiers="{'invisible':[['ddt_number','=',false]]}"/>
+                                     <field name="date" invisible="1" />
+                                     <field name="scheduled_date" />
+                                     <field name="ddt_number" />
+                                     <field name="invoice_number" />
                                      <field name="state" invisible="1"/>
                                  </tree>
                              </field>
@@ -640,6 +640,14 @@
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'ready')]</field>
          </record>
+         <record model="ir.actions.act_window" id="action_sale_order_delivering_form">
+             <field name="name">Sale order delivering</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'delivering')]</field>
+         </record>
          <record model="ir.actions.act_window" id="action_sale_order_done_form">
              <field name="name">Sale order done</field>
              <field name="res_model">sale.order</field>
@@ -775,18 +783,25 @@
                      sequence="60"
                      />
                  <menuitem
+                     id="menu_logistic_left_order_delivering" 
+                     parent="menu_logistic_left_order_root"
+                     name="Logistic state done"
+                     action="action_sale_order_delivering_form"
+                     sequence="70"
+                     />
+                 <menuitem
                      id="menu_logistic_left_order_done" 
                      parent="menu_logistic_left_order_root"
                      name="Logistic state done"
                      action="action_sale_order_done_form"
-                     sequence="70"
+                     sequence="80"
                      />
                  <menuitem
                      id="menu_logistic_left_order_error" 
                      parent="menu_logistic_left_order_root"
                      name="Logistic state error"
                      action="action_sale_order_error_form"
-                     sequence="80"
+                     sequence="90"
                      />
 
              <menuitem

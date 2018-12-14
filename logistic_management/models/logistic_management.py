@@ -667,7 +667,7 @@ class SaleOrder(models.Model):
         return True
 
     @api.multi
-    def logistic_check_and_set_done(self):
+    def logistic_check_and_set_delivering(self):
         ''' Check if all line are in done state (excluding unused)
         '''
         for order in self:
@@ -675,7 +675,7 @@ class SaleOrder(models.Model):
             line_state.discard('unused') # remove kit line (exploded)
             if tuple(line_state) == ('done', ): # All done
                 order.write({
-                    'logistic_state': 'done',
+                    'logistic_state': 'delivering', # XXX ex done
                     })
         return True
 
@@ -1056,7 +1056,7 @@ class SaleOrder(models.Model):
         # Order status:    
         # ---------------------------------------------------------------------
         # Change status order ready > done
-        orders.logistic_check_and_set_done()
+        orders.logistic_check_and_set_delivering()
         return picking_ids    
 
     logistic_picking_ids = fields.One2many(
@@ -1070,6 +1070,7 @@ class SaleOrder(models.Model):
         ('order', 'Order confirmed'), # Quotation transformed in order
         ('pending', 'Pending delivery'), # Waiting for delivery
         ('ready', 'Ready'), # Ready for transfer
+        ('delivering', 'Delivering'), # In delivering phase
         ('done', 'Done'), # Delivered or closed XXX manage partial delivery
         ('error', 'Error order'), # Order without line
         ], 'Logistic state', default='draft',
