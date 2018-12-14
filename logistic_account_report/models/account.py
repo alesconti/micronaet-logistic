@@ -62,7 +62,9 @@ class StockPicking(models.AbstractModel):
         # ---------------------------------------------------------------------
         path = self.get_default_folder_xml_invoice()
 
-        filename = ('%s' % self.name).replace('/', '_')
+        # XXX Note: ERROR external field not declared here:
+        filename = (
+            '%s.xml' % (self.invoice_number or 'no_number')).replace('/', '_')
         fullname = os.path.join(path, filename)
         f_invoice = open(fullname, 'w')
         

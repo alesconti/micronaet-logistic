@@ -67,12 +67,17 @@ class ResCompany(models.Model):
 
     # Get path name:
     @api.model
-    def _logistic_folder(self, document, mode='default'):
+    def _logistic_folder(self, document, mode='default', extra=False):
         ''' Return full path of folder request:
         '''
         folder_block = self._logistic_folder_db[document][mode]    
+        if extra:
+            if type(extra) == str:
+                extra = [extra]
+            elif type(extra) == tuple:
+                extra = list(extra)
+            folder_block = list(folder_block).extend(extra)
         return self.get_subfolder_from_root(folder_block)
-        
 
     @api.model
     def get_subfolder_from_root(self, name):
