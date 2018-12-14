@@ -65,30 +65,30 @@ class StockPicking(models.AbstractModel):
 xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
-''')
+\n''')
 
-        f_invoice.write('<FatturaElettronicaHeader>')
+        f_invoice.write('<FatturaElettronicaHeader>\n')
         
-        f_invoice.write(' <DatiTrasmissione>')
-        f_invoice.write(' </DatiTrasmissione>')
+        f_invoice.write(' <DatiTrasmissione>\n')
+        f_invoice.write(' </DatiTrasmissione>\n')
 
-        f_invoice.write(' <CedentePrestatore>')
-        f_invoice.write(' </CedentePrestatore>')
+        f_invoice.write(' <CedentePrestatore>\n')
+        f_invoice.write(' </CedentePrestatore>\n')
         
-        f_invoice.write('</FatturaElettronicaHeader>')
+        f_invoice.write('</FatturaElettronicaHeader>\n')
 
-        f_invoice.write('<FatturaElettronicaBody>')
+        f_invoice.write('<FatturaElettronicaBody>\n')
         
-        f_invoice.write(' <DatiGenerali>')
-        f_invoice.write(' </DatiGenerali>')
+        f_invoice.write(' <DatiGenerali>\n')
+        f_invoice.write(' </DatiGenerali>\n')
 
         # ---------------------------------------------------------------------
         # Body part:
         # ---------------------------------------------------------------------
         #for line in self.order_lines:
         #    pass
-        f_invoice.write('</FatturaElettronicaBody>')
-        f_invoice.write('</p:FatturaElettronica>')
+        f_invoice.write('</FatturaElettronicaBody>\n')
+        f_invoice.write('</p:FatturaElettronica>\n')
         
         f_invoice.close()
 
