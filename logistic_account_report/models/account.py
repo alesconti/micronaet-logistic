@@ -21,7 +21,22 @@
 #
 ###############################################################################
 
-from . import account
+import os
+import sys
+import logging
+from odoo import api, models
+from odoo import tools
+from odoo.tools.translate import _
 
+_logger = logging.getLogger(__name__)
+
+
+class StockPicking(models.AbstractModel):
+    ''' Stock picking extract
+    '''
+    _inherit = 'stock.picking'
+    
+    # TODO create fields for write DDT / Invoice lines:
+    #report_move_ids = fields.one2many('', 'field_id', 'Label', required=True),
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
