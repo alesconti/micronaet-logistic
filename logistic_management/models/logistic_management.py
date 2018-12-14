@@ -549,6 +549,9 @@ class StockPicking(models.Model):
             # 3. Invoice Print procedure:
             # TODO 
 
+            # 4. Extract electronic invoice:
+            # TODO
+
     @api.multi
     def assign_invoice_number(self):
         ''' Assign invoice number depend on fiscal position and parameter in
