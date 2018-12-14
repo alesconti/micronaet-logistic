@@ -204,9 +204,11 @@ class PurchaseOrder(models.Model):
         '''
         # Export if needed the purchase order:
         self.export_purchase_order()
+        now = fields.Datetime.now()
         
         return self.write({
             'logistic_state': 'confirmed',
+            'date_planned': now,
             })
 
     # -------------------------------------------------------------------------
@@ -1065,6 +1067,19 @@ class SaleOrder(models.Model):
         orders.logistic_check_and_set_delivering()
         return picking_ids    
 
+    # -------------------------------------------------------------------------
+    # C. delivering > done
+    # -------------------------------------------------------------------------
+    @api.multi
+    def wf_set_order_as_done(self):
+        ''' Set order as done (from delivering)
+        '''
+        self.ensure_one()
+        self.logistic_state = 'done'
+            
+    # -------------------------------------------------------------------------
+    # Columns:
+    # -------------------------------------------------------------------------
     logistic_picking_ids = fields.One2many(
         'stock.picking', 'sale_order_id', 'Picking')
 
@@ -1404,7 +1419,8 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         purchase_pending = {}
         for purchase in purchase_pool.search([
-                ('logistic_state', '=', 'draft')]):
+                ('logistic_state', '=', 'draft'),
+                ]):
             supplier_id = purchase.partner_id.id
             if supplier_id not in purchase_pending:
                 purchase_pending[supplier_id] = purchase # link order
@@ -1447,6 +1463,7 @@ class SaleOrderLine(models.Model):
                     #'partner_ref': '',
                     #'logistic_state': 'draft',
                     })
+                # TODO create if theres' some purchase.order.line?
             selected_ids.append(purchase.id)
 
             # -----------------------------------------------------------------

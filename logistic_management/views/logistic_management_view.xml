@@ -346,6 +346,7 @@
                      </page>
                  </xpath>
                  <field name="state" position="after">
+                     <button name="wf_set_order_as_done" string="Order done!" type="object" attrs="{'invisible': [('logistic_state','!=','delivering')]}"/>
                      <button name="return_order_line_list_view" string="Logistic detail" type="object" class="oe_highlight"/>
                  </field>
                  <field name="partner_id" position="after">
