@@ -669,7 +669,7 @@ class SaleOrder(models.Model):
         for order in self:
             line_state = set(order.order_line.mapped('logistic_state'))
             line_state.discard('unused') # remove kit line (exploded)
-            if tuple(line_state) == ('done', ): # All ready
+            if tuple(line_state) == ('done', ): # All done
                 order.write({
                     'logistic_state': 'done',
                     })
@@ -1028,6 +1028,7 @@ class SaleOrder(models.Model):
                     'product_uom': product.uom_id.id,
                     'state': 'done',
                     'origin': origin,
+                    'price_unit': product.standard_price,
                     
                     # Sale order line link:
                     'logistic_unload_id': line.id,
