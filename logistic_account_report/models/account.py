@@ -49,8 +49,8 @@ class StockPicking(models.AbstractModel):
         # ---------------------------------------------------------------------
         # Generate filename for invoice:
         # ---------------------------------------------------------------------
-        path = self.env['res.company'].search([])[0].get_subfolder_from_root(
-            'Invoice_XML')
+        companys = company_pool.search([])
+        path = companys._logistic_folder('invoice', 'xml')
 
         filename = ('%s' % self.name).replace('/', '_')
         fullname = os.path.join(path, filename)

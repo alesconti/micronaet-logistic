@@ -53,6 +53,7 @@ class ResCompany(models.Model):
             'invoice': {
                 'default': ('Invoice', 'Originali'),
                 'history': ('Invoice', 'Storico'),
+                'xml': ('Invoice', 'XML'),
                 },
 
             'bf': {
