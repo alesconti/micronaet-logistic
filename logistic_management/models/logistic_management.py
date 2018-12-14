@@ -108,6 +108,12 @@ class ProductTemplate(models.Model):
         installation_root = companys.get_subfolder_from_root('images')
         return installation_root
 
+    # -------------------------------------------------------------------------
+    # Columns:
+    # -------------------------------------------------------------------------
+    is_expence = fields.Boolean('Expense product', 
+        help='Expense product is not order and produced')
+    
 class PurchaseOrder(models.Model):
     """ Model name: Sale Order
     """

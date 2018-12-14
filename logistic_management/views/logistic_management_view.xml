@@ -2,6 +2,21 @@
 <openerp>
     <data>         
          <!--product.template-->
+         expense_product
+        <record model="ir.ui.view" id="view_product_template_kit_page_form">
+            <field name="name">product.template.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='options']/div[1]" position="before">
+                    <div>
+                        <field name="is_expence"/>
+                        <label for="is_expence"/>
+                    </div>
+                </xpath>
+            </field>       
+         </record>
+         
          <record model="ir.actions.act_window" id="action_product_template_form">
              <field name="name">Product template</field>
              <field name="res_model">product.template</field>
