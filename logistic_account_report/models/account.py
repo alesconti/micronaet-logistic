@@ -36,13 +36,60 @@ class StockPicking(models.AbstractModel):
     '''
     _inherit = 'stock.picking'
 
+    # TODO create fields for write DDT / Invoice lines:
+
+    # -------------------------------------------------------------------------
+    # Electronic Invoice extract:
+    # -------------------------------------------------------------------------
     @api.multi
     def extract_account_electronic_invoice(self):
         ''' Extract electronic invoice (or interchange file)
         '''
+        # TODO
+        # ---------------------------------------------------------------------
+        # Generate filename for invoice:
+        # ---------------------------------------------------------------------
+        path = self.env['res.company'].search([])[0].get_subfolder_from_root(
+            'Invoice_XML')
+
+        filename = ('%s' % self.name).replace('/', '_')
+        fullname = os.path.join(path, filename)
+        f_invoice = open(fullname, 'w')
         
+        # ---------------------------------------------------------------------
+        # Header part:
+        # ---------------------------------------------------------------------
+        f_invoice.write('''<?xml version="1.0" encoding="UTF-8"?>
+<p:FatturaElettronica versione="FPR12" 
+   xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
+xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+''')
+
+        f_invoice.write('<FatturaElettronicaHeader>')
         
-    # TODO create fields for write DDT / Invoice lines:
-    #report_move_ids = fields.one2many('', 'field_id', 'Label', required=True),
+        f_invoice.write(' <DatiTrasmissione>')
+        f_invoice.write(' </DatiTrasmissione>')
+
+        f_invoice.write(' <CedentePrestatore>')
+        f_invoice.write(' </CedentePrestatore>')
+        
+        f_invoice.write('</FatturaElettronicaHeader>')
+
+        f_invoice.write('<FatturaElettronicaBody>')
+        
+        f_invoice.write(' <DatiGenerali>')
+        f_invoice.write(' </DatiGenerali>')
+
+        # ---------------------------------------------------------------------
+        # Body part:
+        # ---------------------------------------------------------------------
+        for self.invoice_line_ids:
+            pass
+        f_invoice.write('</FatturaElettronicaBody>')
+        f_invoice.write('</p:FatturaElettronica>')
+        
+        f_invoice.close()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
