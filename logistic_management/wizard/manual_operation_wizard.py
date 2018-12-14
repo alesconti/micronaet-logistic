@@ -87,14 +87,14 @@ class StockChangeStandardPrice(models.TransientModel):
         picking_pool = self.env['stock.picking']        
         return picking_pool.workflow_ordered_ready()
 
-    @api.multi
+    """@api.multi
     def update_ready_purchase_check(self):
         ''' E2. Update purchase order if all delivered. 
             In production not necessary (just for demo test)
         '''
         purchase_pool = self.env['purchase.order']
         # Without args search all confirmed:
-        return purchase_pool.check_order_confirmed_done() 
+        return purchase_pool.check_order_confirmed_done() """
         
     # DDT Unload phase:
     @api.multi
