@@ -48,6 +48,7 @@ class ResCompany(models.Model):
                 'default': ('DDT', 'Originali'),
                 'history': ('DDT', 'Storico'),
                 'supplier': ('DDT', 'Fornitori'),
+                'daily': ('DDT', 'Giornalieri')
                 },
 
             'invoice': {
@@ -561,16 +562,29 @@ class StockPicking(models.Model):
         companys = self.env['res.company'].search([])
         folder = companys[0]._logistic_folder('ddt')
         history_folder = companys[0]._logistic_folder('ddt', 'history')
+        supplier_folder = companys[0]._logistic_folder('ddt', 'supplier')
+        daily_folder = companys[0]._logistic_folder('ddt', 'daily')
 
         for picking in self.browse(ddt_ids):
+            sale_order = picking.sale_order_id
+            # TODO Sanitize:
+            supplier_name = \
+                sale_order.default_supplier_id.name or 'NESSUNO'
+            supplier_name = supplier_name.replace(' ', '')
+
             # -----------------------------------------------------------------
             #                 DDT Extract:
             # -----------------------------------------------------------------        
             # 1. DDT Extract procedure:
+            # -----------------------------------------------------------------
             original_fullname = picking.extract_account_ddt_report()
             
+            # -----------------------------------------------------------------
             # 2. DDT Symlink procedure:
+            # -----------------------------------------------------------------
             original_base = os.path.basename(original_fullname)
+
+            # A. History folder:
             date = picking.scheduled_date
             month_path = os.path.join(history_folder, date[:4], date[5:7])
             os.system('mkdir -p %s' % month_path)
@@ -578,9 +592,31 @@ class StockPicking(models.Model):
                 original_fullname,
                 os.path.join(month_path, original_base)
                 ))
+
+            # B. Supplier folder:
+            # TODO sanitize name!
+            supplier_path = os.path.join(supplier_folder, supplier_name)
+            os.system('mkdir -p %s' % supplier_path)
+            symlink = os.system('ln -s "%s" "%s"' % (
+                original_fullname,
+                os.path.join(supplier_path, original_base)
+                ))
             
-            # 3. DDT Print procedure:
-            # TODO 
+            # 3. DDT Print procedure:            
+            today = fields.Datetime.now()[:10].replace(
+                '/', '_').replace('-', '_')
+            daily_path = os.path.join(daily_folder, today)
+            os.system('mkdir -p %s' % daily_path)
+            symlink = os.system('ln -s "%s" "%s"' % (
+                original_fullname,
+                os.path.join(
+                    daily_path, 
+                    '%s_%s' % (
+                        supplier_name,
+                        original_base,
+                        )
+                    )
+                ))
 
         # ---------------------------------------------------------------------
         # Invoice extra operations: (require reload)        
