@@ -1518,7 +1518,7 @@ class SaleOrderLine(models.Model):
                 ]):
             supplier_id = purchase.partner_id.id
             if supplier_id not in purchase_pending:
-                purchase_pending[supplier_id] = purchase # link order
+                purchase_pending[supplier_id] = purchase.id # link ID
 
         # ---------------------------------------------------------------------
         #                 Collect data for purchase order:
@@ -1550,28 +1550,9 @@ class SaleOrderLine(models.Model):
                 continue
 
             # -----------------------------------------------------------------
-            # Create header:
-            # -----------------------------------------------------------------            
-            partner = supplier or company.partner_id # Use company 
-            # TODO if order was deleted restore logistic_state to uncovered
-
-            if partner.id in purchase_pending:
-                purchase = purchase_pending[partner.id]
-            else:    
-                purchase = purchase_pool.create({
-                    'partner_id': partner.id,
-                    'date_order': now,
-                    'date_planned': now,
-                    #'name': # TODO counter?
-                    #'partner_ref': '',
-                    #'logistic_state': 'draft',
-                    })
-                # TODO create if theres' some purchase.order.line?
-            selected_ids.append(purchase.id)
-
-            # -----------------------------------------------------------------
             # Create details:
             # -----------------------------------------------------------------
+            purchase_id = False
             for line in purchase_db[supplier]:
                 # -------------------------------------------------------------
                 # Use stock to cover order:
@@ -1584,8 +1565,27 @@ class SaleOrderLine(models.Model):
                 if purchase_qty <= 0.0:
                     continue # no order negative uncoveder (XXX needed)
 
+                # -------------------------------------------------------------
+                # Create/Get header purchase.order (only if line was created):
+                # -------------------------------------------------------------
+                # TODO if order was deleted restore logistic_state to uncovered
+                if not purchase_id:
+                    partner = supplier or company.partner_id # Use company 
+                    if partner.id in purchase_pending:
+                        purchase_id = purchase_pending[partner.id]
+                    else:
+                        purchase_id = purchase_pool.create({
+                            'partner_id': partner.id,
+                            'date_order': now,
+                            'date_planned': now,
+                            #'name': # TODO counter?
+                            #'partner_ref': '',
+                            #'logistic_state': 'draft',
+                            }.id)
+                    selected_ids.append(purchase_id)
+
                 purchase_line_pool.create({
-                    'order_id': purchase.id,
+                    'order_id': purchase_id,
                     'product_id': product.id,
                     'name': product.name,
                     'product_qty': purchase_qty,
