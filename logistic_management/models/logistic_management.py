@@ -1581,7 +1581,7 @@ class SaleOrderLine(models.Model):
                             #'name': # TODO counter?
                             #'partner_ref': '',
                             #'logistic_state': 'draft',
-                            }.id)
+                            }).id
                     selected_ids.append(purchase_id)
 
                 purchase_line_pool.create({
