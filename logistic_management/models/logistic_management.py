@@ -1330,6 +1330,7 @@ class SaleOrderLine(models.Model):
 
         product_pool = self.env['product.product']
         quant_pool = self.env['stock.quant']
+        sale_pool = self.env['sale.order']
         lines = self.search([
             ('order_id.logistic_state', '=', 'order'), # Logistic state
             ('logistic_state', '=', 'draft'),
