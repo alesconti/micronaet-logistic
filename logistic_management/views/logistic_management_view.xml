@@ -374,6 +374,13 @@
              <field name="model">sale.order</field>
              <field name="inherit_id" ref="sale.view_order_tree"/>
              <field name="arch" type="xml">
+                 <field name="confirmation_date" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </field>
+                 <field name="confirmation_date" position="after">
+                    <field name="date_order" />
+                 </field>
+                    
                  <field name="state" position="after">
                      <field name="default_supplier_id" />
                      <field name="logistic_state" />
@@ -640,6 +647,15 @@
              <field name="context">{}</field>
              <field name="domain">[]</field>
          </record>
+         <record model="ir.actions.act_window" id="action_sale_order_problem_form">
+             <field name="name">Sale order problem</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'draft'),('order_id.date_order', '&lt;=', (datetime.datetime.now() - datetime.timedelta(days=2)).strftime('%Y-%m-%d 00:00:00'))]</field>
+         </record>
+         
          <record model="ir.actions.act_window" id="action_sale_order_draft_form">
              <field name="name">Sale order draft</field>
              <field name="res_model">sale.order</field>
@@ -795,6 +811,14 @@
                      action="action_sale_order_all_form"
                      sequence="10"
                      />
+                 <menuitem
+                     id="menu_logistic_left_order_problem" 
+                     parent="menu_logistic_left_order_root"
+                     name="Logistic: Problem"
+                     action="action_sale_order_problem_form"
+                     sequence="15"
+                     />
+
                  <menuitem
                      id="menu_logistic_left_order_draft" 
                      parent="menu_logistic_left_order_root"
