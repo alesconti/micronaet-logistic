@@ -1373,9 +1373,13 @@ class SaleOrderLine(models.Model):
         # This fix a bug because stock status don't update immediately
         quant_used = {} # product quant used during process
         
+        order_touched_ids = [] # For end operation (dropship, default suppl)
         for line in sorted_line:
-            product = line.product_id
+            # Update touched order list:
+            if line.order_id.id not in order_touched_ids:
+                order_touched_ids.append(line.order_id.id)
             
+            product = line.product_id
             # -----------------------------------------------------------------
             # Kit line not used:
             # -----------------------------------------------------------------
@@ -1504,6 +1508,21 @@ class SaleOrderLine(models.Model):
             else: # All other order stay in pending state:
                 order.logistic_state = 'pending'
             # TODO Manage Dropshipping!!    
+
+
+        # Sale order still in pending state so no update of logistic status        
+        # ---------------------------------------------------------------------
+        # Mark sale order with extra information:
+        # ---------------------------------------------------------------------        
+        # Dropshipping # TODO spostare da qui altrimenti crea l'ordine acquisto
+        #sale_order.check_dropshipping_order(order_touched_ids)    
+        # TODO Mettere prima dell'assegnamento magazzino ed eventualmetne n
+        # non fare quello!!!!!!!!    
+        
+        # Default supplier
+        _logger.warning('Assign default supplier for order')
+        sale_pool.mark_default_supplier_order(order_touched_ids)        
+
             
         # Return view:
         return self.return_order_line_list_view(selected_ids)
@@ -1559,7 +1578,7 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         #                 Collect data for purchase order:
         # ---------------------------------------------------------------------
-        order_touched_ids = [] # For ending extra operations
+        order_touched_ids = [] # For ending extra operations XXX not used!
         purchase_db = {} # supplier is the key
         for line in lines:
             product = line.product_id
@@ -1636,17 +1655,6 @@ class SaleOrderLine(models.Model):
                 # Update line state:    
                 line.logistic_state = 'ordered' # XXX needed?
                 
-        # Sale order still in pending state so no update of logistic status        
-        # ---------------------------------------------------------------------
-        # Mark sale order with extra information:
-        # ---------------------------------------------------------------------        
-        # Dropshipping # TODO spostare da qui altrimenti crea l'ordine acquisto
-        #sale_order.check_dropshipping_order(order_touched_ids)        
-        
-        # Default supplier
-        _logger.warning('Assign default supplier for order')
-        sale_pool.mark_default_supplier_order(order_touched_ids)        
-        
         # Return view:
         return purchase_pool.return_purchase_order_list_view(selected_ids)
 
