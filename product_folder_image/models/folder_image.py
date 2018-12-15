@@ -44,7 +44,6 @@ class ProductTemplate(models.Model):
                 product.new_image = False
                 _logger.info('Missed folder of filename: %s' % product.name)
                 continue
-            import pdb; pdb.set_trace()
             filename = os.path.join(folder, filename)
             try:
                 f_data = open(filename, 'rb')
