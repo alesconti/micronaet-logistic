@@ -22,4 +22,5 @@
 ###############################################################################
 
 from . import logistic_management
-from . import account_parameter
+from . import account_parameter # Parameter
+from . import dropshipping # Dropship management

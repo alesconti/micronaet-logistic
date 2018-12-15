@@ -197,7 +197,7 @@ class PurchaseOrder(models.Model):
             if not present
         '''
         if purchase_ids: 
-            purchases = self.search([('id', 'in', purchase_ids)])
+            purchases = self.browse(purchase_ids)
         else:
             purchases = self.search([('logistic_state', '=', 'confirmed')])
         
@@ -562,7 +562,7 @@ class StockPicking(models.Model):
         folder = companys[0]._logistic_folder('ddt')
         history_folder = companys[0]._logistic_folder('ddt', 'history')
 
-        for picking in self.search([('id', 'in', ddt_ids)]):
+        for picking in self.browse(ddt_ids):
             # -----------------------------------------------------------------
             #                 DDT Extract:
             # -----------------------------------------------------------------        
@@ -588,7 +588,7 @@ class StockPicking(models.Model):
         folder = companys[0]._logistic_folder('invoice')
         history_folder = companys[0]._logistic_folder('invoice', 'history')
 
-        for picking in self.search([('id', 'in', invoice_ids)]):
+        for picking in self.browse(invoice_ids):
             # -----------------------------------------------------------------
             #                 Invoice Extract:
             # -----------------------------------------------------------------        
@@ -798,9 +798,7 @@ class SaleOrder(models.Model):
                 template.is_kit = True
 
         # Reload product updated:
-        templates = template_pool.search([
-            ('id', 'in', update_ids), # Updated kit
-            ])
+        templates = template_pool.browse(update_ids) # Updated kit
         res = ''    
         for template in templates:
             code_part = template.default_code.split('#')
@@ -903,6 +901,50 @@ class SaleOrder(models.Model):
         return lines.write({
             'logistic_state': 'ready', # immediately ready
             })
+
+    # Sale order mark default supplier:
+    @api.model
+    def mark_default_supplier_order(self, order_ids):
+        ''' Mark default supplier
+        '''
+        for order in self.browse(order_ids):
+            default_supplier = {}
+            for line in order.order_line:               
+                product = line.product_id
+
+                # -------------------------------------------------------------
+                # No dropship clause (check before expence):
+                # -------------------------------------------------------------
+                # Internal = Company supplier: XXX not considered
+                #if line.mrp_state:
+                
+                # -------------------------------------------------------------
+                # Jump line:
+                # -------------------------------------------------------------
+                # Expence product: (service # TODO after only is_expence)
+                if product.is_expence or product.type == 'service':
+                    continue
+
+                # Kit line:
+                if logistic_state == 'unused': 
+                    continue
+
+                # -------------------------------------------------------------
+                # Supplier check:
+                # -------------------------------------------------------------
+                supplier_id = product.default_supplier_id.id
+                if supplier_id not in default_supplier:
+                    default_supplier[supplier_id] = 1
+                else:    
+                    default_supplier[supplier_id] += 1
+            
+            if default_supplier:        
+                better_supplier = sorted(
+                    default_supplier, 
+                    key=lambda x: better_supplier[x], reverse=True,
+                    )
+                order.default_supplier_id = better_supplier[0]
+        return True
         
     # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
@@ -1107,9 +1149,7 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Confirm picking (DDT and INVOICE)
         # ---------------------------------------------------------------------
-        picking_pool.search([
-            ('id', 'in', picking_ids),
-            ]).workflow_ready_to_done_done_picking()
+        picking_pool.browse(picking_ids).workflow_ready_to_done_done_picking()
 
         # ---------------------------------------------------------------------
         # Order status:    
@@ -1127,10 +1167,12 @@ class SaleOrder(models.Model):
         '''
         self.ensure_one()
         self.logistic_state = 'done'
-            
+
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
+    default_supplier_id = fields.Many2one(
+        'res.partner', 'Default supplier', domain="[('supplier', '=', True)]")
     logistic_picking_ids = fields.One2many(
         'stock.picking', 'sale_order_id', 'Picking')
 
@@ -1144,6 +1186,7 @@ class SaleOrder(models.Model):
         ('ready', 'Ready'), # Ready for transfer
         ('delivering', 'Delivering'), # In delivering phase
         ('done', 'Done'), # Delivered or closed XXX manage partial delivery
+        ('dropshipped', 'Dropshipped'), # Order dropshipped
         ('error', 'Error order'), # Order without line
         ], 'Logistic state', default='draft',
         )
@@ -1231,7 +1274,7 @@ class SaleOrderLine(models.Model):
             line.logistic_state = 'ready'
             
         # Check master order (reload lines for updated status):
-        #sale_lines = line_pool.search([('id', 'in', line_ids)])
+        #sale_lines = line_pool.browse(line_ids)
         line_pool.logistic_check_ready_order(self)#sale_lines)
 
     # -------------------------------------------------------------------------    
@@ -1441,10 +1484,11 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         # Pool used:
         # ---------------------------------------------------------------------
+        sale_pool = self.env['sale.order']
         purchase_pool = self.env['purchase.order']
         purchase_line_pool = self.env['purchase.order.line']        
 
-        # Update only pending order with uncovworkflow_ered lines
+        # Note: Update only pending order with uncovered lines
         lines = self.search([
             # Filter logistic state:
             ('order_id.logistic_state', '=', 'pending'),
@@ -1479,10 +1523,18 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         #                 Collect data for purchase order:
         # ---------------------------------------------------------------------
+        order_touched_ids = [] # For ending extra operations
         purchase_db = {} # supplier is the key
         for line in lines:
             product = line.product_id
             supplier = product.default_supplier_id
+            
+            # Collect order touched:
+            order_id = line.order_id.id
+            if order_id not in order_touched_ids:
+                order_touched_ids.append(order_id)
+             
+            # Update supplier purchase:    
             if supplier not in purchase_db:
                 purchase_db[supplier] = []
             purchase_db[supplier].append(line)
@@ -1549,9 +1601,14 @@ class SaleOrderLine(models.Model):
                 line.logistic_state = 'ordered' # XXX needed?
                 
         # Sale order still in pending state so no update of logistic status        
-        #`TODO Manage dropshipping here?!?
         # ---------------------------------------------------------------------
-        # ---------------------------------------------------------------------
+        # Mark sale order with extra information:
+        # ---------------------------------------------------------------------        
+        # Dropshipping # TODO spostare da qui altrimenti crea l'ordine acquisto
+        #sale_order.check_dropshipping_order(order_touched_ids)        
+        
+        # Default supplier
+        sale_pool.mark_default_supplier_order(order_touched_ids)        
         
         # Return view:
         return purchase_pool.return_purchase_order_list_view(selected_ids)

@@ -328,6 +328,9 @@
              <field name="model">sale.order</field>
              <field name="inherit_id" ref="sale.view_order_form"/>
              <field name="arch" type="xml">
+                 <field name="payment_term_id" position="after">
+                     <field name="default_supplier_id" />
+                 </field>
                  <xpath expr="//page[1]" position="after">
                      <page string="Picking">
                          <group colspan="4" col="4">

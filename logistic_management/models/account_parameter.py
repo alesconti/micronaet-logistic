@@ -22,18 +22,10 @@
 ###############################################################################
 import os
 import sys
-import openerp
+import odoo
 import logging
-from openerp import models, fields
-from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
-from openerp.tools.translate import _
-from openerp.tools import (
-    DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
-    float_compare,
-    )
+from odoo import models, fields, api
+from odoo.tools.translate import _
 
 
 _logger = logging.getLogger(__name__)
