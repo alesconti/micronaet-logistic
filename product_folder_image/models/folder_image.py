@@ -33,10 +33,12 @@ class ProductTemplate(models.Model):
         return installation_root
 
     @api.multi
+    #@api.depends('mmac_url_image')
     def _get_folder_image_file(self):
         ''' Return image loading from file:
         '''
         folder = self._get_root_image_folder()
+        import pdb; pdb.set_trace()
         for product in self:
             filename = product.mmac_url_image
             if not folder or not filename:
