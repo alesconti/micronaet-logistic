@@ -38,13 +38,13 @@ class ProductTemplate(models.Model):
         ''' Return image loading from file:
         '''
         folder = self._get_root_image_folder()
-        import pdb; pdb.set_trace()
         for product in self:
             filename = product.mmac_url_image
             if not folder or not filename:
                 product.new_image = False
                 _logger.info('Missed folder of filename: %s' % product.name)
                 continue
+            import pdb; pdb.set_trace()
             filename = os.path.join(folder, filename)
             try:
                 f_data = open(filename, 'rb')
