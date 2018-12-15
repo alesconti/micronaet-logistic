@@ -908,7 +908,7 @@ class SaleOrder(models.Model):
         ''' Mark default supplier
         '''
         for order in self.browse(order_ids):
-            default_supplier = {}
+            supplier_total = {}
             for line in order.order_line:               
                 product = line.product_id
 
@@ -922,26 +922,26 @@ class SaleOrder(models.Model):
                 # Jump line:
                 # -------------------------------------------------------------
                 # Expence product: (service # TODO after only is_expence)
-                if product.is_expence or product.type == 'service':
+                if product.type == 'service' or product.is_expence:
                     continue
 
                 # Kit line:
-                if logistic_state == 'unused': 
+                if line.logistic_state == 'unused': 
                     continue
 
                 # -------------------------------------------------------------
                 # Supplier check:
                 # -------------------------------------------------------------
                 supplier_id = product.default_supplier_id.id
-                if supplier_id not in default_supplier:
-                    default_supplier[supplier_id] = 1
+                if supplier_id not in supplier_total:
+                    supplier_total[supplier_id] = 1
                 else:    
-                    default_supplier[supplier_id] += 1
+                    supplier_total[supplier_id] += 1
             
-            if default_supplier:        
+            if supplier_total:        
                 better_supplier = sorted(
-                    default_supplier, 
-                    key=lambda x: better_supplier[x], reverse=True,
+                    supplier_total, 
+                    key=lambda x: supplier_total[x], reverse=True,
                     )
                 order.default_supplier_id = better_supplier[0]
         return True
@@ -1608,6 +1608,7 @@ class SaleOrderLine(models.Model):
         #sale_order.check_dropshipping_order(order_touched_ids)        
         
         # Default supplier
+        _logger.warning('Assign default supplier for order')
         sale_pool.mark_default_supplier_order(order_touched_ids)        
         
         # Return view:

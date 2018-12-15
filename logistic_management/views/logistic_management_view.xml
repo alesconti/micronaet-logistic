@@ -375,9 +375,15 @@
              <field name="inherit_id" ref="sale.view_order_tree"/>
              <field name="arch" type="xml">
                  <field name="state" position="after">
+                     <field name="default_supplier_id" />
                      <field name="logistic_state" />
                  </field>
-                 <!--TODO hide state field-->
+                 <field name="invoice_status" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </field>
+                 <field name="state" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </field>
              </field>
          </record>    
 
