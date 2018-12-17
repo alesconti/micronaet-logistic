@@ -39,7 +39,6 @@ class AccountFiscalPosition(models.Model):
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
-    sequence_id = fields.Many2one('ir.sequence', 'Sequence', required=True)
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

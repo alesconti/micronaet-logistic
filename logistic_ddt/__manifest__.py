@@ -36,6 +36,7 @@
     'data': [
         'security/ir.model.access.csv',
         'data/stock_data.xml',
+        'data/sequence_data.xml',
         'views/stock_view.xml',
     ],
     'test': [],

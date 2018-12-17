@@ -69,17 +69,12 @@
              <field name="inherit_id" ref="stock.view_picking_form"/>
              <field name="arch" type="xml">
                  <field name="state" position="after">
-                      <button name="workflow_ready_to_done_done_picking" string="Confirm delivery" type="object" class="oe_highlight"/>
-                      
-                      <button name="assign_ddt_number" string="Assign DDT" type="object" class="oe_highlight" attrs="{'invisible': ['|',('sale_order_id','=',False),('ddt_number','!=',False)]}"/>
-                      <button name="assign_invoice_number" string="Assign Invoice" type="object" class="oe_highlight" attrs="{'invisible': ['|',('sale_order_id','=',False),('invoice_number','!=',False)]}"/>
+                     <button name="assign_ddt_number" string="Assign DDT" type="object" class="oe_highlight" attrs="{'invisible': ['|',('sale_order_id','=',False),('ddt_number','!=',False)]}"/>
+                     <button name="assign_invoice_number" string="Assign Invoice" type="object" class="oe_highlight" attrs="{'invisible': ['|',('sale_order_id','=',False),('invoice_number','!=',False)]}"/>
+                     <button name="workflow_ready_to_done_done_picking" string="Confirm delivery" type="object" class="oe_highlight"/>
                  </field>
                  <field name="origin" position="after">
                     <field name="sale_order_id" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
-                    <field name="ddt_number" attrs="{'invisible': [('ddt_number','=',False)]}"/>
-                    <field name="ddt_date" attrs="{'invisible': [('ddt_number','=',False)]}"/>
-                    <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}"/>
-                    <field name="invoice_date" attrs="{'invisible': [('invoice_number','=',False)]}"/>
                  </field>
              </field>
          </record>
@@ -91,8 +86,6 @@
              <field name="arch" type="xml">
                  <field name="state" position="before">
                     <field name="sale_order_id" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
-                    <field name="ddt_number" attrs="{'invisible': [('ddt_number','=',False)]}"/>
-                    <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}"/>
                  </field>
              </field>
          </record>

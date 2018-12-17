@@ -27,6 +27,22 @@
 from odoo import fields, models, api
 from odoo import _
 
+class AccountFiscalPosition(models.Model):
+    """ Model name: Fiscal position
+    """
+    
+    _inherit = 'account.fiscal.position'
+    
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
+    #invoice_id = fields.Many2one(
+    #    'ir.sequence', 'Invoice sequence', help='Invoice sequence default')        
+    #ddt_id = fields.Many2one(
+    #    'ir.sequence', 'DDT sequence', help='DDT sequence default')
+    sequence_id = fields.Many2one('ir.sequence', 'Sequence', required=True)
+
+
 class StockPickingCarriageCondition(models.Model):
 
     _name = "stock.picking.carriage_condition"
@@ -61,8 +77,46 @@ class StockPickingTransportationMethod(models.Model):
 
 
 class StockPicking(models.Model):
-
+    ''' Add extra fields to keep picking as DDT or Invoice:
+    '''
     _inherit = "stock.picking"
+
+    @api.multi
+    def assign_invoice_number(self):
+        ''' Assign invoice number depend on fiscal position and parameter in
+            partner configuration
+        '''
+        for picking in self:
+            # Load partner sequence (depend on fiscal position)
+            partner = picking.partner_id
+            sequence = partner.property_account_position_id.sequence_id
+            picking.write({
+                'invoice_number': sequence.next_by_id(),
+                'invoice_date': Fields.Datetime.now(),    
+                })
+        return True
+                
+    @api.multi
+    def assign_ddt_number(self):
+        ''' Assign DDt number depend on fiscal position and parameter in
+            partner configuration
+        '''
+        # TODO Manage sequence from fiscal position
+        for picking in self:
+            picking.write({
+                'ddt_number': self.env['ir.sequence'].next_by_code(
+                    'stock.picking.ddt.sequence'),
+                'ddt_date': Fields.Datetime.now(),    
+                })
+        return True
+
+    # -------------------------------------------------------------------------
+    # Columns: 
+    # -------------------------------------------------------------------------
+    ddt_number = fields.Char('DDT number') 
+    ddt_date = fields.Datetime('DDT date')
+    invoice_number = fields.Char('Invoice number') 
+    invoice_date = fields.Datetime('Invoice date')
 
     carriage_condition_id = fields.Many2one(
         'stock.picking.carriage_condition', string='Carriage Condition')

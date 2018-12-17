@@ -647,35 +647,6 @@ class StockPicking(models.Model):
             # 4. Extract electronic invoice:
             picking.extract_account_electronic_invoice()
 
-    @api.multi
-    def assign_invoice_number(self):
-        ''' Assign invoice number depend on fiscal position and parameter in
-            partner configuration
-        '''
-        for picking in self:
-            # Load partner sequence (depend on fiscal position)
-            partner = picking.partner_id
-            sequence = partner.property_account_position_id.sequence_id
-            picking.write({
-                'invoice_number': sequence.next_by_id(),
-                'invoice_date': Fields.Datetime.now(),    
-                })
-        return True
-                
-    @api.multi
-    def assign_ddt_number(self):
-        ''' Assign DDt number depend on fiscal position and parameter in
-            partner configuration
-        '''
-        # TODO Manage sequence from fiscal position
-        for picking in self:
-            picking.write({
-                'ddt_number': self.env['ir.sequence'].next_by_code(
-                    'stock.picking.ddt.sequence'),
-                'ddt_date': Fields.Datetime.now(),    
-                })
-        return True
-
     def move_lines_for_report(self):
         ''' Generate a list of record depend on OC, KIT and 2 substitution mode
             Return list of: product, line
@@ -721,28 +692,7 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     sale_order_id = fields.Many2one(
         'sale.order', 'Sale order', help='Sale order generator')
-        
-    # Fiscal number:    
-    ddt_number = fields.Char('DDT number') 
-    ddt_date = fields.Datetime('DDT date')
-    invoice_number = fields.Char('Invoice number') 
-    invoice_date = fields.Datetime('Invoice date')
     
-    
-class AccountFiscalPosition(models.Model):
-    """ Model name: Stock quant
-    """
-    
-    _inherit = 'account.fiscal.position'
-    
-    # -------------------------------------------------------------------------
-    #                                   COLUMNS:
-    # -------------------------------------------------------------------------
-    invoice_id = fields.Many2one(
-        'ir.sequence', 'Invoice sequence', help='Invoice sequence default')        
-    ddt_id = fields.Many2one(
-        'ir.sequence', 'DDT sequence', help='DDT sequence default')
-        
 class ResPartner(models.Model):
     """ Model name: Res Partner
     """

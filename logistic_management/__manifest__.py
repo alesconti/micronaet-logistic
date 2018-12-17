@@ -44,7 +44,7 @@
         'product_folder_image', # For image management
         'excel_export', # Export in Excel
         'logistic_account_report', # DDT Report
-        'l10n_it_ddt', # DDT Extra data
+        'logistic_ddt', # DDT Extra data
         #'logistic_purchase_export', # Export files
         ],
     'data': [
@@ -54,13 +54,13 @@
         # Views:
         'views/logistic_management_view.xml',
         'wizard/manual_operation_view.xml',
-        'views/account_parameter_view.xml',
+        #'views/account_parameter_view.xml', # XXX move in logistic_ddt
         
         # Report:
         'reports/load_position_report.xml',
         
         # Data:
-        'data/sequence_data.xml',
+        #'data/sequence_data.xml', # XXX moved in logistic_ddt
         ],
     'demo': [],
     'css': [],
