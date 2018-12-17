@@ -98,41 +98,41 @@
                             <div class="oe_structure"/>                            
                             <div class="row">
                                 <div class="col-xs-6" style="height: 60px; border: 1px solid black;">
-                                    Incaricato del trasporto:<br/>
+                                    <b>Incaricato del trasporto:</b><br/>
                                     <span t-esc="o.carrier_id.name or ''" />
                                 </div>
                                 <div class="col-xs-3" style="height: 60px; border: 1px solid black;">
-                                    Causale del trasporto:<br/>
+                                    <b>Causale del trasporto:</b><br/>
                                     <span t-esc="o.carriage_condition_id.name or ''" />
                                 </div>
                                 <div class="col-xs-3" style="height: 60px; border: 1px solid black;">
-                                    Firma incaricato del trasporto:<br/>
+                                    <b>Firma incaricato del trasporto:</b><br/>
                                     
                                 </div>
                             </div>    
                             <div class="row">
                                 <div class="col-xs-1" style="height: 60px; border: 1px solid black;">
-                                    Colli:<br/>
+                                    <b>Colli:</b><br/>
                                     <span t-esc="o.parcels" />
                                 </div>
                                 <div class="col-xs-1" style="height: 60px; border: 1px solid black;">
-                                    Peso:<br/>
+                                    <b>Peso:</b><br/>
                                     <span t-esc="o.weight" />
                                 </div>
                                 <div class="col-xs-2" style="height: 60px; border: 1px solid black;">
-                                    Aspetto est. beni:<br/>
+                                    <b>Aspetto est. beni:</b><br/>
                                     <span t-esc="o.goods_description_id.name or ''" />
                                 </div>
                                 <div class="col-xs-2" style="height: 60px; border: 1px solid black;">
-                                    Porto:<br/>
+                                    <b>Porto:</b><br/>
                                     <span t-esc="o.transportation_method_id.name or ''" />
                                 </div>
                                 <div class="col-xs-3" style="height: 60px; border: 1px solid black;">
-                                    Data e ora inizio trasporto:<br/>
+                                    <b>Data e ora inizio trasporto:</b><br/>
                                     <span t-esc="o.ddt_date or ''" />
                                 </div>
                                 <div class="col-xs-3" style="height: 60px; border: 1px solid black;">
-                                    Firma destinatario:<br/>
+                                    <b>Firma destinatario:</b><br/>
                                     
                                 </div>
                             </div>    
