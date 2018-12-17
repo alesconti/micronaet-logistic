@@ -657,7 +657,7 @@ class StockPicking(models.Model):
             partner = picking.partner_id
             sequence = partner.property_account_position_id.sequence_id
             picking.write({
-                'invoice_number': sequence.next_by_id()
+                'invoice_number': sequence.next_by_id(),
                 'invoice_date': Fields.Datetime.now(),    
                 })
         return True
