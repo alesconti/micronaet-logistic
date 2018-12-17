@@ -44,6 +44,7 @@
         'product_folder_image', # For image management
         'excel_export', # Export in Excel
         'logistic_account_report', # DDT Report
+        'l10n_it_ddt', # DDT Extra data
         #'logistic_purchase_export', # Export files
         ],
     'data': [
