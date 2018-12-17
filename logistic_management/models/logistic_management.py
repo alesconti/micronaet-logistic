@@ -724,7 +724,7 @@ class StockPicking(models.Model):
         
     # Fiscal number:    
     ddt_number = fields.Char('DDT number') 
-    ddt_date = fields.Datetime('Invoice date')
+    ddt_date = fields.Datetime('DDT date')
     invoice_number = fields.Char('Invoice number') 
     invoice_date = fields.Datetime('Invoice date')
     
