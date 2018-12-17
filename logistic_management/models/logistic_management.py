@@ -658,6 +658,7 @@ class StockPicking(models.Model):
             sequence = partner.property_account_position_id.sequence_id
             picking.write({
                 'invoice_number': sequence.next_by_id()
+                'invoice_date': Fields.Datetime.now(),    
                 })
         return True
                 
@@ -670,7 +671,8 @@ class StockPicking(models.Model):
         for picking in self:
             picking.write({
                 'ddt_number': self.env['ir.sequence'].next_by_code(
-                    'stock.picking.ddt.sequence')
+                    'stock.picking.ddt.sequence'),
+                'ddt_date': Fields.Datetime.now(),    
                 })
         return True
 
@@ -721,8 +723,10 @@ class StockPicking(models.Model):
         'sale.order', 'Sale order', help='Sale order generator')
         
     # Fiscal number:    
-    invoice_number = fields.Char('Invoice number') 
     ddt_number = fields.Char('DDT number') 
+    ddt_date = Fields.Datetime('Invoice date')
+    invoice_number = fields.Char('Invoice number') 
+    invoice_date = Fields.Datetime('Invoice date')
     
     
 class AccountFiscalPosition(models.Model):

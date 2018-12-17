@@ -99,7 +99,7 @@ class ResPartner(models.Model):
         '''
         for o in self:
             if o:
-                mask = '%s\n%s%s\n%s - %s (%s)\n%s\nTel.:%s  Mobile:%s\nEmail: %s'
+                mask = '%s\n%s%s\n%s - %s (%s)\n%s\nTel.: %s  Mobile: %s\nEmail: %s'
                 o.contact_info = mask % (
                     o.name or '',
                     o.street or '',

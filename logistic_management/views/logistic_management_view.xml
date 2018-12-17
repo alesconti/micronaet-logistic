@@ -78,7 +78,9 @@
                  <field name="origin" position="after">
                     <field name="sale_order_id" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
                     <field name="ddt_number" attrs="{'invisible': [('ddt_number','=',False)]}"/>
+                    <field name="ddt_date" attrs="{'invisible': [('ddt_number','=',False)]}"/>
                     <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}"/>
+                    <field name="invoice_date" attrs="{'invisible': [('invoice_number','=',False)]}"/>
                  </field>
              </field>
          </record>
@@ -90,8 +92,8 @@
              <field name="arch" type="xml">
                  <field name="state" position="before">
                     <field name="sale_order_id" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
-                    <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}"/>
                     <field name="ddt_number" attrs="{'invisible': [('ddt_number','=',False)]}"/>
+                    <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}"/>
                  </field>
              </field>
          </record>
