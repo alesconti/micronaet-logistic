@@ -58,13 +58,13 @@
                             <div class="oe_structure"/>                            
                             <div class="row">
                                 <div class="col-xs-1">
-                                    Q.ta'
+                                    <b>Q.ta'</b>
                                 </div>    
                                 <div class="col-xs-5">
-                                    Cod. Art.
+                                    <b>Cod. Art.</b>
                                 </div>    
                                 <div class="col-xs-6">
-                                    Descrizione
+                                    <b>Descrizione</b>
                                 </div>    
                             </div>
                             
@@ -98,41 +98,41 @@
                             <div class="oe_structure"/>                            
                             <div class="row">
                                 <div class="col-xs-6" style="height: 60px; border: 1px solid black;">
-                                    Incaricato del trasporto
-                                    
+                                    Incaricato del trasporto:<br/>
+                                    <span t-esc="o.carrier_id.name or ''" />
                                 </div>
                                 <div class="col-xs-3" style="height: 60px; border: 1px solid black;">
-                                    Causale del trasporto
-                                    
+                                    Causale del trasporto:<br/>
+                                    <span t-esc="o.carriage_condition_id.name or ''" />
                                 </div>
                                 <div class="col-xs-3" style="height: 60px; border: 1px solid black;">
-                                    Firma incaricato del trasporto
+                                    Firma incaricato del trasporto:<br/>
                                     
                                 </div>
                             </div>    
                             <div class="row">
                                 <div class="col-xs-1" style="height: 60px; border: 1px solid black;">
-                                    Nr. colli
-                                    
+                                    Colli:<br/>
+                                    <span t-esc="o.parcels" />
                                 </div>
                                 <div class="col-xs-1" style="height: 60px; border: 1px solid black;">
-                                    Peso
-                                    
+                                    Peso:<br/>
+                                    <span t-esc="o.weight" />
                                 </div>
                                 <div class="col-xs-2" style="height: 60px; border: 1px solid black;">
-                                    Aspetto esteriore dei beni
-                                    
+                                    Aspetto est. beni:<br/>
+                                    <span t-esc="o.goods_description_id.name or ''" />
                                 </div>
                                 <div class="col-xs-2" style="height: 60px; border: 1px solid black;">
-                                    Porto
-                                    
+                                    Porto:<br/>
+                                    <span t-esc="o.transportation_method_id.name or ''" />
                                 </div>
                                 <div class="col-xs-3" style="height: 60px; border: 1px solid black;">
-                                    Data e ora inizio trasporto
-                                    
+                                    Data e ora inizio trasporto:<br/>
+                                    <span t-esc="o.ddt_date or ''" />
                                 </div>
                                 <div class="col-xs-3" style="height: 60px; border: 1px solid black;">
-                                    Firma destinatario
+                                    Firma destinatario:<br/>
                                     
                                 </div>
                             </div>    
