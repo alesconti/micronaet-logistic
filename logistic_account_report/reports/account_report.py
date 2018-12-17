@@ -24,7 +24,7 @@
 import os
 import sys
 import logging
-from odoo import api, models
+from odoo import fields, api, models
 from odoo import tools
 from odoo.tools.translate import _
 
@@ -86,6 +86,36 @@ class StockPicking(models.AbstractModel):
         f_pdf.close()
         _logger.info('Extract Invoice: %s' % fullname)
         return fullname
+
+class ResPartner(models.Model):
+    ''' Add extra function
+    '''
+    _inherit = 'res.partner'
+    
+    @api.multi
+    def get_partner_extra_info(self, ):
+        ''' Get partner extra info data (for address print)
+            self: res.partner obj
+        '''
+        for o in self:
+            if o:
+                mask = '%s\n%s%s\n%s - %s (%s)\n%s\nTel.:%s  Mobile:%s\nEmail: %s'
+                o.contact_info = mask % (
+                    o.name or '',
+                    o.street or '',
+                    o.street2 or '',
+                    o.zip or '', 
+                    o.city or '',
+                    o.state_id.name if o.state_id else '',
+                    o.country_id.name if o.country_id else '',
+                    o.phone or '',
+                    o.mobile or '',
+                    o.email or '',
+                    )
+            else:    
+                o.contact_info = '/'
+    
+    contact_info = fields.Text('Extra info', compute='get_partner_extra_info')        
     
 class ReportDdtLangParser(models.AbstractModel):
     ''' Load move report:
@@ -98,9 +128,13 @@ class ReportDdtLangParser(models.AbstractModel):
         ''' Render report parser:
         '''
         return {
+            # Standard data:
             'doc_ids': docids,#self.ids,
             'doc_model': 'stock.picking',#picking_pool.model,#holidays_report.model,
             'docs': self.env['stock.picking'].search([('id', 'in', docids)]),
+            
+            # Extra function:
+            #'get_partner_extra_info': self.get_partner_extra_info,
             }
         
         '''picking_pool = self.env['stock.picking']    

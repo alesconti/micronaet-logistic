@@ -414,7 +414,7 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     #                                   UTILITY:
     # -------------------------------------------------------------------------
-    # TODO remove!!!
+    # TODO Not used, remove?!?
     @api.model
     def workflow_ready_to_done_all_done_picking(self):
         ''' Confirm draft picking documents
@@ -432,9 +432,9 @@ class StockPicking(models.Model):
             line
         """
         self.ensure_one()
+        excel_pool = self.env['excel.writer']
         companys = self.env['res.company'].search([])
         folder = companys[0]._logistic_folder('bf')
-        excel_pool = self.env['excel.writer']
 
         ws_name = 'Carichi'
         excel_pool.create_worksheet(ws_name)
@@ -673,6 +673,46 @@ class StockPicking(models.Model):
                     'stock.picking.ddt.sequence')
                 })
         return True
+
+    def move_lines_for_report(self):
+        ''' Generate a list of record depend on OC, KIT and 2 substitution mode
+            Return list of: product, line
+        '''    
+        self.ensure_one()
+        
+        res = []
+        kit_add = [] # Kit yet addes
+        for line in self.move_lines:
+            sale_line = line.logistic_unload_id # Link to origin sale line
+            product = sale_line.product_id
+            
+            # Kit component:
+            if product.is_kit:
+               continue # Jump is taken with first component
+               # TODO future: control component if generate ordered kit total
+            elif sale_line.kit_line_id:
+                if sale_line.kit_line_id not in kit_add:
+                    kit_add.append(sale_line.kit_line_id)
+                    sale_line = sale_line.kit_line_id
+                    product = sale_line.product_id # Update product
+                else:
+                    continue    
+                
+            elif sale_line.origin_product_id and \
+                    sale_line.linked_mode == 'similar':
+                # TODO Rules for picking out document:
+                # similar: similar write original product
+                # alternative: use real product for pick out document
+                product = sale_line.origin_product_id # Use real
+                
+            res.append((
+                product,
+                int(line.product_uom_qty), # XXX Note: Use stock.move qty
+                sale_line.price_unit,
+                sale_line.tax_id,
+                # TODO price_subtotal (use stock.move or sale.order.line?
+                ))
+        return res
         
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
