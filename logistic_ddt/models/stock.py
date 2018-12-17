@@ -92,7 +92,7 @@ class StockPicking(models.Model):
             sequence = partner.property_account_position_id.sequence_id
             picking.write({
                 'invoice_number': sequence.next_by_id(),
-                'invoice_date': Fields.Datetime.now(),    
+                'invoice_date': fields.Datetime.now(),    
                 })
         return True
                 
@@ -106,7 +106,7 @@ class StockPicking(models.Model):
             picking.write({
                 'ddt_number': self.env['ir.sequence'].next_by_code(
                     'stock.picking.ddt.sequence'),
-                'ddt_date': Fields.Datetime.now(),    
+                'ddt_date': fields.Datetime.now(),    
                 })
         return True
 
