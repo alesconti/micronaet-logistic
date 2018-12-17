@@ -2,7 +2,6 @@
 <openerp>
     <data>         
          <!--product.template-->
-         expense_product
         <record model="ir.ui.view" id="view_product_template_kit_page_form">
             <field name="name">product.template.form</field>
             <field name="model">product.template</field>
