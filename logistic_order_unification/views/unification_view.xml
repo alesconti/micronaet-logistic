@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+         <!--sale.order-->
+         <record model="ir.ui.view" id="view_sale_order_logistic_unification_form">
+             <field name="name">sale.order.logistic.unification.form</field>
+             <field name="model">sale.order</field>
+             <field name="inherit_id" ref="sale.view_order_form"/>
+             <field name="arch" type="xml">
+                 <xpath expr="//page[2]" position="after">
+                     <page string="Unification">
+                         <group colspan="4" col="4">
+                             <separator string="Linked to this order" colspan="4"/>
+                             <field name="unificated_order_ids" nolabel="1" colspan="4" readonly="1"/>
+
+                             <separator string="Move to this order:" colspan="4"/>
+                             <field name="order_destination_id" domain="[('id', '!=', active_id),('partner_id', '=', partner_id)]"/>
+                             <button name="migrate_to_destination_button" string="Migrate" type="object" class="oe_highlight" attrs="{'invisible': [('unificated_line_ids','!=',False)]}"/>
+                             
+                             <separator string="Origin line migrated:" colspan="4"/>
+                             <!--TODO Mode in details page?-->
+                             <field name="unificated_line_ids" nolabel="1" colspan="4" readonly="1"/>
+                         </group>    
+                     </page>
+                 </xpath>
+             </field>
+         </record>   
+         
+         <record model="ir.actions.act_window" id="action_order_unificated_form">
+             <field name="name">Order unificated</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <!--<field name="view_id" ref="view_model_name_form"/>-->
+             <field name="context">{}</field>
+             <field name="domain">[('order_destination_id', '!=', False)]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_order_linked_form">
+             <field name="name">Order linked</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <!--<field name="view_id" ref="view_model_name_form"/>-->
+             <field name="context">{}</field>
+             <field name="domain">[('unificated_order_ids', '!=', False)]</field>
+         </record>
+    </data>
+</openerp>
+
