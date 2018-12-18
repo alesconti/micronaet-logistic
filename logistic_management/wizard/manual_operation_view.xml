@@ -43,9 +43,15 @@
                           <button name="closed_delivered" string="_Closed Delivered" type="object" class="btn-primary" />
                       </group>-->
 
+                      <separator string="Report:" colspan="4"/>
                       <group colspan="4" col="2">
                           <separator string="Report: Load position"/>
                           <button name="load_position_print" string="Load position report" type="object" class="btn-primary" />
+                      </group>                          
+
+                      <group colspan="4" col="2">
+                          <separator string="Report: Accounting Fees"/>
+                          <button name="print_report_account_fees_month" string="Print account fees" type="object" class="btn-primary" />
                       </group>                          
 
 

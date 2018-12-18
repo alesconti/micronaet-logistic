@@ -64,6 +64,10 @@ class ResCompany(models.Model):
             'images': {
                 'default': 'images',
                 },
+            
+            'corrispettivi': {
+                'default': 'corrispettivi',
+                }    
             }
 
     # Get path name:
@@ -389,6 +393,137 @@ class StockPicking(models.Model):
     """
     
     _inherit = 'stock.picking'
+
+    # -------------------------------------------------------------------------
+    # Extract Excel:
+    # -------------------------------------------------------------------------
+    @api.model
+    def excel_report_extract_accounting_fees(self, ):
+        ''' Extract file account fees
+        '''
+        from datetime import datetime, timedelta 
+        
+        # Pool used:
+        excel_pool = self.env['excel.writer']
+        company_pool = self.env['res.company']
+        
+        companys = company_pool.search([])
+        fees_path = companys[0]._logistic_folder('corrispettivi')
+
+        # Period current date:        
+        now_dt = datetime.now()
+        from_date = now_dt.strftime('%Y-%m-01')
+        now_dt += timedelta(months=1)
+        to_date = now_dt.strftime('%Y-%m-01')
+
+        # Picking not invoiced:
+        pickings = self.search([
+            # Period:
+            ('from_date', '>=', from_date),
+            ('to_date', '<', to_date),
+            
+            # Not invoiced (only DDT):
+            ('ddt_number', '!=', False),
+            ('invoice_number', '=', False),
+            ])
+
+
+        ws_name = 'Dettaglio'
+        excel_pool.create_worksheet(ws_name)
+        
+        # ---------------------------------------------------------------------
+        # Format:
+        # ---------------------------------------------------------------------
+        excel_pool.set_format()
+        f_title = excel_pool.get_format('title')
+        f_header = excel_pool.get_format('header')
+
+        f_white_text = excel_pool.get_format('text')
+        f_green_text = excel_pool.get_format('bg_green')
+        f_yellow_text = excel_pool.get_format('bg_yellow')
+        
+        f_white_number = excel_pool.get_format('number')
+        f_green_number = excel_pool.get_format('bg_green_number')
+        f_yellow_number = excel_pool.get_format('bg_yellow_number')
+        
+        # ---------------------------------------------------------------------
+        # Setup page:
+        # ---------------------------------------------------------------------
+        excel_pool.column_width(ws_name, [
+            15, 15, 30, 15, 
+            10, 10, 10,
+            ])
+
+        row = 0
+        excel_pool.write_xls_line(ws_name, row, [
+             'Corrispettivi periodo: [%s - %s]' % (from_date, to_date)
+             ], default_format=f_title)
+
+        row += 1
+        excel_pool.write_xls_line(ws_name, row, [
+             'Data', 'Ordine', 'Cliente', 'Posizione fiscale', 
+             'Imponibile', 'IVA', 'Totale',
+             ], default_format=f_header)
+        
+        total = {
+            'amount': 0.0,
+            'vat': 0.0,
+            'total': 0.0,
+            }
+        for picking in pickings:
+            row +=1
+            # Readability:
+            order = picking.sale_order_id 
+            partner = order.partner_id
+            
+            subtotal = {
+                'amount': 0.0,
+                'vat': 0.0,
+                'total': 0.0,
+                }
+            for move in picking.move_lines_for_report():
+                subtotal['amount'] += move[1] # TODO
+                subtotal['vat'] += move[1] # TODO
+                subtotal['total'] += move[1] # TODO
+            '''
+            original_product,
+            int(sale_line.product_uom_qty), # XXX Note: Not stock.move qty
+            replaced_product,
+            sale_line.tax_id,
+            sale_line.price_unit,
+            sale_line.price_reduce,
+            sale_line.price_tax,
+            sale_line.price_reduce_taxexcl,
+            sale_line.price_reduce_taxinc,
+            sale_line.amt_to_invoice,
+            sale_line.amt_invoiced,
+            sale_line.price_subtotal,
+            sale_line.price_total,
+            '''
+                
+            # Update total:    
+            total['amount'] += subtotal['amount']
+            total['vat'] += subtotal['vat']
+            total['total'] += subtotal['total']
+            
+            excel_pool.write_xls_line(ws_name, row, [(
+                picking.ddt_date,
+                order.name,
+                partner.name,
+                partner.property_account_position_id.name, # Fiscal position
+                (subtotal['amount'], f_number),
+                (subtotal['vat'], f_number),
+                (subtotal['total'], f_number),
+                )], default_format=f_text)
+            row += 1
+
+        # ---------------------------------------------------------------------                 
+        # Define filename and save:
+        # ---------------------------------------------------------------------                 
+        filename = os.path(fees_path, '%s_%s_corrispettivi.xlsx' % (
+            from_date[:4], from_date[5:7]))
+        excel_pool.save_file_as(filename)
+        return True
     
     # -------------------------------------------------------------------------
     # Override path function:
@@ -662,33 +797,46 @@ class StockPicking(models.Model):
         kit_add = [] # Kit yet addes
         for line in self.move_lines:
             sale_line = line.logistic_unload_id # Link to origin sale line
-            product = sale_line.product_id
             
-            # Kit component:
-            if product.is_kit:
-               continue # Jump is taken with first component
-               # TODO future: control component if generate ordered kit total
-            elif sale_line.kit_line_id:
-                if sale_line.kit_line_id not in kit_add:
-                    kit_add.append(sale_line.kit_line_id)
-                    sale_line = sale_line.kit_line_id
-                    product = sale_line.product_id # Update product
-                else:
-                    continue    
+            if sale_line.kit_line_id:
+                # Kit exploded line not used:
+                continue 
                 
-            elif sale_line.origin_product_id and \
-                    sale_line.linked_mode == 'similar':
-                # TODO Rules for picking out document:
-                # similar: similar write original product
-                # alternative: use real product for pick out document
-                product = sale_line.origin_product_id # Use real
-                
+            # Similar / Alternative case:
+            if sale_line.origin_product_id:
+                original_product = sale_line.origin_product_id
+                replaced_product = sale_line.product_id
+            else:    
+                original_product = sale_line.product_id
+                replaced_product = False
+
             res.append((
-                product,
-                int(line.product_uom_qty), # XXX Note: Use stock.move qty
-                sale_line.price_unit,
-                sale_line.tax_id,
+                original_product,
+                int(sale_line.product_uom_qty), # XXX Note: Not stock.move qty
+                replaced_product,
+                
                 # TODO price_subtotal (use stock.move or sale.order.line?
+                sale_line.tax_id,
+                
+                # Unit:
+                sale_line.price_unit,
+                sale_line.price_reduce,
+                sale_line.price_tax,
+
+                # Price net price:
+                sale_line.price_reduce_taxexcl,
+                sale_line.price_reduce_taxinc,
+
+                # Amount:
+                sale_line.amt_to_invoice,
+                sale_line.amt_invoiced,
+
+                # Total:
+                sale_line.price_total,
+                sale_line.price_subtotal,
+
+                # Discount:                
+                sale_line.discount, # not used for now
                 ))
         return res
         

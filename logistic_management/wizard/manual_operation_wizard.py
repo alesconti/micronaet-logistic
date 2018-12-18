@@ -137,5 +137,13 @@ class StockChangeStandardPrice(models.TransientModel):
         return self.env.ref(
             'logistic_management.load_stock_move_position').report_action(
                 moves)
-        
+
+    @api.multi
+    def print_report_account_fees_month(self):
+        """ Account fees report
+        """
+        stock_pool = self.env['stock.picking']
+        return stock_pool.excel_report_extract_accounting_fees()
+
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
