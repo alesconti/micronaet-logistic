@@ -30,6 +30,9 @@ from odoo import exceptions
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
 
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+
 
 _logger = logging.getLogger(__name__)
 
@@ -66,7 +69,7 @@ class ResCompany(models.Model):
                 },
             
             'corrispettivi': {
-                'default': 'corrispettivi',
+                'default': 'Corrispettivi',
                 }    
             }
 
@@ -401,7 +404,6 @@ class StockPicking(models.Model):
     def excel_report_extract_accounting_fees(self, ):
         ''' Extract file account fees
         '''
-        from datetime import datetime, timedelta 
         
         # Pool used:
         excel_pool = self.env['excel.writer']
@@ -413,20 +415,19 @@ class StockPicking(models.Model):
         # Period current date:        
         now_dt = datetime.now()
         from_date = now_dt.strftime('%Y-%m-01')
-        now_dt += timedelta(months=1)
-        to_date = now_dt.strftime('%Y-%m-01')
+        now_dt += relativedelta(months=1)
+        to_date = now_dt.strftime('%Y-%m-01')        
 
         # Picking not invoiced:
         pickings = self.search([
             # Period:
-            ('from_date', '>=', from_date),
-            ('to_date', '<', to_date),
+            ('ddt_date', '>=', from_date),
+            ('ddt_date', '<', to_date),
             
             # Not invoiced (only DDT):
             ('ddt_number', '!=', False),
             ('invoice_number', '=', False),
             ])
-
 
         ws_name = 'Dettaglio'
         excel_pool.create_worksheet(ws_name)
@@ -437,14 +438,12 @@ class StockPicking(models.Model):
         excel_pool.set_format()
         f_title = excel_pool.get_format('title')
         f_header = excel_pool.get_format('header')
-
-        f_white_text = excel_pool.get_format('text')
-        f_green_text = excel_pool.get_format('bg_green')
-        f_yellow_text = excel_pool.get_format('bg_yellow')
-        
-        f_white_number = excel_pool.get_format('number')
-        f_green_number = excel_pool.get_format('bg_green_number')
-        f_yellow_number = excel_pool.get_format('bg_yellow_number')
+        f_text = excel_pool.get_format('text')
+        f_number = excel_pool.get_format('number')
+        #f_green_text = excel_pool.get_format('bg_green')
+        #f_yellow_text = excel_pool.get_format('bg_yellow')
+        #f_green_number = excel_pool.get_format('bg_green_number')
+        #f_yellow_number = excel_pool.get_format('bg_yellow_number')
         
         # ---------------------------------------------------------------------
         # Setup page:
@@ -508,7 +507,7 @@ class StockPicking(models.Model):
             total['vat'] += subtotal['vat']
             total['total'] += subtotal['total']
             
-            excel_pool.write_xls_line(ws_name, row, [(
+            excel_pool.write_xls_line(ws_name, row, (
                 picking.ddt_date,
                 order.name,
                 partner.name,
@@ -516,12 +515,21 @@ class StockPicking(models.Model):
                 (subtotal['amount'], f_number),
                 (subtotal['vat'], f_number),
                 (subtotal['total'], f_number),
-                )], default_format=f_text)
-
+                ), default_format=f_text)
+        
+        # Total line:
+        row += 1        
+        excel_pool.write_xls_line(ws_name, row, (
+            'Totali:',
+            (total['amount'], f_number),
+            (total['vat'], f_number),
+            (total['total'], f_number),
+            ), default_format=f_header, col=3)
+        
         # ---------------------------------------------------------------------                 
         # Define filename and save:
         # ---------------------------------------------------------------------                 
-        filename = os.path(fees_path, '%s_%s_corrispettivi.xlsx' % (
+        filename = os.path.join(fees_path, '%s_%s_corrispettivi.xlsx' % (
             from_date[:4], from_date[5:7]))
         excel_pool.save_file_as(filename)
         return True
