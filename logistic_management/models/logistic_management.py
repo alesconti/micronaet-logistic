@@ -482,23 +482,25 @@ class StockPicking(models.Model):
                 'total': 0.0,
                 }
             for move in picking.move_lines_for_report():
-                subtotal['amount'] += move[1] # TODO
-                subtotal['vat'] += move[1] # TODO
-                subtotal['total'] += move[1] # TODO
+                subtotal['amount'] += move[9] # Total without VAT 
+                subtotal['vat'] += move[6] # VAT Total
+                subtotal['total'] += move[10] # Total with VAT
             '''
-            original_product,
-            int(sale_line.product_uom_qty), # XXX Note: Not stock.move qty
-            replaced_product,
-            sale_line.tax_id,
-            sale_line.price_unit,
-            sale_line.price_reduce,
-            sale_line.price_tax,
-            sale_line.price_reduce_taxexcl,
-            sale_line.price_reduce_taxinc,
-            sale_line.amt_to_invoice,
-            sale_line.amt_invoiced,
-            sale_line.price_subtotal,
-            sale_line.price_total,
+            #0. original_product,
+            #1. int(sale_line.product_uom_qty), # XXX Note: Not stock.move qty
+            #2. replaced_product,
+            #3. sale_line.tax_id,
+            #4. sale_line.price_unit, # Unit no discount
+            #5. sale_line.price_reduce, # Unit discounted
+            6. sale_line.price_tax, # Vat total
+            #7. sale_line.price_reduce_taxexcl, # Unit Without VAT
+            #8. sale_line.price_reduce_taxinc, # Unit With VAT=price_unit-red
+            9. sale_line.price_subtotal, # Tot without VAT
+            10. sale_line.price_total, # Tot With VAT
+
+            #sale_line.amt_to_invoice, # Not used
+            #sale_line.amt_invoiced, # Not used
+            #sale_line.discount, # not used for now
             '''
                 
             # Update total:    
@@ -515,7 +517,6 @@ class StockPicking(models.Model):
                 (subtotal['vat'], f_number),
                 (subtotal['total'], f_number),
                 )], default_format=f_text)
-            row += 1
 
         # ---------------------------------------------------------------------                 
         # Define filename and save:
@@ -819,21 +820,21 @@ class StockPicking(models.Model):
                 sale_line.tax_id,
                 
                 # Unit:
-                sale_line.price_unit,
-                sale_line.price_reduce,
-                sale_line.price_tax,
+                sale_line.price_unit, # Unit no discount
+                sale_line.price_reduce, # Unit discounted
+                sale_line.price_tax, # Vat total
 
                 # Price net price:
-                sale_line.price_reduce_taxexcl,
-                sale_line.price_reduce_taxinc,
-
-                # Amount:
-                sale_line.amt_to_invoice,
-                sale_line.amt_invoiced,
+                sale_line.price_reduce_taxexcl, # Unit Without VAT
+                sale_line.price_reduce_taxinc, # Unit With VAT=price_unit-red
 
                 # Total:
-                sale_line.price_total,
-                sale_line.price_subtotal,
+                sale_line.price_subtotal, # Tot without VAT
+                sale_line.price_total, # Tot With VAT
+
+                # Amount invoiced:
+                sale_line.amt_to_invoice, # Not used
+                sale_line.amt_invoiced, # Not used
 
                 # Discount:                
                 sale_line.discount, # not used for now
