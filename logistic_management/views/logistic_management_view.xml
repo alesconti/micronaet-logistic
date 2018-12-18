@@ -297,6 +297,9 @@
                                          <separator string="Load document:" colspan="4"/>
                                          <field name="logistic_pick_in_type_id" />
                                          <field name="logistic_pick_out_type_id" />
+                                         
+                                         <separator string="Order unification:" colspan="4"/>
+                                         <field name="unificate_period" />
                                      </group>
                                  </page>
                              </notebook>
@@ -872,11 +875,26 @@
                      />
 
                  <menuitem
+                     id="menu_logistic_left_order_unificated" 
+                     parent="menu_logistic_left_order_root"
+                     name="Logistic: Unificated"
+                     action="logistic_order_unification.action_order_unificated_form"
+                     sequence="100"
+                     />
+                     <menuitem
+                         id="menu_logistic_left_order_unificated_destination" 
+                         parent="menu_logistic_left_order_unificated"
+                         name="Logistic: Unificated destination"
+                         action="logistic_order_unification.action_order_linked_form"
+                         sequence="10"
+                         />
+
+                 <menuitem
                      id="menu_logistic_left_order_error" 
                      parent="menu_logistic_left_order_root"
                      name="Logistic: Error"
                      action="action_sale_order_error_form"
-                     sequence="100"
+                     sequence="120"
                      />
 
              <menuitem

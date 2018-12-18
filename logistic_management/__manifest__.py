@@ -46,6 +46,7 @@
         'logistic_account_report', # DDT Report
         'logistic_ddt', # DDT Extra data
         #'logistic_purchase_export', # Export files
+        'logistic_order_unification', # Order unification
         ],
     'data': [
         #'security/crm_security.xml',

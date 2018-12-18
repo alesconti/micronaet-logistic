@@ -140,6 +140,11 @@ class ResCompany(models.Model):
         'Output root folder', 
         help='Master root folder for output',
         required=True,
+        )
+    
+    unificate_period = fields.Float(
+        'Unificate period H.', default=24,
+        help='Check order before hours selected for unification process',        
         )    
 
 class ProductTemplate(models.Model):
@@ -975,7 +980,47 @@ class SaleOrder(models.Model):
                     )
                 order.default_supplier_id = better_supplier[0]
         return True
+
+    @api.model
+    def sale_order_unificate_same_partner(self, order_touched_ids):
+        ''' Unifcate procedure if order has yet present order for same partner
+        '''
+        from datetime import datetime, timedelta
         
+        company_pool = self.env['res.company']
+        unificate_period_min = company_pool.search(
+            [])[0].unificate_period * 60.0
+        
+        from_period = (datetime.utcnow() - timedelta(
+            minute=unificate_period_min)).strftime('%Y-%m-%d %H:%M:%S')
+
+        moved_ids = []
+        for order in self.browse(order_touched_ids):
+            order_destination = self.search([
+                ('partner_id', '=', order.partner_id.id), # This partner
+                ('date_order', '>=', from_period), # In period range
+                ('logistic_state', 'in', ('pending', )) # TODO other selection?
+                ('id', '!=', order.id), # Not this
+                ('order_destination_id', '=', False), # Not unificated
+                ])
+
+            if not order_destination:
+                continue
+                
+            # TODO manage more than one warning?
+            order_destination = order_destination[0] # Take first
+            _logger.warning('Order linked: %s > %s' % (
+                order.name,
+                order_destination,
+                ))
+            # Setup for duplication:    
+            order.order_destination_id = order.destination.id
+            moved_ids.append(order.id)
+                
+        # Run after for upadte process (destination field):
+        for order in self.browse(moved_ids):
+            order.migrate_to_destination_button()
+        return True
     # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
     # -------------------------------------------------------------------------    
@@ -1573,7 +1618,7 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         #                 Collect data for purchase order:
         # ---------------------------------------------------------------------
-        order_touched_ids = [] # For ending extra operations XXX not used!
+        order_touched_ids = [] # For ending extra operations (linked to order)
         purchase_db = {} # supplier is the key
         for line in lines:
             product = line.product_id
@@ -1649,7 +1694,10 @@ class SaleOrderLine(models.Model):
 
                 # Update line state:    
                 line.logistic_state = 'ordered' # XXX needed?
-                
+        
+        # Check if some order linkable to other present with same pratner:
+        sale_order.sale_order_unificate_same_partner(order_touched_ids)
+        
         # Return view:
         return purchase_pool.return_purchase_order_list_view(selected_ids)
 
