@@ -998,6 +998,7 @@ class SaleOrder(models.Model):
         for order in self.browse(order_touched_ids):
             order_destination = self.search([
                 ('partner_id', '=', order.partner_id.id), # This partner
+                ('payment_term_id', '=', order.payment_term_id.id), # Payment
                 ('date_order', '>=', from_period), # In period range
                 ('logistic_state', 'in', ('pending', )), # TODO other selection?
                 ('id', '!=', order.id), # Not this
