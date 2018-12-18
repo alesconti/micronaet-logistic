@@ -1006,13 +1006,15 @@ class SaleOrder(models.Model):
 
             if not order_destination:
                 continue
-                
+            
+            import pdb; pdb.set_trace()
             # TODO manage more than one warning?
             order_destination = order_destination[0] # Take first
             _logger.warning('Order linked: %s > %s' % (
                 order.name,
-                order_destination,
+                order_destination.name,
                 ))
+
             # Setup for duplication:    
             order.order_destination_id = order.destination.id
             moved_ids.append(order.id)
