@@ -563,6 +563,16 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     #                                   UTILITY:
     # -------------------------------------------------------------------------
+    @api.model
+    def qweb_format_float(self, value, decimal=2, length=10):
+        ''' Format float value
+        '''
+        if type(value) != float:
+            return value
+            
+        format_mask = '%%%s.%sf' % (length, decimal)
+        return (format_mask % value).strip()
+
     # TODO Not used, remove?!?
     @api.model
     def workflow_ready_to_done_all_done_picking(self):
@@ -802,15 +812,6 @@ class StockPicking(models.Model):
         '''    
         self.ensure_one()
         
-        def format_float(value, decimal=2, length=10):
-            ''' Format float value
-            '''
-            if type(value) != float:
-                return value
-                
-            format_mask = '%%%s.%sf' % (length, decimal)
-            return (format_mask % value).strip()
-            
         res = []
         kit_add = [] # Kit yet addes
         last_order = False
@@ -871,24 +872,34 @@ class StockPicking(models.Model):
                 sale_line.tax_id,
                 
                 # Unit:
-                format_float(sale_line.price_unit), # 4. Unit no discount
-                format_float(sale_line.price_reduce), # 5. Unit discounted
-                format_float(sale_line.price_tax), # 6. Vat total
+                self.qweb_format_float(
+                    sale_line.price_unit), # 4. Unit no discount
+                self.qweb_format_float(
+                    sale_line.price_reduce), # 5. Unit discounted
+                self.qweb_format_float(
+                    sale_line.price_tax), # 6. Vat total
 
                 # Price net price:
-                format_float(sale_line.price_reduce_taxexcl), # 7. Unit Without VAT
-                format_float(sale_line.price_reduce_taxinc), # 8. Unit With VAT=price_unit-red
+                self.qweb_format_float(
+                    sale_line.price_reduce_taxexcl), # 7. Unit Without VAT
+                self.qweb_format_float(
+                    sale_line.price_reduce_taxinc), # 8. Unit With VAT=price_unit-red
 
                 # Total:
-                format_float(sale_line.price_subtotal), # 9. Tot without VAT
-                format_float(sale_line.price_total), # 10. Tot With VAT
+                self.qweb_format_float(
+                    sale_line.price_subtotal), # 9. Tot without VAT
+                self.qweb_format_float(
+                    sale_line.price_total), # 10. Tot With VAT
 
                 # Amount invoiced:
-                format_float(sale_line.amt_to_invoice), # Not used
-                format_float(sale_line.amt_invoiced), # Not used
+                self.qweb_format_float(
+                    sale_line.amt_to_invoice), # Not used
+                self.qweb_format_float(
+                    sale_line.amt_invoiced), # Not used
 
                 # Discount (XXX not used):                
-                format_float(sale_line.discount), # not used for now
+                self.qweb_format_float(
+                    sale_line.discount), # not used for now
                 
                 write_order, # 14
                 ddt_reference, # 15
