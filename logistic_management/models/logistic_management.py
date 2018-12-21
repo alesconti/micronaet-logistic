@@ -826,7 +826,7 @@ class StockPicking(models.Model):
             sorted_lines[0].picking_id.ddt_number,
             sorted_lines[0].picking_id.ddt_date,
             )
-
+        #total = []
         for line in sorted_lines:
             picking = line.picking_id
             sale_line = line.logistic_unload_id # Link to origin sale line
