@@ -88,6 +88,26 @@
                             <div class="oe_structure"/>
 
                             <t t-foreach="o.move_lines_for_report()" t-as="move">
+                                <!--            Order sub header            -->
+                                <!--A. DDT reference:-->
+                                <div t-if="move[15]" class="row">
+                                    <div class="col-xs-1">
+                                    </div>    
+                                    <div class="col-xs-11">
+                                        <b>Rif. DDT: <span t-esc="move[15]" /></b>
+                                    </div> 
+                                </div>
+
+                                <!--B. Order reference:-->
+                                <div t-if="move[14]" class="row">
+                                    <div class="col-xs-1">
+                                    </div>    
+                                    <div class="col-xs-11">
+                                        <b>Rif. Conferma d'ordine: <span t-esc="move[14]" /></b>
+                                    </div> 
+                                </div>
+
+                                <!--C. Detail part:-->
                                 <div class="row">
                                     <div class="col-xs-2">
                                         <span t-field="move[0].product_tmpl_id.default_code" />
