@@ -80,5 +80,4 @@ class SaleOrder(models.Model):
         'sale.order.line', 'unification_origin_id', 'Unificated line', 
         help='List of unificared line previous in order')
 
-
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

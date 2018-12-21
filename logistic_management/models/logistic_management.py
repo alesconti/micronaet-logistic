@@ -804,7 +804,9 @@ class StockPicking(models.Model):
         
         res = []
         kit_add = [] # Kit yet addes
+        last_order = False
         for line in self.move_lines:
+            picking = line.picking_id
             sale_line = line.logistic_unload_id # Link to origin sale line
             
             if sale_line.kit_line_id:
@@ -819,6 +821,23 @@ class StockPicking(models.Model):
                 original_product = sale_line.product_id
                 replaced_product = False
 
+            # -----------------------------------------------------------------
+            # Order reference:
+            # -----------------------------------------------------------------
+            if not sale_line.unification_origin_id: # Merged
+                current_order = picking.sale_order_id.name
+            else: # Original:
+                current_order = sale_line.unification_origin_id.name
+            
+            if not last_order or current_order != last_order:
+                last_order = current_order
+                write_order = current_order
+            else:    
+                write_order = ''
+
+            # -----------------------------------------------------------------
+            # Line record:    
+            # -----------------------------------------------------------------
             res.append((
                 original_product,
                 int(sale_line.product_uom_qty), # XXX Note: Not stock.move qty
@@ -846,6 +865,8 @@ class StockPicking(models.Model):
 
                 # Discount:                
                 sale_line.discount, # not used for now
+                
+                write_order, # 14
                 ))
         return res
         

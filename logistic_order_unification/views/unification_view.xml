@@ -15,7 +15,7 @@
 
                              <separator string="Move to this order:" colspan="4"/>
                              <field name="order_destination_id" domain="[('id', '!=', active_id),('partner_id', '=', partner_id)]"/>
-                             <button name="migrate_to_destination_button" string="Migrate" type="object" class="oe_highlight" attrs="{'invisible': [('unificated_line_ids','!=',False)]}"/>
+                             <button name="migrate_to_destination_button" string="Migrate" type="object" class="oe_highlight" attrs="{'invisible': [('order_destination_id','=',False)]}"/>
                              
                              <separator string="Origin line migrated:" colspan="4"/>
                              <!--TODO Mode in details page?-->

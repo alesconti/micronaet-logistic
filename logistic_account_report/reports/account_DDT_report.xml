@@ -69,16 +69,25 @@
                             </div>
                             
                             <!--Order reference:-->    
-                            <div class="row">
+                            <!--<div class="row">
                                 <div class="col-xs-6">
                                 </div>    
                                 <div class="col-xs-6">
                                     <b>Rif. Conferma d'ordine: <span t-field="o.sale_order_id.name" /></b>
                                 </div>    
-                            </div>    
+                            </div>-->
                             <div class="oe_structure"/>
 
                             <t t-foreach="o.move_lines_for_report()" t-as="move">
+                                <!--Order header-->
+                                <div t-if="move[14]" class="row">
+                                    <div class="col-xs-1">
+                                    </div>    
+                                    <div class="col-xs-11">
+                                        <b>Rif. Conferma d'ordine: <span t-esc="move[14]" /></b>
+                                    </div> 
+                                </div>
+                                
                                 <div class="row">
                                     <div class="col-xs-1" style="align:text-center;">
                                         <h4 t-esc="move[1]" />
