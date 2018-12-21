@@ -854,25 +854,25 @@ class StockPicking(models.Model):
             # Line record:    
             # -----------------------------------------------------------------
             res.append((
-                original_product,
-                int(sale_line.product_uom_qty), # XXX Note: Not stock.move qty
-                replaced_product,
+                original_product, # 0. Product browse
+                int(sale_line.product_uom_qty), # 1. XXX Note: Not stock.move q
+                replaced_product, # 2. Replaced product
                 
                 # TODO price_subtotal (use stock.move or sale.order.line?
                 sale_line.tax_id,
                 
                 # Unit:
-                sale_line.price_unit, # Unit no discount
-                sale_line.price_reduce, # Unit discounted
-                sale_line.price_tax, # Vat total
+                sale_line.price_unit, # 4. Unit no discount
+                sale_line.price_reduce, # 5. Unit discounted
+                sale_line.price_tax, # 6. Vat total
 
                 # Price net price:
-                sale_line.price_reduce_taxexcl, # Unit Without VAT
-                sale_line.price_reduce_taxinc, # Unit With VAT=price_unit-red
+                sale_line.price_reduce_taxexcl, # 7. Unit Without VAT
+                sale_line.price_reduce_taxinc, # 8. Unit With VAT=price_unit-red
 
                 # Total:
-                sale_line.price_subtotal, # Tot without VAT
-                sale_line.price_total, # Tot With VAT
+                sale_line.price_subtotal, # 9. Tot without VAT
+                sale_line.price_total, # 10. Tot With VAT
 
                 # Amount invoiced:
                 sale_line.amt_to_invoice, # Not used
