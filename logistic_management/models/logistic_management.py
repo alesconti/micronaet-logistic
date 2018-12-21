@@ -802,6 +802,15 @@ class StockPicking(models.Model):
         '''    
         self.ensure_one()
         
+        def format_float(value, decimal=2, length=10):
+            ''' Format float value
+            '''
+            if type(value) != float:
+                return value
+                
+            format_mask = '%%%s.%sf' % (length, decimal)
+            return (format_mask % value).strip()
+            
         res = []
         kit_add = [] # Kit yet addes
         last_order = False
@@ -862,31 +871,31 @@ class StockPicking(models.Model):
                 sale_line.tax_id,
                 
                 # Unit:
-                sale_line.price_unit, # 4. Unit no discount
-                sale_line.price_reduce, # 5. Unit discounted
-                sale_line.price_tax, # 6. Vat total
+                format_float(sale_line.price_unit), # 4. Unit no discount
+                format_float(sale_line.price_reduce), # 5. Unit discounted
+                format_float(sale_line.price_tax), # 6. Vat total
 
                 # Price net price:
-                sale_line.price_reduce_taxexcl, # 7. Unit Without VAT
-                sale_line.price_reduce_taxinc, # 8. Unit With VAT=price_unit-red
+                format_float(sale_line.price_reduce_taxexcl), # 7. Unit Without VAT
+                format_float(sale_line.price_reduce_taxinc), # 8. Unit With VAT=price_unit-red
 
                 # Total:
-                sale_line.price_subtotal, # 9. Tot without VAT
-                sale_line.price_total, # 10. Tot With VAT
+                format_float(sale_line.price_subtotal), # 9. Tot without VAT
+                format_float(sale_line.price_total), # 10. Tot With VAT
 
                 # Amount invoiced:
-                sale_line.amt_to_invoice, # Not used
-                sale_line.amt_invoiced, # Not used
+                format_float(sale_line.amt_to_invoice), # Not used
+                format_float(sale_line.amt_invoiced), # Not used
 
-                # Discount:                
-                sale_line.discount, # not used for now
+                # Discount (XXX not used):                
+                format_float(sale_line.discount), # not used for now
                 
                 write_order, # 14
                 ddt_reference, # 15
                 ))
             ddt_reference = '' # only first line print DDT reference    
         return res
-        
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
