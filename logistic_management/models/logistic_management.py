@@ -398,6 +398,18 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     # -------------------------------------------------------------------------
+    # Override function
+    # -------------------------------------------------------------------------
+    @api.multi
+    def refund_confirm_state_event(self):
+        ''' Confirm operation (will be overrided)
+        '''
+        # TODO change export function for refund operation!!!
+        #TODO picking_pool.browse(picking_ids).workflow_ready_to_done_done_picking()
+
+        return True
+
+    # -------------------------------------------------------------------------
     # Extract Excel:
     # -------------------------------------------------------------------------
     @api.multi

@@ -86,10 +86,19 @@ class StockPicking(models.Model):
             # Load partner sequence (depend on fiscal position)
             partner = picking.partner_id
             sequence = partner.property_account_position_id.sequence_id
-            picking.write({
-                'invoice_number': sequence.next_by_id(),
-                'invoice_date': fields.Datetime.now(),    
-                })
+            sequence_number = sequence.next_by_id()
+            if picking.stock_mode == 'out':
+                picking.write({
+                    'invoice_number': sequence_number,
+                    'invoice_date': fields.Datetime.now(),    
+                    })
+            else: # 'nc' >> Credit note        
+                sequence_number.replace('FT', 'NC')
+                picking.write({
+                    'invoice_number': sequence_number,
+                    'invoice_date': fields.Datetime.now(),    
+                    })
+            
         return True
                 
     @api.multi

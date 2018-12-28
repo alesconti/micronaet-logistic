@@ -30,6 +30,20 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+class StockPicking(models.Model):
+    ''' Extra function
+    '''
+    _inherit = 'stock.picking'
+    
+    # -------------------------------------------------------------------------
+    # Override function
+    # -------------------------------------------------------------------------
+    @api.multi
+    def refund_confirm_state_event(self):
+        ''' Confirm operation (will be overrided)
+        '''
+        return True
+    
 class StockPickingRefundDocumentWizard(models.TransientModel):
     ''' Wizard for generate refund document
     '''
@@ -38,12 +52,10 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
     # -------------------------------------------------------------------------
     # Wizard button event:
     # -------------------------------------------------------------------------
-    def create_refund(self, cr, uid, ids, context=None):
+    @api.multi
+    def create_refund(self):
         ''' Event for button done
         '''
-        if context is None: 
-            context = {}        
-
         # Pool used:        
         picking_pool = self.env['stock.picking']
         move_pool = self.env['stock.move']
@@ -58,15 +70,13 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
         
         # XXX use out pick type:
         logistic_pick_refund_type = company.logistic_pick_out_type_id 
-        logistic_pick_refund_type_id = logistic_pick_refund_type.id
 
         # XXX Invert transfer location:
-        location_to = logistic_pick_out_type.default_location_src_id.id
-        location_from = logistic_pick_out_type.default_location_dest_id.id
+        location_to = logistic_pick_refund_type.default_location_src_id.id
+        location_from = logistic_pick_refund_type.default_location_dest_id.id
         
         # B. Parameter from wizard:
-        wiz_browse = self.browse(cr, uid, ids, context=context)[0]        
-        from_picking = wiz_browse.picking_id
+        from_picking = self.picking_id
         #stock.picking.refund.sequence
         
         # Readability:
@@ -74,20 +84,22 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
         partner = from_picking.partner_id
         origin = from_picking.name
         
-        to_picking_id = picking_pool.create({
+        to_picking = picking_pool.create({
             # TODO
+            'stock_mode': 'in', # refund mode
             #'sale_order_id': from_picking.sale_order_id.id, # Link to order
             'partner_id': partner.id,
             'scheduled_date': now,
             'origin': origin,
             #'move_type': 'direct',
-            'picking_type_id': logistic_pick_refund_type_id,
+            'picking_type_id': logistic_pick_refund_type.id,
             'group_id': False,
             'location_id': location_from,
             'location_dest_id': location_to,
             #'priority': 1,                
             'state': 'draft', # XXX To do manage done phase (for invoice)!!
-            }).id
+            })
+        to_picking_id = to_picking.id    
             
         for line in wiz_browse.line_ids:
             product = line.product_id
@@ -128,9 +140,9 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
 
 
         # ---------------------------------------------------------------------
-        # Confirm picking (DDT and INVOICE)
+        # Confirm picking (Refund and Credit note)
         # ---------------------------------------------------------------------
-        #TODO picking_pool.browse(picking_ids).workflow_ready_to_done_done_picking()
+        to_picking_id.refund_confirm_state_event()
 
         # ---------------------------------------------------------------------
         # Return view:
