@@ -48,31 +48,93 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
         picking_pool = self.env['stock.picking']
         move_pool = self.env['stock.move']
         quant_pool = self.env['stock.quant']
+        company_pool = self.env['res.company']
 
-        # Parameter from wizard:
+        # ---------------------------------------------------------------------
+        # Parameters:
+        # ---------------------------------------------------------------------
+        # A. From company:
+        company = company_pool.search([])[0]
+        
+        # XXX use out pick type:
+        logistic_pick_refund_type = company.logistic_pick_out_type_id 
+        logistic_pick_refund_type_id = logistic_pick_refund_type.id
+
+        # XXX Invert transfer location:
+        location_to = logistic_pick_out_type.default_location_src_id.id
+        location_from = logistic_pick_out_type.default_location_dest_id.id
+        
+        # B. Parameter from wizard:
         wiz_browse = self.browse(cr, uid, ids, context=context)[0]        
         from_picking = wiz_browse.picking_id
+        #stock.picking.refund.sequence
+        
+        # Readability:
+        now = fields.Datetime.now()
+        partner = from_picking.partner_id
+        origin = from_picking.name
         
         to_picking_id = picking_pool.create({
             # TODO
+            #'sale_order_id': from_picking.sale_order_id.id, # Link to order
+            'partner_id': partner.id,
+            'scheduled_date': now,
+            'origin': origin,
+            #'move_type': 'direct',
+            'picking_type_id': logistic_pick_refund_type_id,
+            'group_id': False,
+            'location_id': location_from,
+            'location_dest_id': location_to,
+            #'priority': 1,                
+            'state': 'draft', # XXX To do manage done phase (for invoice)!!
             }).id
             
         for line in wiz_browse.line_ids:
-            if line.refund_qty <= 0:
+            product = line.product_id
+            refund_qty = line.refund_qty
+            
+            if refund_qty <= 0:
                 continue # no refund line
 
             move_id = move_pool.create({
                 'picking_id': to_picking_id,
                 # TODO                 
+                'company_id': company.id,
+                'partner_id': partner.id,
+                'picking_id': to_picking_id,
+                'product_id': product.id, 
+                'name': product.name or ' ',
+                'date': now,
+                'date_expected': now,
+                'location_id': location_from,
+                'location_dest_id': location_to,
+                'product_uom_qty': product_qty,
+                'product_uom': product.uom_id.id,
+                'state': 'done',
+                'origin': origin,
+                'price_unit': product.standard_price,
+                
+                # Sale order line link:
+                #'logistic_unload_id': line.id,
+
+                # group_id
+                # reference'
+                # sale_line_id
+                # procure_method,
+                #'product_qty': select_qty,
                 }).id
+
+            # TODO stock quants?
+
+
+        # ---------------------------------------------------------------------
+        # Confirm picking (DDT and INVOICE)
+        # ---------------------------------------------------------------------
+        #TODO picking_pool.browse(picking_ids).workflow_ready_to_done_done_picking()
 
         # ---------------------------------------------------------------------
         # Return view:
         # ---------------------------------------------------------------------
-        #model_pool = self.pool.get('ir.model.data')
-        #view_id = model_pool.get_object_reference(
-        #    'module_name', 'view_name')[1]
-        
         return {
             'type': 'ir.actions.act_window',
             'name': _('Refund document'),

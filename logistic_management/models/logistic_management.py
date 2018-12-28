@@ -404,26 +404,43 @@ class StockPicking(models.Model):
     def generate_refund_document(self):
         ''' Open refund management from this documet
         '''
-        # Create wizard element
+        # Pool used:
         wizard_pool = self.env['stock.picking.refund.wizard']
-        #wizard_id = 
+        line_pool = self.env['stock.picking.refund.line.wizard']
+
+        # ---------------------------------------------------------------------
+        # Create wizard element
+        # ---------------------------------------------------------------------
+        wizard_id = wizard_pool.create({
+            'picking_id': self.id,
+            }).id
+
+        for line in self.move_lines:#move_lines_for_report()
+            product_qty = line.product_qty
+            if not product_qty:
+                continue # jump empty q (es. Kit)
+            line_pool.create({
+                'wizard_id': wizard_id,
+                'product_id': line.product_id.id,
+                'product_qty': product_qty,            
+                'refund_qty': product_qty, # Same q.
+                })
         
+        # ---------------------------------------------------------------------
         # Open wizard element
-        #model_pool = self.env['ir.model.data']
-        #view_id = model_pool.get_object_reference('module_name', 'view_name')[1]
-        
+        # ---------------------------------------------------------------------        
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Result for view_name'),
+            'name': _('Refund wizard'),
             'view_type': 'form',
-            'view_mode': 'tree,form',
-            #'res_id': 1,
-            'res_model': 'model.name',
-            'view_id': view_id, # False
-            'views': [(False, 'tree'), (False, 'form')],
+            'view_mode': 'form',
+            'res_id': wizard_id,
+            'res_model': 'stock.picking.refund.wizard',
+            'view_id': False,
+            'views': [(False, 'form')],
             'domain': [],
-            'context': context,
-            'target': 'current', # 'new'
+            'context': self.env.context,
+            'target': 'new',
             'nodestroy': False,
             }
 

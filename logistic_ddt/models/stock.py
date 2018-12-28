@@ -112,7 +112,7 @@ class StockPicking(models.Model):
     stock_mode = fields.Selection([
         ('in', 'Refund document'),
         ('out', 'Delivery document'),
-        ], string='Stock mode', default='in')
+        ], string='Stock mode', default='out')
         
     refund_number = fields.Char('Refund number')
     refund_date = fields.Datetime('Refund date')
