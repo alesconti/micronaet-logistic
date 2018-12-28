@@ -75,7 +75,7 @@ class StockPickingTransportationMethod(models.Model):
 class StockPicking(models.Model):
     ''' Add extra fields to keep picking as DDT or Invoice:
     '''
-    _inherit = "stock.picking"
+    _inherit = 'stock.picking'
 
     @api.multi
     def assign_invoice_number(self):
@@ -96,7 +96,7 @@ class StockPicking(models.Model):
                 sequence_number.replace('FT', 'NC')
                 picking.write({
                     'invoice_number': sequence_number,
-                    'invoice_date': fields.Datetime.now(),    
+                    'invoice_date': fields.Datetime.now(),
                     })
             
         return True
@@ -129,6 +129,9 @@ class StockPicking(models.Model):
         ('in', 'Refund document'),
         ('out', 'Delivery document'),
         ], string='Stock mode', default='out')
+    refund_origin_id = fields.Many2one(
+        'stock.picking', string='Back document refunded')
+        
         
     refund_number = fields.Char('Refund number')
     refund_date = fields.Datetime('Refund date')

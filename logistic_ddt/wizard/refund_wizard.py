@@ -24,7 +24,7 @@ import os
 import sys
 import openerp
 import logging
-from odoo import models, fields
+from odoo import models, fields, api
 from odoo.tools.translate import _
 
 
@@ -42,6 +42,7 @@ class StockPicking(models.Model):
     def refund_confirm_state_event(self):
         ''' Confirm operation (will be overrided)
         '''
+        self.state = 'done'
         return True
     
 class StockPickingRefundDocumentWizard(models.TransientModel):
@@ -74,7 +75,8 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
         # XXX Invert transfer location:
         location_to = logistic_pick_refund_type.default_location_src_id.id
         location_from = logistic_pick_refund_type.default_location_dest_id.id
-        
+        location_id = company.logistic_location_id.id
+                
         # B. Parameter from wizard:
         from_picking = self.picking_id
         #stock.picking.refund.sequence
@@ -85,9 +87,9 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
         origin = from_picking.name
         
         to_picking = picking_pool.create({
-            # TODO
+            'refund_origin_id': from_picking.id,
             'stock_mode': 'in', # refund mode
-            #'sale_order_id': from_picking.sale_order_id.id, # Link to order
+            'sale_order_id': from_picking.sale_order_id.id, # Link to order
             'partner_id': partner.id,
             'scheduled_date': now,
             'origin': origin,
@@ -103,14 +105,17 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
             
         for line in wiz_browse.line_ids:
             product = line.product_id
-            refund_qty = line.refund_qty
+            product_qty = line.refund_qty # Q refunded
+            quant_qty = line.stock_qty # Q. in stock
             
-            if refund_qty <= 0:
+            # TODO no service load!?!
+            
+            if product_qty <= 0:
                 continue # no refund line
 
             move_id = move_pool.create({
                 'picking_id': to_picking_id,
-                # TODO                 
+
                 'company_id': company.id,
                 'partner_id': partner.id,
                 'picking_id': to_picking_id,
@@ -136,7 +141,18 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
                 #'product_qty': select_qty,
                 }).id
 
-            # TODO stock quants?
+            if quant_qty <= 0:
+                continue # no stock load
+
+            quant_id = quant_pool.create({
+                'company_id': company.id,
+                'in_date': now,
+                'location_id': location_id,
+                'product_id': product.id,
+                'quantity': quant_qty,
+                #'product_tmpl_id': used_product.product_tmpl_id.id,
+                #'lot_id' #'package_id'
+                })
 
 
         # ---------------------------------------------------------------------
@@ -181,7 +197,10 @@ class StockPickingRefundDocumentLineWizard(models.TransientModel):
     product_id = fields.Many2one(
         'product.product', 'Product')
     product_qty = fields.Float('Q. origin', digits=(16, 2))
-    refund_qty = fields.Float('Q. refund', digits=(16, 2))
+    refund_qty = fields.Float('Q. refund', digits=(16, 2), 
+        help='Refund q. from customer delivery document')
+    stock_qty = fields.Float('Q. in stock', digits=(16, 2),
+        help='Refund q. real returned in stock, generate load of stock')
 
 class StockPickingRefundDocumentWizard(models.TransientModel):
     ''' Wizard for generate refund document

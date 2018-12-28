@@ -435,7 +435,8 @@ class StockPicking(models.Model):
                 'wizard_id': wizard_id,
                 'product_id': line.product_id.id,
                 'product_qty': product_qty,            
-                'refund_qty': product_qty, # Same q.
+                'refund_qty': product_qty, # Same q. (returned from customer)
+                'stock_qty': product_qty, # Same q. (load stock)
                 })
         
         # ---------------------------------------------------------------------
