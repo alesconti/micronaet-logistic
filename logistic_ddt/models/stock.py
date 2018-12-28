@@ -99,11 +99,18 @@ class StockPicking(models.Model):
         '''
         # TODO Manage sequence from fiscal position
         for picking in self:
-            picking.write({
-                'ddt_number': self.env['ir.sequence'].next_by_code(
-                    'stock.picking.ddt.sequence'),
-                'ddt_date': fields.Datetime.now(),    
-                })
+            if picking.stock_mode == 'out':
+                picking.write({
+                    'ddt_number': self.env['ir.sequence'].next_by_code(
+                        'stock.picking.ddt.sequence'),
+                    'ddt_date': fields.Datetime.now(),    
+                    })
+            else: # in >> Refund value:
+                picking.write({
+                    'refund_number': self.env['ir.sequence'].next_by_code(
+                        'stock.picking.refund.sequence'),
+                    'refund_date': fields.Datetime.now(),    
+                    })
         return True
 
     # -------------------------------------------------------------------------
