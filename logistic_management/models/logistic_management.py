@@ -406,7 +406,7 @@ class StockPicking(models.Model):
         '''
         # TODO change export function for refund operation!!!
         #TODO picking_pool.browse(picking_ids).workflow_ready_to_done_done_picking()
-
+        import pdb; pdb.set_trace()
         return True
 
     # -------------------------------------------------------------------------
@@ -431,6 +431,9 @@ class StockPicking(models.Model):
             product_qty = line.product_qty
             if not product_qty:
                 continue # jump empty q (es. Kit)
+            if line.product_id.type == 'service':
+                continue # no service product (expense and lavoration)
+
             line_pool.create({
                 'wizard_id': wizard_id,
                 'product_id': line.product_id.id,
