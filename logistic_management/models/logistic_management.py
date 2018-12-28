@@ -400,6 +400,33 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     # Extract Excel:
     # -------------------------------------------------------------------------
+    @api.multi
+    def generate_refund_document(self):
+        ''' Open refund management from this documet
+        '''
+        # Create wizard element
+        wizard_pool = self.env['stock.picking.refund.wizard']
+        #wizard_id = 
+        
+        # Open wizard element
+        #model_pool = self.env['ir.model.data']
+        #view_id = model_pool.get_object_reference('module_name', 'view_name')[1]
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Result for view_name'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            #'res_id': 1,
+            'res_model': 'model.name',
+            'view_id': view_id, # False
+            'views': [(False, 'tree'), (False, 'form')],
+            'domain': [],
+            'context': context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+
     @api.model
     def excel_report_extract_accounting_fees(self, ):
         ''' Extract file account fees

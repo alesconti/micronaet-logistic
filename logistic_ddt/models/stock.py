@@ -36,10 +36,6 @@ class AccountFiscalPosition(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    #invoice_id = fields.Many2one(
-    #    'ir.sequence', 'Invoice sequence', help='Invoice sequence default')        
-    #ddt_id = fields.Many2one(
-    #    'ir.sequence', 'DDT sequence', help='DDT sequence default')
     sequence_id = fields.Many2one('ir.sequence', 'Sequence', required=True)
 
 
@@ -113,7 +109,14 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     # Columns: 
     # -------------------------------------------------------------------------
-    ddt_number = fields.Char('DDT number') 
+    stock_mode = fields.Selection([
+        ('in', 'Refund document'),
+        ('out', 'Delivery document'),
+        ], string='Stock mode', default='in')
+        
+    refund_number = fields.Char('Refund number')
+    refund_date = fields.Datetime('Refund date')
+    ddt_number = fields.Char('DDT number')
     ddt_date = fields.Datetime('DDT date')
     invoice_number = fields.Char('Invoice number') 
     invoice_date = fields.Datetime('Invoice date')
@@ -132,5 +135,4 @@ class StockPicking(models.Model):
         'res.partner', string='Carrier')
     parcels = fields.Integer('Parcels')
     weight = fields.Float('Weight')
-    #ddt_type = fields.Selection(
-    #    string="DdT Type", related='picking_type_id.code')
+

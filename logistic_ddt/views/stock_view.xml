@@ -29,17 +29,22 @@
              <field name="model">stock.picking</field>
              <field name="inherit_id" ref="stock.view_picking_form"/>
              <field name="arch" type="xml">
-                 <!--<field name="state" position="after">
-                      <button name="assign_ddt_number" string="Assign DDT" type="object" class="oe_highlight" attrs="{'invisible': [('ddt_number','!=',False)]}"/>
-                      <button name="assign_invoice_number" string="Assign Invoice" type="object" class="oe_highlight" attrs="{'invisible': [('invoice_number','!=',False)]}"/>
-                 </field>-->
                  <xpath expr="//notebook/page[2]" position="after">
                      <page string="Account extra">
                          <group colspan="4" col="4">
+                            <field name="stock_mode" readonly="1"/>
+                            <newline/>
+                            
+                            <field name="refund_number" attrs="{'invisible': [('refund_number','=',False)]}"/>
+                            <field name="refund_date" attrs="{'invisible': [('refund_number','=',False)]}"/>
+
                             <field name="ddt_number" attrs="{'invisible': [('ddt_number','=',False)]}"/>
                             <field name="ddt_date" attrs="{'invisible': [('ddt_number','=',False)]}"/>
+                            
+                            <!--Invoice or credit note:-->
                             <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}"/>
                             <field name="invoice_date" attrs="{'invisible': [('invoice_number','=',False)]}"/>
+                            
                             <field name="carriage_condition_id" />
                             <field name="goods_description_id" />
                             <field name="transportation_reason_id" />

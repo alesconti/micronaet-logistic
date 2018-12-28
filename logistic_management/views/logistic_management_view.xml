@@ -69,6 +69,7 @@
              <field name="inherit_id" ref="stock.view_picking_form"/>
              <field name="arch" type="xml">
                  <field name="state" position="after">
+                     <button name="generate_refund_document" string="Generate refund" type="object" class="oe_highlight" attrs="{'invisible': ['|',('sale_order_id','=',False),('ddt_number','!=',False)]}"/>
                      <button name="assign_ddt_number" string="Assign DDT" type="object" class="oe_highlight" attrs="{'invisible': ['|',('sale_order_id','=',False),('ddt_number','!=',False)]}"/>
                      <button name="assign_invoice_number" string="Assign Invoice" type="object" class="oe_highlight" attrs="{'invisible': ['|',('sale_order_id','=',False),('invoice_number','!=',False)]}"/>
                      <button name="workflow_ready_to_done_done_picking" string="Confirm delivery" type="object" class="oe_highlight"/>

@@ -64,6 +64,20 @@
             <field name="padding">6</field>
             <field name="use_data_range">1</field>
         </record>
+
+        <!-- Refund: -->
+        <record model="ir.sequence" id="data_sequence_stock_picking_refund">
+            <field name="name">Picking Refund 1</field>
+            <field name="code">stock.picking.refund.sequence</field>
+            <field name="implementation">no_gap</field>
+            <field name="active">1</field>
+            <field name="prefix">RC/1/%(year)s/</field>
+            <field name="suffix"></field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="padding">6</field>
+            <field name="use_data_range">1</field>
+        </record>
     </data>
 </openerp>
 
