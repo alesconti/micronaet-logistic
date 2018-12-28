@@ -159,7 +159,6 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         # Confirm picking (Refund and Credit note)
         # ---------------------------------------------------------------------
-        import pdb; pdb.set_trace()
         to_picking.refund_confirm_state_event()
 
         # ---------------------------------------------------------------------

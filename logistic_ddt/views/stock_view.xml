@@ -54,6 +54,11 @@
                             <field name="weight" />
                          </group>    
                      </page>
+                     <page string="Refunded" attrs="{'invisible': [('refunded_ids','!=',False)]}">
+                         <group colspan="4" col="4">
+                             <field name="refunded_ids" />
+                         </group>    
+                     </page>                     
                  </xpath>
              </field>
          </record>

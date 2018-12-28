@@ -93,7 +93,7 @@ class StockPicking(models.Model):
                     'invoice_date': fields.Datetime.now(),    
                     })
             else: # 'nc' >> Credit note        
-                sequence_number.replace('FT', 'NC')
+                sequence_number = sequence_number.replace('FT', 'NC')
                 picking.write({
                     'invoice_number': sequence_number,
                     'invoice_date': fields.Datetime.now(),
@@ -131,6 +131,8 @@ class StockPicking(models.Model):
         ], string='Stock mode', default='out')
     refund_origin_id = fields.Many2one(
         'stock.picking', string='Back document refunded')
+    refunded_ids = fields.One2many(
+        'stock.picking', refund_origin_id, string='Document refunded this BC')
         
         
     refund_number = fields.Char('Refund number')

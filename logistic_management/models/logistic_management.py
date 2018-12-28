@@ -813,12 +813,15 @@ class StockPicking(models.Model):
 
             # B. Supplier folder:
             # TODO sanitize name!
-            supplier_path = os.path.join(supplier_folder, supplier_name)
-            os.system('mkdir -p %s' % supplier_path)
-            symlink = os.system('ln -s "%s" "%s"' % (
-                original_fullname,
-                os.path.join(supplier_path, original_base)
-                ))
+            if supplier_name: # NC no Supplier link!
+                supplier_path = os.path.join(supplier_folder, supplier_name)
+                os.system('mkdir -p %s' % supplier_path)
+                symlink = os.system('ln -s "%s" "%s"' % (
+                    original_fullname,
+                    os.path.join(supplier_path, original_base)
+                    ))
+            else:
+                _logger.warning('No supplier link generated!')        
             
             # 3. DDT Print procedure:            
             today = fields.Datetime.now()[:10].replace(
