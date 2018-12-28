@@ -57,7 +57,7 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
     def create_refund(self):
         ''' Event for button done
         '''
-        # Pool used:        
+        # Pool used:    
         picking_pool = self.env['stock.picking']
         move_pool = self.env['stock.move']
         quant_pool = self.env['stock.quant']
@@ -84,12 +84,13 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
         # Readability:
         now = fields.Datetime.now()
         partner = from_picking.partner_id
-        origin = from_picking.name
+        origin = from_picking.invoice_number or from_picking.ddt_number or \
+            from_picking.name
         
         to_picking = picking_pool.create({
             'refund_origin_id': from_picking.id,
             'stock_mode': 'in', # refund mode
-            'sale_order_id': from_picking.sale_order_id.id, # Link to order
+            'sale_order_id': from_picking.sale_order_id.id, # XXX need?
             'partner_id': partner.id,
             'scheduled_date': now,
             'origin': origin,
@@ -103,7 +104,7 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
             })
         to_picking_id = to_picking.id    
             
-        for line in wiz_browse.line_ids:
+        for line in self.line_ids:
             product = line.product_id
             product_qty = line.refund_qty # Q refunded
             quant_qty = line.stock_qty # Q. in stock
@@ -158,7 +159,8 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         # Confirm picking (Refund and Credit note)
         # ---------------------------------------------------------------------
-        to_picking_id.refund_confirm_state_event()
+        import pdb; pdb.set_trace()
+        to_picking.refund_confirm_state_event()
 
         # ---------------------------------------------------------------------
         # Return view:

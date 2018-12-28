@@ -57,8 +57,15 @@ class StockPicking(models.AbstractModel):
         ''' Extract PDF report
         '''
         folder = self.get_default_folder_path()
+        
         # TODO Sanitize file name:
-        filename = (self.ddt_number or 'not_confirmed.pdf').replace('/', '_')
+        if self.stock_mode == 'out':
+            filename = (
+                self.ddt_number or 'BC_no_name.pdf').replace('/', '_')
+        else:        
+            filename = (
+                self.refund_number or 'RC_no_name.pdf').replace('/', '_')
+            
         fullname = os.path.join(folder, filename)
         
         REPORT_ID = 'logistic_account_report.action_report_ddt_lang'        
@@ -74,7 +81,9 @@ class StockPicking(models.AbstractModel):
         ''' Extract PDF report
         '''
         folder = self.get_default_folder_invoice_path()
+        
         # TODO Sanitize file name:
+        # Different name from NC and Invoice
         filename = (
             self.invoice_number or 'not_confirmed.pdf').replace('/', '_')
         fullname = os.path.join(folder, filename)

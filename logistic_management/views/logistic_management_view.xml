@@ -334,12 +334,14 @@
                          <group colspan="4" col="4">
                              <separator string="Picking out:" colspan="4"/>
                              <field name="logistic_picking_ids" nolabel="1" colspan="4">
-                                 <tree string="Picking:">
+                                 <tree string="Picking:" decoration-danger="stock_mode=='in'">
+                                     <field name="stock_mode" />
                                      <field name="name" />
                                      <field name="date" invisible="1" />
                                      <field name="scheduled_date" />
                                      <field name="ddt_number" />
                                      <field name="invoice_number" />
+                                     <field name="refund_number" />
                                      <field name="state" invisible="1"/>
                                  </tree>
                              </field>
@@ -1118,7 +1120,6 @@
                      action="action_res_company_parameter"
                      sequence="10"
                      />
-
 
           <!--Inventory configuration menu -->          
           <!--Stock position:-->
