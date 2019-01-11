@@ -250,7 +250,7 @@ class PurchaseOrder(models.Model):
             'res_model': 'purchase.order.line',
             'view_id': tree_view_id,
             'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
-            'domain': [('id', '=', line_ids)],
+            'domain': [('id', 'in', line_ids)],
             'context': self.env.context,
             'target': 'current', # 'new'
             'nodestroy': False,

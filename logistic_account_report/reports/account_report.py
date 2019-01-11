@@ -61,10 +61,11 @@ class StockPicking(models.AbstractModel):
         # TODO Sanitize file name:
         if self.stock_mode == 'out':
             filename = (
-                self.ddt_number or 'BC_no_name.pdf').replace('/', '_')
+                self.ddt_number or 'BC_no_name').replace('/', '_')
         else:        
             filename = (
-                self.refund_number or 'RC_no_name.pdf').replace('/', '_')
+                self.refund_number or 'RC_no_name').replace('/', '_')
+        filename = filename + '.pdf'        
             
         fullname = os.path.join(folder, filename)
         
