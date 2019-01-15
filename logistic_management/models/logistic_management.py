@@ -758,7 +758,6 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Confirm pickign for DDT and Invoice:
         # ---------------------------------------------------------------------
-        import pdb; pdb.set_trace()
         ddt_ids = [] # For extra operation after
         invoice_ids = [] # For extra operation after
         for picking in self:
@@ -1699,7 +1698,7 @@ class SaleOrderLine(models.Model):
         # This fix a bug because stock status don't update immediately
         quant_used = {} # product quant used during process
         
-        order_touched_ids = [] # For end operation (dropship, default suppl)
+        order_touched_ids = [] # For end operation (dropship, default suppl.)
         for line in sorted_line:
             # Update touched order list:
             if line.order_id.id not in order_touched_ids:
@@ -1842,7 +1841,7 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------        
         # Dropshipping # TODO spostare da qui altrimenti crea l'ordine acquisto
         #sale_order.check_dropshipping_order(order_touched_ids)    
-        # TODO Mettere prima dell'assegnamento magazzino ed eventualmetne n
+        # TODO Mettere prima dell'assegnamento magazzino ed eventualmente n
         # non fare quello!!!!!!!!    
         
         # Default supplier
@@ -1921,6 +1920,10 @@ class SaleOrderLine(models.Model):
             purchase_db[supplier].append(line)
 
         selected_ids = [] # ID: to return view list
+        
+        # 15 gen 2019: Cause a strange case there's some uncovered line
+        # but covered with stock, change here the availabilty
+        bug_uncovered_covered = [] # ID line to update
         for supplier in purchase_db:
             # -----------------------------------------------------------------
             # Lavoration order
@@ -1944,6 +1947,10 @@ class SaleOrderLine(models.Model):
 
                 purchase_qty = line.logistic_uncovered_qty
                 if purchase_qty <= 0.0:
+                    # Bug:
+                    if line.logistic_covered_qty == line.product_uom_qty:
+                        line.logistic_state = 'ready'
+                    _logger.error('Covered line marked as uncovered, correct!')             
                     continue # no order negative uncoveder (XXX needed)
 
                 # -------------------------------------------------------------

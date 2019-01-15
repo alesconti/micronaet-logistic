@@ -22,7 +22,7 @@
                                 <div class="col-xs-6">
                                     <h1 t-field="o.partner_id.country_id.code" /><br />
                                     <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('Code128', (o.ddt_number or o.refund_number or '').split('/')[-1], 800, 50)" style="width:400px;height:50px;" /><br/>
-                                    <span t-esc="'Reso cliente nr. ' if o.refund_number else 'Doc. di trasporto nr. '" /><span t-field="o.ddt_number or o.refund_number" /> del <span t-field="o.ddt_date" />
+                                    <span t-esc="'Reso cliente nr. ' if o.refund_number else 'Doc. di trasporto nr. '" /><span t-field="o.ddt_number or o.refund_number" /> del <span t-field="o.ddt_date or o.refund_date" />
                                 </div>    
                             </div>                            
                             <div class="oe_structure"/>
