@@ -165,5 +165,8 @@ class StockChangeStandardPrice(models.TransientModel):
             logistic_covered_qty = line.logistic_covered_qty  
             if product_uom_qty == logistic_covered_qty:
                 log.write(line.order_id.name + '\n')
+            line.logistic_state = 'ready'
+
+        line_pool.logistic_check_ready_order()
         return True
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
