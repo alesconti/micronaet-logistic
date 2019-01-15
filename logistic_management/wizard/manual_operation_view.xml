@@ -54,6 +54,11 @@
                           <button name="print_report_account_fees_month" string="Print account fees" type="object" class="btn-primary" />
                       </group>                          
 
+                      <group colspan="4" col="2">
+                          <separator string="Bug check:"/>
+                          <button name="print_bug_check_pending_draft_line" string="Check pending order with draft lines" type="object" class="btn-primary" />
+                      </group>                          
+
 
 
                   </sheet>
