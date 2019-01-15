@@ -131,8 +131,6 @@ class StockPicking(models.Model):
         ], string='Stock mode', default='out')
     refund_origin_id = fields.Many2one(
         'stock.picking', string='Back document refunded')
-    refunded_ids = fields.One2many(
-        'stock.picking', refund_origin_id, string='Document refunded this BC')
         
         
     refund_number = fields.Char('Refund number')
@@ -156,4 +154,15 @@ class StockPicking(models.Model):
         'res.partner', string='Carrier')
     parcels = fields.Integer('Parcels')
     weight = fields.Float('Weight')
+
+class StockPicking(models.Model):
+    ''' Add extra fields to keep picking as DDT or Invoice:
+    '''
+    _inherit = 'stock.picking'
+
+    # -------------------------------------------------------------------------
+    # Columns: 
+    # -------------------------------------------------------------------------
+    refunded_ids = fields.One2many(
+        'stock.picking', 'refund_origin_id', string='Document refunded this BC')
 
