@@ -1028,6 +1028,7 @@ class SaleOrder(models.Model):
     def logistic_check_and_set_ready(self):
         ''' Check if all line are in ready state (excluding unused)
         '''
+        order_ids = []
         for order in self:
             line_state = set(order.order_line.mapped('logistic_state'))
             line_state.discard('unused') # remove kit line (exploded)
@@ -1036,7 +1037,9 @@ class SaleOrder(models.Model):
                 order.write({
                     'logistic_state': 'ready',
                     })
-        return True
+                order_ids.append(order.id)
+        _logger.warning('Closed because ready # %s order' % len(order_ids))
+        return order_ids
 
     @api.multi
     def logistic_check_and_set_delivering(self):
@@ -1575,11 +1578,11 @@ class SaleOrderLine(models.Model):
                     continue
                 # Check sale.order logistic status (once):    
                 order.logistic_check_and_set_ready()
-                order_checked.append(order)    
+                order_checked.append(order) 
         else:
             # Check pending order:
             orders = order_pool.search([('logistic_state', '=', 'pending')])            
-            orders.logistic_check_and_set_ready()
+            return orders.logistic_check_and_set_ready() # IDs order updated
         return True
             
     @api.model
@@ -1817,7 +1820,7 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         # Update order to ready / pending status:
         # ---------------------------------------------------------------------
-        # TODO line_pool.logistic_check_ready_order(sale_line_ready)        
+        # TODO line_pool.logistic_check_ready_order(sale_line_ready)     
         all_ready = set(['ready'])
         for order in selected_order:
             # Generate list of line state, jump not used:                
@@ -1947,11 +1950,18 @@ class SaleOrderLine(models.Model):
 
                 purchase_qty = line.logistic_uncovered_qty
                 if purchase_qty <= 0.0:
-                    # Bugfix:
+                    # ---------------------------------------------------------
+                    # Bugfix (close yet covered order:
+                    # ---------------------------------------------------------
                     if line.logistic_covered_qty == line.product_uom_qty:
+                        
                         line.logistic_state = 'ready'
                         _logger.error(
                             'Covered line marked as uncovered, correct!')             
+                        order_id = line.order_id.id
+                        if order_id not in bug_uncovered_covered
+                            bug_uncovered_covered.append(order_id)
+
                     continue # no order negative uncoveder (XXX needed)
 
                 # -------------------------------------------------------------
@@ -1989,8 +1999,14 @@ class SaleOrderLine(models.Model):
                 # Update line state:    
                 line.logistic_state = 'ordered' # XXX needed?
         
-        # Check if some order linkable to other present with same pratner:
-        sale_pool.sale_order_unificate_same_partner(order_touched_ids)
+        # Bug: Close order pending but ready (nothing passed = check all)
+        closed_order_ids = self.logistic_check_ready_order()
+        
+        # Check if some order linkable to other present with same partner:        
+        if closed_order_ids:
+            order_touched_ids = tuple(
+                set(order_touched_ids) - set(closed_order_ids))
+        sale_pool.sale_order_unificate_same_partner(order_touched_ids)        
         
         # Return view:
         return purchase_pool.return_purchase_order_list_view(selected_ids)
