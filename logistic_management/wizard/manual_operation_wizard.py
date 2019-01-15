@@ -153,7 +153,7 @@ class StockChangeStandardPrice(models.TransientModel):
             os.path.expanduser('~'), 
             'log.txt',
             )            
-        log = open(log_file)
+        log = open(log_file, 'w')
 
         line_pool = self.env['sale.order.line']
         lines = line_pool.search([
@@ -164,7 +164,6 @@ class StockChangeStandardPrice(models.TransientModel):
             product_uom_qty = line.product_uom_qty
             logistic_covered_qty = line.logistic_covered_qty  
             if product_uom_qty == logistic_covered_qty:
-                print 'Ordine: %s' % line.order_id.name
                 log.write(line.order_id.name)
         return True
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
