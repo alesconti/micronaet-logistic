@@ -1926,7 +1926,6 @@ class SaleOrderLine(models.Model):
         
         # 15 gen 2019: Cause a strange case there's some uncovered line
         # but covered with stock, change here the availabilty
-        bug_uncovered_covered = [] # ID line to update
         for supplier in purchase_db:
             # -----------------------------------------------------------------
             # Lavoration order
@@ -1954,14 +1953,9 @@ class SaleOrderLine(models.Model):
                     # Bugfix (close yet covered order:
                     # ---------------------------------------------------------
                     if line.logistic_covered_qty == line.product_uom_qty:
-                        
                         line.logistic_state = 'ready'
                         _logger.error(
                             'Covered line marked as uncovered, correct!')             
-                        order_id = line.order_id.id
-                        if order_id not in bug_uncovered_covered
-                            bug_uncovered_covered.append(order_id)
-
                     continue # no order negative uncoveder (XXX needed)
 
                 # -------------------------------------------------------------
@@ -2004,10 +1998,10 @@ class SaleOrderLine(models.Model):
         
         # Check if some order linkable to other present with same partner:        
         if closed_order_ids:
-            _logger.warning('Order touched: %s' % len(order_touched_ids)
+            _logger.warning('Order touched: %s' % len(order_touched_ids))
             order_touched_ids = tuple(
                 set(order_touched_ids) - set(closed_order_ids))
-            _logger.warning('Order touched real: %s' % len(order_touched_ids)
+            _logger.warning('Order touched real: %s' % len(order_touched_ids))
         sale_pool.sale_order_unificate_same_partner(order_touched_ids)        
         
         # Return view:
