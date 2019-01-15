@@ -2004,8 +2004,10 @@ class SaleOrderLine(models.Model):
         
         # Check if some order linkable to other present with same partner:        
         if closed_order_ids:
+            _logger.warning('Order touched: %s' % len(order_touched_ids)
             order_touched_ids = tuple(
                 set(order_touched_ids) - set(closed_order_ids))
+            _logger.warning('Order touched real: %s' % len(order_touched_ids)
         sale_pool.sale_order_unificate_same_partner(order_touched_ids)        
         
         # Return view:
