@@ -164,6 +164,6 @@ class StockChangeStandardPrice(models.TransientModel):
             product_uom_qty = line.product_uom_qty
             logistic_covered_qty = line.logistic_covered_qty  
             if product_uom_qty == logistic_covered_qty:
-                log.write(line.order_id.name)
+                log.write(line.order_id.name + '\n')
         return True
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
