@@ -1947,10 +1947,11 @@ class SaleOrderLine(models.Model):
 
                 purchase_qty = line.logistic_uncovered_qty
                 if purchase_qty <= 0.0:
-                    # Bug:
+                    # Bugfix:
                     if line.logistic_covered_qty == line.product_uom_qty:
                         line.logistic_state = 'ready'
-                    _logger.error('Covered line marked as uncovered, correct!')             
+                       _logger.error(
+                           'Covered line marked as uncovered, correct!')             
                     continue # no order negative uncoveder (XXX needed)
 
                 # -------------------------------------------------------------
