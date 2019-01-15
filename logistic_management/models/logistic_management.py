@@ -2002,6 +2002,7 @@ class SaleOrderLine(models.Model):
             order_touched_ids = tuple(
                 set(order_touched_ids) - set(closed_order_ids))
             _logger.warning('Order touched real: %s' % len(order_touched_ids))
+            
         sale_pool.sale_order_unificate_same_partner(order_touched_ids)        
         
         # Return view:

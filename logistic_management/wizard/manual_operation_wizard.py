@@ -145,5 +145,22 @@ class StockChangeStandardPrice(models.TransientModel):
         stock_pool = self.env['stock.picking']
         return stock_pool.excel_report_extract_accounting_fees()
 
+    @api.multi
+    def print_bug_check_pending_draft_line(self):
+        """ Account Check pending order with draft lines
+        """
+        line_pool = self.env['sale.order.line']
+        lines = line_pool.search([
+            ('logistic_state', '=', 'draft'),
+            ('order_id.logistic_state', '=', 'pending'),
+            ])
+        for line in lines:
+            product_uom_qty = line.product_uom_qty
+            logistic_covered_qty = line.logistic_covered_qty  
+            if product_uom_qty == logistic_covered_qty:
+                print 'Ordine: %s' % line.order_id.name
+            
+        return stock_pool.excel_report_extract_accounting_fees()
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
