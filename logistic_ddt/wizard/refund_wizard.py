@@ -36,7 +36,7 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
     
     # -------------------------------------------------------------------------
-    # Override function
+    # Overrided function
     # -------------------------------------------------------------------------
     @api.multi
     def refund_confirm_state_event(self):

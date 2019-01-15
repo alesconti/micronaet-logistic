@@ -758,6 +758,7 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Confirm pickign for DDT and Invoice:
         # ---------------------------------------------------------------------
+        import pdb; pdb.set_trace()
         ddt_ids = [] # For extra operation after
         invoice_ids = [] # For extra operation after
         for picking in self:
@@ -783,6 +784,7 @@ class StockPicking(models.Model):
         supplier_folder = companys[0]._logistic_folder('ddt', 'supplier')
         daily_folder = companys[0]._logistic_folder('ddt', 'daily')
 
+        # Reload picking data:
         for picking in self.browse(ddt_ids):
             sale_order = picking.sale_order_id
             # TODO Sanitize:

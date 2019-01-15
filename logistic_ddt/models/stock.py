@@ -92,7 +92,8 @@ class StockPicking(models.Model):
                     'invoice_number': sequence_number,
                     'invoice_date': fields.Datetime.now(),    
                     })
-            else: # 'nc' >> Credit note        
+            else: # 'nc' >> Credit note     
+                # Note: Keep same number but different prefix:   
                 sequence_number = sequence_number.replace('FT', 'NC')
                 picking.write({
                     'invoice_number': sequence_number,
@@ -108,6 +109,7 @@ class StockPicking(models.Model):
         '''
         # TODO Manage sequence from fiscal position
         for picking in self:
+            # Use DDT counter:
             if picking.stock_mode == 'out':
                 picking.write({
                     'ddt_number': self.env['ir.sequence'].next_by_code(
@@ -115,6 +117,7 @@ class StockPicking(models.Model):
                     'ddt_date': fields.Datetime.now(),    
                     })
             else: # in >> Refund value:
+                # Use refund counter:
                 picking.write({
                     'refund_number': self.env['ir.sequence'].next_by_code(
                         'stock.picking.refund.sequence'),
@@ -131,7 +134,6 @@ class StockPicking(models.Model):
         ], string='Stock mode', default='out')
     refund_origin_id = fields.Many2one(
         'stock.picking', string='Back document refunded')
-        
         
     refund_number = fields.Char('Refund number')
     refund_date = fields.Datetime('Refund date')

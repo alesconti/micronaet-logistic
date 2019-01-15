@@ -68,8 +68,9 @@
              <field name="inherit_id" ref="stock.vpicktree"/>
              <field name="arch" type="xml">
                  <field name="state" position="before">
-                    <field name="ddt_number" attrs="{'invisible': [('ddt_number','=',False)]}"/>
-                    <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}"/>
+                    <field name="refund_number" />
+                    <field name="ddt_number" />
+                    <field name="invoice_number" />
                  </field>
              </field>
          </record>
