@@ -21,7 +21,7 @@
                                 </div>    
                                 <div class="col-xs-6">
                                     <h1 t-field="o.partner_id.country_id.code" /><br />
-                                    <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('Code128', o.ddt_number, 800, 50)" style="width:400px;height:50px;" /><br/>
+                                    <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('Code128', o.ddt_number.split('/')[-1], 800, 50)" style="width:400px;height:50px;" /><br/>
                                     Doc. di trasporto nr. <span t-field="o.ddt_number" /> del <span t-field="o.ddt_date" />
                                 </div>    
                             </div>                            
