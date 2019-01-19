@@ -69,7 +69,7 @@ class StockPicking(models.AbstractModel):
         f_invoice = open(fullname, 'w')
         
         # ---------------------------------------------------------------------
-        # Header part:
+        # Doc part:
         # ---------------------------------------------------------------------
         f_invoice.write('''<?xml version="1.0" encoding="UTF-8"?>
 <p:FatturaElettronica versione="FPR12" 
@@ -79,19 +79,467 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
 \n''')
 
-        f_invoice.write('<FatturaElettronicaHeader>\n')
-        
+        # ---------------------------------------------------------------------
+        # Header part:
+        # ---------------------------------------------------------------------
+        # 1.
+        f_invoice.write('<FatturaElettronicaHeader>\n')        
+        # 1.1
         f_invoice.write(' <DatiTrasmissione>\n')
+        # 1.1.1
+        f_invoice.write('  <IdTrasmittente>\n')
+        # 1.1.1.1
+        f_invoice.write('   <IdPaese>\n')
+        # DATA
+        f_invoice.write('   </IdPaese>\n')
+        # 1.1.1.2
+        f_invoice.write('   <IdCodice>\n')
+        # DATA        
+        f_invoice.write('   </IdCodice>\n')                
+        f_invoice.write('  </IdTrasmittente>\n')
+        
+        # 1.1.2
+        f_invoice.write('  <ProgressivoInvio>\n')
+        # DATA
+        f_invoice.write('  </ProgressivoInvio>\n')
+        
+        # 1.1.3
+        f_invoice.write('  <FormatoTrasmissione>\n')
+        # DATA FPR12
+        f_invoice.write('  </FormatoTrasmissione>\n')
+
+        # 1.1.4
+        f_invoice.write('  <CodiceDestinatario>\n')
+        # DATA 
+        f_invoice.write('  </CodiceDestinatario>\n')
+
+        # ---------------------------------------------------------------------
+        # 1.1.5 (alternative 1.1.6)
+        f_invoice.write('  <ContattiTrasmittente>\n')
+        # 1.1.5.1
+        f_invoice.write('   <Telefono>\n')
+        # DATI
+        f_invoice.write('   </Telefono>\n')
+        # 1.1.5.2
+        f_invoice.write('   <Email>\n')
+        # DATI
+        f_invoice.write('   </Email>\n')
+
+        f_invoice.write('  </ContattiTrasmittente>\n')
+        
+        # ---------------------------------------------------------------------
+        # 1.1.6 (alternative 1.1.5)
+        f_invoice.write('  <PECDestinatario>\n')
+        # DATA 
+        f_invoice.write('  </PECDestinatario>\n')        
+
         f_invoice.write(' </DatiTrasmissione>\n')
 
+        # ---------------------------------------------------------------------
+        # 1.2
         f_invoice.write(' <CedentePrestatore>\n')
+
+        # 1.2.1
+        f_invoice.write('  <DatiAnagrafici>\n')
+
+        # 1.2.1.1
+        f_invoice.write('   <IdFiscaleIVA>\n')
+        
+        # 1.2.1.1.1
+        f_invoice.write('    <IdPaese>\n')
+        # DATI
+        f_invoice.write('    </IdPaese>\n')
+
+        # 1.2.1.1.2
+        f_invoice.write('    <IdCodice>\n')
+        # DATI
+        f_invoice.write('    </IdCodice>\n')
+        
+        f_invoice.write('   </IdFiscaleIVA>\n')
+
+        # 1.2.1.2
+        f_invoice.write('   <CodiceFiscale>\n')
+        # DATA        
+        f_invoice.write('   </CodiceFiscale>\n')
+
+        # 1.2.1.3
+        f_invoice.write('   <Anagrafica>\n')
+        
+        # ---------------------------------------------------------------------
+        # 1.2.1.3.1 (alternative 1.2.1.3.2   1.2.1.3.3
+        f_invoice.write('    <Denominazione>\n')
+        # DATI
+        f_invoice.write('    </Denominazione>\n')
+        
+        # ---------------------------------------------------------------------
+        # 1.2.3.1.2 (altenative 1.2.1.3.1)
+        f_invoice.write('    <Nome>\n')
+        # DATI
+        f_invoice.write('    </Nome>\n')
+        # 1.2.3.1.3 (altenative 1.2.1.3.3)
+        f_invoice.write('    <Cognome>\n')
+        # DATI
+        f_invoice.write('    </Cognome>\n')
+
+        # 1.2.3.1.4
+        #f_invoice.write('    <Titolo>\n')
+        # DATI
+        #f_invoice.write('    </Titolo>\n')
+        
+        # 1.2.3.1.5
+        #f_invoice.write('    <CodEORI>\n')
+        # DATI
+        #f_invoice.write('    </CodEORI>\n')
+
+        f_invoice.write('   </Anagrafica>\n')
+
+        # 1.2.1.4
+        #f_invoice.write('   <AlboProfessionale>\n')
+        # DATA
+        #f_invoice.write('   </AlboProfessionale>\n')
+
+        # 1.2.1.5
+        #f_invoice.write('   <ProvinciaAlbo>\n')
+        # DATA
+        #f_invoice.write('   </ProvinciaAlbo>\n')
+
+        # 1.2.1.6
+        #f_invoice.write('   <NumeroIscrizioneAlbo>\n')
+        # DATA
+        #f_invoice.write('   </NumeroIscrizioneAlbo>\n')
+
+        # 1.2.1.7
+        #f_invoice.write('   <DataIscrizioneAlbo>\n')
+        # DATA
+        #f_invoice.write('   </DataIscrizioneAlbo>\n')
+
+        # 1.2.1.8
+        f_invoice.write('   <RegimeFiscale>\n')
+        # DATA (TABELLA)
+        f_invoice.write('   </RegimeFiscale>\n')
+
+        f_invoice.write('  </DatiAnagrafici>\n')
+
+        # 1.2.2
+        f_invoice.write('  <Sede>\n')
+        
+        # 1.2.2.1
+        f_invoice.write('   <Indirizzo>\n')
+        # DATA
+        f_invoice.write('   </Indirizzo>\n')
+
+        # 1.2.2.2
+        f_invoice.write('   <NumeroCivico>\n')
+        # DATA
+        f_invoice.write('   </NumeroCivico>\n')
+
+        # 1.2.2.3
+        f_invoice.write('   <CAP>\n')
+        # DATA
+        f_invoice.write('   </CAP>\n')
+
+        # 1.2.2.4
+        f_invoice.write('   <Comune>\n')
+        # DATA
+        f_invoice.write('   </Comune>\n')
+
+        # 1.2.2.5
+        f_invoice.write('   <Provincia>\n')
+        # DATA
+        f_invoice.write('   </Provincia>\n')
+
+        # 1.2.2.6
+        f_invoice.write('   <Nazione>\n')
+        # DATA
+        f_invoice.write('   </Nazione>\n')
+
+        f_invoice.write('  </Sede>\n')
+
+        # ---------------------------------------------------------------------
+        # IF PRESENT:
+        # 1.2.3
+        f_invoice.write('  <StabileOrganizzazione>\n')
+        
+        # 1.2.3.1
+        f_invoice.write('   <Indirizzo>\n')
+        # DATA
+        f_invoice.write('   </Indirizzo>\n')
+
+        # 1.2.3.2
+        f_invoice.write('   <NumeroCivico>\n')
+        # DATA
+        f_invoice.write('   </NumeroCivico>\n')
+
+        # 1.2.3.3
+        f_invoice.write('   <CAP>\n')
+        # DATA
+        f_invoice.write('   </CAP>\n')
+
+        # 1.2.3.4
+        f_invoice.write('   <Comune>\n')
+        # DATA
+        f_invoice.write('   </Comune>\n')
+
+        # 1.2.3.5
+        f_invoice.write('   <Provincia>\n')
+        # DATA
+        f_invoice.write('   </Provincia>\n')
+
+        # 1.2.3.6
+        f_invoice.write('   <Nazione>\n')
+        # DATA
+        f_invoice.write('   </Nazione>\n')
+
+        f_invoice.write('  </StabileOrganizzazione>\n')
+        # ---------------------------------------------------------------------
+
+        # 1.2.4
+        f_invoice.write('  <IscrizioneREA>\n')
+        
+        # 1.2.4.1
+        f_invoice.write('   <Ufficio>\n')
+        # DATA
+        f_invoice.write('   </Ufficio>\n')
+
+        # 1.2.4.2
+        f_invoice.write('   <NumeroREA>\n')
+        # DATA
+        f_invoice.write('   </NumeroREA>\n')
+
+        # 1.2.4.3  (0.1)
+        #f_invoice.write('   <CapitaleSociale>\n')
+        # DATA
+        #f_invoice.write('   </CapitaleSociale>\n')
+
+        # 1.2.4.3  (0.1)
+        #f_invoice.write('   <SocioUnico>\n')
+        # DATA
+        #f_invoice.write('   </SocioUnico>\n')
+       
+        # 1.2.4.3  (0.1)
+        f_invoice.write('   <StatoLiquidazione>\n')
+        # DATA
+        f_invoice.write('   </StatoLiquidazione>\n')
+       
+        f_invoice.write('  </IscrizioneREA>\n')
+        
+        # ---------------------------------------------------------------------
+        # NOT MANDATORY:
+        # 1.2.5
+        #f_invoice.write('  <Contatti>\n')
+        
+        # 1.2.5.1
+        #f_invoice.write('   <Telefono>\n')
+        # DATA
+        #f_invoice.write('   </Telefono>\n')
+
+        # 1.2.5.2
+        #f_invoice.write('   <Fax>\n')
+        # DATA
+        #f_invoice.write('   </Fax>\n')
+
+        # 1.2.5.2
+        #f_invoice.write('   <Email>\n')
+        # DATA
+        #f_invoice.write('   </Email>\n')
+
+        #f_invoice.write('  </Contatti>\n')
+        # ---------------------------------------------------------------------
+        
+        # ---------------------------------------------------------------------
+        # NOT MANDATORY:
+        # 1.2.6 RiferimentoAmministrazione
+        
+        # ---------------------------------------------------------------------
+        # NOT MANDATORY:
+        # 1.3 RappresentanteFiscale
+        # 1.3.1 DatiAnagrafici
+        # 1.3.1.1 IdFiscaleIVA
+        # 1.3.1.1.1 IdPaese
+        # 1.3.1.1.2 Idcodice
+        # 1.3.1.2 CodiceFiscale
+        # 1.3.1.3 Anagrafica
+        # 1.3.1.3.1 Denominazione
+        # 1.3.1.3.2 Nome
+        # 1.3.1.3.3 Cognome
+        # 1.3.1.3.4 Titolo
+        # 1.3.1.3.5 CodEORI
+
         f_invoice.write(' </CedentePrestatore>\n')
         
-        f_invoice.write('</FatturaElettronicaHeader>\n')
+        # 1.4
+        f_invoice.write(' <CessionarioCommittente>\n')
 
+        # 1.4.1
+        f_invoice.write('  <DatiAnagrafici>\n')
+
+        # 1.4.1.1
+        f_invoice.write('   <IdFiscaleIVA>\n')
+        
+        # 1.4.1.1.1
+        f_invoice.write('    <IdPaese>\n')
+        # DATI
+        f_invoice.write('    </IdPaese>\n')
+
+        # 1.4.1.1.2
+        f_invoice.write('    <IdCodice>\n')
+        # DATI
+        f_invoice.write('    </IdCodice>\n')
+        
+        f_invoice.write('   </IdFiscaleIVA>\n')
+
+        # 1.4.1.2
+        f_invoice.write('   <CodiceFiscale>\n')
+        # DATA        
+        f_invoice.write('   </CodiceFiscale>\n')
+
+        # 1.4.1.3
+        f_invoice.write('   <Anagrafica>\n')
+        
+        # ---------------------------------------------------------------------
+        # 1.4.1.3.1 (alternative 1.2.1.3.2   1.2.1.3.3
+        f_invoice.write('    <Denominazione>\n')
+        # DATI
+        f_invoice.write('    </Denominazione>\n')
+        
+        # ---------------------------------------------------------------------
+        # 1.4.3.1.2 (altenative 1.2.1.3.1)
+        f_invoice.write('    <Nome>\n')
+        # DATI
+        f_invoice.write('    </Nome>\n')
+        # 1.4.3.1.3 (altenative 1.2.1.3.3)
+        f_invoice.write('    <Cognome>\n')
+        # DATI
+        f_invoice.write('    </Cognome>\n')
+
+        # 1.4.3.1.4
+        #f_invoice.write('    <Titolo>\n')
+        # DATI
+        #f_invoice.write('    </Titolo>\n')
+        
+        # 1.4.3.1.5
+        #f_invoice.write('    <CodEORI>\n')
+        # DATI
+        #f_invoice.write('    </CodEORI>\n')
+
+        f_invoice.write('   </Anagrafica>\n')
+
+        # ---------------------------------------------------------------------
+        # 1.4.2
+        f_invoice.write('  <Sede>\n')
+        
+        # 1.4.2.1
+        f_invoice.write('   <Indirizzo>\n')
+        # DATA
+        f_invoice.write('   </Indirizzo>\n')
+
+        # 1.4.2.2
+        f_invoice.write('   <NumeroCivico>\n')
+        # DATA
+        f_invoice.write('   </NumeroCivico>\n')
+
+        # 1.4.2.3
+        f_invoice.write('   <CAP>\n')
+        # DATA
+        f_invoice.write('   </CAP>\n')
+
+        # 1.4.2.4
+        f_invoice.write('   <Comune>\n')
+        # DATA
+        f_invoice.write('   </Comune>\n')
+
+        # 1.4.2.5
+        f_invoice.write('   <Provincia>\n')
+        # DATA
+        f_invoice.write('   </Provincia>\n')
+
+        # 1.4.2.6
+        f_invoice.write('   <Nazione>\n')
+        # DATA
+        f_invoice.write('   </Nazione>\n')
+
+        f_invoice.write('  </Sede>\n')
+
+        # ---------------------------------------------------------------------
+        # IF PRESENT:
+        # 1.4.3
+        f_invoice.write('  <StabileOrganizzazione>\n')
+        
+        # 1.4.3.1
+        f_invoice.write('   <Indirizzo>\n')
+        # DATA
+        f_invoice.write('   </Indirizzo>\n')
+
+        # 1.4.3.2
+        f_invoice.write('   <NumeroCivico>\n')
+        # DATA
+        f_invoice.write('   </NumeroCivico>\n')
+
+        # 1.4.3.3
+        f_invoice.write('   <CAP>\n')
+        # DATA
+        f_invoice.write('   </CAP>\n')
+
+        # 1.4.3.4
+        f_invoice.write('   <Comune>\n')
+        # DATA
+        f_invoice.write('   </Comune>\n')
+
+        # 1.4.3.5
+        f_invoice.write('   <Provincia>\n')
+        # DATA
+        f_invoice.write('   </Provincia>\n')
+
+        # 1.4.3.6
+        f_invoice.write('   <Nazione>\n')
+        # DATA
+        f_invoice.write('   </Nazione>\n')
+
+        f_invoice.write('  </StabileOrganizzazione>\n')
+        # ---------------------------------------------------------------------
+
+        # NOT MANDATORY:
+        # 1.4.4 RappresentanteFiscale
+        # 1.4.4.1 IdFiscaleIVA
+        # 1.4.4.1.1 IdPaese
+        # 1.4.4.1.2 IdCodice
+        # 1.4.4.2 Denominazione
+        # 1.4.4.3 Nome
+        # 1.4.4.4 Cognome
+
+        f_invoice.write('  </DatiAnagrafici>\n')
+        f_invoice.write(' </CessionarioCommittente>\n')
+
+        # NOT MANDATORY:
+        # 1.5 TerzoIntermediarioOSoggettoEmittente
+        # 1.5.1 DatiAnagrafici
+        # 1.5.1.1 IdFiscaleIVA
+        # 1.5.1.1.1 IdPaese
+        # 1.5.1.1.2 IdCodice
+        # 1.5.1.2 CodiceFiscale
+        # 1.5.1.3 Anagrafica
+        # 1.5.1.3.1 Denominazione
+        # 1.5.1.3.2 Nome
+        # 1.5.1.3.3 Cognome
+        # 1.5.1.3.4 Titolo
+        # 1.5.1.3.5 CodEORI
+
+        # NOT MANDATORY:
+        # 1.6 SoggettoEmittente
+        
+        f_invoice.write('</FatturaElettronicaHeader>\n')
+        # ---------------------------------------------------------------------
+
+        # ---------------------------------------------------------------------
+        #                                BODY:
+        # ---------------------------------------------------------------------
+        # 2.
         f_invoice.write('<FatturaElettronicaBody>\n')
         
+        # 2.1
         f_invoice.write(' <DatiGenerali>\n')
+        
+        
         f_invoice.write(' </DatiGenerali>\n')
 
         # ---------------------------------------------------------------------

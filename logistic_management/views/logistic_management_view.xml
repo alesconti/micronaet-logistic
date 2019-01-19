@@ -457,9 +457,30 @@
                  </tree>
              </field>
          </record>
+         <record model="ir.ui.view" id="view_sale_order_line_search">
+             <field name="name">sale.order.line.search</field>
+             <field name="model">sale.order.line</field>
+             <field name="arch" type="xml">
+                 <search string="Sale order filter">
+                     <field name="name" />
+                     
+                     <field name="product_id" domain="[('product_id.product_tmpl_id.default_code', 'ilike', self)]" />
+                     <field name="order_id" filter_domain="[('order_id','=',self)]"/>            
+                     <!--<field name="order_logistic_state" filter_domain="[('order_id.logistic_state','=',self)]"/>-->
+
+                     <group expand="0" string="Group By...">
+                         <filter name="group_order" string="Order" context="{'group_by': 'order_id'}"/>
+                         <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
+                         <filter name="group_logistic" string="Logistic" context="{'group_by': 'logistic_state'}"/>
+                         <filter name="group_mrp" string="MRP" context="{'group_by': 'mrp_state'}"/>
+                     </group>
+                 </search>
+             </field>
+         </record>
          <record model="ir.ui.view" id="view_sale_order_line_mrp_search">
              <field name="name">sale.order.line.search</field>
              <field name="model">sale.order.line</field>
+             <field name="priority" eval="40" />
              <field name="arch" type="xml">
                  <search string="Lavoration sale">
                      <field name="name" />
@@ -632,6 +653,7 @@
              <field name="view_type">form</field>
              <field name="view_mode">tree,form</field>
              <field name="view_id" ref="view_sale_order_line_logistic_tree"/>
+             <field name="search_view_id" ref="view_sale_order_line_search"/>
              <field name="context">{'form_view_ref': 'logistic_management.view_sale_order_line_logistic_form'}</field>
              <field name="domain">[]</field>
          </record>
