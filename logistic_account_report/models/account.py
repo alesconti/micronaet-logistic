@@ -539,9 +539,379 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
         # 2.1
         f_invoice.write(' <DatiGenerali>\n')
         
+        # 2.1.1
+        f_invoice.write('  <DatiGeneraliDocumento>\n')
+
+        # 2.1.1.1
+        f_invoice.write('   <TipoDocumento>\n')
+        # DATA
+        f_invoice.write('   </TipoDocumento>\n')
+
+        # 2.1.1.2
+        f_invoice.write('   <Divisa>\n')
+        # DATA
+        f_invoice.write('   </Divisa>\n')
+
+        # 2.1.1.3
+        f_invoice.write('   <Data>\n')
+        # DATA
+        f_invoice.write('   </Data>\n')
+
+        # 2.1.1.4
+        f_invoice.write('   <Numero>\n')
+        # DATA
+        f_invoice.write('   </Numero>\n')
+
+        # 2.1.1.5
+        #f_invoice.write('   <DatiRitenuta>\n')
+        # 2.1.1.5.1 TipoRitenuta
+        # 2.1.1.5.1 ImportoRitenuta
+        # 2.1.1.5.1 AliquotaRitenuta
+        # 2.1.1.5.1 CausaleRitenuta
+        #f_invoice.write('   </DatiRitenuta>\n')
+
+        # 2.1.1.6
+        f_invoice.write('   <DatiBollo>\n')        
+        
+        # 2.1.1.6.1 
+        f_invoice.write('    <BolloVirtuale>\n')        
+        # DATA
+        f_invoice.write('    </BolloVirtuale>\n')        
+
+        # 2.1.1.6.2
+        f_invoice.write('    <ImportoBollo>\n')        
+        # DATA
+        f_invoice.write('    </ImportoBollo>\n')        
+
+        f_invoice.write('   </DatiBollo>\n')
+
+        # 2.1.1.7 DatiCassaPrevidenziale
+        # 2.1.1.7.1 TipoCassa
+        # 2.1.1.7.2 AlCassa
+        # 2.1.1.7.3 ImportoContributoCassa
+        # 2.1.1.7.4 ImponibileCassa
+        # 2.1.1.7.5 AliquotaIVA
+        # 2.1.1.7.6 Ritenuta
+        # 2.1.1.7.7 Natura
+        # 2.1.1.7.8 RiferimentoAmministrazione
+
+        # ---------------------------------------------------------------------
+        # TEST: Abbuoni attivi / passivi:
+        # 2.1.1.8
+        f_invoice.write('   <ScontoMaggiorazione>\n')        
+        
+        # 2.1.1.8.1 
+        f_invoice.write('    <Tipo>\n')        
+        # DATA
+        f_invoice.write('    </Tipo>\n')        
+
+        # ---------------------------------------------------------------------
+        # 2.1.1.8.2     >>> Alternative 2.1.1.8.3
+        f_invoice.write('    <Percentuale>\n')        
+        # DATA
+        f_invoice.write('    </Percentuale>\n')        
+
+        # ---------------------------------------------------------------------
+        # 2.1.1.8.3     >>> Alternative 2.1.1.8.2
+        f_invoice.write('    <Importo>\n')        
+        # DATA
+        f_invoice.write('    </Importo>\n')        
+
+        f_invoice.write('   </ScontoMaggiorazione>\n')        
+        
+        # 2.1.1.9
+        f_invoice.write('   <ImportoTotaleDocumento>\n')        
+        f_invoice.write('   </ImportoTotaleDocumento>\n')        
+        
+        # 2.1.1.10
+        f_invoice.write('   <Arrotondamento>\n')        
+        f_invoice.write('   </Arrotondamento>\n')        
+
+        # 2.1.1.11
+        f_invoice.write('   <Causale>\n')        
+        f_invoice.write('   </Causale>\n')        
+
+        # 2.1.1.12
+        f_invoice.write('   <Art73>\n')        
+        # DATA
+        f_invoice.write('   </Art73>\n')        
+        
+        f_invoice.write('  </DatiGeneraliDocumento>\n')
+        
+        # 2.1.2
+        f_invoice.write('  <DatiOrdineAcquisto>\n')
+        
+        # 2.1.2.1 
+        f_invoice.write('   <RiferimentoNumeroLinea>\n')
+        # DATA
+        f_invoice.write('   </RiferimentoNumeroLinea>\n')
+
+        # 2.1.2.2
+        f_invoice.write('   <IdDocumento>\n')
+        # DATA
+        f_invoice.write('   </IdDocumento>\n')
+
+        # 2.1.2.3 
+        f_invoice.write('   <Data>\n')
+        # DATA
+        f_invoice.write('   </Data>\n')
+
+        # 2.1.2.4 
+        f_invoice.write('   <NumItem>\n')
+        # DATA
+        f_invoice.write('   </NumItem>\n')
+
+        # 2.1.2.5 
+        f_invoice.write('   <CodiceCommessaConvenzione>\n')
+        # DATA
+        f_invoice.write('   </CodiceCommessaConvenzione>\n')
+
+        # NOT MANDATORI: PA only:
+        # 2.1.2.6 
+        #f_invoice.write('   <CodiceCUP>\n')
+        # DATA
+        #f_invoice.write('   </CodiceCUP>\n')
+        # 2.1.2.7 
+        #f_invoice.write('   <CodiceCIG>\n')
+        # DATA
+        #f_invoice.write('   </CodiceCIG>\n')
+ 
+        f_invoice.write('  </DatiOrdineAcquisto>\n')
+
+        # 2.1.3
+        f_invoice.write('   <DatiContratto>\n')
+        # DATA
+        f_invoice.write('   </DatiContratto>\n')
+
+        # 2.1.4
+        f_invoice.write('   <DatiConvenzione>\n')
+        # DATA
+        f_invoice.write('   </DatiConvenzione>\n')
+
+        # 2.1.5
+        f_invoice.write('   <DatiRicezione>\n')
+        # DATA
+        f_invoice.write('   </DatiRicezione>\n')
+
+        # 2.1.6
+        f_invoice.write('   <DatiFattureCollegate>\n')
+        # DATA
+        f_invoice.write('   </DatiFattureCollegate>\n')
+
+        # 2.1.7
+        f_invoice.write('   <DatiSAL>\n')
+        
+        # 2.1.7.1
+        f_invoice.write('    <RiferimenntoFase>\n')
+        # DATA 
+        f_invoice.write('    </RiferimenntoFase>\n')
+        
+        f_invoice.write('   </DatiSAL>\n')
+
+        # 2.1.8
+        f_invoice.write('   <DatiDDT>\n')
+        
+        # 2.1.8.1 
+        f_invoice.write('    <NumeroDDT>\n')
+        # DATA
+        f_invoice.write('    </NumeroDDT>\n')
+                    
+        # 2.1.8.2
+        f_invoice.write('    <DataDDT>\n')
+        # DATA                    
+        f_invoice.write('    </DataDDT>\n')
+
+        # 2.1.8.3
+        f_invoice.write('    <RiferimentoNumeroLinea>\n')
+        # DATA                    
+        f_invoice.write('    </RiferimentoNumeroLinea>\n')
+        
+        f_invoice.write('   </DatiDDT>\n')
+
+        # 2.1.9
+        f_invoice.write('   <DatiTrasporto>\n')
+        
+        # 2.1.9.1
+        f_invoice.write('    <DatiAnagraficiVettore>\n')
+
+        # 2.1.9.1.1
+        f_invoice.write('    <IdFiscaleIVA>\n')
+        
+        # 2.1.9.1.1.1
+        f_invoice.write('     <IdPaese>\n')
+        # DATI
+        f_invoice.write('     </IdPaese>\n')
+
+        # 2.1.9.1.1.2
+        f_invoice.write('     <IdCodice>\n')
+        # DATI
+        f_invoice.write('     </IdCodice>\n')
+        
+        f_invoice.write('    </IdFiscaleIVA>\n')
+
+        # 2.1.9.1.2
+        f_invoice.write('    <CodiceFiscale>\n')
+        # DATA        
+        f_invoice.write('    </CodiceFiscale>\n')
+
+        # 2.1.9.1.3
+        f_invoice.write('    <Anagrafica>\n')
+        
+        # ---------------------------------------------------------------------
+        # 2.1.9.1.3.1 (alternative 2.1.9.1.3.2    2.1.9.1.3.3
+        f_invoice.write('     <Denominazione>\n')
+        # DATI
+        f_invoice.write('     </Denominazione>\n')
+        
+        # ---------------------------------------------------------------------
+        # 2.1.9.1.3.2 (altenative 2.1.9.1.3.1)
+        f_invoice.write('     <Nome>\n')
+        # DATI
+        f_invoice.write('     </Nome>\n')
+        # 2.1.9.1.3.3 (altenative 1.2.1.3.3)
+        f_invoice.write('     <Cognome>\n')
+        # DATI
+        f_invoice.write('     </Cognome>\n')
+
+        # 2.1.9.1.3.4
+        #f_invoice.write('     <Titolo>\n')
+        # DATI
+        #f_invoice.write('     </Titolo>\n')
+        
+        # 2.1.9.1.3.5
+        #f_invoice.write('     <CodEORI>\n')
+        # DATI
+        #f_invoice.write('     </CodEORI>\n')
+
+        # 2.1.9.1.4
+        #f_invoice.write('    <NumeroLicenzaGuida>\n')
+        # DATA        
+        #f_invoice.write('    </NumeroLicenzaGuida>\n')
+
+        f_invoice.write('    </Anagrafica>\n')
+
+        f_invoice.write('    </DatiAnagraficiVettore>\n')
+
+        # 2.1.9.2
+        f_invoice.write('    <MezzoTrasporto>\n')
+        # DATA
+        f_invoice.write('    </MezzoTrasporto>\n')
+
+        # 2.1.9.3
+        f_invoice.write('    <CausaleTrasporto>\n')
+        # DATA
+        f_invoice.write('    </CausaleTrasporto>\n')
+
+        # 2.1.9.4
+        f_invoice.write('    <NumeroColli>\n')
+        # DATA
+        f_invoice.write('    </NumeroColli>\n')
+
+        # 2.1.9.5
+        f_invoice.write('    <Descrizione>\n')
+        # DATA
+        f_invoice.write('    </Descrizione>\n')
+
+        # 2.1.9.6
+        f_invoice.write('    <UnitaMisuraPeso>\n')
+        # DATA
+        f_invoice.write('    </UnitaMisuraPeso>\n')
+
+        # 2.1.9.7
+        f_invoice.write('    <PesoLordo>\n')
+        # DATA
+        f_invoice.write('    </PesoLordo>\n')
+
+        # 2.1.9.8
+        f_invoice.write('    <PesoNetto>\n')
+        # DATA
+        f_invoice.write('    </PesoNetto>\n')
+
+        # 2.1.9.9
+        f_invoice.write('    <DataOraRitiro>\n')
+        # DATA
+        f_invoice.write('    </DataOraRitiro>\n')
+
+        # 2.1.9.10
+        f_invoice.write('    <DataInizioTrasporto>\n')
+        # DATA
+        f_invoice.write('    </DataInizioTrasporto>\n')
+
+        # 2.1.9.11
+        f_invoice.write('    <TipoResa>\n')
+        # DATA
+        f_invoice.write('    </TipoResa>\n')
+
+        # ---------------------------------------------------------------------
+        # 2.1.9.12
+        f_invoice.write('   <IndirizzoResa>\n')
+        
+        # 2.1.9.12.1
+        f_invoice.write('    <Indirizzo>\n')
+        # DATA
+        f_invoice.write('    </Indirizzo>\n')
+
+        # 2.1.9.12.2
+        f_invoice.write('    <NumeroCivico>\n')
+        # DATA
+        f_invoice.write('    </NumeroCivico>\n')
+
+        # 2.1.9.12.3
+        f_invoice.write('    <CAP>\n')
+        # DATA
+        f_invoice.write('    </CAP>\n')
+
+        # 2.1.9.12.4
+        f_invoice.write('    <Comune>\n')
+        # DATA
+        f_invoice.write('    </Comune>\n')
+
+        # 2.1.9.12.5
+        f_invoice.write('    <Provincia>\n')
+        # DATA
+        f_invoice.write('    </Provincia>\n')
+
+        # 2.1.9.12.6
+        f_invoice.write('    <Nazione>\n')
+        # DATA
+        f_invoice.write('    </Nazione>\n')
+                
+        f_invoice.write('   </IndirizzoResa>\n')
+        # ---------------------------------------------------------------------
+
+        # 2.1.9.13
+        f_invoice.write('    <DataOraConsegna>\n')
+        # DATA
+        f_invoice.write('    </DataOraConsegna>\n')
+
+        f_invoice.write('   </DatiTrasporto>\n')
+
+        # ---------------------------------------------------------------------
+        # NOT MANADATORY: Agevolazione trasportatore:
+        # 2.1.10
+        f_invoice.write('   <FatturaPrincipale>\n')        
+        
+        # 2.1.10.1
+        f_invoice.write('    <NumeroFatturaPrincipale>\n')        
+        # DATA
+        f_invoice.write('    </NumeroFatturaPrincipale>\n')
+
+        # 2.1.10.2
+        f_invoice.write('    <DataFatturaPrincipale>\n')        
+        # DATA
+        f_invoice.write('    </DataFatturaPrincipale>\n')
+
+        f_invoice.write('   </FatturaPrincipale>\n')
+        # ---------------------------------------------------------------------
         
         f_invoice.write(' </DatiGenerali>\n')
 
+        # 2.2
+        f_invoice.write(' <DatiBeniServizi>\n')
+        
+        
+        
+        f_invoice.write(' </DatiBeniServizi>\n')
 
         f_invoice.write('</FatturaElettronicaBody>\n')
         f_invoice.write('</p:FatturaElettronica>\n')
