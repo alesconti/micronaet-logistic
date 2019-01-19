@@ -542,14 +542,10 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
         
         f_invoice.write(' </DatiGenerali>\n')
 
-        # ---------------------------------------------------------------------
-        # Body part:
-        # ---------------------------------------------------------------------
-        #for line in self.order_lines:
-        #    pass
+
         f_invoice.write('</FatturaElettronicaBody>\n')
         f_invoice.write('</p:FatturaElettronica>\n')
-        
+
         f_invoice.close()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
