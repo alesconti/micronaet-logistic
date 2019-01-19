@@ -1700,7 +1700,6 @@ class SaleOrderLine(models.Model):
 
         # This fix a bug because stock status don't update immediately
         quant_used = {} # product quant used during process
-        # product_qty_available = {} # Managa as start q - quants used
         
         order_touched_ids = [] # For end operation (dropship, default suppl.)
         for line in sorted_line:
@@ -1739,14 +1738,6 @@ class SaleOrderLine(models.Model):
             state = False # Used for check if used some pool product
             
             for used_product in product_list: # p.p similar
-                # New procedure:
-                #if used_product in product_qty_available:                
-                #    stock_qty = product_qty_available[used_product]
-                #else:
-                #    stock_qty = used_product.qty_available
-                #    product_qty_available[used_product] = stock_qty # startup
-                
-                # 
                 # XXX Remove used qty during assign process:
                 # TODO problem if qty_qvailable dont update with quants created
                 stock_qty = used_product.qty_available - \
@@ -1783,10 +1774,10 @@ class SaleOrderLine(models.Model):
                     # ---------------------------------------------------------
                     # Save used stock for next elements:
                     # ---------------------------------------------------------
-                    if product not in quant_used:
-                        quant_used[product] = assign_quantity
+                    if used_product not in quant_used:
+                        quant_used[used_product] = assign_quantity
                     else:    
-                        quant_used[product] += assign_quantity
+                        quant_used[used_product] += assign_quantity
                     
                     # Update line if quant created                
                     update_db[line] = {
