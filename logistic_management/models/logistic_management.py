@@ -1399,7 +1399,7 @@ class SaleOrder(models.Model):
         selected_ids = []
         for order in orders:    
             selected_ids.append(order.id)
-            # A. Generate subelements from kit:
+            # A. Generate sub-elements from kit:
             order.explode_kit_in_order_line()
 
             # C. Became real order:
@@ -1445,11 +1445,16 @@ class SaleOrder(models.Model):
         orders = self.search([
             ('logistic_state', '=', 'ready'),
             ])
+        verbose_order = len(orders)    
             
         #ddt_list = []
         #invoice_list = []    
         picking_ids = [] # return value
+        i = 0
         for order in orders:
+            i += 1
+            _logger.warning('Order %s / %s'  % (i, verbose_order))
+
             # Create picking document:
             partner = order.partner_id
             name = order.name # same as order_ref
@@ -1472,14 +1477,23 @@ class SaleOrder(models.Model):
                 
             for line in order.order_line:
                 product = line.product_id
-                product_qty = line.logistic_undelivered_qty
+                
+                # -------------------------------------------------------------
+                # Speed up (check if yet delivered):
+                # -------------------------------------------------------------
+                # TODO check if there's another cases: service, kit, etc. 
+                if line.delivered_line_ids:
+                    product_qty = line.logistic_undelivered_qty
+                else:
+                    product_qty = line.product_uom_qty
                 
                 # Update line status:
                 line.write({'logistic_state': 'done', })
+                # -------------------------------------------------------------
 
-                # ---------------------------------------------------------
+                # -------------------------------------------------------------
                 # Create movement (not load stock):
-                # ---------------------------------------------------------
+                # -------------------------------------------------------------
                 # TODO Check kit!!
                 move_pool.create({
                     'company_id': company.id,
@@ -1735,8 +1749,7 @@ class SaleOrderLine(models.Model):
             # -----------------------------------------------------------------
             # Use stock to cover order:
             # -----------------------------------------------------------------
-            state = False # Used for check if used some pool product
-            
+            state = False # Used for check if used some pool product            
             for used_product in product_list: # p.p similar
                 # XXX Remove used qty during assign process:
                 # TODO problem if qty_qvailable dont update with quants created
@@ -1774,10 +1787,10 @@ class SaleOrderLine(models.Model):
                     # ---------------------------------------------------------
                     # Save used stock for next elements:
                     # ---------------------------------------------------------
-                    if used_product not in quant_used:
-                        quant_used[used_product] = assign_quantity
-                    else:    
+                    if used_product in quant_used:
                         quant_used[used_product] += assign_quantity
+                    else:    
+                        quant_used[used_product] = assign_quantity
                     
                     # Update line if quant created                
                     update_db[line] = {
@@ -1803,13 +1816,13 @@ class SaleOrderLine(models.Model):
             # -----------------------------------------------------------------
             # No stock passed in uncovered state:
             # -----------------------------------------------------------------
-            if line not in update_db: 
+            if line not in update_db:
                 update_db[line] = {
                     'logistic_state': 'uncovered',
                     }
 
         # ---------------------------------------------------------------------
-        # Update sale line status:
+        # Update sale line state:
         # ---------------------------------------------------------------------
         selected_ids = [] # ID, to return view list
         selected_order = [] # Obj, to update master order status
@@ -1818,6 +1831,39 @@ class SaleOrderLine(models.Model):
             selected_ids.append(line.id)
             if line.order_id not in selected_order:
                 selected_order.append(line.order_id)                
+
+        # ---------------------------------------------------------------------
+        #                          PARTICULAR CASES:
+        # ---------------------------------------------------------------------
+        # Note: Work only if start this procedure with data!
+        pending_draft = self.search([
+            ('order_id.logistic_state', '=', 'pending'),
+            ('logistic_state', '=', 'draft'),
+            ])
+        if pending_draft:    
+            _logger.error(
+                'Pending order with draft movements: %s' % len(pending_draft))
+            for line in pending_draft:    
+                product = line.product_id
+
+                # A. Kit must be unused state not draft:
+                if product.is_kit:
+                    line.logistic_state = 'unused'
+
+                # B. Service must be ready (not kit)
+                elif product.type == 'service':
+                    line.logistic_state = 'ready'
+                
+                # C. Covered with stock: TODO     
+
+                # END: Add this order to the check state order:
+                if line.order_id not in selected_order:
+                    selected_order.append(line.order_id)                
+        
+        # Note: Particular cases for line with standard procedure will be 
+        #       updata also order logistic state (see after):        
+        # ---------------------------------------------------------------------
+
 
         # ---------------------------------------------------------------------
         # Update order to ready / pending status:
@@ -1847,13 +1893,12 @@ class SaleOrderLine(models.Model):
         # Dropshipping # TODO spostare da qui altrimenti crea l'ordine acquisto
         #sale_order.check_dropshipping_order(order_touched_ids)    
         # TODO Mettere prima dell'assegnamento magazzino ed eventualmente n
-        # non fare quello!!!!!!!!    
+        # non fare quello!!!!!!!!
         
         # Default supplier
         _logger.warning('Assign default supplier for order')
         sale_pool.mark_default_supplier_order(order_touched_ids)        
 
-            
         # Return view:
         return self.return_order_line_list_view(selected_ids)
     
@@ -2014,8 +2059,8 @@ class SaleOrderLine(models.Model):
     #                            COMPUTE FIELDS FUNCTION:
     # -------------------------------------------------------------------------
     @api.multi
-    @api.depends('assigned_line_ids', 'purchase_line_ids', 'load_line_ids',
-        'delivered_line_ids', 'mrp_state')
+    #@api.depends('assigned_line_ids', 'purchase_line_ids', 'load_line_ids',
+    #    'delivered_line_ids', 'mrp_state')
     def _get_logistic_status_field(self):
         ''' Manage all data for logistic situation in sale order:
         '''
