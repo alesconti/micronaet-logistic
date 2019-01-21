@@ -38,6 +38,11 @@ class StockChangeStandardPrice(models.TransientModel):
     # -------------------------------------------------------------------------
     #                               BUTTON EVENT:    
     # -------------------------------------------------------------------------    
+    limit = fields.Integer('Limit', default=10)
+
+    # -------------------------------------------------------------------------
+    #                               BUTTON EVENT:    
+    # -------------------------------------------------------------------------    
     # Order phase:
     @api.multi
     def confirm_payment(self):
@@ -104,7 +109,7 @@ class StockChangeStandardPrice(models.TransientModel):
         
         # Create draft document:
         order_pool = self.env['sale.order']
-        order_pool.workflow_ready_to_done_draft_picking()
+        order_pool.workflow_ready_to_done_draft_picking(self.limit)
 
     @api.multi
     def closed_delivered(self):

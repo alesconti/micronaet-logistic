@@ -35,7 +35,8 @@
                       </group>    
                       
                       <group colspan="4" col="2">
-                          <separator string="F. Generate picking out document (and confirm):"/>
+                          <separator string="F. Generate picking out document (and confirm):" colspan="4"/>
+                          <field name="limit" />
                           <button name="generate_delivery" string="Generate _Delivery" type="object" class="btn-primary" />
                       </group>                          
                       <!--<group colspan="4" col="2">

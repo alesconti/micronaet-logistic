@@ -1419,7 +1419,7 @@ class SaleOrder(models.Model):
     # B. Logistic delivery phase: ready > done
     # -------------------------------------------------------------------------
     @api.model
-    def workflow_ready_to_done_draft_picking(self):
+    def workflow_ready_to_done_draft_picking(self, limit=False):
         ''' Confirm payment order (before expand kit)
         '''
         now = fields.Datetime.now()
@@ -1442,9 +1442,16 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Select order to prepare:
         # ---------------------------------------------------------------------
-        orders = self.search([
-            ('logistic_state', '=', 'ready'),
-            ])
+        if limit:
+            _logger.warning('Limited export: %s' % limit)            
+            orders = self.search([
+                ('logistic_state', '=', 'ready'),
+                ], limit=limit)
+        else:        
+            orders = self.search([
+                ('logistic_state', '=', 'ready'),
+                ])
+                
         verbose_order = len(orders)    
             
         #ddt_list = []
