@@ -158,9 +158,7 @@ class SaleOrderStatusExtractWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         # Save file:
         # ---------------------------------------------------------------------
-        filename = os.path.expanduser('~/status_report.xlsx')
-        excel_pool.save_file_as(filename)
-        return True
+        return excel_pool.return_attachment('Stato_righe_ordini')
 
     # -------------------------------------------------------------------------
     #                             COLUMNS DATA: 
