@@ -1453,7 +1453,8 @@ class SaleOrder(models.Model):
         i = 0
         for order in orders:
             i += 1
-            _logger.warning('Order %s / %s'  % (i, verbose_order))
+            _logger.warning('Generate pick out from order: %s / %s'  % (
+                i, verbose_order))
 
             # Create picking document:
             partner = order.partner_id
@@ -1478,7 +1479,7 @@ class SaleOrder(models.Model):
             for line in order.order_line:
                 product = line.product_id
                 
-                # -------------------------------------------------------------
+                # =============================================================
                 # Speed up (check if yet delivered):
                 # -------------------------------------------------------------
                 # TODO check if there's another cases: service, kit, etc. 
@@ -1489,7 +1490,7 @@ class SaleOrder(models.Model):
                 
                 # Update line status:
                 line.write({'logistic_state': 'done', })
-                # -------------------------------------------------------------
+                # =============================================================
 
                 # -------------------------------------------------------------
                 # Create movement (not load stock):
