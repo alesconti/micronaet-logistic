@@ -908,10 +908,275 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
 
         # 2.2
         f_invoice.write(' <DatiBeniServizi>\n')
+
+        # 2.2.1
+        f_invoice.write('  <DettaglioLinee>\n')
+
+        # 2.2.1.1
+        f_invoice.write('   <NumeroLinea>\n')
+        f_invoice.write('   </NumeroLinea>\n')
+
+        # 2.2.1.2 # Solo se SC PR AB AC (spesa accessoria)
+        #f_invoice.write('   <TipoCessionePrestazione>\n')
+        #f_invoice.write('   </TipoCessionePrestazione>\n')
+
+        # 2.2.1.3
+        f_invoice.write('   <CodiceArticolo>\n')
+
+        # 2.2.1.3.1 # PROPRIETARIO EAN TARIC SSC
+        f_invoice.write('    <CodiceTipo>\n')
+        f_invoice.write('    </CodiceTipo>\n')
+
+        # 2.2.1.3.2 # come da punto precedente
+        f_invoice.write('    <CodiceValore>\n')
+        f_invoice.write('    </CodiceValore>\n')
+
+        f_invoice.write('   </CodiceArticolo>\n')
+
+        # 2.2.1.4
+        f_invoice.write('   <Descrizione>\n')
+        f_invoice.write('   </Descrizione>\n')
+
+        # 2.2.1.5
+        f_invoice.write('   <Quantita>\n')
+        f_invoice.write('   </Quantita>\n')
+
+        # 2.2.1.6
+        f_invoice.write('   <UnitaMisura>\n')
+        f_invoice.write('   </UnitaMisura>\n')
+
+        # 2.2.1.7 # Per Servizi
+        f_invoice.write('   <DataInizioPeriodo>\n')
+        f_invoice.write('   </DataInizioPeriodo>\n')
+
+        # 2.2.1.8 # Per Servizi
+        f_invoice.write('   <DataFinePeriodo>\n')
+        f_invoice.write('   </DataFinePeriodo>\n')
+
+        # 2.2.1.9 # Anche negativo # Vedi 2.2.1.2
+        f_invoice.write('   <PrezzoUnitario>\n')
+        f_invoice.write('   </PrezzoUnitario>\n')
+
+        # 2.2.1.10
+        f_invoice.write('   <ScontoMaggiorazione>\n')
+
+        # 2.2.1.10.1 # SC o MG
+        f_invoice.write('    <Tipo>\n')
+        f_invoice.write('    </Tipo>\n')
+
+        # 2.2.1.10.2 # Alternativo a 2.2.1.10.3
+        f_invoice.write('    <Percentuale>\n')
+        f_invoice.write('    </Percentuale>\n')
+
+        # 2.2.1.10.3 # Alternativo a 2.2.1.10.2
+        f_invoice.write('    <Importo>\n')
+        f_invoice.write('    </Importo>\n')
+
+        f_invoice.write('   </ScontoMaggiorazione>\n')
+
+        # 2.2.1.11
+        f_invoice.write('   <PrezzoTotale>\n')
+        f_invoice.write('   </PrezzoTotale>\n')
+
+        # 2.2.1.12
+        f_invoice.write('   <AliquotaIVA>\n')
+        f_invoice.write('   </AliquotaIVA>\n')
+
+        # 2.2.1.13
+        f_invoice.write('   <Ritenuta>\n')
+        f_invoice.write('   </Ritenuta>\n')
+
+        # 2.2.1.14
+        f_invoice.write('   <Natura>\n')
+        f_invoice.write('   </Natura>\n')
+
+        # 2.2.1.15
+        f_invoice.write('   <RiferimentoAmministrazione>\n')
+        f_invoice.write('   </RiferimentoAmministrazione>\n')
+
+        # 2.2.1.16
+        f_invoice.write('   <AltriDatiGestionali>\n')
+
+        # 2.2.1.16.1
+        f_invoice.write('    <TipoDato>\n')
+        f_invoice.write('    </TipoDato>\n')
+
+        # 2.2.1.16.2
+        f_invoice.write('    <RiferimentoTesto>\n')
+        f_invoice.write('    </RiferimentoTesto>\n')
+
+        # 2.2.1.16.3
+        f_invoice.write('    <RiferimentoNumero>\n')
+        f_invoice.write('    </RiferimentoNumero>\n')
+
+        # 2.2.1.16.4
+        f_invoice.write('    <RiferimentoData>\n')
+        f_invoice.write('    </RiferimentoData>\n')
+
+        f_invoice.write('   </AltriDatiGestionali>\n')
         
-        
-        
+        f_invoice.write(' </DettaglioLinee>\n')
+
+        # 2.2.2
+        f_invoice.write('  <DatiRiepilogo>\n')
+
+        # 2.2.2.1
+        f_invoice.write('   <AliquotaIVA>\n')
+        f_invoice.write('   </AliquotaIVA>\n')
+
+        # 2.2.2.2 # Tabella
+        f_invoice.write('   <Natura>\n')
+        f_invoice.write('   </Natura>\n')
+
+        # 2.2.2.3
+        f_invoice.write('   <SpeseAccessorie>\n')
+        f_invoice.write('   </SpeseAccessorie>\n')
+
+        # 2.2.2.4
+        f_invoice.write('   <Arrotondamento>\n')
+        f_invoice.write('   </Arrotondamento>\n')
+
+        # 2.2.2.5
+        f_invoice.write('   <ImponibileImporto>\n')
+        f_invoice.write('   </ImponibileImporto>\n')
+
+        # 2.2.2.6
+        f_invoice.write('   <Imposta>\n')
+        f_invoice.write('   </Imposta>\n')
+
+        # 2.2.2.7
+        f_invoice.write('   <EsigibilitaIVA>\n')
+        f_invoice.write('   </EsigibilitaIVA>\n')
+
+        # 2.2.2.8
+        f_invoice.write('   <RiferimentoNormativo>\n')
+        f_invoice.write('   </RiferimentoNormativo>\n')
+
+        f_invoice.write('  </DatiRiepilogo>\n')
+
         f_invoice.write(' </DatiBeniServizi>\n')
+
+        # 2.4
+        f_invoice.write(' <DatiPagamento>\n')
+
+        # 2.4.1
+        f_invoice.write('  <CondizioniPagamento>\n')
+        f_invoice.write('  </CondizioniPagamento>\n')
+        
+        # 2.4.2
+        f_invoice.write('  <DettaglioPagamento>\n')
+
+        # 2.4.2.1
+        f_invoice.write('   <Beneficiario>\n')
+        f_invoice.write('   </Beneficiario>\n')
+        
+        # 2.4.2.2
+        f_invoice.write('   <ModalitaPagamento>\n')
+        f_invoice.write('   </ModalitaPagamento>\n')
+        
+        # 2.4.2.3
+        f_invoice.write('   <DataRiferimentoTerminiPagamento>\n')
+        f_invoice.write('   </DataRiferimentoTerminiPagamento>\n')
+        
+        # 2.4.2.4
+        f_invoice.write('   <GiorniTerminiPagamento>\n')
+        f_invoice.write('   </GiorniTerminiPagamento>\n')
+        
+        # 2.4.2.5
+        f_invoice.write('   <DataScadenzaPagamento>\n')
+        f_invoice.write('   </DataScadenzaPagamento>\n')
+        
+        # 2.4.2.6
+        f_invoice.write('   <ImportoPagamento>\n')
+        f_invoice.write('   </ImportoPagamento>\n')
+        
+        # 2.4.2.7
+        f_invoice.write('   <CodUfficioPostale>\n')
+        f_invoice.write('   </CodUfficioPostale>\n')
+        
+        # 2.4.2.8
+        f_invoice.write('   <CognomeQuietanzante>\n')
+        f_invoice.write('   </CognomeQuietanzante>\n')
+        
+        # 2.4.2.9
+        f_invoice.write('   <NomeQuietanzante>\n')
+        f_invoice.write('   </NomeQuietanzante>\n')
+        
+        # 2.4.2.10
+        f_invoice.write('   <CFQuietanzante>\n')
+        f_invoice.write('   </CFQuietanzante>\n')
+        
+        # 2.4.2.11
+        f_invoice.write('   <TitoloQuietanzante>\n')
+        f_invoice.write('   </TitoloQuietanzante>\n')
+        
+        # 2.4.2.12
+        f_invoice.write('   <BenefiIstitutoFInanziariociario>\n')
+        f_invoice.write('   </IstitutoFInanziario>\n')
+        
+        # 2.4.2.13
+        f_invoice.write('   <IBAN>\n')
+        f_invoice.write('   </IBAN>\n')
+        
+        # 2.4.2.14
+        f_invoice.write('   <ABI>\n')
+        f_invoice.write('   </ABI>\n')
+        
+        # 2.4.2.15
+        f_invoice.write('   <CAB>\n')
+        f_invoice.write('   </CAB>\n')
+        
+        # 2.4.2.16
+        f_invoice.write('   <BIC>\n')
+        f_invoice.write('   </BIC>\n')
+        
+        # 2.4.2.17
+        f_invoice.write('   <ScontoPagamentoAnticipato>\n')
+        f_invoice.write('   </ScontoPagamentoAnticipato>\n')
+        
+        # 2.4.2.18
+        f_invoice.write('   <DataLimitePagamentoAnticipato>\n')
+        f_invoice.write('   </DataLimitePagamentoAnticipato>\n')
+        
+        # 2.4.2.19
+        f_invoice.write('   <PenalitaPagamentiRitardati>\n')
+        f_invoice.write('   </PenalitaPagamentiRitardati>\n')
+        
+        # 2.4.2.20
+        f_invoice.write('   <DataDecorrenzaPenale>\n')
+        f_invoice.write('   </DataDecorrenzaPenale>\n')
+        
+        # 2.4.2.21
+        f_invoice.write('   <CodicePagamento>\n')
+        f_invoice.write('   </CodicePagamento>\n')
+
+        f_invoice.write('  </DettaglioPagamento>\n')
+        f_invoice.write(' </DatiPagamento>\n')
+
+        # 2.5
+        f_invoice.write(' <Allegati>\n')
+
+        # 2.5.1
+        f_invoice.write('  <NomeAttachment>\n')
+        f_invoice.write('  </NomeAttachment>\n')
+
+        # 2.5.2 # ZIP RAR
+        f_invoice.write('  <AlgoritmoCompressione>\n')
+        f_invoice.write('  </AlgoritmoCompressione>\n')
+
+        # 2.5.3 # TXT XML DOC PDF
+        f_invoice.write('  <FormatoAttachment>\n')
+        f_invoice.write('  </FormatoAttachment>\n')
+
+        # 2.5.4
+        f_invoice.write('  <DescrizioneAttachment>\n')
+        f_invoice.write('  </DescrizioneAttachment>\n')
+
+        # 2.5.5
+        f_invoice.write('  <Attachment>\n')
+        f_invoice.write('  </Attachment>\n')
+
+        f_invoice.write(' </Allegati>\n')
 
         f_invoice.write('</FatturaElettronicaBody>\n')
         f_invoice.write('</p:FatturaElettronica>\n')
