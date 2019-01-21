@@ -34,9 +34,10 @@
                           <button name="update_ready_purchase_check" string="Update ready purchase check" type="object" class="btn-primary" /> -->
                       </group>    
                       
-                      <group colspan="4" col="2">
+                      <group colspan="4" col="4">
                           <separator string="F. Generate picking out document (and confirm):" colspan="4"/>
                           <field name="limit" />
+                          <field name="loop" />
                           <button name="generate_delivery" string="Generate _Delivery" type="object" class="btn-primary" />
                       </group>                          
                       <!--<group colspan="4" col="2">

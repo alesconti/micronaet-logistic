@@ -39,6 +39,7 @@ class StockChangeStandardPrice(models.TransientModel):
     #                               BUTTON EVENT:    
     # -------------------------------------------------------------------------    
     limit = fields.Integer('Limit', default=10)
+    loop = fields.Integer('Loop', default=5, required=True)
 
     # -------------------------------------------------------------------------
     #                               BUTTON EVENT:    
@@ -109,7 +110,9 @@ class StockChangeStandardPrice(models.TransientModel):
         
         # Create draft document:
         order_pool = self.env['sale.order']
-        order_pool.workflow_ready_to_done_draft_picking(self.limit)
+        
+        for times in range(0, self.loop):
+            order_pool.workflow_ready_to_done_draft_picking(self.limit)
 
     @api.multi
     def closed_delivered(self):
