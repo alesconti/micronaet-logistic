@@ -90,9 +90,9 @@
                                     </div> 
                                 </div>
                                 
-                                <div class="row">
+                                <div class="row" max-height="80">
                                     <div class="col-xs-2">
-                                        <img t-att-src="'data:image/png;base64,%s' % to_text(move[0].new_image)"/>
+                                        <img t-att-src="'data:image/png;base64,%s' % to_text(move[0].new_image)" max-height="80" max-width="80"/>
                                     </div>    
                                     <div class="col-xs-1" style="align:text-center;">
                                         <h4 t-esc="move[1]" />
