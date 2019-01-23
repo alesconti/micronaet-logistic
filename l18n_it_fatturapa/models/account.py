@@ -399,7 +399,6 @@ class StockPicking(models.Model):
             # -----------------------------------------------------------------            
             i += 1     
             detail_table[i] = {
-                'position': i,
                 'mode': '', # No mode = product line (else SC, PR, AB, AC)
                 'discount': '', # No discount
                 'nature': '', # No nature (always 22)
@@ -1007,42 +1006,50 @@ class StockPicking(models.Model):
         #    f_invoice.write(' </DatiGenerali>' + newline)
         """
         
-        # TODO LOOP ON LINE 
-        """
-        detail_table
         self.start_tag('2.2', 'DatiBeniServizi')
         self.start_tag('2.2.1', 'DettaglioLinee')
-        f_invoice.write(
-            self.get_tag('2.2.1.1', 'NumeroLinea', ))
 
-        f_invoice.write(# Solo se SC PR AB AC (spesa accessoria)
-            self.get_tag('2.2.1.2', 'TipoCessionePrestazione', ))
-            
-        # Loop on every code passed:    
-        self.start_tag('2.2.1.3', 'CodiceArticolo')
-        f_invoice.write(# PROPRIETARIO EAN TARIC SSC
-            self.get_tag('2.2.1.3.1', 'CodiceTipo', 'PROPRIETARIO')) # TODO
-        f_invoice.write(# PROPRIETARIO EAN TARIC SSC
-            self.get_tag('2.2.1.3.2', 'CodiceValore', )) # TODO
-        self.start_tag('2.2.1.3', 'CodiceArticolo', mode='close')
+        # ---------------------------------------------------------------------
+        #                        INVOCE DETAILS:
+        # ---------------------------------------------------------------------
+        for seq in detail_table:
+            record = detail_table[seq]
+            default_code = product.product_tmpl_id.default_code
+            name = product.name
+            uom = product.uom_id.name
 
-        f_invoice.write(
-            self.get_tag('2.2.1.4', 'Descrizione', ))
-        f_invoice.write(
-            self.get_tag('2.2.1.5', 'Quantita', ))
-        f_invoice.write(
-            self.get_tag('2.2.1.6', 'UnitaMisura', ))
-        f_invoice.write(
-            self.get_tag('2.2.1.7', 'DataInizioPeriodo', , 
-                cardinality='0:1'))
-        f_invoice.write(
-            self.get_tag('2.2.1.8', 'DataFinePeriodo', , 
-                cardinality='0:1'))
-        f_invoice.write(
-            # TODO prezzo unitario, totale sconto (anche negativo)
-            # Anche negativo # Vedi 2.2.1.2
-            self.get_tag('2.2.1.9', 'PrezzoUnitario', ))
-        """
+            f_invoice.write(
+                self.get_tag('2.2.1.1', 'NumeroLinea', seq))
+
+            f_invoice.write(# Solo se SC PR AB AC (spesa accessoria)
+                self.get_tag('2.2.1.2', 'TipoCessionePrestazione', 
+                    record['mode'], cardinality='0:1'))
+                
+            # XXX Loop on every code passed:    
+            f_invoice.write(
+                self.start_tag('2.2.1.3', 'CodiceArticolo')
+            f_invoice.write(# PROPRIETARIO EAN TARIC SSC
+                self.get_tag('2.2.1.3.1', 'CodiceTipo', 'PROPRIETARIO')) # TODO
+            f_invoice.write(
+                self.get_tag('2.2.1.3.2', 'CodiceValore', default_code))
+            self.start_tag('2.2.1.3', 'CodiceArticolo', mode='close')
+
+            f_invoice.write(
+                self.get_tag('2.2.1.4', 'Descrizione', name))
+            f_invoice.write(
+                self.get_tag('2.2.1.5', 'Quantita', record['qty']))
+            f_invoice.write(
+                self.get_tag('2.2.1.6', 'UnitaMisura', uom))
+            #f_invoice.write(
+            #    self.get_tag('2.2.1.7', 'DataInizioPeriodo', , 
+            #        cardinality='0:1'))
+            #f_invoice.write(
+            #    self.get_tag('2.2.1.8', 'DataFinePeriodo', , 
+            #        cardinality='0:1'))
+            f_invoice.write(# unitario, totale sconto (anche negativo)
+                # Anche negativo # Vedi 2.2.1.2
+                self.get_tag('2.2.1.9', 'PrezzoUnitario', record['price']))
+
         """
         # ---------------------------------------------------------------------
         # Sconto manuale (opzionale:
@@ -1059,20 +1066,22 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('2.2.1.10', 'ScontoMaggiorazione', mode='close'))
         # ---------------------------------------------------------------------
+        """
 
         f_invoice.write(# Subtotal for line
-            self.get_tag('2.2.1.11', 'PrezzoTotale', ))
+            self.get_tag('2.2.1.11', 'PrezzoTotale', record['subtotal']))
         f_invoice.write(# % VAT 22.00 format
-            self.get_tag('2.2.1.12', 'AliquotaIVA', ))
+            self.get_tag('2.2.1.12', 'AliquotaIVA', record['vat']))
         #f_invoice.write(# % 22.00 format
         #    self.get_tag('2.2.1.13', 'Ritenuta', ))
 
         # Obbligatorio se IVA 0:
         f_invoice.write(# TODO Descrizione eventuale esenzione
-            self.get_tag('2.2.1.14', 'Natura', ))
+            self.get_tag('2.2.1.14', 'Natura', record['nature']))
         #f_invoice.write(# Codice identificativo ai fini amministrativi
         #    self.get_tag('2.2.1.15', 'RiferimentoAmministrazione', ))
 
+        """
         # ---------------------------------------------------------------------
         # Non obbligatorio: note e riferimenti
         f_invoice.write(
@@ -1088,6 +1097,7 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('2.2.1.16', 'AltriDatiGestionali', mode='close'))
         """
+        
         self.start_tag('2.2.1', 'DettaglioLinee', mode='close')
 
         # ---------------------------------------------------------------------
