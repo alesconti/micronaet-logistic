@@ -32,11 +32,13 @@
     'depends': [
         'base',
         'account',
-        'stock',
+        'stock',        
         ],
     'data': [
+        'security/ir.model.access.csv',
+        'data/fatturapa_data.xml',
         # Views:
-        #'views/fattura_pa_view.xml',
+        'views/fatturapa_views.xml',
         ],
     'demo': [],
     'css': [],
