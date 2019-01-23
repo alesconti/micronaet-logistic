@@ -585,14 +585,18 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Header part:
         # ---------------------------------------------------------------------
-        self.start_tag('1', 'FatturaElettronicaHeader')
-        self.start_tag('1.1', 'DatiTrasmissione')
-        self.start_tag('1.1.1', 'IdTrasmittente')
+        f_invoice.write(
+            self.start_tag('1', 'FatturaElettronicaHeader'))
+        f_invoice.write(
+            self.start_tag('1.1', 'DatiTrasmissione'))
+        f_invoice.write(
+            self.start_tag('1.1.1', 'IdTrasmittente'))
         
         f_invoice.write(self.get_tag('1.1.1.1', 'IdPaese', vat[:2]))
         f_invoice.write(self.get_tag('1.1.1.2', 'IdCodice', vat[2:]))
         
-        self.start_tag('1.1.1', 'IdTrasmittente', mode='close')
+        f_invoice.write(
+            self.start_tag('1.1.1', 'IdTrasmittente', mode='close'))
         
         f_invoice.write( # Invoice number
             self.get_tag('1.1.2', 'ProgressivoInvio', invoice_number))        
@@ -613,25 +617,31 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.get_tag('1.1.4', 'PECDestinatario', unique_pec, 
                 cardinality='0:1'))
-        self.start_tag('1.1', 'DatiTrasmissione', mode='close')
+        f_invoice.write(
+            self.start_tag('1.1', 'DatiTrasmissione', mode='close'))
 
         # ---------------------------------------------------------------------
-        self.start_tag('1.2', 'CedentePrestatore')
-        self.start_tag('1.2.1', 'DatiAnagrafici')
-        self.start_tag('1.2.1.1', 'IdFiscaleIVA')
+        f_invoice.write(
+            self.start_tag('1.2', 'CedentePrestatore'))
+        f_invoice.write(
+            self.start_tag('1.2.1', 'DatiAnagrafici'))
+        f_invoice.write(
+            self.start_tag('1.2.1.1', 'IdFiscaleIVA'))
         
         f_invoice.write(
             self.get_tag('1.2.1.1.1', 'IdPaese', company_vat[:2]))
         f_invoice.write( # TODO - IT?
             self.get_tag('1.2.1.1.2', 'IdCodice', company_vat[2:]))
 
-        self.start_tag('1.2.1.1', 'IdFiscaleIVA', mode='close')
+        f_invoice.write(
+            self.start_tag('1.2.1.1', 'IdFiscaleIVA', mode='close'))
 
         # TODO strano!
         f_invoice.write( # TODO ???
             self.get_tag('1.2.1.2', 'CodiceFiscale', company_fiscal[2:]))
 
-        self.start_tag('1.2.1.3', 'Anagrafica')        
+        f_invoice.write(
+            self.start_tag('1.2.1.3', 'Anagrafica'))
         # ---------------------------------------------------------------------                
         if company_company: # 1.2.1.3.1 (alternative 1.2.1.3.2 - 1.2.1.3.3)
             f_invoice.write(
@@ -644,7 +654,8 @@ class StockPicking(models.Model):
 
         # 1.2.3.1.4 <Titolo> partner_title            
         # 1.2.3.1.5 <CodEORI> newline 
-        self.start_tag('1.2.1.3', 'Anagrafica', mode='close')
+        f_invoice.write(
+            self.start_tag('1.2.1.3', 'Anagrafica', mode='close'))
 
         # 1.2.1.4 <AlboProfessionale>
         # 1.2.1.5 <ProvinciaAlbo>
@@ -654,9 +665,11 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.get_tag('1.2.1.8', 'RegimeFiscale', company_fiscal_mode))
 
-        self.start_tag('1.2.1', 'DatiAnagrafici', mode='close')
+        f_invoice.write(
+            self.start_tag('1.2.1', 'DatiAnagrafici', mode='close'))
 
-        self.start_tag('1.2.2', 'Sede')
+        f_invoice.write(
+            self.start_tag('1.2.2', 'Sede'))
         
         f_invoice.write(
             self.get_tag('1.2.2.1', 'Indirizzo', company_street))
@@ -672,7 +685,8 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.get_tag('1.2.2.6', 'Nazione', company_country))
 
-        self.start_tag('1.2.2', 'Sede', mode='close')
+        f_invoice.write(
+            self.start_tag('1.2.2', 'Sede', mode='close'))
 
         # ---------------------------------------------------------------------
         # IF PRESENTE STABILE:
@@ -686,7 +700,8 @@ class StockPicking(models.Model):
         #       </StabileOrganizzazione>
         # ---------------------------------------------------------------------
 
-        self.start_tag('1.2.4', 'IscrizioneREA')
+        f_invoice.write(
+            self.start_tag('1.2.4', 'IscrizioneREA'))
         f_invoice.write(
             self.get_tag('1.2.4.1', 'Ufficio', rea_office))
         f_invoice.write(
@@ -700,7 +715,8 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.get_tag('1.2.4.5', 'StatoLiquidazione', rea_liquidation, 
                 cardinality='0:1'))
-        self.start_tag('1.2.4', 'IscrizioneREA', mode='close')
+        f_invoice.write(
+            self.start_tag('1.2.4', 'IscrizioneREA', mode='close'))
         
         # NOT MANDATORY:
         # 1.2.5 <Contatti>        
@@ -731,26 +747,32 @@ class StockPicking(models.Model):
         #       </DatiAnagrafici
         #     </RappresentanteFiscale
 
-        self.start_tag('1.2', 'CedentePrestatore', mode='close')
+        f_invoice.write(
+            self.start_tag('1.2', 'CedentePrestatore', mode='close'))
         
         # ---------------------------------------------------------------------
         #                             CUSTOMER DATA:
         # ---------------------------------------------------------------------
-        self.start_tag('1.4', 'CessionarioCommittente')
-        self.start_tag('1.4.1', 'DatiAnagrafici')
+        f_invoice.write(
+            self.start_tag('1.4', 'CessionarioCommittente'))
+        f_invoice.write(
+            self.start_tag('1.4.1', 'DatiAnagrafici'))
         
         if partner_vat: # Alternativo al blocco 1.4.1.2
-            self.start_tag('1.4.1.1', 'IdFiscaleIVA')
+            f_invoice.write(
+                self.start_tag('1.4.1.1', 'IdFiscaleIVA'))
             f_invoice.write(
                 self.get_tag('1.4.1.1.1', 'IdPaese', partner_vat[:2]))
             f_invoice.write(
                 self.get_tag('1.4.1.1.2', 'IdCodice', partner_vat[2:]))
-            self.start_tag('1.4.1.1', 'IdFiscaleIVA', mode='close')
+            f_invoice.write(
+                self.start_tag('1.4.1.1', 'IdFiscaleIVA', mode='close'))
         else: # partner_fiscal Alternativo al blocco 1.4.1.1
             f_invoice.write(
                 self.get_tag('1.4.1.2', 'CodiceFiscale', partner_fiscal))
 
-        self.start_tag('1.4.1.3', 'Anagrafica')
+        f_invoice.write(
+            self.start_tag('1.4.1.3', 'Anagrafica'))
         if partner_company: # 1.4.1.3.1 (alternative 1.2.1.3.2   1.2.1.3.3)
             f_invoice.write(
                 self.get_tag('1.4.1.3.1', 'Denominazione', partner_company))
@@ -761,9 +783,11 @@ class StockPicking(models.Model):
                 self.get_tag('1.4.1.3.3', 'Cognome', partner_surname))
             # 1.4.3.1.4 <Titolo>partner_title
             # 1.4.3.1.5 <CodEORI> partner_eori
-        self.start_tag('1.4.1.3', 'Anagrafica', mode='close')
+        f_invoice.write(
+            self.start_tag('1.4.1.3', 'Anagrafica', mode='close'))
 
-        self.start_tag('1.4.2', 'Sede')
+        f_invoice.write(
+            self.start_tag('1.4.2', 'Sede'))
         f_invoice.write(
             self.get_tag('1.4.2.1', 'Indirizzo', partner_street))
         f_invoice.write(
@@ -778,7 +802,8 @@ class StockPicking(models.Model):
                 cardinality='0:1'))
         f_invoice.write(
             self.get_tag('1.4.2.6', 'Nazione', partner_country))
-        self.start_tag('1.4.2', 'Sede', mode='close')
+        f_invoice.write(
+            self.start_tag('1.4.2', 'Sede', mode='close'))
 
         # ---------------------------------------------------------------------
         # IF PRESENT:
@@ -801,8 +826,10 @@ class StockPicking(models.Model):
         # 1.4.4.3 <Nome>
         # 1.4.4.4 <Cognome>
         #       <RappresentanteFiscale>
-        self.start_tag('1.4.1', 'DatiAnagrafici', mode='close')
-        self.start_tag('1.4', 'CessionarioCommittente', mode='close')
+        f_invoice.write(
+            self.start_tag('1.4.1', 'DatiAnagrafici', mode='close'))
+        f_invoice.write(
+            self.start_tag('1.4', 'CessionarioCommittente', mode='close'))
 
         # NOT MANDATORY:
         # 1.5 TerzoIntermediarioOSoggettoEmittente
@@ -821,15 +848,19 @@ class StockPicking(models.Model):
         # NOT MANDATORY:
         # 1.6 SoggettoEmittente
 
-        self.start_tag('1', 'FatturaElettronicaHeader', mode='close')
+        f_invoice.write(
+            self.start_tag('1', 'FatturaElettronicaHeader', mode='close'))
         # ---------------------------------------------------------------------
 
         # ---------------------------------------------------------------------
         #                                BODY:
         # ---------------------------------------------------------------------
-        self.start_tag('2', 'FatturaElettronicaBody')
-        self.start_tag('2.1', 'DatiGenerali')
-        self.start_tag('2.1.1', 'DatiGeneraliDocumento')
+        f_invoice.write(
+            self.start_tag('2', 'FatturaElettronicaBody'))
+        f_invoice.write(
+            self.start_tag('2.1', 'DatiGenerali'))
+        f_invoice.write(
+            self.start_tag('2.1.1', 'DatiGeneraliDocumento'))
 
         f_invoice.write(
             self.get_tag('2.1.1.1', 'TipoDocumento', invoice_type))
@@ -883,13 +914,15 @@ class StockPicking(models.Model):
                 cardinality='0:N'))
 
         # 2.1.1.12 <Art73>
-        self.start_tag('2.1.1', 'DatiGeneraliDocumento', mode='close')
+        f_invoice.write(
+            self.start_tag('2.1.1', 'DatiGeneraliDocumento', mode='close'))
 
         # ---------------------------------------------------------------------        
         # RIFERIMENTO ORDINE: (0:N)
         # ---------------------------------------------------------------------
         """ 
-        self.start_tag('2.1.2', 'DatiOrdineAcquisto')
+        f_invoice.write(
+            self.start_tag('2.1.2', 'DatiOrdineAcquisto'))
         
         # TODO LOOP LINE
         f_invoice.write(
@@ -909,7 +942,8 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.get_tag('2.1.2.7', 'CodiceCIG', ))
  
-        self.start_tag('2.1.2', 'DatiOrdineAcquisto', mode='close')
+        f_invoice.write(
+            self.start_tag('2.1.2', 'DatiOrdineAcquisto', mode='close'))
         """
         # ---------------------------------------------------------------------        
 
@@ -926,10 +960,12 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.get_tag('2.1.6', 'DatiFattureCollegate', ))
 
-        self.start_tag('2.1.7', 'DatiSAL')
+        f_invoice.write(
+            self.start_tag('2.1.7', 'DatiSAL'))
         f_invoice.write(
             self.get_tag('2.1.7.1', 'RiferimentoFase', ))
-        self.start_tag('2.1.7', 'DatiSAL', mode='close')
+        f_invoice.write(
+            self.start_tag('2.1.7', 'DatiSAL', mode='close'))
         """
         # ---------------------------------------------------------------------        
 
@@ -939,7 +975,8 @@ class StockPicking(models.Model):
         for ddt_number in ddt_reference:
             ddt_lines, ddt_date = ddt_reference[ddt_number]
                          
-            self.start_tag('2.1.8', 'DatiDDT')
+            f_invoice.write(
+                self.start_tag('2.1.8', 'DatiDDT'))
             f_invoice.write(
                 self.get_tag('2.1.8.1', 'NumeroDDT', ddt_number))
             f_invoice.write(
@@ -950,7 +987,8 @@ class StockPicking(models.Model):
                 f_invoice.write(
                     self.get_tag('2.1.8.3', 'RiferimentoNumeroLinea', line))
 
-            self.start_tag('2.1.8', 'DatiDDT', mode='close')
+            f_invoice.write(
+                self.start_tag('2.1.8', 'DatiDDT', mode='close'))
         # ---------------------------------------------------------------------        
 
         # ---------------------------------------------------------------------        
@@ -1006,8 +1044,10 @@ class StockPicking(models.Model):
         #    f_invoice.write(' </DatiGenerali>' + newline)
         """
         
-        self.start_tag('2.2', 'DatiBeniServizi')
-        self.start_tag('2.2.1', 'DettaglioLinee')
+        f_invoice.write(
+            self.start_tag('2.2', 'DatiBeniServizi'))
+        f_invoice.write(
+            self.start_tag('2.2.1', 'DettaglioLinee'))
 
         # ---------------------------------------------------------------------
         #                        INVOCE DETAILS:
@@ -1027,12 +1067,13 @@ class StockPicking(models.Model):
                 
             # XXX Loop on every code passed:    
             f_invoice.write(
-                self.start_tag('2.2.1.3', 'CodiceArticolo')
+                self.start_tag('2.2.1.3', 'CodiceArticolo'))
             f_invoice.write(# PROPRIETARIO EAN TARIC SSC
                 self.get_tag('2.2.1.3.1', 'CodiceTipo', 'PROPRIETARIO')) # TODO
             f_invoice.write(
                 self.get_tag('2.2.1.3.2', 'CodiceValore', default_code))
-            self.start_tag('2.2.1.3', 'CodiceArticolo', mode='close')
+            f_invoice.write(
+                self.start_tag('2.2.1.3', 'CodiceArticolo', mode='close'))
 
             f_invoice.write(
                 self.get_tag('2.2.1.4', 'Descrizione', name))
@@ -1098,7 +1139,8 @@ class StockPicking(models.Model):
             self.start_tag('2.2.1.16', 'AltriDatiGestionali', mode='close'))
         """
         
-        self.start_tag('2.2.1', 'DettaglioLinee', mode='close')
+        f_invoice.write(
+            self.start_tag('2.2.1', 'DettaglioLinee', mode='close'))
 
         # ---------------------------------------------------------------------
 
@@ -1108,7 +1150,8 @@ class StockPicking(models.Model):
         for vat_key in vat_table:
             (item_subtotal, item_subtotal_vat, item_nature, item_round) = \
                 vat_table[vat_key]
-            self.start_tag('2.2.2', 'DatiRiepilogo')
+            f_invoice.write(
+                self.start_tag('2.2.2', 'DatiRiepilogo'))
             f_invoice.write(# % 22.00 format
                 self.get_tag('2.2.2.1', 'AliquotaIVA', vat_key))
             #f_invoice.write(# % Tabella Natura (se non idicata l'IVA)
@@ -1125,10 +1168,12 @@ class StockPicking(models.Model):
                 self.get_tag('2.2.2.7', 'EsigibilitaIVA', esigibility))
             #f_invoice.write(# % Tabella se presente Natura
             #    self.get_tag('2.2.2.8', 'RiferimentoNormativo', ))
-            self.start_tag('2.2.2', 'DatiRiepilogo', mode='close')
+            f_invoice.write(
+                self.start_tag('2.2.2', 'DatiRiepilogo', mode='close'))
         # ---------------------------------------------------------------------        
             
-        self.start_tag('2.2', 'DatiBeniServizi', mode='close')
+        f_invoice.write(
+            self.start_tag('2.2', 'DatiBeniServizi', mode='close'))
 
         """
         # 2.3 <DatiVeicoli>
@@ -1141,13 +1186,15 @@ class StockPicking(models.Model):
         # Pagamento: TODO 
         # ---------------------------------------------------------------------
         """
-        self.start_tag('2.4', 'DatiPagamento')
+        f_invoice.write(
+            self.start_tag('2.4', 'DatiPagamento'))
         f_invoice.write(# TODO tabelle TP01 a rate TP02 pagamento completo TP03 anticipo
             self.get_tag('2.4.1', 'CondizioniPagamento', ))
 
             
         # LOOP RATE (1:N):
-        self.start_tag('2.4.2', 'DettaglioPagamento')
+        f_invoice.write(
+            self.start_tag('2.4.2', 'DettaglioPagamento'))
         f_invoice.write( # TODO se differente dal cedente
             self.get_tag('2.4.2.1', 'Beneficiario', '', # TODO
             cardinality='0:1'))
@@ -1196,16 +1243,20 @@ class StockPicking(models.Model):
         """
         # ---------------------------------------------------------------------
         """
-        self.start_tag('2.4.2', 'DettaglioPagamento', mode='close')
+        f_invoice.write(
+            self.start_tag('2.4.2', 'DettaglioPagamento', mode='close'))
         """
         
-        self.start_tag('2.4', 'DatiPagamento', mode='close')
+        f_invoice.write(
+            self.start_tag('2.4', 'DatiPagamento', mode='close'))
         # ---------------------------------------------------------------------
 
         # ---------------------------------------------------------------------
         # LOOP ATTACHMENTS:
+        # ---------------------------------------------------------------------
         '''
-        self.start_tag('2.5', 'Allegati')
+        f_invoice.write(
+            self.start_tag('2.5', 'Allegati'))
         f_invoice.write( 
             self.get_tag('2.5.1', 'NomeAttachment', ))
         f_invoice.write( # ZIP RAR
@@ -1216,11 +1267,14 @@ class StockPicking(models.Model):
             self.get_tag('2.5.4', 'DescrizioneAttachment', ))
         f_invoice.write( 
             self.get_tag('2.5.5', 'Attachment', ))
-        self.start_tag('2.4', 'Allegati', mode='close')
+        f_invoice.write(
+            self.start_tag('2.4', 'Allegati', mode='close'))
         '''
 
-        self.start_tag('2', 'FatturaElettronicaBody', mode='close')
-        self.start_tag('1', 'p:FatturaElettronica', mode='close')
+        f_invoice.write(
+            self.start_tag('2', 'FatturaElettronicaBody', mode='close'))
+        f_invoice.write(
+            self.start_tag('1', 'p:FatturaElettronica', mode='close'))
 
         f_invoice.close()
 
