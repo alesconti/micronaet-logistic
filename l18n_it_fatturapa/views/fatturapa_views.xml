@@ -244,6 +244,35 @@
             </field>
         </record>-->
         
+        <!--TODO res.partner fatturapa_pec fatturapa_fiscalcode fatturapa_private_fiscalcode-->
+        
+        <record model="ir.ui.view" id="view_res_company_form">
+            <field name="name">res.company.form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page" position="after">
+                    <page string="Fattura PA">
+                        <group colspan="4" col="4">
+                            <field name="fatturapa_fiscal_position_id" />
+                            <field name="fatturapa_format_id" />
+                            <!--<field name="fatturapa_unique_code" />-->
+                            <!--<field name="fatturapa_sequence_id" />-->
+                            <field name="fatturapa_art73" />
+                            <field name="fatturapa_pub_administration_ref" />
+                            <field name="fatturapa_rea_office" />
+                            <field name="fatturapa_rea_number" />
+                            <field name="fatturapa_rea_capital" />
+                            <field name="fatturapa_rea_partner" />
+                            <field name="fatturapa_rea_liquidation" />
+                            <field name="fatturapa_tax_representative" />
+                            <field name="fatturapa_sender_partner" />
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        
         <menuitem 
             id="menu_account_fatturapa_root" 
             name="Fattura PA" 
