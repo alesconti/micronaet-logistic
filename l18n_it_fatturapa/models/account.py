@@ -367,6 +367,88 @@ class StockPicking(models.Model):
             tag,
             newline,
             )
+
+    # TODO To beoverrided in another module:
+    @api.multi
+    def fatturapa_get_details(self):
+        ''' Extract line detail sumary
+        '''
+        self.ensure_one()
+        
+        # Result dict:
+        detail_table = {}
+        vat_table = {}        
+        ddt_reference = {}
+        # TODO order?
+        
+        # XXX Always present and one only!
+        ddt_number = picking.ddt_number
+        ddt_date = picking.ddt_date
+        
+        i = 0
+        for line in picking.move_lines:
+            # Parameters:
+            price = line.unit_price
+            qty = line.product_uom_qty
+            subtotal = price * qty
+            vat = 22.0 # TODO 
+
+            # -----------------------------------------------------------------            
+            # Detail data:
+            # -----------------------------------------------------------------            
+            i += 1     
+            detail_table[i] = {
+                'position': i,
+                'mode': '', # No mode = product line (else SC, PR, AB, AC)
+                'discount': '', # No discount
+                'nature': '', # No nature (always 22)
+                'product': line.product_id, # Browse
+                'price': price,
+                'quantity': qty,
+                'vat': vat, # %
+                'retention': '', # No retention
+                'subtotal': subtotal, # VAT excluded
+                }
+
+            # -----------------------------------------------------------------            
+            # Vat data:
+            # -----------------------------------------------------------------            
+            if vat in vat_table:
+                vat_table[vat][0] += subtotal
+                vat_table[vat][1] += subtotal * vat
+            else:        
+                vat_table[vat] = [
+                    subtotal, # Subtotal
+                    subtotal * vat, # VAT total
+                    '', # Nature
+                    '', # Extra expense
+                    '', # Round
+                    ]
+
+            # -----------------------------------------------------------------            
+            # DDT reference:
+            # -----------------------------------------------------------------            
+            if ddt_number in ddt_reference:
+                ddt_reference[ddt_number][0].append(i)
+            else:    
+                ddt_reference[ddt_number] = [
+                    [i, ], ddt_date]
+            
+        return detail_table, vat_table, ddt_reference
+
+    @api.model
+    def fatturapa_get_vat_table(self, picking):
+        ''' Extract vat sumary
+        '''
+        res = []
+        return res
+
+    @api.model
+    def fatturapa_get_payments(self, picking):
+        ''' Extract payment sumary
+        '''
+        res = []
+        return res
         
     # -------------------------------------------------------------------------
     # Default path (to be overrided)
@@ -428,6 +510,9 @@ class StockPicking(models.Model):
         invoice_currency = 'EUR'
         invoice_causal = 'VENDITA'
         
+        # Extra table from picking:
+        detail_table, vat_table, ddt_reference = \
+            picking.fatturapa_get_details()
         # amount:
         invoice_amount = 0.0 # TODO 
         invoice_vat_total = 0.0 # TODO 
@@ -500,49 +585,33 @@ class StockPicking(models.Model):
         # Header part:
         # ---------------------------------------------------------------------
         self.start_tag('1', 'FatturaElettronicaHeader')
-
         self.start_tag('1.1', 'DatiTrasmissione')
-
         self.start_tag('1.1.1', 'IdTrasmittente')
         
-        f_invoice.write(
-            self.get_tag('1.1.1.1', 'IdPaese', vat[:2]))
-
-        f_invoice.write(
-            self.get_tag('1.1.1.2', 'IdCodice', vat[2:],))
+        f_invoice.write(self.get_tag('1.1.1.1', 'IdPaese', vat[:2]))
+        f_invoice.write(self.get_tag('1.1.1.2', 'IdCodice', vat[2:]))
         
         self.start_tag('1.1.1', 'IdTrasmittente', mode='close')
         
         f_invoice.write( # Invoice number
-            self.get_tag('1.1.2', 'ProgressivoInvio', invoice_number))
-        
+            self.get_tag('1.1.2', 'ProgressivoInvio', invoice_number))        
         f_invoice.write(
             self.get_tag('1.1.3', 'FormatoTrasmissione', send_format))
-
         # Codice univoco destinatario (7 caratteri PR, 6 PA) tutti 0 alt.
         f_invoice.write(
             self.get_tag('1.1.4', 'CodiceDestinatario', unique_code))
 
         # ---------------------------------------------------------------------
-        # 1.1.5 (alternative 1.1.6)
-        #f_invoice.write('  <ContattiTrasmittente>' + newline)
-        # 1.1.5.1
-        #f_invoice.write('   <Telefono>' + newline)
-        # DATI
-        #f_invoice.write('   </Telefono>' + newline)
-        # 1.1.5.2
-        #f_invoice.write('   <Email>' + newline)
-        # DATI
-        #f_invoice.write('   </Email>' + newline)
-
-        #f_invoice.write('  </ContattiTrasmittente>' + newline)
+        # 1.1.5 (alternative 1.1.6) <ContattiTrasmittente>
+        # 1.1.5.1 <Telefono>
+        # 1.1.5.2 <Email>
+        #        </ContattiTrasmittente>
         
         # ---------------------------------------------------------------------
         # 1.1.6 (alternative 1.1.5)
-        if unique_pec:
-            f_invoice.write('  <PECDestinatario>%s</PECDestinatario>%s' % (
-                unique_pec, newline))
-
+        f_invoice.write(
+            self.get_tag('1.1.4', 'PECDestinatario', unique_pec, 
+                cardinality='0:1'))
         self.start_tag('1.1', 'DatiTrasmissione', mode='close')
 
         # ---------------------------------------------------------------------
@@ -552,7 +621,6 @@ class StockPicking(models.Model):
         
         f_invoice.write(
             self.get_tag('1.2.1.1.1', 'IdPaese', company_vat[:2]))
-
         f_invoice.write( # TODO - IT?
             self.get_tag('1.2.1.1.2', 'IdCodice', company_vat[2:]))
 
@@ -562,8 +630,7 @@ class StockPicking(models.Model):
         f_invoice.write( # TODO ???
             self.get_tag('1.2.1.2', 'CodiceFiscale', company_fiscal[2:]))
 
-        self.start_tag('1.2.1.3', 'Anagrafica')
-        
+        self.start_tag('1.2.1.3', 'Anagrafica')        
         # ---------------------------------------------------------------------                
         if company_company: # 1.2.1.3.1 (alternative 1.2.1.3.2 - 1.2.1.3.3)
             f_invoice.write(
@@ -815,7 +882,6 @@ class StockPicking(models.Model):
                 cardinality='0:N'))
 
         # 2.1.1.12 <Art73>
-
         self.start_tag('2.1.1', 'DatiGeneraliDocumento', mode='close')
 
         # ---------------------------------------------------------------------        
@@ -869,20 +935,21 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------        
         # RIFERIMENTO DDT: (0:N) >> 1:N se non accompagnatoria
         # ---------------------------------------------------------------------
-        """
-        # TODO LOOP DDT
-        self.start_tag('2.1.8', 'DatiDDT')
-        f_invoice.write(
-            self.get_tag('2.1.8.1', 'NumeroDDT', ))
-        f_invoice.write(
-            self.get_tag('2.1.8.2', 'DataDDT', ))
-            
-        # LOOP ON LINE REF
-        f_invoice.write(
-            self.get_tag('2.1.8.3', 'RiferimentoNumeroLinea', ))
+        for ddt_number in ddt_reference:
+            ddt_lines, ddt_date = ddt_reference[ddt_number]
+                         
+            self.start_tag('2.1.8', 'DatiDDT')
+            f_invoice.write(
+                self.get_tag('2.1.8.1', 'NumeroDDT', ddt_number))
+            f_invoice.write(
+                self.get_tag('2.1.8.2', 'DataDDT', ddt_date))
+                
+            # LOOP ON LINE REF
+            for line in ddt_lines:
+                f_invoice.write(
+                    self.get_tag('2.1.8.3', 'RiferimentoNumeroLinea', line))
 
-        self.start_tag('2.1.8', 'DatiDDT', mode='close')
-        """
+            self.start_tag('2.1.8', 'DatiDDT', mode='close')
         # ---------------------------------------------------------------------        
 
         # ---------------------------------------------------------------------        
@@ -940,6 +1007,7 @@ class StockPicking(models.Model):
         
         # TODO LOOP ON LINE 
         """
+        detail_table
         self.start_tag('2.2', 'DatiBeniServizi')
         self.start_tag('2.2.1', 'DettaglioLinee')
         f_invoice.write(
@@ -1021,7 +1089,9 @@ class StockPicking(models.Model):
         self.start_tag('2.2.1', 'DettaglioLinee', mode='close')
 
         # ---------------------------------------------------------------------
-        # Obblicatorio: Elenco riepilogativo IVA del documento (1:N):
+        
+        # Obbligatorio: Elenco riepilogativo IVA del documento (1:N):
+        #vat_table
         # LOOP RIEPILOGO IVA:
         self.start_tag('2.2.2', 'DatiRiepilogo')
         f_invoice.write(# % 22.00 format
