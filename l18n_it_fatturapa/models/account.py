@@ -164,6 +164,9 @@ class ResPartner(models.Model):
          ('LN', 'Not in liquidation')], 'Liquidation State')
 
     # Fattura PA:
+    fatturapa_name = fields.Char('Partner name', size=80)
+    fatturapa_surname = fields.Char('Partner surname', size=80)
+
     fatturapa_unique_code = fields.Char('Unique code SDI', size=7)
     fatturapa_pec = fields.Char('Fattura PA PEC', size=120)
     fatturapa_fiscalcode = fields.Char(
@@ -206,9 +209,6 @@ class ResCompany(models.Model):
     # -------------------------------------------------------------------------
     #                             COLUMNS:
     # -------------------------------------------------------------------------
-    fatturapa_name = fields.Char('Partner name', size=80)
-    fatturapa_surname = fields.Char('Partner surname', size=80)
-
     fatturapa_fiscal_position_id = fields.Many2one(
         'fatturapa.fiscal_position', 'Fiscal Position',
         help='Fiscal position used by FatturaPA',
@@ -375,6 +375,7 @@ class StockPicking(models.Model):
         '''
         self.ensure_one()
         
+        picking = self[0]
         # Result dict:
         detail_table = {}
         vat_table = {}        
@@ -388,7 +389,7 @@ class StockPicking(models.Model):
         i = 0
         for line in picking.move_lines:
             # Parameters:
-            price = line.unit_price
+            price = line.price_unit # TODO!
             qty = line.product_uom_qty
             subtotal = price * qty
             vat = 22.0 # TODO 
@@ -398,13 +399,13 @@ class StockPicking(models.Model):
             # Detail data:
             # -----------------------------------------------------------------            
             i += 1     
-            detail_table[i] = {
+            detail_table[str(i)] = {
                 'mode': '', # No mode = product line (else SC, PR, AB, AC)
                 'discount': '', # No discount
                 'nature': '', # No nature (always 22)
                 'product': line.product_id, # Browse
                 'price': price,
-                'quantity': qty,
+                'qty': qty,
                 'vat': vat, # %
                 'retention': '', # No retention
                 'subtotal': subtotal, # VAT excluded
@@ -429,10 +430,10 @@ class StockPicking(models.Model):
             # DDT reference:
             # -----------------------------------------------------------------            
             if ddt_number in ddt_reference:
-                ddt_reference[ddt_number][0].append(i)
+                ddt_reference[ddt_number][0].append(str(i))
             else:    
                 ddt_reference[ddt_number] = [
-                    [i, ], ddt_date]
+                    [str(i), ], ddt_date]
             
         return detail_table, vat_table, ddt_reference
 
@@ -480,7 +481,7 @@ class StockPicking(models.Model):
         format_param = company.fatturapa_format_id
         newline = '\n'        
         doc_part = format_param.doc_part + newline
-        vat = company.vat
+        company_vat = company.vat
         company_fiscal = company.vat
         company_fiscal_mode = 'RF01' # TODO 
         esigibility = 'I' # TODO
@@ -491,13 +492,13 @@ class StockPicking(models.Model):
         # company_number = '' # in street!
         company_city = company.city
         company_zip = company.zip
-        company_provice = 'BS' # TODO 
+        company_province = 'BS' # TODO 
         company_country = 'IT' #TODO
         rea_office = 'BS' # company.fatturapa_rea_number
         rea_number = company.fatturapa_rea_number
         rea_capital = company.fatturapa_rea_capital
-        rea_partner = company.fatturapa_rea_partner.code
-        rea_liquidation = company.fatturapa_rea_liquidation.code
+        rea_partner = company.fatturapa_rea_partner
+        rea_liquidation = company.fatturapa_rea_liquidation
         
         #unique_code = company.fatturapa_unique_code # TODO company or destin.?
 
@@ -525,10 +526,10 @@ class StockPicking(models.Model):
         
         # sede:
         partner_street = partner.street
-        # partner_number = '' # in street!
+        partner_number = '' # in street!
         partner_city = partner.city
         partner_zip = partner.zip
-        partner_provice = '' #'BS' # 0.1 TODO 
+        partner_province = '' #'BS' # 0.1 TODO 
         partner_country = 'IT' #TODO
         
         # codes:
@@ -547,7 +548,7 @@ class StockPicking(models.Model):
             partner_company = partner.name # No Company name written    
         
         # Reference:
-        partner_vat = partner.client_vat # XXX needed?
+        partner_vat = partner.vat # XXX needed?
         partner_fiscal = partner_vat or \
             partner.fatturapa_private_fiscalcode or \
             partner.fatturapa_fiscalcode
@@ -574,6 +575,8 @@ class StockPicking(models.Model):
             '%s.xml' % (self.invoice_number or 'no_number')).replace('/', '_')
         fullname = os.path.join(path, filename)
         f_invoice = open(fullname, 'w')
+        _logger.warning('Output invoice XML: %s' % fullname)
+
         send_format = 'FPR12' # always!
 
         # ---------------------------------------------------------------------
@@ -592,8 +595,8 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('1.1.1', 'IdTrasmittente'))
         
-        f_invoice.write(self.get_tag('1.1.1.1', 'IdPaese', vat[:2]))
-        f_invoice.write(self.get_tag('1.1.1.2', 'IdCodice', vat[2:]))
+        f_invoice.write(self.get_tag('1.1.1.1', 'IdPaese', company_vat[:2]))
+        f_invoice.write(self.get_tag('1.1.1.2', 'IdCodice', company_vat[2:]))
         
         f_invoice.write(
             self.start_tag('1.1.1', 'IdTrasmittente', mode='close'))
@@ -1043,6 +1046,8 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         #    f_invoice.write(' </DatiGenerali>' + newline)
         """
+        f_invoice.write(
+            self.start_tag('2.1', 'DatiGenerali', mode='close'))
         
         f_invoice.write(
             self.start_tag('2.2', 'DatiBeniServizi'))
@@ -1054,6 +1059,7 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         for seq in detail_table:
             record = detail_table[seq]
+            product = record['product']
             default_code = product.product_tmpl_id.default_code
             name = product.name
             uom = product.uom_id.name
@@ -1078,7 +1084,7 @@ class StockPicking(models.Model):
             f_invoice.write(
                 self.get_tag('2.2.1.4', 'Descrizione', name))
             f_invoice.write(
-                self.get_tag('2.2.1.5', 'Quantita', record['qty']))
+                self.get_tag('2.2.1.5', 'Quantita', str(record['qty']))) # TODO 
             f_invoice.write(
                 self.get_tag('2.2.1.6', 'UnitaMisura', uom))
             #f_invoice.write(
@@ -1089,7 +1095,7 @@ class StockPicking(models.Model):
             #        cardinality='0:1'))
             f_invoice.write(# unitario, totale sconto (anche negativo)
                 # Anche negativo # Vedi 2.2.1.2
-                self.get_tag('2.2.1.9', 'PrezzoUnitario', record['price']))
+                self.get_tag('2.2.1.9', 'PrezzoUnitario', str(record['price']))) # TODO 
 
         """
         # ---------------------------------------------------------------------
@@ -1110,9 +1116,9 @@ class StockPicking(models.Model):
         """
 
         f_invoice.write(# Subtotal for line
-            self.get_tag('2.2.1.11', 'PrezzoTotale', record['subtotal']))
+            self.get_tag('2.2.1.11', 'PrezzoTotale', str(record['subtotal']))) # TODO 
         f_invoice.write(# % VAT 22.00 format
-            self.get_tag('2.2.1.12', 'AliquotaIVA', record['vat']))
+            self.get_tag('2.2.1.12', 'AliquotaIVA', str(record['vat']))) # TODO 
         #f_invoice.write(# % 22.00 format
         #    self.get_tag('2.2.1.13', 'Ritenuta', ))
 
@@ -1148,12 +1154,12 @@ class StockPicking(models.Model):
         # Obbligatorio: Elenco riepilogativo IVA del documento (1:N):
         # ---------------------------------------------------------------------        
         for vat_key in vat_table:
-            (item_subtotal, item_subtotal_vat, item_nature, item_round) = \
+            (item_subtotal, item_subtotal_vat, item_nature, item_round, extra) = \
                 vat_table[vat_key]
             f_invoice.write(
                 self.start_tag('2.2.2', 'DatiRiepilogo'))
             f_invoice.write(# % 22.00 format
-                self.get_tag('2.2.2.1', 'AliquotaIVA', vat_key))
+                self.get_tag('2.2.2.1', 'AliquotaIVA', str(vat_key)))
             #f_invoice.write(# % Tabella Natura (se non idicata l'IVA)
             #    self.get_tag('2.2.2.2', 'Natura', ))
             #f_invoice.write(# % Tabella
@@ -1161,9 +1167,9 @@ class StockPicking(models.Model):
             #f_invoice.write(# % Tabella
             #    self.get_tag('2.2.2.4', 'Arrotondamento', ))
             f_invoice.write(# % Tabella
-                self.get_tag('2.2.2.5', 'ImponibileImporto', item_subtotal))
+                self.get_tag('2.2.2.5', 'ImponibileImporto', str(item_subtotal)))
             f_invoice.write(# % Tabella
-                self.get_tag('2.2.2.6', 'Imposta', item_subtotal_vat))
+                self.get_tag('2.2.2.6', 'Imposta', str(item_subtotal_vat)))
             f_invoice.write(# % Tabella
                 self.get_tag('2.2.2.7', 'EsigibilitaIVA', esigibility))
             #f_invoice.write(# % Tabella se presente Natura
@@ -1245,10 +1251,10 @@ class StockPicking(models.Model):
         """
         f_invoice.write(
             self.start_tag('2.4.2', 'DettaglioPagamento', mode='close'))
-        """
-        
         f_invoice.write(
             self.start_tag('2.4', 'DatiPagamento', mode='close'))
+        """
+        
         # ---------------------------------------------------------------------
 
         # ---------------------------------------------------------------------
