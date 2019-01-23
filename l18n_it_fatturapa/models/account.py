@@ -392,6 +392,7 @@ class StockPicking(models.Model):
             qty = line.product_uom_qty
             subtotal = price * qty
             vat = 22.0 # TODO 
+            subtotal_vat = subtotal * vat / 100.0
 
             # -----------------------------------------------------------------            
             # Detail data:
@@ -415,11 +416,11 @@ class StockPicking(models.Model):
             # -----------------------------------------------------------------            
             if vat in vat_table:
                 vat_table[vat][0] += subtotal
-                vat_table[vat][1] += subtotal * vat
+                vat_table[vat][1] += subtotal_vat
             else:        
                 vat_table[vat] = [
                     subtotal, # Subtotal
-                    subtotal * vat, # VAT total
+                    subtotal_vat, # VAT total
                     '', # Nature
                     '', # Extra expense
                     '', # Round
@@ -483,6 +484,7 @@ class StockPicking(models.Model):
         vat = company.vat
         company_fiscal = company.vat
         company_fiscal_mode = 'RF01' # TODO 
+        esigibility = 'I' # TODO
 
         # Sede:        
         company_company = company.name
@@ -1089,30 +1091,33 @@ class StockPicking(models.Model):
         self.start_tag('2.2.1', 'DettaglioLinee', mode='close')
 
         # ---------------------------------------------------------------------
-        
+
+        # ---------------------------------------------------------------------        
         # Obbligatorio: Elenco riepilogativo IVA del documento (1:N):
-        #vat_table
-        # LOOP RIEPILOGO IVA:
-        self.start_tag('2.2.2', 'DatiRiepilogo')
-        f_invoice.write(# % 22.00 format
-            self.get_tag('2.2.2.1', 'AliquotaIVA', ))
-        #f_invoice.write(# % Tabella Natura (se non idicata l'IVA)
-        #    self.get_tag('2.2.2.2', 'Natura', ))
-        #f_invoice.write(# % Tabella
-        #    self.get_tag('2.2.2.3', 'SpeseAccessorie', ))
-        #f_invoice.write(# % Tabella
-        #    self.get_tag('2.2.2.4', 'Arrotondamento', ))
-        f_invoice.write(# % Tabella
-            self.get_tag('2.2.2.5', 'ImponibileImporto', ))
-        f_invoice.write(# % Tabella
-            self.get_tag('2.2.2.6', 'Imposta', ))
-        f_invoice.write(# % Tabella
-            self.get_tag('2.2.2.7', 'EsigibilitaIVA', ))
-        f_invoice.write(# % Tabella
-            self.get_tag('2.2.2.8', 'RiferimentoNormativo', ))
-
-
-        self.start_tag('2.2.2', 'DatiRiepilogo', mode='close')
+        # ---------------------------------------------------------------------        
+        for vat_key in vat_table:
+            (item_subtotal, item_subtotal_vat, item_nature, item_round) = \
+                vat_table[vat_key]
+            self.start_tag('2.2.2', 'DatiRiepilogo')
+            f_invoice.write(# % 22.00 format
+                self.get_tag('2.2.2.1', 'AliquotaIVA', vat_key))
+            #f_invoice.write(# % Tabella Natura (se non idicata l'IVA)
+            #    self.get_tag('2.2.2.2', 'Natura', ))
+            #f_invoice.write(# % Tabella
+            #    self.get_tag('2.2.2.3', 'SpeseAccessorie', ))
+            #f_invoice.write(# % Tabella
+            #    self.get_tag('2.2.2.4', 'Arrotondamento', ))
+            f_invoice.write(# % Tabella
+                self.get_tag('2.2.2.5', 'ImponibileImporto', item_subtotal))
+            f_invoice.write(# % Tabella
+                self.get_tag('2.2.2.6', 'Imposta', item_subtotal_vat))
+            f_invoice.write(# % Tabella
+                self.get_tag('2.2.2.7', 'EsigibilitaIVA', esigibility))
+            #f_invoice.write(# % Tabella se presente Natura
+            #    self.get_tag('2.2.2.8', 'RiferimentoNormativo', ))
+            self.start_tag('2.2.2', 'DatiRiepilogo', mode='close')
+        # ---------------------------------------------------------------------        
+            
         self.start_tag('2.2', 'DatiBeniServizi', mode='close')
 
         """
@@ -1123,8 +1128,9 @@ class StockPicking(models.Model):
         """
 
         # ---------------------------------------------------------------------
-        # Pagamento:
+        # Pagamento: TODO 
         # ---------------------------------------------------------------------
+        """
         self.start_tag('2.4', 'DatiPagamento')
         f_invoice.write(# TODO tabelle TP01 a rate TP02 pagamento completo TP03 anticipo
             self.get_tag('2.4.1', 'CondizioniPagamento', ))
@@ -1145,7 +1151,7 @@ class StockPicking(models.Model):
             self.get_tag('2.4.2.5', 'DataScadenzaPagamento', ))
         f_invoice.write( # TODO Tabella MP
             self.get_tag('2.4.2.6', 'ImportoPagamento', ))
-
+        
         # ---------------------------------------------------------------------
         # Ufficio postale:        
         # ---------------------------------------------------------------------
@@ -1168,7 +1174,7 @@ class StockPicking(models.Model):
             self.get_tag('2.4.2.15', 'CAB', ))
         f_invoice.write( 
             self.get_tag('2.4.2.16', 'BIC', ))
-        
+        """
         # ---------------------------------------------------------------------
         # Pagamento anticipato:        
         """
@@ -1179,8 +1185,10 @@ class StockPicking(models.Model):
         # 2.4.2.21 <CodicePagamento>
         """
         # ---------------------------------------------------------------------
-
+        """
         self.start_tag('2.4.2', 'DettaglioPagamento', mode='close')
+        """
+        
         self.start_tag('2.4', 'DatiPagamento', mode='close')
         # ---------------------------------------------------------------------
 
