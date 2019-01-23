@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 ###############################################################################
 #
 # ODOO (ex OpenERP) 
 # Open Source Management Solution
-# Copyright (C) 2001-2018 Micronaet S.r.l. (<https://micronaet.com>)
+# Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -21,33 +21,7 @@
 #
 ###############################################################################
 
-{
-    'name': 'Logistic Account Report',
-    'version': '1.0',
-    'category': 'Logistic',
-    'sequence': 5,
-    'summary': 'Logistic, Accounting report',
-    #'description': '',
-    'website': 'https://micronaet.com',
-    'depends': [
-        'base',
-        'account',
-        'stock',
-        'product_folder_image', # For image management
-        'l18n_it_fatturapa', # Fattura PA
-        ],
-    'data': [
-        # Views:
-        #'views/logistic_management_view.xml',
-        
-        # Report:
-        'reports/account_DDT_report.xml',
-        'reports/account_invoice_report.xml',
-        'reports/button_account_view.xml',
-        ],
-    'demo': [],
-    'css': [],
-    'installable': True,
-    'application': True,
-    'auto_install': False,
-    }
+from . import account
+
+
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
