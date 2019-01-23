@@ -328,10 +328,13 @@ class StockPicking(models.Model):
     def extract_account_electronic_invoice(self):
         ''' Extract electronic invoice (or interchange file)
         '''
-        #company_pool = self.env['res.company']
-        #company = company_pool.search([])[0]
+        # Parameter:
+        company_pool = self.env['res.company']
+        company = company_pool.search([])[0]
         
-        # TODO mode parameter in company: fatturapa_format_id
+        format_param = company.fatturapa_format_id
+        newline = '\n'        
+        doc_part = format_param.doc_part + newline
         
         # ---------------------------------------------------------------------
         # Generate filename for invoice:
@@ -344,283 +347,278 @@ class StockPicking(models.Model):
             '%s.xml' % (self.invoice_number or 'no_number')).replace('/', '_')
         fullname = os.path.join(path, filename)
         f_invoice = open(fullname, 'w')
-        
+
+        # ---------------------------------------------------------------------
+        #                         WRITE INVOICE:        
         # ---------------------------------------------------------------------
         # Doc part:
-        # ---------------------------------------------------------------------
-        f_invoice.write('''<?xml version="1.0" encoding="UTF-8"?>
-<p:FatturaElettronica versione="FPR12" 
-   xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
-xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
-\n''')
+        f_invoice.write(doc_part)
 
         # ---------------------------------------------------------------------
         # Header part:
         # ---------------------------------------------------------------------
         # 1.
-        f_invoice.write('<FatturaElettronicaHeader>\n')        
+        f_invoice.write('<FatturaElettronicaHeader>' + newline)        
         # 1.1
-        f_invoice.write(' <DatiTrasmissione>\n')
+        f_invoice.write(' <DatiTrasmissione>' + newline)
         # 1.1.1
-        f_invoice.write('  <IdTrasmittente>\n')
+        f_invoice.write('  <IdTrasmittente' + newline)
         # 1.1.1.1
-        f_invoice.write('   <IdPaese>\n')
+        f_invoice.write('   <IdPaese' + newline)
         # TODO IR
-        f_invoice.write('   </IdPaese>\n')
+        f_invoice.write('   </IdPaese' + newline)
         # 1.1.1.2
-        f_invoice.write('   <IdCodice>\n')
+        f_invoice.write('   <IdCodice' + newline)
         # TODO codice fiscale     
-        f_invoice.write('   </IdCodice>\n')                
-        f_invoice.write('  </IdTrasmittente>\n')
+        f_invoice.write('   </IdCodice' + newline)                
+        f_invoice.write('  </IdTrasmittente' + newline)
         
         # 1.1.2
-        f_invoice.write('  <ProgressivoInvio>\n')
+        f_invoice.write('  <ProgressivoInvio' + newline)
         # TODO numero fattura
-        f_invoice.write('  </ProgressivoInvio>\n')
+        f_invoice.write('  </ProgressivoInvio' + newline)
         
         # 1.1.3
-        f_invoice.write('  <FormatoTrasmissione>\n')
+        f_invoice.write('  <FormatoTrasmissione' + newline)
         # TODO FPR12   (No FPA12)
-        f_invoice.write('  </FormatoTrasmissione>\n')
+        f_invoice.write('  </FormatoTrasmissione' + newline)
 
         # 1.1.4
-        f_invoice.write('  <CodiceDestinatario>\n')
+        f_invoice.write('  <CodiceDestinatario' + newline)
         # TODO Cocide univoco destinatario (7 caratteri PR, 6 PA) tutti 0 alt.
-        f_invoice.write('  </CodiceDestinatario>\n')
+        f_invoice.write('  </CodiceDestinatario' + newline)
 
         # ---------------------------------------------------------------------
         # 1.1.5 (alternative 1.1.6)
-        #f_invoice.write('  <ContattiTrasmittente>\n')
+        #f_invoice.write('  <ContattiTrasmittente' + newline)
         # 1.1.5.1
-        #f_invoice.write('   <Telefono>\n')
+        #f_invoice.write('   <Telefono' + newline)
         # DATI
-        #f_invoice.write('   </Telefono>\n')
+        #f_invoice.write('   </Telefono' + newline)
         # 1.1.5.2
-        #f_invoice.write('   <Email>\n')
+        #f_invoice.write('   <Email' + newline)
         # DATI
-        #f_invoice.write('   </Email>\n')
+        #f_invoice.write('   </Email' + newline)
 
-        #f_invoice.write('  </ContattiTrasmittente>\n')
+        #f_invoice.write('  </ContattiTrasmittente' + newline)
         
         # ---------------------------------------------------------------------
         # 1.1.6 (alternative 1.1.5)
-        f_invoice.write('  <PECDestinatario>\n')
+        f_invoice.write('  <PECDestinatario' + newline)
         # TODO obbligatorio se non c'è CodiceDestinatario
-        f_invoice.write('  </PECDestinatario>\n')        
+        f_invoice.write('  </PECDestinatario' + newline)        
 
-        f_invoice.write(' </DatiTrasmissione>\n')
+        f_invoice.write(' </DatiTrasmissione' + newline)
 
         # ---------------------------------------------------------------------
         # 1.2
-        f_invoice.write(' <CedentePrestatore>\n')
+        f_invoice.write(' <CedentePrestatore' + newline)
 
         # 1.2.1
-        f_invoice.write('  <DatiAnagrafici>\n')
+        f_invoice.write('  <DatiAnagrafici' + newline)
 
         # 1.2.1.1
-        f_invoice.write('   <IdFiscaleIVA>\n')
+        f_invoice.write('   <IdFiscaleIVA' + newline)
         
         # 1.2.1.1.1
-        f_invoice.write('    <IdPaese>\n')
+        f_invoice.write('    <IdPaese' + newline)
         # TODO IT 
-        f_invoice.write('    </IdPaese>\n')
+        f_invoice.write('    </IdPaese' + newline)
 
         # 1.2.1.1.2
-        f_invoice.write('    <IdCodice>\n')
+        f_invoice.write('    <IdCodice' + newline)
         # TODO VAT company
-        f_invoice.write('    </IdCodice>\n')
+        f_invoice.write('    </IdCodice' + newline)
         
-        f_invoice.write('   </IdFiscaleIVA>\n')
+        f_invoice.write('   </IdFiscaleIVA' + newline)
 
         # 1.2.1.2
-        f_invoice.write('   <CodiceFiscale>\n')
+        f_invoice.write('   <CodiceFiscale' + newline)
         # TODO Codice fiscale company
-        f_invoice.write('   </CodiceFiscale>\n')
+        f_invoice.write('   </CodiceFiscale' + newline)
 
         # 1.2.1.3
-        f_invoice.write('   <Anagrafica>\n')
+        f_invoice.write('   <Anagrafica' + newline)
         
         # ---------------------------------------------------------------------
         # 1.2.1.3.1 (alternative 1.2.1.3.2   1.2.1.3.3
-        f_invoice.write('    <Denominazione>\n')
+        f_invoice.write('    <Denominazione' + newline)
         # RAGIONE SOCIALE Company
-        f_invoice.write('    </Denominazione>\n')
+        f_invoice.write('    </Denominazione' + newline)
         
         # ---------------------------------------------------------------------
         # 1.2.3.1.2 (altenative 1.2.1.3.1)
-        #f_invoice.write('    <Nome>\n')
+        #f_invoice.write('    <Nome' + newline)
         # DATI
-        #f_invoice.write('    </Nome>\n')
+        #f_invoice.write('    </Nome' + newline)
         # 1.2.3.1.3 (altenative 1.2.1.3.3)
-        #f_invoice.write('    <Cognome>\n')
+        #f_invoice.write('    <Cognome' + newline)
         # DATI
-        #f_invoice.write('    </Cognome>\n')
+        #f_invoice.write('    </Cognome' + newline)
 
         # 1.2.3.1.4
-        #f_invoice.write('    <Titolo>\n')
+        #f_invoice.write('    <Titolo' + newline)
         # DATI
-        #f_invoice.write('    </Titolo>\n')
+        #f_invoice.write('    </Titolo' + newline)
         
         # 1.2.3.1.5
-        #f_invoice.write('    <CodEORI>\n')
+        #f_invoice.write('    <CodEORI' + newline)
         # DATI
-        #f_invoice.write('    </CodEORI>\n')
+        #f_invoice.write('    </CodEORI' + newline)
 
-        f_invoice.write('   </Anagrafica>\n')
+        f_invoice.write('   </Anagrafica' + newline)
 
         # 1.2.1.4
-        #f_invoice.write('   <AlboProfessionale>\n')
+        #f_invoice.write('   <AlboProfessionale' + newline)
         # DATA
-        #f_invoice.write('   </AlboProfessionale>\n')
+        #f_invoice.write('   </AlboProfessionale' + newline)
 
         # 1.2.1.5
-        #f_invoice.write('   <ProvinciaAlbo>\n')
+        #f_invoice.write('   <ProvinciaAlbo' + newline)
         # DATA
-        #f_invoice.write('   </ProvinciaAlbo>\n')
+        #f_invoice.write('   </ProvinciaAlbo' + newline)
 
         # 1.2.1.6
-        #f_invoice.write('   <NumeroIscrizioneAlbo>\n')
+        #f_invoice.write('   <NumeroIscrizioneAlbo' + newline)
         # DATA
-        #f_invoice.write('   </NumeroIscrizioneAlbo>\n')
+        #f_invoice.write('   </NumeroIscrizioneAlbo' + newline)
 
         # 1.2.1.7
-        #f_invoice.write('   <DataIscrizioneAlbo>\n')
+        #f_invoice.write('   <DataIscrizioneAlbo' + newline)
         # DATA
-        #f_invoice.write('   </DataIscrizioneAlbo>\n')
+        #f_invoice.write('   </DataIscrizioneAlbo' + newline)
 
         # 1.2.1.8
-        f_invoice.write('   <RegimeFiscale>\n')
+        f_invoice.write('   <RegimeFiscale' + newline)
         # TODO TABELLA: RF01
-        f_invoice.write('   </RegimeFiscale>\n')
+        f_invoice.write('   </RegimeFiscale' + newline)
 
-        f_invoice.write('  </DatiAnagrafici>\n')
+        f_invoice.write('  </DatiAnagrafici' + newline)
 
         # 1.2.2
-        f_invoice.write('  <Sede>\n')
+        f_invoice.write('  <Sede' + newline)
         
         # 1.2.2.1
-        f_invoice.write('   <Indirizzo>\n')
+        f_invoice.write('   <Indirizzo' + newline)
         # TODO
-        f_invoice.write('   </Indirizzo>\n')
+        f_invoice.write('   </Indirizzo' + newline)
 
         # 1.2.2.2
-        f_invoice.write('   <NumeroCivico>\n')
+        f_invoice.write('   <NumeroCivico' + newline)
         # TODO
-        f_invoice.write('   </NumeroCivico>\n')
+        f_invoice.write('   </NumeroCivico' + newline)
 
         # 1.2.2.3
-        f_invoice.write('   <CAP>\n')
+        f_invoice.write('   <CAP' + newline)
         # TODO
-        f_invoice.write('   </CAP>\n')
+        f_invoice.write('   </CAP' + newline)
 
         # 1.2.2.4
-        f_invoice.write('   <Comune>\n')
+        f_invoice.write('   <Comune' + newline)
         # TODO
-        f_invoice.write('   </Comune>\n')
+        f_invoice.write('   </Comune' + newline)
 
         # 1.2.2.5
-        f_invoice.write('   <Provincia>\n')
+        f_invoice.write('   <Provincia' + newline)
         # TODO
-        f_invoice.write('   </Provincia>\n')
+        f_invoice.write('   </Provincia' + newline)
 
         # 1.2.2.6
-        f_invoice.write('   <Nazione>\n')
+        f_invoice.write('   <Nazione' + newline)
         # TODO
-        f_invoice.write('   </Nazione>\n')
+        f_invoice.write('   </Nazione' + newline)
 
-        f_invoice.write('  </Sede>\n')
+        f_invoice.write('  </Sede' + newline)
 
         # ---------------------------------------------------------------------
         # IF PRESENT:
         # 1.2.3
-        #f_invoice.write('  <StabileOrganizzazione>\n')
+        #f_invoice.write('  <StabileOrganizzazione' + newline)
         
         # 1.2.3.1
-        #f_invoice.write('   <Indirizzo>\n')
+        #f_invoice.write('   <Indirizzo' + newline)
         # DATA
-        #f_invoice.write('   </Indirizzo>\n')
+        #f_invoice.write('   </Indirizzo' + newline)
 
         # 1.2.3.2
-        #f_invoice.write('   <NumeroCivico>\n')
+        #f_invoice.write('   <NumeroCivico' + newline)
         # DATA
-        #f_invoice.write('   </NumeroCivico>\n')
+        #f_invoice.write('   </NumeroCivico' + newline)
 
         # 1.2.3.3
-        #f_invoice.write('   <CAP>\n')
+        #f_invoice.write('   <CAP' + newline)
         # DATA
-        #f_invoice.write('   </CAP>\n')
+        #f_invoice.write('   </CAP' + newline)
 
         # 1.2.3.4
-        #f_invoice.write('   <Comune>\n')
+        #f_invoice.write('   <Comune' + newline)
         # DATA
-        #f_invoice.write('   </Comune>\n')
+        #f_invoice.write('   </Comune' + newline)
 
         # 1.2.3.5
-        #f_invoice.write('   <Provincia>\n')
+        #f_invoice.write('   <Provincia' + newline)
         # DATA
-        #f_invoice.write('   </Provincia>\n')
+        #f_invoice.write('   </Provincia' + newline)
 
         # 1.2.3.6
-        #f_invoice.write('   <Nazione>\n')
+        #f_invoice.write('   <Nazione' + newline)
         # DATA
-        #f_invoice.write('   </Nazione>\n')
+        #f_invoice.write('   </Nazione' + newline)
 
-        #f_invoice.write('  </StabileOrganizzazione>\n')
+        #f_invoice.write('  </StabileOrganizzazione' + newline)
         # ---------------------------------------------------------------------
 
         # 1.2.4
-        f_invoice.write('  <IscrizioneREA>\n')
+        f_invoice.write('  <IscrizioneREA' + newline)
         
         # 1.2.4.1
-        f_invoice.write('   <Ufficio>\n')
+        f_invoice.write('   <Ufficio' + newline)
         # TODO
-        f_invoice.write('   </Ufficio>\n')
+        f_invoice.write('   </Ufficio' + newline)
 
         # 1.2.4.2
-        f_invoice.write('   <NumeroREA>\n')
+        f_invoice.write('   <NumeroREA' + newline)
         # TODO
-        f_invoice.write('   </NumeroREA>\n')
+        f_invoice.write('   </NumeroREA' + newline)
 
         # 1.2.4.3  (0.1)
-        #f_invoice.write('   <CapitaleSociale>\n')
+        #f_invoice.write('   <CapitaleSociale' + newline)
         # TODO
-        #f_invoice.write('   </CapitaleSociale>\n')
+        #f_invoice.write('   </CapitaleSociale' + newline)
 
         # 1.2.4.3  (0.1)
-        #f_invoice.write('   <SocioUnico>\n')
+        #f_invoice.write('   <SocioUnico' + newline)
         # TODO
-        #f_invoice.write('   </SocioUnico>\n')
+        #f_invoice.write('   </SocioUnico' + newline)
        
         # 1.2.4.3  (0.1)
-        f_invoice.write('   <StatoLiquidazione>\n')
+        f_invoice.write('   <StatoLiquidazione' + newline)
         # TODO
-        f_invoice.write('   </StatoLiquidazione>\n')
+        f_invoice.write('   </StatoLiquidazione' + newline)
        
-        f_invoice.write('  </IscrizioneREA>\n')
+        f_invoice.write('  </IscrizioneREA' + newline)
         
         # ---------------------------------------------------------------------
         # NOT MANDATORY:
         # 1.2.5
-        #f_invoice.write('  <Contatti>\n')
+        #f_invoice.write('  <Contatti' + newline)
         
         # 1.2.5.1
-        #f_invoice.write('   <Telefono>\n')
+        #f_invoice.write('   <Telefono' + newline)
         # DATA
-        #f_invoice.write('   </Telefono>\n')
+        #f_invoice.write('   </Telefono' + newline)
 
         # 1.2.5.2
-        #f_invoice.write('   <Fax>\n')
+        #f_invoice.write('   <Fax' + newline)
         # DATA
-        #f_invoice.write('   </Fax>\n')
+        #f_invoice.write('   </Fax' + newline)
 
         # 1.2.5.2
-        #f_invoice.write('   <Email>\n')
+        #f_invoice.write('   <Email' + newline)
         # DATA
-        #f_invoice.write('   </Email>\n')
+        #f_invoice.write('   </Email' + newline)
 
-        #f_invoice.write('  </Contatti>\n')
+        #f_invoice.write('  </Contatti' + newline)
         # ---------------------------------------------------------------------
         
         # ---------------------------------------------------------------------
@@ -642,139 +640,139 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
         # 1.3.1.3.4 Titolo
         # 1.3.1.3.5 CodEORI
 
-        f_invoice.write(' </CedentePrestatore>\n')
+        f_invoice.write(' </CedentePrestatore' + newline)
         
         # 1.4
-        f_invoice.write(' <CessionarioCommittente>\n')
+        f_invoice.write(' <CessionarioCommittente' + newline)
 
         # 1.4.1
-        f_invoice.write('  <DatiAnagrafici>\n')
+        f_invoice.write('  <DatiAnagrafici' + newline)
 
         # Alternativo al blocco 1.4.1.2 ---------------------------------------
         # 1.4.1.1
-        f_invoice.write('   <IdFiscaleIVA>\n')
+        f_invoice.write('   <IdFiscaleIVA' + newline)
         
         # 1.4.1.1.1
-        f_invoice.write('    <IdPaese>\n')
+        f_invoice.write('    <IdPaese' + newline)
         # TODO IT cliente
-        f_invoice.write('    </IdPaese>\n')
+        f_invoice.write('    </IdPaese' + newline)
 
         # 1.4.1.1.2
-        f_invoice.write('    <IdCodice>\n')
+        f_invoice.write('    <IdCodice' + newline)
         # TODO Codice fiscale cliente
-        f_invoice.write('    </IdCodice>\n')
+        f_invoice.write('    </IdCodice' + newline)
         
-        f_invoice.write('   </IdFiscaleIVA>\n')
+        f_invoice.write('   </IdFiscaleIVA' + newline)
 
         # Alternativo al blocco 1.4.1.1 ---------------------------------------
         # 1.4.1.2
-        f_invoice.write('   <CodiceFiscale>\n')
+        f_invoice.write('   <CodiceFiscale' + newline)
         # TODO        
-        f_invoice.write('   </CodiceFiscale>\n')
+        f_invoice.write('   </CodiceFiscale' + newline)
 
         # 1.4.1.3
-        f_invoice.write('   <Anagrafica>\n')
+        f_invoice.write('   <Anagrafica' + newline)
         
         # ---------------------------------------------------------------------
         # 1.4.1.3.1 (alternative 1.2.1.3.2   1.2.1.3.3
-        f_invoice.write('    <Denominazione>\n')
+        f_invoice.write('    <Denominazione' + newline)
         # TODO Ragione sociale
-        f_invoice.write('    </Denominazione>\n')
+        f_invoice.write('    </Denominazione' + newline)
         
         # ---------------------------------------------------------------------
         # 1.4.3.1.2 (altenative 1.2.1.3.1)
-        f_invoice.write('    <Nome>\n')
+        f_invoice.write('    <Nome' + newline)
         # TODO
-        f_invoice.write('    </Nome>\n')
+        f_invoice.write('    </Nome' + newline)
         # 1.4.3.1.3 (altenative 1.2.1.3.3)
-        f_invoice.write('    <Cognome>\n')
+        f_invoice.write('    <Cognome' + newline)
         # TODO
-        f_invoice.write('    </Cognome>\n')
+        f_invoice.write('    </Cognome' + newline)
 
         # 1.4.3.1.4
-        #f_invoice.write('    <Titolo>\n')
+        #f_invoice.write('    <Titolo' + newline)
         # DATI
-        #f_invoice.write('    </Titolo>\n')
+        #f_invoice.write('    </Titolo' + newline)
         
         # 1.4.3.1.5
-        #f_invoice.write('    <CodEORI>\n')
+        #f_invoice.write('    <CodEORI' + newline)
         # DATI
-        #f_invoice.write('    </CodEORI>\n')
+        #f_invoice.write('    </CodEORI' + newline)
 
-        f_invoice.write('   </Anagrafica>\n')
+        f_invoice.write('   </Anagrafica' + newline)
 
         # ---------------------------------------------------------------------
         # 1.4.2
-        f_invoice.write('  <Sede>\n')
+        f_invoice.write('  <Sede' + newline)
         
         # 1.4.2.1
-        f_invoice.write('   <Indirizzo>\n')
+        f_invoice.write('   <Indirizzo' + newline)
         # TODO
-        f_invoice.write('   </Indirizzo>\n')
+        f_invoice.write('   </Indirizzo' + newline)
 
         # 1.4.2.2
-        f_invoice.write('   <NumeroCivico>\n')
+        f_invoice.write('   <NumeroCivico' + newline)
         # TODO
-        f_invoice.write('   </NumeroCivico>\n')
+        f_invoice.write('   </NumeroCivico' + newline)
 
         # 1.4.2.3
-        f_invoice.write('   <CAP>\n')
+        f_invoice.write('   <CAP' + newline)
         # TODO
-        f_invoice.write('   </CAP>\n')
+        f_invoice.write('   </CAP' + newline)
 
         # 1.4.2.4
-        f_invoice.write('   <Comune>\n')
+        f_invoice.write('   <Comune' + newline)
         # TODO
-        f_invoice.write('   </Comune>\n')
+        f_invoice.write('   </Comune' + newline)
 
         # 1.4.2.5
-        f_invoice.write('   <Provincia>\n')
+        f_invoice.write('   <Provincia' + newline)
         # TODO
-        f_invoice.write('   </Provincia>\n')
+        f_invoice.write('   </Provincia' + newline)
 
         # 1.4.2.6
-        f_invoice.write('   <Nazione>\n')
+        f_invoice.write('   <Nazione' + newline)
         # TODO
-        f_invoice.write('   </Nazione>\n')
+        f_invoice.write('   </Nazione' + newline)
 
-        f_invoice.write('  </Sede>\n')
+        f_invoice.write('  </Sede' + newline)
 
         # ---------------------------------------------------------------------
         # IF PRESENT:
         # 1.4.3
-        #f_invoice.write('  <StabileOrganizzazione>\n')
+        #f_invoice.write('  <StabileOrganizzazione' + newline)
         
         # 1.4.3.1
-        #f_invoice.write('   <Indirizzo>\n')
+        #f_invoice.write('   <Indirizzo' + newline)
         # DATA
-        #f_invoice.write('   </Indirizzo>\n')
+        #f_invoice.write('   </Indirizzo' + newline)
 
         # 1.4.3.2
-        #f_invoice.write('   <NumeroCivico>\n')
+        #f_invoice.write('   <NumeroCivico' + newline)
         # DATA
-        #f_invoice.write('   </NumeroCivico>\n')
+        #f_invoice.write('   </NumeroCivico' + newline)
 
         # 1.4.3.3
-        #f_invoice.write('   <CAP>\n')
+        #f_invoice.write('   <CAP' + newline)
         # DATA
-        #f_invoice.write('   </CAP>\n')
+        #f_invoice.write('   </CAP' + newline)
 
         # 1.4.3.4
-        #f_invoice.write('   <Comune>\n')
+        #f_invoice.write('   <Comune' + newline)
         # DATA
-        #f_invoice.write('   </Comune>\n')
+        #f_invoice.write('   </Comune' + newline)
 
         # 1.4.3.5
-        #f_invoice.write('   <Provincia>\n')
+        #f_invoice.write('   <Provincia' + newline)
         # DATA
-        #f_invoice.write('   </Provincia>\n')
+        #f_invoice.write('   </Provincia' + newline)
 
         # 1.4.3.6
-        #f_invoice.write('   <Nazione>\n')
+        #f_invoice.write('   <Nazione' + newline)
         # DATA
-        #f_invoice.write('   </Nazione>\n')
+        #f_invoice.write('   </Nazione' + newline)
 
-        #f_invoice.write('  </StabileOrganizzazione>\n')
+        #f_invoice.write('  </StabileOrganizzazione' + newline)
         # ---------------------------------------------------------------------
 
         # NOT MANDATORY:
@@ -786,8 +784,8 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
         # 1.4.4.3 Nome
         # 1.4.4.4 Cognome
 
-        f_invoice.write('  </DatiAnagrafici>\n')
-        f_invoice.write(' </CessionarioCommittente>\n')
+        f_invoice.write('  </DatiAnagrafici' + newline)
+        f_invoice.write(' </CessionarioCommittente' + newline)
 
         # NOT MANDATORY:
         # 1.5 TerzoIntermediarioOSoggettoEmittente
@@ -806,64 +804,64 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
         # NOT MANDATORY:
         # 1.6 SoggettoEmittente
         
-        f_invoice.write('</FatturaElettronicaHeader>\n')
+        f_invoice.write('</FatturaElettronicaHeader' + newline)
         # ---------------------------------------------------------------------
 
         # ---------------------------------------------------------------------
         #                                BODY:
         # ---------------------------------------------------------------------
         # 2.
-        f_invoice.write('<FatturaElettronicaBody>\n')
+        f_invoice.write('<FatturaElettronicaBody' + newline)
         
         # 2.1
-        f_invoice.write(' <DatiGenerali>\n')
+        f_invoice.write(' <DatiGenerali' + newline)
         
         # 2.1.1
-        f_invoice.write('  <DatiGeneraliDocumento>\n')
+        f_invoice.write('  <DatiGeneraliDocumento' + newline)
 
         # 2.1.1.1
-        f_invoice.write('   <TipoDocumento>\n')
+        f_invoice.write('   <TipoDocumento' + newline)
         # TODO Usare la tabella TD01 Fattura TD04 Nota di credito
-        f_invoice.write('   </TipoDocumento>\n')
+        f_invoice.write('   </TipoDocumento' + newline)
 
         # 2.1.1.2
-        f_invoice.write('   <Divisa>\n')
+        f_invoice.write('   <Divisa' + newline)
         # TODO EUR
-        f_invoice.write('   </Divisa>\n')
+        f_invoice.write('   </Divisa' + newline)
 
         # 2.1.1.3
-        f_invoice.write('   <Data>\n')
+        f_invoice.write('   <Data' + newline)
         # TODO Data fattura ISO format YYYY-MM-DD
-        f_invoice.write('   </Data>\n')
+        f_invoice.write('   </Data' + newline)
 
         # 2.1.1.4
-        f_invoice.write('   <Numero>\n')
+        f_invoice.write('   <Numero' + newline)
         # TODO Serie - Numero
-        f_invoice.write('   </Numero>\n')
+        f_invoice.write('   </Numero' + newline)
 
         # 2.1.1.5
-        #f_invoice.write('   <DatiRitenuta>\n')
+        #f_invoice.write('   <DatiRitenuta' + newline)
         # 2.1.1.5.1 TipoRitenuta
         # 2.1.1.5.1 ImportoRitenuta
         # 2.1.1.5.1 AliquotaRitenuta
         # 2.1.1.5.1 CausaleRitenuta
-        #f_invoice.write('   </DatiRitenuta>\n')
+        #f_invoice.write('   </DatiRitenuta' + newline)
 
         # TODO Valutare questione bollo:
         # 2.1.1.6
-        f_invoice.write('   <DatiBollo>\n')        
+        f_invoice.write('   <DatiBollo' + newline)        
         
         # 2.1.1.6.1 
-        f_invoice.write('    <BolloVirtuale>\n')        
+        f_invoice.write('    <BolloVirtuale' + newline)        
         # TODO
-        f_invoice.write('    </BolloVirtuale>\n')        
+        f_invoice.write('    </BolloVirtuale' + newline)        
 
         # 2.1.1.6.2
-        f_invoice.write('    <ImportoBollo>\n')        
+        f_invoice.write('    <ImportoBollo' + newline)        
         # TODO
-        f_invoice.write('    </ImportoBollo>\n')        
+        f_invoice.write('    </ImportoBollo' + newline)        
 
-        f_invoice.write('   </DatiBollo>\n')
+        f_invoice.write('   </DatiBollo' + newline)
 
         # 2.1.1.7 DatiCassaPrevidenziale
         # 2.1.1.7.1 TipoCassa
@@ -878,149 +876,149 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
         # ---------------------------------------------------------------------
         # VALUTARE: Abbuoni attivi / passivi:
         # 2.1.1.8
-        f_invoice.write('   <ScontoMaggiorazione>\n')        
+        f_invoice.write('   <ScontoMaggiorazione' + newline)        
         
         # 2.1.1.8.1 
-        f_invoice.write('    <Tipo>\n')        
+        f_invoice.write('    <Tipo' + newline)        
         # TODO
-        f_invoice.write('    </Tipo>\n')        
+        f_invoice.write('    </Tipo' + newline)        
 
         # ---------------------------------------------------------------------
         # 2.1.1.8.2     >>> Alternative 2.1.1.8.3
-        f_invoice.write('    <Percentuale>\n')        
+        f_invoice.write('    <Percentuale' + newline)        
         # TODO
-        f_invoice.write('    </Percentuale>\n')        
+        f_invoice.write('    </Percentuale' + newline)        
 
         # ---------------------------------------------------------------------
         # 2.1.1.8.3     >>> Alternative 2.1.1.8.2
-        f_invoice.write('    <Importo>\n')        
+        f_invoice.write('    <Importo' + newline)        
         # TODO
-        f_invoice.write('    </Importo>\n')        
+        f_invoice.write('    </Importo' + newline)        
 
-        f_invoice.write('   </ScontoMaggiorazione>\n')        
+        f_invoice.write('   </ScontoMaggiorazione' + newline)        
         
         # 2.1.1.9
-        f_invoice.write('   <ImportoTotaleDocumento>\n')        
+        f_invoice.write('   <ImportoTotaleDocumento' + newline)        
         # TODO Totale IVATO (al netto di sconti)
-        f_invoice.write('   </ImportoTotaleDocumento>\n')        
+        f_invoice.write('   </ImportoTotaleDocumento' + newline)        
         
         # 2.1.1.10
-        f_invoice.write('   <Arrotondamento>\n')        
+        f_invoice.write('   <Arrotondamento' + newline)        
         # TODO
-        f_invoice.write('   </Arrotondamento>\n')        
+        f_invoice.write('   </Arrotondamento' + newline)        
 
         # 2.1.1.11
-        f_invoice.write('   <Causale>\n')        
+        f_invoice.write('   <Causale' + newline)        
         # TODO Causale del documento (testo)
-        f_invoice.write('   </Causale>\n')        
+        f_invoice.write('   </Causale' + newline)        
 
         # 2.1.1.12
-        #f_invoice.write('   <Art73>\n')        
+        #f_invoice.write('   <Art73' + newline)        
         # TODO
-        #f_invoice.write('   </Art73>\n')        
+        #f_invoice.write('   </Art73' + newline)        
         
-        f_invoice.write('  </DatiGeneraliDocumento>\n')
+        f_invoice.write('  </DatiGeneraliDocumento' + newline)
 
         # ---------------------------------------------------------------------        
         # RIFERIMENTO ORDINE:
         # ---------------------------------------------------------------------        
         # 2.1.2
-        f_invoice.write('  <DatiOrdineAcquisto>\n')
+        f_invoice.write('  <DatiOrdineAcquisto' + newline)
         
         # 2.1.2.1 
-        f_invoice.write('   <RiferimentoNumeroLinea>\n')
+        f_invoice.write('   <RiferimentoNumeroLinea' + newline)
         # DATA
-        f_invoice.write('   </RiferimentoNumeroLinea>\n')
+        f_invoice.write('   </RiferimentoNumeroLinea' + newline)
 
         # 2.1.2.2
-        f_invoice.write('   <IdDocumento>\n')
+        f_invoice.write('   <IdDocumento' + newline)
         # DATA
-        f_invoice.write('   </IdDocumento>\n')
+        f_invoice.write('   </IdDocumento' + newline)
 
         # 2.1.2.3 
-        f_invoice.write('   <Data>\n')
+        f_invoice.write('   <Data' + newline)
         # DATA
-        f_invoice.write('   </Data>\n')
+        f_invoice.write('   </Data' + newline)
 
         # 2.1.2.4 
-        f_invoice.write('   <NumItem>\n')
+        f_invoice.write('   <NumItem' + newline)
         # DATA
-        f_invoice.write('   </NumItem>\n')
+        f_invoice.write('   </NumItem' + newline)
 
         # 2.1.2.5 
-        f_invoice.write('   <CodiceCommessaConvenzione>\n')
+        f_invoice.write('   <CodiceCommessaConvenzione' + newline)
         # DATA
-        f_invoice.write('   </CodiceCommessaConvenzione>\n')
+        f_invoice.write('   </CodiceCommessaConvenzione' + newline)
 
         # NOT MANDATORI: PA only:
         # 2.1.2.6 
-        #f_invoice.write('   <CodiceCUP>\n')
+        #f_invoice.write('   <CodiceCUP' + newline)
         # DATA
-        #f_invoice.write('   </CodiceCUP>\n')
+        #f_invoice.write('   </CodiceCUP' + newline)
         # 2.1.2.7 
-        #f_invoice.write('   <CodiceCIG>\n')
+        #f_invoice.write('   <CodiceCIG' + newline)
         # DATA
-        #f_invoice.write('   </CodiceCIG>\n')
+        #f_invoice.write('   </CodiceCIG' + newline)
  
-        f_invoice.write('  </DatiOrdineAcquisto>\n')
+        f_invoice.write('  </DatiOrdineAcquisto' + newline)
         # ---------------------------------------------------------------------        
 
         # ---------------------------------------------------------------------        
         # RIFERIMENTO CONTRATTO:
         # ---------------------------------------------------------------------        
         # 2.1.3
-        f_invoice.write('   <DatiContratto>\n')
+        f_invoice.write('   <DatiContratto' + newline)
         # DATA
-        f_invoice.write('   </DatiContratto>\n')
+        f_invoice.write('   </DatiContratto' + newline)
 
         # 2.1.4
-        f_invoice.write('   <DatiConvenzione>\n')
+        f_invoice.write('   <DatiConvenzione' + newline)
         # DATA
-        f_invoice.write('   </DatiConvenzione>\n')
+        f_invoice.write('   </DatiConvenzione' + newline)
 
         # 2.1.5
-        f_invoice.write('   <DatiRicezione>\n')
+        f_invoice.write('   <DatiRicezione' + newline)
         # DATA
-        f_invoice.write('   </DatiRicezione>\n')
+        f_invoice.write('   </DatiRicezione' + newline)
 
         # 2.1.6
-        f_invoice.write('   <DatiFattureCollegate>\n')
+        f_invoice.write('   <DatiFattureCollegate' + newline)
         # DATA
-        f_invoice.write('   </DatiFattureCollegate>\n')
+        f_invoice.write('   </DatiFattureCollegate' + newline)
 
         # 2.1.7
-        f_invoice.write('   <DatiSAL>\n')
+        f_invoice.write('   <DatiSAL' + newline)
         
         # 2.1.7.1
-        f_invoice.write('    <RiferimenntoFase>\n')
+        f_invoice.write('    <RiferimenntoFase' + newline)
         # DATA 
-        f_invoice.write('    </RiferimenntoFase>\n')
+        f_invoice.write('    </RiferimenntoFase' + newline)
         
-        f_invoice.write('   </DatiSAL>\n')
+        f_invoice.write('   </DatiSAL' + newline)
         # ---------------------------------------------------------------------        
 
         # ---------------------------------------------------------------------        
         # RIFERIMENTO DDT:
         # ---------------------------------------------------------------------        
         # 2.1.8
-        f_invoice.write('   <DatiDDT>\n')
+        f_invoice.write('   <DatiDDT' + newline)
         
         # 2.1.8.1 
-        f_invoice.write('    <NumeroDDT>\n')
+        f_invoice.write('    <NumeroDDT' + newline)
         # TODO Numero documento
-        f_invoice.write('    </NumeroDDT>\n')
+        f_invoice.write('    </NumeroDDT' + newline)
                     
         # 2.1.8.2
-        f_invoice.write('    <DataDDT>\n')
+        f_invoice.write('    <DataDDT' + newline)
         # TODO ISO   
-        f_invoice.write('    </DataDDT>\n')
+        f_invoice.write('    </DataDDT' + newline)
 
         # 2.1.8.3
-        f_invoice.write('    <RiferimentoNumeroLinea>\n')
+        f_invoice.write('    <RiferimentoNumeroLinea' + newline)
         # TODO Numero linea                   
-        f_invoice.write('    </RiferimentoNumeroLinea>\n')
+        f_invoice.write('    </RiferimentoNumeroLinea' + newline)
         
-        f_invoice.write('   </DatiDDT>\n')
+        f_invoice.write('   </DatiDDT' + newline)
         # ---------------------------------------------------------------------        
 
         # ---------------------------------------------------------------------        
@@ -1028,538 +1026,538 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
         # ---------------------------------------------------------------------        
         """
         # 2.1.9
-        f_invoice.write('   <DatiTrasporto>\n')
+        f_invoice.write('   <DatiTrasporto' + newline)
         
         # 2.1.9.1
-        f_invoice.write('    <DatiAnagraficiVettore>\n')
+        f_invoice.write('    <DatiAnagraficiVettore' + newline)
 
         # 2.1.9.1.1
-        f_invoice.write('    <IdFiscaleIVA>\n')
+        f_invoice.write('    <IdFiscaleIVA' + newline)
         
         # 2.1.9.1.1.1
-        f_invoice.write('     <IdPaese>\n')
+        f_invoice.write('     <IdPaese' + newline)
         # DATI
-        f_invoice.write('     </IdPaese>\n')
+        f_invoice.write('     </IdPaese' + newline)
 
         # 2.1.9.1.1.2
-        f_invoice.write('     <IdCodice>\n')
+        f_invoice.write('     <IdCodice' + newline)
         # DATI
-        f_invoice.write('     </IdCodice>\n')
+        f_invoice.write('     </IdCodice' + newline)
         
-        f_invoice.write('    </IdFiscaleIVA>\n')
+        f_invoice.write('    </IdFiscaleIVA' + newline)
 
         # 2.1.9.1.2
-        f_invoice.write('    <CodiceFiscale>\n')
+        f_invoice.write('    <CodiceFiscale' + newline)
         # DATA        
-        f_invoice.write('    </CodiceFiscale>\n')
+        f_invoice.write('    </CodiceFiscale' + newline)
 
         # 2.1.9.1.3
-        f_invoice.write('    <Anagrafica>\n')
+        f_invoice.write('    <Anagrafica' + newline)
         
         # ---------------------------------------------------------------------
         # 2.1.9.1.3.1 (alternative 2.1.9.1.3.2    2.1.9.1.3.3
-        f_invoice.write('     <Denominazione>\n')
+        f_invoice.write('     <Denominazione' + newline)
         # DATI
-        f_invoice.write('     </Denominazione>\n')
+        f_invoice.write('     </Denominazione' + newline)
         
         # ---------------------------------------------------------------------
         # 2.1.9.1.3.2 (altenative 2.1.9.1.3.1)
-        f_invoice.write('     <Nome>\n')
+        f_invoice.write('     <Nome' + newline)
         # DATI
-        f_invoice.write('     </Nome>\n')
+        f_invoice.write('     </Nome' + newline)
         # 2.1.9.1.3.3 (altenative 1.2.1.3.3)
-        f_invoice.write('     <Cognome>\n')
+        f_invoice.write('     <Cognome' + newline)
         # DATI
-        f_invoice.write('     </Cognome>\n')
+        f_invoice.write('     </Cognome' + newline)
 
         # 2.1.9.1.3.4
-        #f_invoice.write('     <Titolo>\n')
+        #f_invoice.write('     <Titolo' + newline)
         # DATI
-        #f_invoice.write('     </Titolo>\n')
+        #f_invoice.write('     </Titolo' + newline)
         
         # 2.1.9.1.3.5
-        #f_invoice.write('     <CodEORI>\n')
+        #f_invoice.write('     <CodEORI' + newline)
         # DATI
-        #f_invoice.write('     </CodEORI>\n')
+        #f_invoice.write('     </CodEORI' + newline)
 
         # 2.1.9.1.4
-        #f_invoice.write('    <NumeroLicenzaGuida>\n')
+        #f_invoice.write('    <NumeroLicenzaGuida' + newline)
         # DATA        
-        #f_invoice.write('    </NumeroLicenzaGuida>\n')
+        #f_invoice.write('    </NumeroLicenzaGuida' + newline)
 
-        f_invoice.write('    </Anagrafica>\n')
+        f_invoice.write('    </Anagrafica' + newline)
 
-        f_invoice.write('    </DatiAnagraficiVettore>\n')
+        f_invoice.write('    </DatiAnagraficiVettore' + newline)
 
         # 2.1.9.2
-        f_invoice.write('    <MezzoTrasporto>\n')
+        f_invoice.write('    <MezzoTrasporto' + newline)
         # DATA
-        f_invoice.write('    </MezzoTrasporto>\n')
+        f_invoice.write('    </MezzoTrasporto' + newline)
 
         # 2.1.9.3
-        f_invoice.write('    <CausaleTrasporto>\n')
+        f_invoice.write('    <CausaleTrasporto' + newline)
         # DATA
-        f_invoice.write('    </CausaleTrasporto>\n')
+        f_invoice.write('    </CausaleTrasporto' + newline)
 
         # 2.1.9.4
-        f_invoice.write('    <NumeroColli>\n')
+        f_invoice.write('    <NumeroColli' + newline)
         # DATA
-        f_invoice.write('    </NumeroColli>\n')
+        f_invoice.write('    </NumeroColli' + newline)
 
         # 2.1.9.5
-        f_invoice.write('    <Descrizione>\n')
+        f_invoice.write('    <Descrizione' + newline)
         # DATA
-        f_invoice.write('    </Descrizione>\n')
+        f_invoice.write('    </Descrizione' + newline)
 
         # 2.1.9.6
-        f_invoice.write('    <UnitaMisuraPeso>\n')
+        f_invoice.write('    <UnitaMisuraPeso' + newline)
         # DATA
-        f_invoice.write('    </UnitaMisuraPeso>\n')
+        f_invoice.write('    </UnitaMisuraPeso' + newline)
 
         # 2.1.9.7
-        f_invoice.write('    <PesoLordo>\n')
+        f_invoice.write('    <PesoLordo' + newline)
         # DATA
-        f_invoice.write('    </PesoLordo>\n')
+        f_invoice.write('    </PesoLordo' + newline)
 
         # 2.1.9.8
-        f_invoice.write('    <PesoNetto>\n')
+        f_invoice.write('    <PesoNetto' + newline)
         # DATA
-        f_invoice.write('    </PesoNetto>\n')
+        f_invoice.write('    </PesoNetto' + newline)
 
         # 2.1.9.9
-        f_invoice.write('    <DataOraRitiro>\n')
+        f_invoice.write('    <DataOraRitiro' + newline)
         # DATA
-        f_invoice.write('    </DataOraRitiro>\n')
+        f_invoice.write('    </DataOraRitiro' + newline)
 
         # 2.1.9.10
-        f_invoice.write('    <DataInizioTrasporto>\n')
+        f_invoice.write('    <DataInizioTrasporto' + newline)
         # DATA
-        f_invoice.write('    </DataInizioTrasporto>\n')
+        f_invoice.write('    </DataInizioTrasporto' + newline)
 
         # 2.1.9.11
-        f_invoice.write('    <TipoResa>\n')
+        f_invoice.write('    <TipoResa' + newline)
         # DATA
-        f_invoice.write('    </TipoResa>\n')
+        f_invoice.write('    </TipoResa' + newline)
 
         # ---------------------------------------------------------------------
         # 2.1.9.12
-        f_invoice.write('   <IndirizzoResa>\n')
+        f_invoice.write('   <IndirizzoResa' + newline)
         
         # 2.1.9.12.1
-        f_invoice.write('    <Indirizzo>\n')
+        f_invoice.write('    <Indirizzo' + newline)
         # DATA
-        f_invoice.write('    </Indirizzo>\n')
+        f_invoice.write('    </Indirizzo' + newline)
 
         # 2.1.9.12.2
-        f_invoice.write('    <NumeroCivico>\n')
+        f_invoice.write('    <NumeroCivico' + newline)
         # DATA
-        f_invoice.write('    </NumeroCivico>\n')
+        f_invoice.write('    </NumeroCivico' + newline)
 
         # 2.1.9.12.3
-        f_invoice.write('    <CAP>\n')
+        f_invoice.write('    <CAP' + newline)
         # DATA
-        f_invoice.write('    </CAP>\n')
+        f_invoice.write('    </CAP' + newline)
 
         # 2.1.9.12.4
-        f_invoice.write('    <Comune>\n')
+        f_invoice.write('    <Comune' + newline)
         # DATA
-        f_invoice.write('    </Comune>\n')
+        f_invoice.write('    </Comune' + newline)
 
         # 2.1.9.12.5
-        f_invoice.write('    <Provincia>\n')
+        f_invoice.write('    <Provincia' + newline)
         # DATA
-        f_invoice.write('    </Provincia>\n')
+        f_invoice.write('    </Provincia' + newline)
 
         # 2.1.9.12.6
-        f_invoice.write('    <Nazione>\n')
+        f_invoice.write('    <Nazione' + newline)
         # DATA
-        f_invoice.write('    </Nazione>\n')
+        f_invoice.write('    </Nazione' + newline)
                 
-        f_invoice.write('   </IndirizzoResa>\n')
+        f_invoice.write('   </IndirizzoResa' + newline)
         # ---------------------------------------------------------------------
 
         # 2.1.9.13
-        f_invoice.write('    <DataOraConsegna>\n')
+        f_invoice.write('    <DataOraConsegna' + newline)
         # DATA
-        f_invoice.write('    </DataOraConsegna>\n')
+        f_invoice.write('    </DataOraConsegna' + newline)
 
-        f_invoice.write('   </DatiTrasporto>\n')
+        f_invoice.write('   </DatiTrasporto' + newline)
 
         # ---------------------------------------------------------------------
         # NOT MANADATORY: Agevolazione trasportatore:
         # 2.1.10
-        f_invoice.write('   <FatturaPrincipale>\n')        
+        f_invoice.write('   <FatturaPrincipale' + newline)        
         
         # 2.1.10.1
-        f_invoice.write('    <NumeroFatturaPrincipale>\n')        
+        f_invoice.write('    <NumeroFatturaPrincipale' + newline)        
         # DATA
-        f_invoice.write('    </NumeroFatturaPrincipale>\n')
+        f_invoice.write('    </NumeroFatturaPrincipale' + newline)
 
         # 2.1.10.2
-        f_invoice.write('    <DataFatturaPrincipale>\n')        
+        f_invoice.write('    <DataFatturaPrincipale' + newline)        
         # DATA
-        f_invoice.write('    </DataFatturaPrincipale>\n')
+        f_invoice.write('    </DataFatturaPrincipale' + newline)
 
-        f_invoice.write('   </FatturaPrincipale>\n')
+        f_invoice.write('   </FatturaPrincipale' + newline)
         # ---------------------------------------------------------------------
         
-        f_invoice.write(' </DatiGenerali>\n')
+        f_invoice.write(' </DatiGenerali' + newline)
         """
         # ---------------------------------------------------------------------        
 
 
         # 2.2
-        f_invoice.write(' <DatiBeniServizi>\n')
+        f_invoice.write(' <DatiBeniServizi' + newline)
 
         # 2.2.1
-        f_invoice.write('  <DettaglioLinee>\n')
+        f_invoice.write('  <DettaglioLinee' + newline)
 
         # 2.2.1.1
-        f_invoice.write('   <NumeroLinea>\n')
+        f_invoice.write('   <NumeroLinea' + newline)
         # TODO 
-        f_invoice.write('   </NumeroLinea>\n')
+        f_invoice.write('   </NumeroLinea' + newline)
 
         # Spesa accessoria (condizionale):
         # 2.2.1.2 # Solo se SC PR AB AC (spesa accessoria)
-        f_invoice.write('   <TipoCessionePrestazione>\n')
+        f_invoice.write('   <TipoCessionePrestazione' + newline)
         # TODO AB(uono)  AC(essoria)  SC(onto) PR(remio)
-        f_invoice.write('   </TipoCessionePrestazione>\n')
+        f_invoice.write('   </TipoCessionePrestazione' + newline)
 
         # 2.2.1.3
-        f_invoice.write('   <CodiceArticolo>\n')
+        f_invoice.write('   <CodiceArticolo' + newline)
 
         # 2.2.1.3.1 # PROPRIETARIO EAN TARIC SSC
-        f_invoice.write('    <CodiceTipo>\n')
+        f_invoice.write('    <CodiceTipo' + newline)
         # TODO PROPRIETARIO o EAN (o altri)
-        f_invoice.write('    </CodiceTipo>\n')
+        f_invoice.write('    </CodiceTipo' + newline)
 
         # 2.2.1.3.2 # come da punto precedente
-        f_invoice.write('    <CodiceValore>\n')
+        f_invoice.write('    <CodiceValore' + newline)
         # TODO CODICE
-        f_invoice.write('    </CodiceValore>\n')
+        f_invoice.write('    </CodiceValore' + newline)
 
-        f_invoice.write('   </CodiceArticolo>\n')
+        f_invoice.write('   </CodiceArticolo' + newline)
 
         # 2.2.1.4
-        f_invoice.write('   <Descrizione>\n')
+        f_invoice.write('   <Descrizione' + newline)
         # TODO 
-        f_invoice.write('   </Descrizione>\n')
+        f_invoice.write('   </Descrizione' + newline)
 
         # 2.2.1.5
-        f_invoice.write('   <Quantita>\n')
+        f_invoice.write('   <Quantita' + newline)
         # TODO
-        f_invoice.write('   </Quantita>\n')
+        f_invoice.write('   </Quantita' + newline)
 
         # 2.2.1.6
-        f_invoice.write('   <UnitaMisura>\n')
+        f_invoice.write('   <UnitaMisura' + newline)
         # TODO 
-        f_invoice.write('   </UnitaMisura>\n')
+        f_invoice.write('   </UnitaMisura' + newline)
 
         # Servizi: Opzionale:
         # 2.2.1.7 # Per Servizi
-        #f_invoice.write('   <DataInizioPeriodo>\n')
+        #f_invoice.write('   <DataInizioPeriodo' + newline)
         # TODO
-        #f_invoice.write('   </DataInizioPeriodo>\n')
+        #f_invoice.write('   </DataInizioPeriodo' + newline)
 
         # 2.2.1.8 # Per Servizi
-        #f_invoice.write('   <DataFinePeriodo>\n')
+        #f_invoice.write('   <DataFinePeriodo' + newline)
         # TODO
-        #f_invoice.write('   </DataFinePeriodo>\n')
+        #f_invoice.write('   </DataFinePeriodo' + newline)
 
         # 2.2.1.9 # Anche negativo # Vedi 2.2.1.2
-        f_invoice.write('   <PrezzoUnitario>\n')
+        f_invoice.write('   <PrezzoUnitario' + newline)
         # TODO prezzo unitario, totale sconto (anche negativo)
-        f_invoice.write('   </PrezzoUnitario>\n')
+        f_invoice.write('   </PrezzoUnitario' + newline)
 
         # ---------------------------------------------------------------------
         # Sconto manuale (opzionale:
         # 2.2.1.10
-        f_invoice.write('   <ScontoMaggiorazione>\n')
+        f_invoice.write('   <ScontoMaggiorazione' + newline)
 
         # 2.2.1.10.1 # SC o MG
-        f_invoice.write('    <Tipo>\n')
-        f_invoice.write('    </Tipo>\n')
+        f_invoice.write('    <Tipo' + newline)
+        f_invoice.write('    </Tipo' + newline)
 
         # 2.2.1.10.2 # Alternativo a 2.2.1.10.3
-        f_invoice.write('    <Percentuale>\n')
-        f_invoice.write('    </Percentuale>\n')
+        f_invoice.write('    <Percentuale' + newline)
+        f_invoice.write('    </Percentuale' + newline)
 
         # 2.2.1.10.3 # Alternativo a 2.2.1.10.2
-        f_invoice.write('    <Importo>\n')
-        f_invoice.write('    </Importo>\n')
+        f_invoice.write('    <Importo' + newline)
+        f_invoice.write('    </Importo' + newline)
 
-        f_invoice.write('   </ScontoMaggiorazione>\n')
+        f_invoice.write('   </ScontoMaggiorazione' + newline)
         # ---------------------------------------------------------------------
 
 
         # 2.2.1.11
-        f_invoice.write('   <PrezzoTotale>\n')
+        f_invoice.write('   <PrezzoTotale' + newline)
         # TODO Subtotale
-        f_invoice.write('   </PrezzoTotale>\n')
+        f_invoice.write('   </PrezzoTotale' + newline)
 
         # 2.2.1.12
-        f_invoice.write('   <AliquotaIVA>\n')
+        f_invoice.write('   <AliquotaIVA' + newline)
         # TODO percentuale 22.00
-        f_invoice.write('   </AliquotaIVA>\n')
+        f_invoice.write('   </AliquotaIVA' + newline)
 
         # 2.2.1.13
-        #f_invoice.write('   <Ritenuta>\n')
+        #f_invoice.write('   <Ritenuta' + newline)
         # TODO 
-        #f_invoice.write('   </Ritenuta>\n')
+        #f_invoice.write('   </Ritenuta' + newline)
 
         # Se IVA 0 obbligatorio:
         # 2.2.1.14
-        f_invoice.write('   <Natura>\n')
+        f_invoice.write('   <Natura' + newline)
         # TODO Descrizione eventuale esenzione
-        f_invoice.write('   </Natura>\n')
+        f_invoice.write('   </Natura' + newline)
 
         # 2.2.1.15
-        #f_invoice.write('   <RiferimentoAmministrazione>\n')
+        #f_invoice.write('   <RiferimentoAmministrazione' + newline)
         # TODO
-        #f_invoice.write('   </RiferimentoAmministrazione>\n')
+        #f_invoice.write('   </RiferimentoAmministrazione' + newline)
 
         # 2.2.1.16
         """
-        f_invoice.write('   <AltriDatiGestionali>\n')
+        f_invoice.write('   <AltriDatiGestionali' + newline)
 
         # 2.2.1.16.1
-        f_invoice.write('    <TipoDato>\n')
-        f_invoice.write('    </TipoDato>\n')
+        f_invoice.write('    <TipoDato' + newline)
+        f_invoice.write('    </TipoDato' + newline)
 
         # 2.2.1.16.2
-        f_invoice.write('    <RiferimentoTesto>\n')
-        f_invoice.write('    </RiferimentoTesto>\n')
+        f_invoice.write('    <RiferimentoTesto' + newline)
+        f_invoice.write('    </RiferimentoTesto' + newline)
 
         # 2.2.1.16.3
-        f_invoice.write('    <RiferimentoNumero>\n')
-        f_invoice.write('    </RiferimentoNumero>\n')
+        f_invoice.write('    <RiferimentoNumero' + newline)
+        f_invoice.write('    </RiferimentoNumero' + newline)
 
         # 2.2.1.16.4
-        f_invoice.write('    <RiferimentoData>\n')
-        f_invoice.write('    </RiferimentoData>\n')
+        f_invoice.write('    <RiferimentoData' + newline)
+        f_invoice.write('    </RiferimentoData' + newline)
 
-        f_invoice.write('   </AltriDatiGestionali>\n')
+        f_invoice.write('   </AltriDatiGestionali' + newline)
         """
         
-        f_invoice.write(' </DettaglioLinee>\n')
+        f_invoice.write(' </DettaglioLinee' + newline)
 
         # Elenco riepilogativo IVA del documento (1:N):
         # 2.2.2
-        f_invoice.write('  <DatiRiepilogo>\n')
+        f_invoice.write('  <DatiRiepilogo' + newline)
 
         # 2.2.2.1        
-        f_invoice.write('   <AliquotaIVA>\n')
+        f_invoice.write('   <AliquotaIVA' + newline)
         # TODO 22.00
-        f_invoice.write('   </AliquotaIVA>\n')
+        f_invoice.write('   </AliquotaIVA' + newline)
 
         # 2.2.2.2 # Tabella
-        f_invoice.write('   <Natura>\n')
+        f_invoice.write('   <Natura' + newline)
         # TODO 
-        f_invoice.write('   </Natura>\n')
+        f_invoice.write('   </Natura' + newline)
 
         # 2.2.2.3
-        #f_invoice.write('   <SpeseAccessorie>\n')
+        #f_invoice.write('   <SpeseAccessorie' + newline)
         # TODO 
-        #f_invoice.write('   </SpeseAccessorie>\n')
+        #f_invoice.write('   </SpeseAccessorie' + newline)
 
         # 2.2.2.4
-        #f_invoice.write('   <Arrotondamento>\n')
+        #f_invoice.write('   <Arrotondamento' + newline)
         # TODO 
-        #f_invoice.write('   </Arrotondamento>\n')
+        #f_invoice.write('   </Arrotondamento' + newline)
 
         # 2.2.2.5
-        f_invoice.write('   <ImponibileImporto>\n')
+        f_invoice.write('   <ImponibileImporto' + newline)
         # TODO Base imponibile
-        f_invoice.write('   </ImponibileImporto>\n')
+        f_invoice.write('   </ImponibileImporto' + newline)
 
         # 2.2.2.6
-        f_invoice.write('   <Imposta>\n')
+        f_invoice.write('   <Imposta' + newline)
         # TODO Imposta totale
-        f_invoice.write('   </Imposta>\n')
+        f_invoice.write('   </Imposta' + newline)
 
         # 2.2.2.7
-        f_invoice.write('   <EsigibilitaIVA>\n')
+        f_invoice.write('   <EsigibilitaIVA' + newline)
         # TODO I(mmediata) D(ifferita) S(cissione)
-        f_invoice.write('   </EsigibilitaIVA>\n')
+        f_invoice.write('   </EsigibilitaIVA' + newline)
 
         # 2.2.2.8
-        f_invoice.write('   <RiferimentoNormativo>\n')
+        f_invoice.write('   <RiferimentoNormativo' + newline)
         # Se natura valorizzato
-        f_invoice.write('   </RiferimentoNormativo>\n')
+        f_invoice.write('   </RiferimentoNormativo' + newline)
 
-        f_invoice.write('  </DatiRiepilogo>\n')
+        f_invoice.write('  </DatiRiepilogo' + newline)
 
-        f_invoice.write(' </DatiBeniServizi>\n')
+        f_invoice.write(' </DatiBeniServizi' + newline)
 
         # 2.3
         """
-        f_invoice.write(' <DatiVeicoli>\n')
+        f_invoice.write(' <DatiVeicoli' + newline)
 
         # 2.3.1
-        f_invoice.write('  <Data>\n')
-        f_invoice.write('  </Data>\n')
+        f_invoice.write('  <Data' + newline)
+        f_invoice.write('  </Data' + newline)
 
         # 2.3.1
-        f_invoice.write('  <TotalePercorso>\n')
-        f_invoice.write('  </TotalePercorso>\n')
+        f_invoice.write('  <TotalePercorso' + newline)
+        f_invoice.write('  </TotalePercorso' + newline)
 
-        f_invoice.write(' </DatiVeicoli>\n')
+        f_invoice.write(' </DatiVeicoli' + newline)
         """
 
         # ---------------------------------------------------------------------
         # Pagamento:
         # ---------------------------------------------------------------------
         # 2.4
-        f_invoice.write(' <DatiPagamento>\n')
+        f_invoice.write(' <DatiPagamento' + newline)
 
         # 2.4.1
-        f_invoice.write('  <CondizioniPagamento>\n')
+        f_invoice.write('  <CondizioniPagamento' + newline)
         # TODO tabelle TP01 a rate TP02 pagamento completo TP03 anticipo
-        f_invoice.write('  </CondizioniPagamento>\n')
+        f_invoice.write('  </CondizioniPagamento' + newline)
         
         # Elenco rate:
         # 2.4.2
-        f_invoice.write('  <DettaglioPagamento>\n')
+        f_invoice.write('  <DettaglioPagamento' + newline)
 
         # 2.4.2.1 (0.1)
-        f_invoice.write('   <Beneficiario>\n')
+        f_invoice.write('   <Beneficiario' + newline)
         # TODO se differente dal cedente
-        f_invoice.write('   </Beneficiario>\n')
+        f_invoice.write('   </Beneficiario' + newline)
         
         # 2.4.2.2
-        f_invoice.write('   <ModalitaPagamento>\n')
+        f_invoice.write('   <ModalitaPagamento' + newline)
         # TODO Tabella MP
-        f_invoice.write('   </ModalitaPagamento>\n')
+        f_invoice.write('   </ModalitaPagamento' + newline)
         
         # 2.4.2.3 (0.1)
-        f_invoice.write('   <DataRiferimentoTerminiPagamento>\n')
+        f_invoice.write('   <DataRiferimentoTerminiPagamento' + newline)
         # TODO 
-        f_invoice.write('   </DataRiferimentoTerminiPagamento>\n')
+        f_invoice.write('   </DataRiferimentoTerminiPagamento' + newline)
         
         # 2.4.2.4 (0.1)
-        f_invoice.write('   <GiorniTerminiPagamento>\n')
+        f_invoice.write('   <GiorniTerminiPagamento' + newline)
         # TODO 
-        f_invoice.write('   </GiorniTerminiPagamento>\n')
+        f_invoice.write('   </GiorniTerminiPagamento' + newline)
         
         # 2.4.2.5 (0.1)
-        f_invoice.write('   <DataScadenzaPagamento>\n')
+        f_invoice.write('   <DataScadenzaPagamento' + newline)
         # TODO 
-        f_invoice.write('   </DataScadenzaPagamento>\n')
+        f_invoice.write('   </DataScadenzaPagamento' + newline)
         
         # 2.4.2.6
-        f_invoice.write('   <ImportoPagamento>\n')
+        f_invoice.write('   <ImportoPagamento' + newline)
         # TODO 
-        f_invoice.write('   </ImportoPagamento>\n')
+        f_invoice.write('   </ImportoPagamento' + newline)
 
         # ---------------------------------------------------------------------
         # Ufficio postale:        
         # ---------------------------------------------------------------------
         """
         # 2.4.2.7
-        f_invoice.write('   <CodUfficioPostale>\n')
-        f_invoice.write('   </CodUfficioPostale>\n')
+        f_invoice.write('   <CodUfficioPostale' + newline)
+        f_invoice.write('   </CodUfficioPostale' + newline)
         
         # 2.4.2.8
-        f_invoice.write('   <CognomeQuietanzante>\n')
-        f_invoice.write('   </CognomeQuietanzante>\n')
+        f_invoice.write('   <CognomeQuietanzante' + newline)
+        f_invoice.write('   </CognomeQuietanzante' + newline)
         
         # 2.4.2.9
-        f_invoice.write('   <NomeQuietanzante>\n')
-        f_invoice.write('   </NomeQuietanzante>\n')
+        f_invoice.write('   <NomeQuietanzante' + newline)
+        f_invoice.write('   </NomeQuietanzante' + newline)
         
         # 2.4.2.10
-        f_invoice.write('   <CFQuietanzante>\n')
-        f_invoice.write('   </CFQuietanzante>\n')
+        f_invoice.write('   <CFQuietanzante' + newline)
+        f_invoice.write('   </CFQuietanzante' + newline)
         
         # 2.4.2.11
-        f_invoice.write('   <TitoloQuietanzante>\n')
-        f_invoice.write('   </TitoloQuietanzante>\n')
+        f_invoice.write('   <TitoloQuietanzante' + newline)
+        f_invoice.write('   </TitoloQuietanzante' + newline)
         """
         # ---------------------------------------------------------------------
         
         # 2.4.2.12 (0.1)
-        f_invoice.write('   <IstitutoFinanziario>\n')
-        f_invoice.write('   </IstitutoFinanziario>\n')
+        f_invoice.write('   <IstitutoFinanziario' + newline)
+        f_invoice.write('   </IstitutoFinanziario' + newline)
         
         # 2.4.2.13 (0.1)
-        f_invoice.write('   <IBAN>\n')
-        f_invoice.write('   </IBAN>\n')
+        f_invoice.write('   <IBAN' + newline)
+        f_invoice.write('   </IBAN' + newline)
         
         # 2.4.2.14 (0.1)
-        f_invoice.write('   <ABI>\n')
-        f_invoice.write('   </ABI>\n')
+        f_invoice.write('   <ABI' + newline)
+        f_invoice.write('   </ABI' + newline)
         
         # 2.4.2.15 (0.1)
-        f_invoice.write('   <CAB>\n')
-        f_invoice.write('   </CAB>\n')
+        f_invoice.write('   <CAB' + newline)
+        f_invoice.write('   </CAB' + newline)
         
         # 2.4.2.16 (0.1)
-        f_invoice.write('   <BIC>\n')
-        f_invoice.write('   </BIC>\n')
+        f_invoice.write('   <BIC' + newline)
+        f_invoice.write('   </BIC' + newline)
 
         # ---------------------------------------------------------------------
         # Pagamento anticipato:        
         # 2.4.2.17
         """
-        f_invoice.write('   <ScontoPagamentoAnticipato>\n')
+        f_invoice.write('   <ScontoPagamentoAnticipato' + newline)
         # TODO 
-        f_invoice.write('   </ScontoPagamentoAnticipato>\n')
+        f_invoice.write('   </ScontoPagamentoAnticipato' + newline)
         
         # 2.4.2.18
-        f_invoice.write('   <DataLimitePagamentoAnticipato>\n')
+        f_invoice.write('   <DataLimitePagamentoAnticipato' + newline)
         # TODO 
-        f_invoice.write('   </DataLimitePagamentoAnticipato>\n')
+        f_invoice.write('   </DataLimitePagamentoAnticipato' + newline)
         
         # 2.4.2.19
-        f_invoice.write('   <PenalitaPagamentiRitardati>\n')
+        f_invoice.write('   <PenalitaPagamentiRitardati' + newline)
         # TODO 
-        f_invoice.write('   </PenalitaPagamentiRitardati>\n')
+        f_invoice.write('   </PenalitaPagamentiRitardati' + newline)
         
         # 2.4.2.20
-        f_invoice.write('   <DataDecorrenzaPenale>\n')
+        f_invoice.write('   <DataDecorrenzaPenale' + newline)
         # TODO 
-        f_invoice.write('   </DataDecorrenzaPenale>\n')
+        f_invoice.write('   </DataDecorrenzaPenale' + newline)
         
         # 2.4.2.21
-        f_invoice.write('   <CodicePagamento>\n')
+        f_invoice.write('   <CodicePagamento' + newline)
         # TODO 
-        f_invoice.write('   </CodicePagamento>\n')
+        f_invoice.write('   </CodicePagamento' + newline)
         """
         # ---------------------------------------------------------------------
 
 
-        f_invoice.write('  </DettaglioPagamento>\n')
-        f_invoice.write(' </DatiPagamento>\n')
+        f_invoice.write('  </DettaglioPagamento' + newline)
+        f_invoice.write(' </DatiPagamento' + newline)
         # ---------------------------------------------------------------------
 
 
         # 2.5
-        f_invoice.write(' <Allegati>\n')
+        f_invoice.write(' <Allegati' + newline)
 
         # 2.5.1
-        f_invoice.write('  <NomeAttachment>\n')
-        f_invoice.write('  </NomeAttachment>\n')
+        f_invoice.write('  <NomeAttachment' + newline)
+        f_invoice.write('  </NomeAttachment' + newline)
 
         # 2.5.2 # ZIP RAR
-        f_invoice.write('  <AlgoritmoCompressione>\n')
-        f_invoice.write('  </AlgoritmoCompressione>\n')
+        f_invoice.write('  <AlgoritmoCompressione' + newline)
+        f_invoice.write('  </AlgoritmoCompressione' + newline)
 
         # 2.5.3 # TXT XML DOC PDF
-        f_invoice.write('  <FormatoAttachment>\n')
-        f_invoice.write('  </FormatoAttachment>\n')
+        f_invoice.write('  <FormatoAttachment' + newline)
+        f_invoice.write('  </FormatoAttachment' + newline)
 
         # 2.5.4
-        f_invoice.write('  <DescrizioneAttachment>\n')
-        f_invoice.write('  </DescrizioneAttachment>\n')
+        f_invoice.write('  <DescrizioneAttachment' + newline)
+        f_invoice.write('  </DescrizioneAttachment' + newline)
 
         # 2.5.5
-        f_invoice.write('  <Attachment>\n')
-        f_invoice.write('  </Attachment>\n')
+        f_invoice.write('  <Attachment' + newline)
+        f_invoice.write('  </Attachment' + newline)
 
-        f_invoice.write(' </Allegati>\n')
+        f_invoice.write(' </Allegati' + newline)
 
-        f_invoice.write('</FatturaElettronicaBody>\n')
-        f_invoice.write('</p:FatturaElettronica>\n')
+        f_invoice.write('</FatturaElettronicaBody' + newline)
+        f_invoice.write('</p:FatturaElettronica' + newline)
 
         f_invoice.close()
 
