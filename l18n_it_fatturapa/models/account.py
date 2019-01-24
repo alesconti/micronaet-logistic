@@ -257,7 +257,11 @@ class AccountFiscalPosition(models.Model):
     # -------------------------------------------------------------------------
     #                             COLUMNS:
     # -------------------------------------------------------------------------
-    fatturapa = fields.Boolean('Fattura PA')
+    fatturapa = fields.Boolean('Fattura PA', help='Managed with Fattura PA')
+    invoice_id = fields.Many2one(
+        'fatturapa.document_type', 'Invoice document type')
+    credit_note_id = fields.Many2one(
+        'fatturapa.document_type', 'Credit note document type')
 
 class AccountTax(models.Model):
     ''' Account tax fattura PA data

@@ -281,6 +281,33 @@
             </field>
         </record>-->
         
+        <!--account.fiscal.position-->        
+        <record model="ir.ui.view" id="view_account_fiscal_position_tree">
+            <field name="name">account.fiscal.position.tree</field>
+            <field name="model">account.fiscal.position</field>
+            <field name="inherit_id" ref="account.view_account_position_tree"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="before">
+                    <field name="fatturapa" />
+                    <field name="invoice_id" />
+                    <field name="credit_note_id" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_account_fiscal_position_form">
+            <field name="name">account.fiscal.position.form</field>
+            <field name="model">account.fiscal.position</field>
+            <field name="inherit_id" ref="account.view_account_position_form"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="fatturapa" />
+                    <field name="invoice_id" attrs="{'required':  [('fatturapa','=',False)], 'invisible': [('fatturapa','=',False)]}"/>
+                    <field name="credit_note_id"  attrs="{'required':  [('fatturapa','=',False)], 'invisible': [('fatturapa','=',False)]}"/>
+                </field>
+            </field>
+        </record>
+        
         <!--TODO res.partner fatturapa_pec fatturapa_fiscalcode fatturapa_private_fiscalcode-->
         
         <record model="ir.ui.view" id="view_res_company_form">

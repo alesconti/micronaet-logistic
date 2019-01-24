@@ -1,7 +1,19 @@
 <?xml version="1.0"?>
 <openerp>
     <data>         
-         <!--product.template-->
+        <!--account.fiscal.position-->
+        <record model="ir.ui.view" id="view_account_fiscal_position_form">
+            <field name="name">account.fiscal.position.need.invoice.form</field>
+            <field name="model">account.fiscal.position</field>
+            <field name="inherit_id" ref="account.view_account_position_form"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="need_invoice" />
+                </field>
+            </field>
+        </record>
+
+        <!--product.template-->
         <record model="ir.ui.view" id="view_product_template_kit_page_form">
             <field name="name">product.template.form</field>
             <field name="model">product.template</field>

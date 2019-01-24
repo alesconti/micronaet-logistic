@@ -761,12 +761,18 @@ class StockPicking(models.Model):
         ddt_ids = [] # For extra operation after
         invoice_ids = [] # For extra operation after
         for picking in self:
+            partner = picking.partner_id
+            
+            # Need invoice check:
+            need_invoice = partner.property_account_fiscal_id.need_invoice or \
+                partner.need_invoice
+                
             # Assign always DDT number:
             picking.assign_ddt_number()
             ddt_ids.append(picking.id)
             
             # Invoice procedure (check rules):
-            if picking.partner_id.need_invoice:
+            if need_invoice:                
                 picking.assign_invoice_number()
                 invoice_ids.append(picking.id)
             
@@ -981,6 +987,17 @@ class ResPartner(models.Model):
     """
     
     _inherit = 'res.partner'
+    
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
+    need_invoice = fields.Boolean('Always invoice')
+
+class AccountFiscalPosition(models.Model):
+    """ Model name: Account Fiscal Position
+    """
+    
+    _inherit = 'account.fiscal.position'
     
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
