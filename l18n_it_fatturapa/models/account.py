@@ -477,8 +477,16 @@ class StockPicking(models.Model):
         # Parameter:
         # ---------------------------------------------------------------------
         company_pool = self.env['res.company']
-        company = company_pool.search([])[0]
 
+        # Readability:
+        picking = self
+        company = company_pool.search([])[0]
+        partner = picking.partner_id
+
+        # Check if needed:
+        if not partner.property_account_position_id.fatturapa:
+            _logger.warning('No need XML invoice: %s' % picking.name)
+        
         # ---------------------------------------------------------------------
         # Company parameters:                
         # ---------------------------------------------------------------------
@@ -509,7 +517,6 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Invoice / Picking parameters: TODO Put in loop
         # ---------------------------------------------------------------------
-        picking = self
         invoice_number = picking.invoice_number
         invoice_date = picking.invoice_date # TODO prepare
         invoice_type = 'TD01' # TODO 
@@ -526,8 +533,6 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Partner:
         # ---------------------------------------------------------------------
-        partner = picking.partner_id
-        
         # sede:
         partner_street = partner.street
         partner_number = '' # in street!
