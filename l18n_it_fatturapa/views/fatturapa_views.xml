@@ -229,6 +229,43 @@
                 </field>
             </field>
         </record>
+        <record model="ir.ui.view" id="view_res_partner_form">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[2]" position="after">
+                    <page string="Fattura PA">
+                        <group colspan="2" col="4" groups="account.group_account_invoice">
+                            <!--<separator string="REA Ref.:" colspan="4"/>
+                            <field name="rea_office" />
+                            <field name="rea_code" />
+                            <field name="rea_capital" />
+                            <field name="rea_member" />
+                            <field name="rea_liquidation_state" />-->
+                            <separator string="Fattura PA: Company" colspan="4"/>
+                            <field name="fatturapa_fiscalcode" />
+                            <field name="eori_code" />
+                            <field name="pa_partner_code" />
+                            <field name="register_province" />
+                            <field name="register_code" />
+                            <field name="register_regdate" />
+                            <field name="register_fiscalpos" />
+                            <field name="license_number" />
+                            <newline/>
+
+                            <separator string="Fattura PA: Private" colspan="4"/>
+                            <field name="fatturapa_name"/>
+                            <field name="fatturapa_surname"/>
+                            <field name="fatturapa_pec" />
+                            <field name="fatturapa_private_fiscalcode" />
+                            <newline/>                            
+                            
+                        </group>
+                    </page>                    
+                </xpath>
+            </field>
+        </record>
         <!--<record model="ir.ui.view" id="view_partner_form_fatturapa">
             <field name="name">partner.form.fatturapa</field>
             <field name="model">res.partner</field>
