@@ -1143,6 +1143,44 @@
                      sequence="10"
                      />
 
+        <!--FATTURA PA (ACCOUNTING POSITION):-->
+        <menuitem 
+            id="menu_account_fatturapa_root" 
+            name="Fattura PA" 
+            parent="menu_logistic_left_configuration_root" 
+            sequence="10"             
+            /><!--groups="account.group_account_invoice"-->
+            <menuitem 
+                id="menu_account_fatturapa_format" 
+                action="l18n_it_fatturapa.action_fatturapa_format"
+                name="Format" 
+                parent="menu_account_fatturapa_root" 
+                sequence="10"/>
+            <menuitem 
+                id="menu_account_fatturapa_document_type" 
+                action="l18n_it_fatturapa.action_fatturapa_document_type"
+                name="Document Type" 
+                parent="menu_account_fatturapa_root" 
+                sequence="20"/>
+            <menuitem 
+                id="menu_account_fatturapa_payment_term" 
+                action="l18n_it_fatturapa.action_fatturapa_payment_term"
+                name="Payment Term" 
+                parent="menu_account_fatturapa_root" 
+                sequence="30"/>
+            <menuitem 
+                id="menu_account_fatturapa_welfare" 
+                action="l18n_it_fatturapa.action_welfare_fund_type"
+                name="Welfare" 
+                parent="menu_account_fatturapa_root" 
+                sequence="40"/>
+            <menuitem 
+                id="menu_account_fatturapa_fiscal_position" 
+                action="l18n_it_fatturapa.action_fatturapa_fiscal_position"
+                name="Fiscal position" 
+                parent="menu_account_fatturapa_root" 
+                sequence="50"/>
+
           <!--Inventory configuration menu -->          
           <!--Stock position:-->
           <menuitem 

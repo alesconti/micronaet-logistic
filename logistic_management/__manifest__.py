@@ -47,6 +47,7 @@
         'logistic_ddt', # DDT Extra data
         #'logistic_purchase_export', # Export files
         'logistic_order_unification', # Order unification
+        'l18n_it_fatturapa', # Fattura PA Management
         ],
     'data': [
         #'security/crm_security.xml',
