@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        <!--account.payment.term-->        
+        <record model="ir.ui.view" id="view_account_payment_term_form">
+            <field name="name">account.payment.term.form</field>
+            <field name="model">account.payment.term</field>
+            <field name="inherit_id" ref="account.view_payment_term_form"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">                
+                     <field name="fatturapa_pt_id" />
+                     <field name="fatturapa_pm_id" />
+                </field>     
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_account_payment_term_tree">
+            <field name="name">account.payment.term.tree</field>
+            <field name="model">account.payment.term</field>
+            <field name="inherit_id" ref="account.view_payment_term_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                     <field name="fatturapa_pt_id" />
+                     <field name="fatturapa_pm_id" />
+                </field>     
+            </field>
+        </record>
+        
         <!--fatturapa.format-->
         <record model="ir.ui.view" id="view_fatturapa_format_tree">
             <field name="name">fatturapa.format.tree</field>
@@ -302,8 +326,8 @@
             <field name="arch" type="xml">
                 <field name="company_id" position="after">
                     <field name="fatturapa" />
-                    <field name="invoice_id" attrs="{'required':  [('fatturapa','=',False)], 'invisible': [('fatturapa','=',False)]}"/>
-                    <field name="credit_note_id"  attrs="{'required':  [('fatturapa','=',False)], 'invisible': [('fatturapa','=',False)]}"/>
+                    <field name="invoice_id" attrs="{'required':  [('fatturapa','=',True)], 'invisible': [('fatturapa','=',False)]}"/>
+                    <field name="credit_note_id"  attrs="{'required':  [('fatturapa','=',True)], 'invisible': [('fatturapa','=',False)]}"/>
                 </field>
             </field>
         </record>

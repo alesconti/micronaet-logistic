@@ -137,7 +137,7 @@ class AccountPaymentTerm(models.Model):
 
     # -------------------------------------------------------------------------
     #                             COLUMNS:
-    # -------------------------------------------------------------------------
+    # -------------------------------------------------------------------------    
     fatturapa_pt_id = fields.Many2one(
         'fatturapa.payment_term', string='FatturaPA Payment Term')
     fatturapa_pm_id = fields.Many2one(

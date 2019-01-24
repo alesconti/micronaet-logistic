@@ -12,6 +12,16 @@
                 </field>
             </field>
         </record>
+        <record model="ir.ui.view" id="view_account_fiscal_position_tree">
+            <field name="name">account.fiscal.position.tree</field>
+            <field name="model">account.fiscal.position</field>
+            <field name="inherit_id" ref="account.view_account_position_tree"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="before">
+                    <field name="need_invoice" />
+                </field>
+            </field>
+        </record>
 
         <!--product.template-->
         <record model="ir.ui.view" id="view_product_template_kit_page_form">
