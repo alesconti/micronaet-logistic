@@ -258,6 +258,9 @@ class AccountFiscalPosition(models.Model):
     #                             COLUMNS:
     # -------------------------------------------------------------------------
     fatturapa = fields.Boolean('Fattura PA', help='Managed with Fattura PA')
+    fatturapa_empty_code = fields.Char('Empty code', 
+        help='Ex. XXXXXXX for not Italy, 0000000 for Italy',
+        default='0000000')
     invoice_id = fields.Many2one(
         'fatturapa.document_type', 'Invoice document type')
     credit_note_id = fields.Many2one(
@@ -482,6 +485,7 @@ class StockPicking(models.Model):
         picking = self
         company = company_pool.search([])[0]
         partner = picking.partner_id
+        fiscal_position = partner.property_account_position_id
 
         # Check if needed:
         if not partner.property_account_position_id.fatturapa:
@@ -498,7 +502,7 @@ class StockPicking(models.Model):
         company_fiscal_mode = 'RF01' # TODO 
         esigibility = 'I' # TODO
 
-        # Sede:        
+        # Sede:
         company_company = company.name
         company_street = company.street
         # company_number = '' # in street!
@@ -512,7 +516,7 @@ class StockPicking(models.Model):
         rea_partner = company.fatturapa_rea_partner
         rea_liquidation = company.fatturapa_rea_liquidation
         
-        #unique_code = company.fatturapa_unique_code # TODO company or destin.?
+        company_unique_code = company.fatturapa_unique_code # TODO company or destin.?
 
         # ---------------------------------------------------------------------
         # Invoice / Picking parameters: TODO Put in loop
@@ -533,7 +537,7 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Partner:
         # ---------------------------------------------------------------------
-        # sede:
+        # Address:
         partner_street = partner.street
         partner_number = '' # in street!
         partner_city = partner.city
@@ -541,8 +545,9 @@ class StockPicking(models.Model):
         partner_province = '' #'BS' # 0.1 TODO 
         partner_country = 'IT' #TODO
         
-        # codes:
-        unique_code = partner.fatturapa_unique_code # TODO company or destin.?
+        # Codes:
+        empty_unique = fiscal_position.fatturapa_empty_code
+        partner_unique_code = partner.fatturapa_unique_code # TODO company or destin.?
         unique_pec = partner.fatturapa_pec
         fatturapa_private_fiscalcode = partner.fatturapa_private_fiscalcode
 
@@ -568,8 +573,8 @@ class StockPicking(models.Model):
         # format_param
         # doc_part
         # VAT 13 char UPPER
-        # unique_pec or unique_code!!
-        # unique_code = '0000000'
+        # unique_pec or partner_unique_code!!
+        # partner_unique_code = '0000000'   or 'XXXXXXX'
         # need vat, fiscalcode, pec check
         # check partner_vat | partner_fiscal
                 
@@ -616,7 +621,7 @@ class StockPicking(models.Model):
             self.get_tag('1.1.3', 'FormatoTrasmissione', send_format))
         # Codice univoco destinatario (7 caratteri PR, 6 PA) tutti 0 alt.
         f_invoice.write(
-            self.get_tag('1.1.4', 'CodiceDestinatario', unique_code))
+            self.get_tag('1.1.4', 'CodiceDestinatario', partner_unique_code))
 
         # ---------------------------------------------------------------------
         # 1.1.5 (alternative 1.1.6) <ContattiTrasmittente>
