@@ -1557,7 +1557,16 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Change status order ready > done
         orders.logistic_check_and_set_delivering()
-        return picking_ids    
+        
+        # Different return value if called with limit:
+        if limit:
+            _logger.warning('Check other order remain: %s' % limit)            
+            orders = self.search([
+                ('logistic_state', '=', 'ready'),
+                ], limit=limit) # keep limit instead of search all
+            return orders or False
+
+        return picking_ids
 
     # -------------------------------------------------------------------------
     # C. delivering > done
