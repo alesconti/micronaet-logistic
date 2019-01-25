@@ -43,7 +43,7 @@ class ResPartner(models.Model):
     # -------------------------------------------------------------------------
     # COLUMNS:
     # -------------------------------------------------------------------------
-    product_suffix = fields.Char('Product suffix', size=80, 
+    product_suffix = fields.Char('Product suffix', size=100, 
         help='If more than one use | to separate code: SUF1|SUF2')
     # -------------------------------------------------------------------------
 
