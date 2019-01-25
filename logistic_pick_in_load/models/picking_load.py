@@ -123,6 +123,11 @@ class StockPicking(models.Model):
             scheduled_date = header.date_order
             name = header.name # same as order_ref
             origin = _('%s [%s]') % (header.order_ref, header.date_order[:10])
+
+            _logger.info('DOCA Order importing: %s ref. %s' % (
+                name,
+                origin,                
+                ))
             
             # -----------------------------------------------------------------
             # Create new picking:
@@ -144,7 +149,7 @@ class StockPicking(models.Model):
             # -----------------------------------------------------------------
             # Append stock.move detail (or quants if in stock)
             # -----------------------------------------------------------------            
-            for line in header.doca_line:
+            for line in header.doca_line:                
                 product = line.product_id
                 product_qty = line.product_qty # received
                 
@@ -213,8 +218,8 @@ class StockPicking(models.Model):
                     # Create stock quants for remain data
                     # ---------------------------------------------------------
                     # TODO link to stock move?
-                    _logger.warning('Stock load not created: %s' % (
-                            product.product_tmpl_id.default_code))
+                    #_logger.warning('Stock creating... %s' % (
+                    #        product.product_tmpl_id.default_code))
                     quant = quant_pool.create({
                         'company_id': company.id,
                         'product_id': product.id, 
