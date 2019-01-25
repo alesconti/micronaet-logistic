@@ -227,7 +227,7 @@ class StockPicking(models.Model):
                             'quantity': product_qty,
                             })
                     except:
-                        _logger.warning('Stock creating load error: %s' % (
+                        _logger.error('Stock creating load error: %s' % (
                             product.name))
                         # TODO remove, not correct procedure    
 
