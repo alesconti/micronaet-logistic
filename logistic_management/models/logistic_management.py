@@ -764,7 +764,7 @@ class StockPicking(models.Model):
             partner = picking.partner_id
             
             # Need invoice check:
-            need_invoice = partner.property_account_fiscal_id.need_invoice or \
+            need_invoice = partner.property_account_position_id.need_invoice or \
                 partner.need_invoice
                 
             # Assign always DDT number:
