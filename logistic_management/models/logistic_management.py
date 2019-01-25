@@ -1339,15 +1339,19 @@ class SaleOrder(models.Model):
         #                               Pre operations:
         # ---------------------------------------------------------------------
         # Empty orders:
+        _logger.info('Check: Mark error state for empty orders')
         self.check_empty_orders() # Order without line
         
         # Payment article (not kit now):
+        _logger.info('Check: Mark service line to ready (not lavoration)')
         self.check_product_service() # Line with service article (not used)
         
         # Explode kit if present (create also product service):
+        _logger.info('Check: Explode product kit (if # in default_code)')
         self.check_exploded_product_kit()
         
         # Update supplier if present:
+        _logger.info('Check: Generate first supplier if not present')
         self.check_product_first_supplier()
         
         # ---------------------------------------------------------------------
@@ -2011,22 +2015,23 @@ class SaleOrderLine(models.Model):
         # but covered with stock, change here the availabilty
         for supplier in purchase_db:
             # -----------------------------------------------------------------
-            # Lavoration order
-            # -----------------------------------------------------------------
-            if supplier == company.partner_id:
-                for line in purchase_db[supplier]:
-                    line.mrp_state = 'draft'
-                continue
-
-            # -----------------------------------------------------------------
             # Create details:
             # -----------------------------------------------------------------
             purchase_id = False
+            is_company_parner = supplier == company.partner_id
             for line in purchase_db[supplier]:
+                product = line.product_id
+
+                # -------------------------------------------------------------
+                # Lavoration order
+                # -------------------------------------------------------------
+                if is_company_parner and product.type == 'service':
+                    line.mrp_state = 'draft' # put in lavoration state
+                    continue
+
                 # -------------------------------------------------------------
                 # Use stock to cover order:
                 # -------------------------------------------------------------
-                product = line.product_id
                 if not product:
                     continue
 
