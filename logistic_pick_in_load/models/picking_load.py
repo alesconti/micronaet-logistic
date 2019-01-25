@@ -213,6 +213,8 @@ class StockPicking(models.Model):
                     # Create stock quants for remain data
                     # ---------------------------------------------------------
                     # TODO link to stock move?
+                    _logger.warning('Stock load not created: %s' % (
+                            product.product_tmpl_id.default_code))
                     quant = quant_pool.create({
                         'company_id': company.id,
                         'product_id': product.id, 
