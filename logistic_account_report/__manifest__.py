@@ -33,6 +33,7 @@
         'base',
         'account',
         'stock',
+        'web', # Reporting qweb
         'product_folder_image', # For image management
         'l18n_it_fatturapa', # Fattura PA
         ],
@@ -44,6 +45,7 @@
         'reports/account_DDT_report.xml',
         'reports/account_invoice_report.xml',
         'reports/button_account_view.xml',
+        'views/company_view.xml',
         ],
     'demo': [],
     'css': [],

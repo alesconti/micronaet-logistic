@@ -21,6 +21,37 @@
 #
 ###############################################################################
 
-from . import company
+import os
+import sys
+import openerp
+import logging
+from openerp import models, fields
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+from openerp.tools.translate import _
+from openerp.tools import (
+    DEFAULT_SERVER_DATE_FORMAT, 
+    DEFAULT_SERVER_DATETIME_FORMAT, 
+    DATETIME_FORMATS_MAP, 
+    float_compare,
+    )
+
+
+_logger = logging.getLogger(__name__)
+
+class ResCompany(models.Model):
+    """ Model name: ResCompany
+    """
+    
+    _inherit = 'res.company'
+    
+    # -------------------------------------------------------------------------
+    # COLUMNS:
+    # -------------------------------------------------------------------------
+    report_text_thanks = fields.Text('Report text: Thanks')
+    report_text_privacy = fields.Text('Report text: Privacy')
+    
+    # -------------------------------------------------------------------------
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

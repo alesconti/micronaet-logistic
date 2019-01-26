@@ -5,7 +5,7 @@
         <template id="report_account_ddt">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <t t-call="web.internal_layout">
+                    <t t-call="web.external_layout">
                         <div class="page">
                              <!-- HEADER: -->
                             <div class="row">
@@ -92,7 +92,9 @@
                                 
                                 <div class="row" style="max-height 80px">
                                     <div class="col-xs-2">
-                                        <img t-att-src="'data:image/png;base64,%s' % to_text(move[0].new_image)" style="max-height:80px;max-width:80px"/>
+                                        <t t-if="move[0].type != 'service'">
+                                            <img t-att-src="'data:image/png;base64,%s' % to_text(move[0].new_image)" style="max-height:80px;max-width:80px"/>
+                                        </t>
                                     </div>    
                                     <div class="col-xs-1" style="align:text-center;">
                                         <h4 t-esc="move[1]" />
@@ -100,7 +102,9 @@
                                     <div class="col-xs-5" style="float: left; align:text-left;">
                                         <span t-esc="move[0].product_tmpl_id.default_code or &quot; &quot;" /><br/>
                                         <i><span t-if="move[2]" t-field="move[2].product_tmpl_id.default_code" /></i>
-                                        <img t-if="move[0].product_tmpl_id.default_code" t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('Code128', move[0].product_tmpl_id.default_code, 800, 50)" style="width:400px;height:25px;"/><br/>
+                                        <t t-if="move[0].type != 'service'">
+                                            <img t-if="move[0].product_tmpl_id.default_code" t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('Code128', move[0].product_tmpl_id.default_code, 800, 50)" style="width:400px;height:25px;"/><br/>
+                                        </t>
                                     </div>    
                                     <div class="col-xs-6">
                                         <h4 t-field="move[0].name" />
@@ -157,14 +161,7 @@
                             <div class="oe_structure"/>                            
                             <div class="row">
                                 <div class="col-xs-12" style="border: 1px solid black;">
-                                    IMPORTANTE: Lo staff Brixia Moto ringrazia per l’acquisto e la fiducia prestata.
-                                    Ogni nostra spedizione è accompagnata da regolare DDT di vendita, il quale fa fede in termini di data di
-                                    acquisto e garanzia del prodotto ordinato. Questo rapporto di vendita non e' soggetto ne' all'obbligo di emissione
-                                    della fattura (a meno che non sia richiesta dal cliente, non oltre il momento di effettuazione dell'operazione) come
-                                    stabilito dall'art.22 DPR 633/1972. ne' a quello di certificazione tramite scontrino o ricevuta fiscale fiscale ex art.2
-                                    co.1 lett. oo DPR 696/1996.
-                                    Restano salve tutte le garanzie di vendita, tra cui il diritto di recesso, come illustrato nelle condizioni generali di
-                                    vendita (a cui si rimanda) pubblicate sul sito.
+                                    <span t-field="res_company.report_text_thanks" />
                                 </div>    
                             </div>    
 
@@ -175,8 +172,7 @@
                                     Pag. 1
                                 </div>    
                                 <div class="col-xs-11">
-                                    Ai sensi del D.Lgs. 196/2003 Vi informiamo che i Vs. dati saranno utilizzati esclusivamente per i fini connessi ai rapporti commerciali tra di noi in essere.
-                                    Vi preghiamo di controllare i Vs. dati anagrafici, la Partita IVA e il Codice Fiscale. Non ci riteniamo responsabili di eventuali errori.
+                                    <span t-field="res_company.report_text_privacy" />
                                 </div>    
                             </div>    
                             <br />
