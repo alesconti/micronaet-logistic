@@ -516,7 +516,7 @@ class StockPicking(models.Model):
         rea_partner = company.fatturapa_rea_partner
         rea_liquidation = company.fatturapa_rea_liquidation
         
-        company_unique_code = company.fatturapa_unique_code # TODO company or destin.?
+        company_unique_code = company.partner_id.fatturapa_unique_code # TODO company or destin.?
 
         # ---------------------------------------------------------------------
         # Invoice / Picking parameters: TODO Put in loop
