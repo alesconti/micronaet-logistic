@@ -13,6 +13,8 @@
                             <field name="report_text_privacy" nolabel="1" colspan="4"/>
                             <separator string="Thanks clause:" colspan="4"/>
                             <field name="report_text_thanks" nolabel="1" colspan="4"/>
+                            <separator string="Invoice clause:" colspan="4"/>
+                            <field name="report_text_invoice" nolabel="1" colspan="4"/>
                         </group>
                     </page>
                 </xpath>

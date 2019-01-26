@@ -875,6 +875,37 @@ class StockPicking(models.Model):
             # 4. Extract electronic invoice:
             picking.extract_account_electronic_invoice()
 
+    @api.model
+    def move_lines_for_report_total(self):
+        ''' Generate Total collect data for report purposes
+        '''    
+        self.ensure_one()
+        
+        res = {
+            'total': 0.0, # net + vat
+            'net': 0.0,
+            'vat': 0.0,
+            
+            'vat_text': '', # VAT description
+            }
+        
+        for line in self.move_lines_for_report():
+            print(line)
+            if not res['vat_text'] and line[3]:
+                res['vat_text'] = line[3].name
+                
+            net = float(line[9])
+            total = float(line[10])
+            res['total'] += total
+            res['net'] += net
+            res['vat'] += total - net
+        
+        for key in res:
+            if key != 'vat_text':
+                res[key] = self.qweb_format_float(res[key])
+        return res
+
+    @api.model
     def move_lines_for_report(self):
         ''' Generate a list of record depend on OC, KIT and 2 substitution mode
             Return list of: product, line
@@ -940,7 +971,9 @@ class StockPicking(models.Model):
                 # TODO price_subtotal (use stock.move or sale.order.line?
                 sale_line.tax_id,
                 
+                # -------------------------------------------------------------
                 # Unit:
+                # -------------------------------------------------------------
                 self.qweb_format_float(
                     sale_line.price_unit), # 4. Unit no discount
                 self.qweb_format_float(
@@ -948,27 +981,33 @@ class StockPicking(models.Model):
                 self.qweb_format_float(
                     sale_line.price_tax), # 6. Vat total
 
+                # -------------------------------------------------------------
                 # Price net price:
+                # -------------------------------------------------------------
                 self.qweb_format_float(
                     sale_line.price_reduce_taxexcl), # 7. Unit Without VAT
                 self.qweb_format_float(
                     sale_line.price_reduce_taxinc), # 8. Unit With VAT=price_unit-red
 
+                # -------------------------------------------------------------
                 # Total:
+                # -------------------------------------------------------------
                 self.qweb_format_float(
                     sale_line.price_subtotal), # 9. Tot without VAT
                 self.qweb_format_float(
                     sale_line.price_total), # 10. Tot With VAT
 
+                # -------------------------------------------------------------
                 # Amount invoiced:
+                # -------------------------------------------------------------
                 self.qweb_format_float(
-                    sale_line.amt_to_invoice), # Not used
+                    sale_line.amt_to_invoice), # 11. Not used
                 self.qweb_format_float(
-                    sale_line.amt_invoiced), # Not used
+                    sale_line.amt_invoiced), # 12. Not used
 
                 # Discount (XXX not used):                
                 self.qweb_format_float(
-                    sale_line.discount), # not used for now
+                    sale_line.discount), # 13. not used for now
                 
                 write_order, # 14
                 ddt_reference, # 15

@@ -62,7 +62,7 @@
                             <!-- DETAIL: -->
                             <br />
                             <div class="oe_structure"/>                            
-                            <div class="row" style="height: 60px; border-top: 1px solid black; border-bottom: 1px solid black;">
+                            <div class="row" style="font-size: 11px; height: 60px; border-top: 1px solid black; border-bottom: 1px solid black;">
                                 <div class="col-xs-3">
                                     <b>Codice</b>
                                 </div>    
@@ -73,7 +73,7 @@
                                     <b>Quant.</b>
                                 </div>    
                                 <div class="col-xs-1">
-                                    <b>Prezzo Ivato</b>
+                                    <b>Pr. Ivato</b>
                                 </div>    
                                 <!--<div class="col-xs-1">
                                     <b>Sconto</b>
@@ -134,21 +134,25 @@
                                 </div> 
                             </t>
                             
+                            <!--Load total data:-->
+                            <t t-set="total" t-value="o.move_lines_for_report_total()" />
+
                             <!-- VAT: -->
                             <br />
                             <div class="oe_structure"/>                            
                             <div class="row" style="height: 60px; border-top: 1px solid black;">
                                 <div class="col-xs-6">
-                                    <b>IVA:</b><br/>                                    
+                                    <b>IVA:</b><br/>
+                                    <t t-esc="total.get('vat_text', '')"/>
 
                                 </div>
                                 <div class="col-xs-3">
                                     <b>Imponibile:</b><br/>                                    
-
+                                    <t t-esc="total.get('net', '')"/>
                                 </div>
                                 <div class="col-xs-3">
                                     <b>Imposta:</b><br/>                                    
-
+                                    <t t-esc="total.get('vat', '')"/>
                                 </div>
                             </div>    
 
@@ -162,7 +166,7 @@
                                     <b>Tot. importi:</b>
                                 </div>
                                 <div class="col-xs-3" style="height: 60px; border-top: 1px solid black;">
-                                    <b>XX</b>
+                                    <b><t t-esc="total.get('total', '')"/></b>
                                 </div>
                             </div>    
                             <div class="row">
@@ -172,7 +176,7 @@
                                     <b>Spese di Trasporto</b>
                                 </div>
                                 <div class="col-xs-3" style="height: 60px;">
-                                   <b>XX</b>                                 
+                                   <b></b>                                 
                                 </div>
                             </div>    
                             <div class="row">
@@ -180,7 +184,7 @@
                                     <b>Scadenze:</b>
                                 </div>
                                 <div class="col-xs-3" style="height: 60px;">
-                                    <b>XX</b>
+                                    <b>Pagamento anticipato</b>
                                 </div>
                                 <div class="col-xs-6" style="height: 60px; border-left: 1px solid black;">
                                 </div>
@@ -193,7 +197,7 @@
                                     <b>Tot. documento</b>
                                 </div>
                                 <div class="col-xs-3" style="height: 60px; border-top: 2px solid black; border-bottom: 1px solid black;">
-                                    <b>XXXX</b>
+                                    <b><t t-esc="total.get('total', '')"/></b>
                                 </div>
                             </div>    
 
@@ -205,8 +209,7 @@
                                     <b>Pag. 1</b>
                                 </div>    
                                 <div class="col-xs-11">
-                                    Ai sensi del D.Lgs. 196/2003 Vi informiamo che i Vs. dati saranno utilizzati esclusivamente per i fini connessi ai rapporti commerciali tra di noi in essere.
-                                    Contributo CONAI assolto ove dovuto - Vi preghiamo di controllare i Vs. dati anagrafici, la P. IVA e il Cod. Fiscale. Non ci riteniamo responsabili di eventuali errori.
+                                    <t t-esc="res_company.report_text_invoice"/>
                                 </div>    
                             </div>    
                             <div class="oe_structure"/>

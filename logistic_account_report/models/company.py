@@ -50,6 +50,7 @@ class ResCompany(models.Model):
     # -------------------------------------------------------------------------
     report_text_thanks = fields.Text('Report text: Thanks')
     report_text_privacy = fields.Text('Report text: Privacy')
+    report_text_invoice = fields.Text('Report text: Invoice')
     
     # -------------------------------------------------------------------------
 
