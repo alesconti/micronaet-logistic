@@ -400,6 +400,80 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     # Override function
     # -------------------------------------------------------------------------
+    # XXX Override original procedure un l18n_it_fatturapa:
+    @api.multi
+    def fatturapa_get_details(self):
+        ''' Extract line detail sumary
+        '''
+        self.ensure_one()
+        
+        picking = self[0]
+        # Result dict:
+        detail_table = {}
+        vat_table = {}        
+        ddt_reference = {}
+        # TODO order?
+        
+        # XXX Always present and one only!
+        ddt_number = picking.ddt_number
+        ddt_date = picking.ddt_date
+        
+        i = 0
+        for move in picking.move_lines_for_report():
+            # Parameters:
+            price = float(move[5]) # price_reduce from sale order line
+            qty = float(move[1]) # q. from sale order line
+            subtotal = float(move[9])
+            vat = move[3].amount
+            subtotal_vat = float(move[10]) - subtotal # XXX check approx!
+
+            # -----------------------------------------------------------------            
+            # Detail data:
+            # -----------------------------------------------------------------            
+            i += 1     
+            # TODO remove from here: self.qweb_format_float(
+            detail_table[str(i)] = {
+                'mode': '', # No mode = product line (else SC, PR, AB, AC)
+                'discount': '', # No discount
+                'nature': '', # No nature (always 22)
+                'product': move[0], # Browse
+                'price': self.qweb_format_float(price),
+                'qty': self.qweb_format_float(qty),
+                'vat': self.qweb_format_float(vat), # %
+                'retention': '', # No retention
+                'subtotal': self.qweb_format_float(subtotal), # VAT excluded
+                }
+
+            # -----------------------------------------------------------------            
+            # Vat data:
+            # -----------------------------------------------------------------            
+            if vat in vat_table:
+                vat_table[vat][0] += subtotal
+                vat_table[vat][1] += subtotal_vat
+            else:        
+                vat_table[vat] = [
+                    subtotal, # Subtotal
+                    subtotal_vat, # VAT total
+                    '', # Nature
+                    '', # Extra expense
+                    '', # Round
+                    ]
+
+            # -----------------------------------------------------------------            
+            # DDT reference:
+            # -----------------------------------------------------------------            
+            if ddt_number in ddt_reference:
+                ddt_reference[ddt_number][0].append(str(i))
+            else:    
+                ddt_reference[ddt_number] = [
+                    [str(i), ], ddt_date]
+  
+        # TODO remove from here format float
+        for vat in vat_table:
+            vat_table[vat][0] = self.qweb_format_float(vat_table[vat][0])
+            vat_table[vat][1] = self.qweb_format_float(vat_table[vat][1])
+        return detail_table, vat_table, ddt_reference
+
     @api.multi
     def refund_confirm_state_event(self):
         ''' Confirm operation (will be overrided)

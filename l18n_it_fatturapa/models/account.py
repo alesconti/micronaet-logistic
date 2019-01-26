@@ -375,7 +375,9 @@ class StockPicking(models.Model):
             newline,
             )
 
-    # TODO To beoverrided in another module:
+    # -------------------------------------------------------------------------
+    # XXX IMPORTANT: To beoverrided in another module:
+    # -------------------------------------------------------------------------
     @api.multi
     def fatturapa_get_details(self):
         ''' Extract line detail sumary
