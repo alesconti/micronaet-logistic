@@ -40,22 +40,60 @@ class FatturapaFormat(models.Model):
     _description = 'FatturaPA Format'
 
     # -------------------------------------------------------------------------
-    # Utility:
+    #                             Format utility:
     # -------------------------------------------------------------------------
     @api.model
-    def format_pa_date(self, value):
-        ''' Date ISO format YYYY-MM-GG
-        '''        
+    def format_date(self, value):
+        ''' Format date ISO mode
+        ''' 
+        value = value or ''
+        return value[:10]
+
+    @api.model
+    def format_decimal(self, value, decimal=2):
+        ''' Format float data
+        '''
+        if not value:
+            return '0.00'
+           
+        # if comes as a string, ex.: '12.045' 
+        if type(value) in (str, ):# unicode):
+            try:
+                value = float(value)
+            except:    
+                return '0.00'
+                
+        mask = '%%10.%sf' % decimal
+        return (mask % value)
+
+    @api.model
+    def format_integer(self, value):
+        ''' Format integer data
+        '''
         return value
 
     @api.model
-    def format_pa_float(self, value):
-        ''' Date ISO format 0.00
+    def format_string(self, value, size=0):
+        ''' Format text data
+            Char used: [a:z, A:Z]
         '''
-        if not value or type(value) != float:
-            return '0.00'
+        value = value or ''
+        if size:
+            return value[:size]
         else:
-            return ('%10.2f' % value).strip()
+            return value
+
+    @api.model
+    def format_normalized_string(self, value, size=0):
+        ''' Format text data
+        '''
+        value = value or ''
+        if size:
+            return value[:size]
+        else:
+            return value
+    # -------------------------------------------------------------------------
+
 
     # -------------------------------------------------------------------------
     #                             COLUMNS:
@@ -142,6 +180,17 @@ class AccountPaymentTerm(models.Model):
         'fatturapa.payment_term', string='FatturaPA Payment Term')
     fatturapa_pm_id = fields.Many2one(
         'fatturapa.payment_method', string='FatturaPA Payment Method')
+
+class ProductUom(models.Model):
+    ''' Product UOM
+        ['2.2.1.6']
+    '''
+    _inherit = 'product.uom'
+
+    # -------------------------------------------------------------------------
+    #                             COLUMNS:
+    # -------------------------------------------------------------------------    
+    fatturapa_code = fields.Char('Fattura PA code', size=10)
 
 class ResPartner(models.Model):
     ''' Extra data for partner 
@@ -886,7 +935,8 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.get_tag('2.1.1.2', 'Divisa', invoice_currency))
         f_invoice.write(
-            self.get_tag('2.1.1.3', 'Data', invoice_date))
+            self.get_tag('2.1.1.3', 'Data', 
+            format_param.format_date(invoice_date)))
         f_invoice.write(
             self.get_tag('2.1.1.4', 'Numero', invoice_number))
 
@@ -999,7 +1049,8 @@ class StockPicking(models.Model):
             f_invoice.write(
                 self.get_tag('2.1.8.1', 'NumeroDDT', ddt_number))
             f_invoice.write(
-                self.get_tag('2.1.8.2', 'DataDDT', ddt_date))
+                self.get_tag('2.1.8.2', 'DataDDT', 
+                format_param.format_date(ddt_date)))
                 
             # LOOP ON LINE REF
             for line in ddt_lines:
@@ -1067,18 +1118,19 @@ class StockPicking(models.Model):
         
         f_invoice.write(
             self.start_tag('2.2', 'DatiBeniServizi'))
-        f_invoice.write(
-            self.start_tag('2.2.1', 'DettaglioLinee'))
 
         # ---------------------------------------------------------------------
         #                        INVOCE DETAILS:
         # ---------------------------------------------------------------------
-        for seq in detail_table:
+        for seq in sorted(detail_table):
             record = detail_table[seq]
             product = record['product']
             default_code = product.product_tmpl_id.default_code
             name = product.name
-            uom = product.uom_id.name
+            uom = product.uom_id.fatturapa_code or product.uom_id.name
+
+            f_invoice.write(
+                self.start_tag('2.2.1', 'DettaglioLinee'))
 
             f_invoice.write(
                 self.get_tag('2.2.1.1', 'NumeroLinea', seq))
@@ -1086,7 +1138,7 @@ class StockPicking(models.Model):
             f_invoice.write(# Solo se SC PR AB AC (spesa accessoria)
                 self.get_tag('2.2.1.2', 'TipoCessionePrestazione', 
                     record['mode'], cardinality='0:1'))
-                
+
             # XXX Loop on every code passed:    
             f_invoice.write(
                 self.start_tag('2.2.1.3', 'CodiceArticolo'))
@@ -1100,7 +1152,8 @@ class StockPicking(models.Model):
             f_invoice.write(
                 self.get_tag('2.2.1.4', 'Descrizione', name))
             f_invoice.write(
-                self.get_tag('2.2.1.5', 'Quantita', str(record['qty']))) # TODO 
+                self.get_tag('2.2.1.5', 'Quantita', 
+                format_param.format_decimal(record['qty'])))
             f_invoice.write(
                 self.get_tag('2.2.1.6', 'UnitaMisura', uom))
             #f_invoice.write(
@@ -1111,58 +1164,60 @@ class StockPicking(models.Model):
             #        cardinality='0:1'))
             f_invoice.write(# unitario, totale sconto (anche negativo)
                 # Anche negativo # Vedi 2.2.1.2
-                self.get_tag('2.2.1.9', 'PrezzoUnitario', str(record['price']))) # TODO 
+                self.get_tag('2.2.1.9', 'PrezzoUnitario', 
+                format_param.format_decimal(record['price'])))
 
-        """
-        # ---------------------------------------------------------------------
-        # Sconto manuale (opzionale:
-        f_invoice.write(
-            self.start_tag('2.2.1.10', 'ScontoMaggiorazione'))
+            """
+            # ---------------------------------------------------------------------
+            # Sconto manuale (opzionale:
+            f_invoice.write(
+                self.start_tag('2.2.1.10', 'ScontoMaggiorazione'))
 
-        f_invoice.write(# SC o MG
-            self.get_tag('2.2.1.10.1', 'Tipo', ))
-        f_invoice.write(# Alternativo a 2.2.1.10.3
-            self.get_tag('2.2.1.10.2', 'Percentuale', ))
-        f_invoice.write(# Alternativo a 2.2.1.10.2
-            self.get_tag('2.2.1.10.3', 'Importo', ))
+            f_invoice.write(# SC o MG
+                self.get_tag('2.2.1.10.1', 'Tipo', ))
+            f_invoice.write(# Alternativo a 2.2.1.10.3
+                self.get_tag('2.2.1.10.2', 'Percentuale', ))
+            f_invoice.write(# Alternativo a 2.2.1.10.2
+                self.get_tag('2.2.1.10.3', 'Importo', ))
+                
+            f_invoice.write(
+                self.start_tag('2.2.1.10', 'ScontoMaggiorazione', mode='close'))
+            # ---------------------------------------------------------------------
+            """
+            f_invoice.write(# Subtotal for line
+                self.get_tag('2.2.1.11', 'PrezzoTotale', 
+                format_param.format_decimal(record['subtotal'])))
+            f_invoice.write(# % VAT 22.00 format
+                self.get_tag('2.2.1.12', 'AliquotaIVA', 
+                format_param.format_decimal(record['vat'])))
+            #f_invoice.write(# % 22.00 format
+            #    self.get_tag('2.2.1.13', 'Ritenuta', format_param.format_decimal))
+
+            # Obbligatorio se IVA 0:
+            f_invoice.write(# TODO Descrizione eventuale esenzione
+                self.get_tag('2.2.1.14', 'Natura', record['nature']))
+            #f_invoice.write(# Codice identificativo ai fini amministrativi
+            #    self.get_tag('2.2.1.15', 'RiferimentoAmministrazione', ))
+
+            """
+            # ---------------------------------------------------------------------
+            # Non obbligatorio: note e riferimenti
+            f_invoice.write(
+                self.start_tag('2.2.1.16', 'AltriDatiGestionali'))
+            #f_invoice.write(# % 22.00 format
+            #    self.get_tag('2.2.1.16.1', 'TipoDato', ))
+            #f_invoice.write(# % 22.00 format
+            #    self.get_tag('2.2.1.16.2', 'RiferimentoTesto', ))
+            #f_invoice.write(# % 22.00 format
+            #    self.get_tag('2.2.1.16.3', 'RiferimentoNumero', ))
+            #f_invoice.write(# % 22.00 format
+            #    self.get_tag('2.2.1.16.4', 'RiferimentoData', ))
+            f_invoice.write(
+                self.start_tag('2.2.1.16', 'AltriDatiGestionali', mode='close'))
+            """
             
-        f_invoice.write(
-            self.start_tag('2.2.1.10', 'ScontoMaggiorazione', mode='close'))
-        # ---------------------------------------------------------------------
-        """
-
-        f_invoice.write(# Subtotal for line
-            self.get_tag('2.2.1.11', 'PrezzoTotale', str(record['subtotal']))) # TODO 
-        f_invoice.write(# % VAT 22.00 format
-            self.get_tag('2.2.1.12', 'AliquotaIVA', str(record['vat']))) # TODO 
-        #f_invoice.write(# % 22.00 format
-        #    self.get_tag('2.2.1.13', 'Ritenuta', ))
-
-        # Obbligatorio se IVA 0:
-        f_invoice.write(# TODO Descrizione eventuale esenzione
-            self.get_tag('2.2.1.14', 'Natura', record['nature']))
-        #f_invoice.write(# Codice identificativo ai fini amministrativi
-        #    self.get_tag('2.2.1.15', 'RiferimentoAmministrazione', ))
-
-        """
-        # ---------------------------------------------------------------------
-        # Non obbligatorio: note e riferimenti
-        f_invoice.write(
-            self.start_tag('2.2.1.16', 'AltriDatiGestionali'))
-        #f_invoice.write(# % 22.00 format
-        #    self.get_tag('2.2.1.16.1', 'TipoDato', ))
-        #f_invoice.write(# % 22.00 format
-        #    self.get_tag('2.2.1.16.2', 'RiferimentoTesto', ))
-        #f_invoice.write(# % 22.00 format
-        #    self.get_tag('2.2.1.16.3', 'RiferimentoNumero', ))
-        #f_invoice.write(# % 22.00 format
-        #    self.get_tag('2.2.1.16.4', 'RiferimentoData', ))
-        f_invoice.write(
-            self.start_tag('2.2.1.16', 'AltriDatiGestionali', mode='close'))
-        """
-        
-        f_invoice.write(
-            self.start_tag('2.2.1', 'DettaglioLinee', mode='close'))
+            f_invoice.write(
+                self.start_tag('2.2.1', 'DettaglioLinee', mode='close'))
 
         # ---------------------------------------------------------------------
 
@@ -1175,7 +1230,8 @@ class StockPicking(models.Model):
             f_invoice.write(
                 self.start_tag('2.2.2', 'DatiRiepilogo'))
             f_invoice.write(# % 22.00 format
-                self.get_tag('2.2.2.1', 'AliquotaIVA', str(vat_key)))
+                self.get_tag('2.2.2.1', 'AliquotaIVA', 
+                format_param.format_decimal(vat_key)))
             #f_invoice.write(# % Tabella Natura (se non idicata l'IVA)
             #    self.get_tag('2.2.2.2', 'Natura', ))
             #f_invoice.write(# % Tabella
@@ -1183,9 +1239,11 @@ class StockPicking(models.Model):
             #f_invoice.write(# % Tabella
             #    self.get_tag('2.2.2.4', 'Arrotondamento', ))
             f_invoice.write(# % Tabella
-                self.get_tag('2.2.2.5', 'ImponibileImporto', str(item_subtotal)))
+                self.get_tag('2.2.2.5', 'ImponibileImporto', 
+                format_param.format_decimal(item_subtotal)))
             f_invoice.write(# % Tabella
-                self.get_tag('2.2.2.6', 'Imposta', str(item_subtotal_vat)))
+                self.get_tag('2.2.2.6', 'Imposta', 
+                format_param.format_decimal(item_subtotal_vat)))
             f_invoice.write(# % Tabella
                 self.get_tag('2.2.2.7', 'EsigibilitaIVA', esigibility))
             #f_invoice.write(# % Tabella se presente Natura

@@ -239,6 +239,28 @@
         </record>
 
         <!--INHERIT-->
+        <record model="ir.ui.view" id="view_product_uom_fattura_pa_form">
+            <field name="name">product.uom.fatturapa.code.form</field>
+            <field name="model">product.uom</field>
+            <field name="inherit_id" ref="product.product_uom_form_view"/>
+            <field name="arch" type="xml">
+                <field name="active" position="before">
+                    <field name="fatturapa_code" />
+                    <newline/>
+                </field>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_product_uom_fattura_pa_tree">
+            <field name="name">product.uom.fatturapa.code.tree</field>
+            <field name="model">product.uom</field>
+            <field name="inherit_id" ref="product.product_uom_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="uom_type" position="after">
+                    <field name="fatturapa_code" />
+                </field>
+            </field>
+        </record>
+        
         <record id="view_payment_term_form_fatturapa" model="ir.ui.view">
             <field name="name">account.payment.term.fatturapa</field>
             <field name="model">account.payment.term</field>
