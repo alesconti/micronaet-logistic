@@ -351,8 +351,8 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     # Function fields:
     # -------------------------------------------------------------------------
+    #@api.depends('load_line_ids', )
     @api.multi
-    @api.depends('load_line_ids', )
     def _get_logistic_status_field(self):
         ''' Manage all data for logistic situation in sale order:
         '''
@@ -361,7 +361,7 @@ class PurchaseOrderLine(models.Model):
             logistic_delivered_qty = 0.0
             for move in line.load_line_ids:
                 logistic_delivered_qty += move.product_uom_qty
-            # Generate data for fields::
+            # Generate data for fields:
             line.logistic_delivered_qty = logistic_delivered_qty
             line.logistic_undelivered_qty = \
                 line.product_qty - logistic_delivered_qty
