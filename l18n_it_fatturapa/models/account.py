@@ -432,12 +432,9 @@ class StockPicking(models.Model):
             cardinality: 1:1 0:1 0:N (to check if need to return)
             block: XML block, es: 1.2.3.4 (used for extra init space
         ''' 
-        try:
-            value = (value or '').strip().upper()
-        except:
-            _logger.error('Extract %s, %s > %s' % (
-                block, tag, value))
-            import pdb; pdb.set_trace()    
+        value = (value or '').strip().upper()
+        #    _logger.error('Extract %s, %s > %s' % (
+        #        block, tag, value))
         # Readability of XML:
         if init_space:
             extra_space = ' ' * block.count('.')
@@ -829,8 +826,8 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.get_tag('1.2.4.2', 'NumeroREA', rea_number))
         f_invoice.write(
-            self.get_tag('1.2.4.3', 'CapitaleSociale', rea_capital, 
-                cardinality='0:1'))
+            self.get_tag('1.2.4.3', 'CapitaleSociale', 
+            format_param.format_decimal(rea_capital), cardinality='0:1'))
         f_invoice.write(
             self.get_tag('1.2.4.4', 'SocioUnico', rea_partner, 
                 cardinality='0:1'))
