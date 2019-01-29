@@ -439,9 +439,13 @@
              <field name="arch" type="xml">
                  <tree string="Sale line logistic" decoration-muted="is_kit==True" decoration-warning="kit_product_id != False">
                      <field name="is_kit" />
+                     <button name="open_view_sale_order" string="Open sale order" type="object" icon="fa-arrow-circle-o-right"/>
                      <field name="order_id" />
+                     <button name="open_view_sale_order_product" string="Open sale order product" type="object" icon="fa-arrow-circle-o-right"/>
                      <field name="product_id" />
+                     <button name="open_view_sale_order_kit_product" string="Open sale order kit product" type="object" icon="fa-arrow-circle-o-right" attrs="{'invisible': [('kit_product_id','=',False)]}"/>
                      <field name="kit_product_id" />
+                     <button name="open_view_sale_order_original_product" string="Open sale order original product" type="object" icon="fa-arrow-circle-o-right" attrs="{'invisible': [('origin_product_id','=',False)]}"/>
                      <field name="origin_product_id" />
                      <field name="linked_mode" />
                      <field name="name" />

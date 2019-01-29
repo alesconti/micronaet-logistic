@@ -1779,6 +1779,102 @@ class SaleOrderLine(models.Model):
             }
 
     # -------------------------------------------------------------------------
+    #                           BUTTON EVENT:
+    # -------------------------------------------------------------------------
+    @api.multi
+    def open_view_sale_order(self):
+        ''' Open order view
+        '''
+        #model_pool = self.env['ir.model.data']
+        #view_id = model_pool.get_object_reference(
+        #    'module_name', 'view_name')[1]
+        view_id = False
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Sale order'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': self.order_id.id,
+            'res_model': 'sale.order',
+            #'view_id': view_id, # False
+            'views': [(False, 'form'), (False, 'tree')],
+            'domain': [('id', '=', self.order_id.id)],
+            #'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+    
+    @api.multi
+    def open_view_sale_order_product(self):
+        ''' Open subsituted product
+        '''
+        #model_pool = self.env['ir.model.data']
+        #view_id = model_pool.get_object_reference(
+        #    'module_name', 'view_name')[1]
+        view_id = False
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Product detail'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': self.product_id.id,
+            'res_model': 'product.product',
+            #'view_id': view_id, # False
+            'views': [(False, 'form'), (False, 'tree')],
+            'domain': [('id', '=', self.product_id.id)],
+            #'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+    
+    @api.multi
+    def open_view_sale_order_original_product(self):
+        ''' Open original product
+        '''
+        #model_pool = self.env['ir.model.data']
+        #view_id = model_pool.get_object_reference(
+        #    'module_name', 'view_name')[1]
+        view_id = False
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Product detail'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': self.origin_product_id.id,
+            'res_model': 'product.product',
+            #'view_id': view_id, # False
+            'views': [(False, 'form'), (False, 'tree')],
+            'domain': [('id', '=', self.origin_product_id.id)],
+            #'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+
+    @api.multi
+    def open_view_sale_order_kit_product(self):
+        ''' Open original product
+        '''
+        view_id = False
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Product detail'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': self.kit_product_id.id,
+            'res_model': 'product.product',
+            #'view_id': view_id, # False
+            'views': [(False, 'form'), (False, 'tree')],
+            'domain': [('id', '=', self.kit_product_id.id)],
+            #'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+
+    # -------------------------------------------------------------------------
     #                   WORKFLOW: [LAVORATION OPERATION TRIGGER]
     # -------------------------------------------------------------------------    
     # A. Draft > Progress
@@ -1938,9 +2034,10 @@ class SaleOrderLine(models.Model):
                     try:    
                         quant_pool.create(data)
                     except:
-                        _logger.error('Product is service? [%s - %s]' % (
+                        _logger.error('Product is service? [%s - %s]\n%s' % (
                             used_product.product_tmpl_id.default_code or '',
                             used_product.name,
+                            sys.exc_info(),
                             ))
                         continue    
                     
