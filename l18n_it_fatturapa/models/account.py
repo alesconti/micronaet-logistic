@@ -432,8 +432,12 @@ class StockPicking(models.Model):
             cardinality: 1:1 0:1 0:N (to check if need to return)
             block: XML block, es: 1.2.3.4 (used for extra init space
         ''' 
-        value = (value or '').strip().upper()
-
+        try:
+            value = (value or '').strip().upper()
+        except:
+            _logger.error('Extract %s, %s > %s' % (
+                block, tag, value))
+            import pdb; pdb.set_trace()    
         # Readability of XML:
         if init_space:
             extra_space = ' ' * block.count('.')
