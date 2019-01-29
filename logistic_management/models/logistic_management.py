@@ -1085,6 +1085,7 @@ class StockPicking(models.Model):
                 
                 write_order, # 14
                 ddt_reference, # 15
+                sale_line, # 16 For every extra reference
                 ))
             ddt_reference = '' # only first line print DDT reference    
         return res
