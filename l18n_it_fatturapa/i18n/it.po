@@ -1,0 +1,558 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* l18n_it_fatturapa
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-01-29 11:07+0000\n"
+"PO-Revision-Date: 2019-01-29 12:14+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_company_fatturapa_art73
+msgid "Art73"
+msgstr "Art73"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_rea_capital
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_rea_capital
+msgid "Capital"
+msgstr "Capitale sociale"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_document_type_code
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_fiscal_position_code
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_format_code
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_method_code
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_term_code
+msgid "Code"
+msgstr "Codice"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model,name:l18n_it_fatturapa.model_res_company
+msgid "Companies"
+msgstr "Aziende"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model,name:l18n_it_fatturapa.model_res_partner
+msgid "Contact"
+msgstr "Contatto"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_document_type_create_uid
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_fiscal_position_create_uid
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_format_create_uid
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_method_create_uid
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_term_create_uid
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_welfare_fund_type_create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_document_type_create_date
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_fiscal_position_create_date
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_format_create_date
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_method_create_date
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_term_create_date
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_welfare_fund_type_create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_account_fiscal_position_credit_note_id
+msgid "Credit note document type"
+msgstr "Tipo di documento nota di credito"
+
+#. module: l18n_it_fatturapa
+#: selection:account.tax,payability:0
+msgid "Deferred payability"
+msgstr "Pagamento differito"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_document_type_name
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_fiscal_position_name
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_format_name
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_method_name
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_term_name
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_welfare_fund_type_description
+msgid "Description"
+msgstr "Descrizione"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_document_type_display_name
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_fiscal_position_display_name
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_format_display_name
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_method_display_name
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_term_display_name
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_welfare_fund_type_display_name
+msgid "Display Name"
+msgstr "Nome Completo"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_format_doc_part
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_fatturapa_format_form
+msgid "Doc Part"
+msgstr "Part. Doc."
+
+#. module: l18n_it_fatturapa
+#: model:ir.ui.menu,name:l18n_it_fatturapa.menu_account_fatturapa_document_type
+msgid "Document Type"
+msgstr "Tipo documento"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_eori_code
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_eori_code
+msgid "EORI Code"
+msgstr "Codice EORI"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_account_fiscal_position_fatturapa_empty_code
+msgid "Empty code"
+msgstr "Codice vuoto"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,help:l18n_it_fatturapa.field_account_fiscal_position_fatturapa_empty_code
+msgid "Ex. XXXXXXX for not Italy, 0000000 for Italy"
+msgstr "Es. XXXXXXX per non Italia, 0000000 per Italia"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_account_fiscal_position_fatturapa
+#: model:ir.ui.menu,name:l18n_it_fatturapa.menu_account_fatturapa_root
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_res_company_form
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_res_partner_form
+msgid "Fattura PA"
+msgstr "Fattura PA"
+
+#. module: l18n_it_fatturapa
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_fatturapa_document_type_form
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_fatturapa_document_type_tree
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_fatturapa_fiscal_position_form
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_fatturapa_fiscal_position_tree
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_fatturapa_format_form
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_fatturapa_format_tree
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_fatturapa_payment_method_tree
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_fatturapa_payment_term_form
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_fatturapa_payment_term_tree
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_welfare_fund_type_form
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_welfare_fund_type_tree
+msgid "Fattura PA Format"
+msgstr "Fattura PA Formato"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_fatturapa_pec
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_fatturapa_pec
+msgid "Fattura PA PEC"
+msgstr "Fattura PA PEC"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_product_uom_fatturapa_code
+msgid "Fattura PA code"
+msgstr "Fattura PA codice"
+
+#. module: l18n_it_fatturapa
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_res_partner_form
+msgid "Fattura PA: Company"
+msgstr "Fattura PA: Azienda"
+
+#. module: l18n_it_fatturapa
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_res_partner_form
+msgid "Fattura PA: Private"
+msgstr "Fattura PA: Privato"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_fatturapa_fiscalcode
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_fatturapa_fiscalcode
+msgid "Fattura fiscal code"
+msgstr "Fattura PA Codice fiscale"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_fatturapa_private_fiscalcode
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_fatturapa_private_fiscalcode
+msgid "Fattura private fiscal code"
+msgstr "Fattura PA Codice fiscale privato"
+
+#. module: l18n_it_fatturapa
+#: model:ir.ui.view,arch_db:l18n_it_fatturapa.view_payment_term_form_fatturapa
+msgid "FatturaPA"
+msgstr "FatturaPA"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model,name:l18n_it_fatturapa.model_fatturapa_document_type
+msgid "FatturaPA Document Type"
+msgstr "FatturaPA Tipo documento"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model,name:l18n_it_fatturapa.model_fatturapa_fiscal_position
+msgid "FatturaPA Fiscal Position"
+msgstr "FatturaPA Posizione fiscale"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model,name:l18n_it_fatturapa.model_fatturapa_format
+#: model:ir.model.fields,help:l18n_it_fatturapa.field_res_company_fatturapa_format_id
+msgid "FatturaPA Format"
+msgstr "FatturaPA Formato"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model,name:l18n_it_fatturapa.model_fatturapa_payment_method
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_account_payment_term_fatturapa_pm_id
+msgid "FatturaPA Payment Method"
+msgstr "FatturaPA Metodo di pagamento"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model,name:l18n_it_fatturapa.model_fatturapa_payment_term
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_account_payment_term_fatturapa_pt_id
+msgid "FatturaPA Payment Term"
+msgstr "FatturaPA Termini di pagamento"
+
+#. module: l18n_it_fatturapa
+#: model:ir.actions.act_window,name:l18n_it_fatturapa.action_fatturapa_document_type
+msgid "Fatturapa Document Type"
+msgstr "Fatturapa Tipo documento"
+
+#. module: l18n_it_fatturapa
+#: model:ir.actions.act_window,name:l18n_it_fatturapa.action_fatturapa_fiscal_position
+msgid "Fatturapa Fiscal Position"
+msgstr "Fatturapa Posizione fiscale"
+
+#. module: l18n_it_fatturapa
+#: model:ir.actions.act_window,name:l18n_it_fatturapa.action_fatturapa_format
+msgid "Fatturapa Format"
+msgstr "Fatturapa Formato"
+
+#. module: l18n_it_fatturapa
+#: model:ir.actions.act_window,name:l18n_it_fatturapa.action_fatturapa_payment_term
+msgid "Fatturapa Payment Method"
+msgstr "Fatturapa Metodo di pagamento"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model,name:l18n_it_fatturapa.model_account_fiscal_position
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_company_fatturapa_fiscal_position_id
+msgid "Fiscal Position"
+msgstr "Posizione Fiscale"
+
+#. module: l18n_it_fatturapa
+#: model:ir.ui.menu,name:l18n_it_fatturapa.menu_account_fatturapa_fiscal_position
+msgid "Fiscal position"
+msgstr "Posizione fiscale"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,help:l18n_it_fatturapa.field_res_company_fatturapa_fiscal_position_id
+msgid "Fiscal position used by FatturaPA"
+msgstr "Posizione fiscale utilizzata per la Fattura PA"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_company_fatturapa_format_id
+#: model:ir.ui.menu,name:l18n_it_fatturapa.menu_account_fatturapa_format
+msgid "Format"
+msgstr "Formato"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_document_type_id
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_fiscal_position_id
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_format_id
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_method_id
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_term_id
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_welfare_fund_type_id
+msgid "ID"
+msgstr "ID"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,help:l18n_it_fatturapa.field_res_company_fatturapa_sequence_id
+msgid ""
+"Il progressivo univoco del file è rappresentato da una stringa alfanumerica "
+"di lunghezza massima di 5 caratteri e con valori ammessi da \"A\" a \"Z\" e "
+"da \"0\" a \"9\"."
+msgstr ""
+"Il progressivo univoco del file è rappresentato da una stringa alfanumerica "
+"di lunghezza massima di 5 caratteri e con valori ammessi da \"A\" a \"Z\" e "
+"da \"0\" a \"9\"."
+
+#. module: l18n_it_fatturapa
+#: selection:account.tax,payability:0
+msgid "Immediate payability"
+msgstr "Pagabilità immediata"
+
+#. module: l18n_it_fatturapa
+#: selection:res.partner,rea_liquidation_state:0
+msgid "In liquidation"
+msgstr "In liquidazione"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_document_type___last_update
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_fiscal_position___last_update
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_format___last_update
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_method___last_update
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_term___last_update
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_welfare_fund_type___last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_document_type_write_uid
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_fiscal_position_write_uid
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_format_write_uid
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_method_write_uid
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_term_write_uid
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_welfare_fund_type_write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_document_type_write_date
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_fiscal_position_write_date
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_format_write_date
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_method_write_date
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_fatturapa_payment_term_write_date
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_welfare_fund_type_write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_account_tax_law_reference
+msgid "Law reference"
+msgstr "Riferimento legale"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_company_fatturapa_tax_representative
+msgid "Legal Tax Representative"
+msgstr "Rappresentante legale per tasse"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_license_number
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_license_number
+msgid "License Code"
+msgstr "Codice licenza"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_company_fatturapa_rea_liquidation
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_rea_liquidation_state
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_rea_liquidation_state
+msgid "Liquidation State"
+msgstr "Stato liquidazione"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,help:l18n_it_fatturapa.field_account_fiscal_position_fatturapa
+msgid "Managed with Fattura PA"
+msgstr "Gestito con Fattura PA"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_company_fatturapa_rea_partner
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_rea_member_type
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_rea_member_type
+msgid "Member Type"
+msgstr "Tipo membro"
+
+#. module: l18n_it_fatturapa
+#: selection:res.partner,rea_member_type:0
+msgid "Multiple Members"
+msgstr "Membri multipli"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_welfare_fund_type_name
+msgid "Name"
+msgstr "Nome"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_account_tax_non_taxable_nature
+msgid "Non taxable nature"
+msgstr "Natura non tassabile"
+
+#. module: l18n_it_fatturapa
+#: selection:res.partner,rea_liquidation_state:0
+msgid "Not in liquidation"
+msgstr "Non in liquidazione"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_rea_office
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_rea_office
+msgid "Office Province"
+msgstr "Ufficio provincia"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_pa_partner_code
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_pa_partner_code
+msgid "PA Code for partner"
+msgstr "PA Codice per partner"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_fatturapa_name
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_fatturapa_name
+msgid "Partner name"
+msgstr "Nome partner"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_fatturapa_surname
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_fatturapa_surname
+msgid "Partner surname"
+msgstr "Cognome partner"
+
+#. module: l18n_it_fatturapa
+#: model:ir.ui.menu,name:l18n_it_fatturapa.menu_account_fatturapa_payment_term
+msgid "Payment Term"
+msgstr "Termini di pagamento"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model,name:l18n_it_fatturapa.model_account_payment_term
+msgid "Payment Terms"
+msgstr "Termini di pagamento"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model,name:l18n_it_fatturapa.model_product_uom
+msgid "Product Unit of Measure"
+msgstr "Unità di misura del prodotto"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_register
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_register
+msgid "Professional Register"
+msgstr "Registro professionale"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_company_fatturapa_pub_administration_ref
+msgid "Public Administration Reference Code"
+msgstr "Pubblica amministrazione Codice di riferimento "
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_rea_code
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_rea_code
+msgid "REA Code"
+msgstr "Codice REA"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_company_fatturapa_rea_office
+msgid "REA office"
+msgstr "Ufficio REA"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_company_fatturapa_rea_capital
+msgid "Rea Capital"
+msgstr "Capitale REA"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_company_fatturapa_rea_number
+msgid "Rea Number"
+msgstr "Numero REA"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_register_code
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_register_code
+msgid "Register Code"
+msgstr "Codice registro"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_register_fiscalpos
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_register_fiscalpos
+msgid "Register Fiscal Position"
+msgstr "Registro posizione fiscale"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_register_province
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_register_province
+msgid "Register Province"
+msgstr "Registro provincia"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_register_regdate
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_register_regdate
+msgid "Register Registration Date"
+msgstr "Registro data registrazione"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_company_fatturapa_sequence_id
+msgid "Sequence"
+msgstr "Sequenza"
+
+#. module: l18n_it_fatturapa
+#: selection:account.tax,payability:0
+msgid "Split payment"
+msgstr "Split payment"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model,name:l18n_it_fatturapa.model_account_tax
+msgid "Tax"
+msgstr "Imposta"
+
+#. module: l18n_it_fatturapa
+#: sql_constraint:res.partner:0
+msgid "The rea code code must be unique per company !"
+msgstr "Il codice REA deve essere univoco per azienda!"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_company_fatturapa_sender_partner
+msgid "Third Party/Sender"
+msgstr "Spedizione tramite terze parti"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model,name:l18n_it_fatturapa.model_stock_picking
+msgid "Transfer"
+msgstr "Trasferimento"
+
+#. module: l18n_it_fatturapa
+#: selection:res.partner,rea_member_type:0
+msgid "Unique Member"
+msgstr "Membro unico"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_partner_fatturapa_unique_code
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_res_users_fatturapa_unique_code
+msgid "Unique code SDI"
+msgstr "Codice univoco SDI"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model.fields,field_description:l18n_it_fatturapa.field_account_tax_payability
+msgid "VAT payability"
+msgstr "Partita IVA"
+
+#. module: l18n_it_fatturapa
+#: model:ir.ui.menu,name:l18n_it_fatturapa.menu_account_fatturapa_welfare
+msgid "Welfare"
+msgstr "Welfare"
+
+#. module: l18n_it_fatturapa
+#: model:ir.actions.act_window,name:l18n_it_fatturapa.action_welfare_fund_type
+msgid "Welfare Fund Type"
+msgstr "Tipo fondo welfare"
+
+#. module: l18n_it_fatturapa
+#: selection:account.tax,non_taxable_nature:0
+msgid "escluse ex art. 15"
+msgstr "escluse ex art. 15"
+
+#. module: l18n_it_fatturapa
+#: selection:account.tax,non_taxable_nature:0
+msgid "esenti"
+msgstr "esenti"
+
+#. module: l18n_it_fatturapa
+#: selection:account.tax,non_taxable_nature:0
+msgid "inversione contabile (reverse charge)"
+msgstr "inversione contabile (reverse charge)"
+
+#. module: l18n_it_fatturapa
+#: selection:account.tax,non_taxable_nature:0
+msgid "non imponibili"
+msgstr "non imponibili"
+
+#. module: l18n_it_fatturapa
+#: selection:account.tax,non_taxable_nature:0
+msgid "non soggette"
+msgstr "non soggette"
+
+#. module: l18n_it_fatturapa
+#: selection:account.tax,non_taxable_nature:0
+msgid "regime del margine"
+msgstr "regime del margine"
+
+#. module: l18n_it_fatturapa
+#: model:ir.model,name:l18n_it_fatturapa.model_welfare_fund_type
+msgid "welfare fund type"
+msgstr "tipo fondo welfare"
