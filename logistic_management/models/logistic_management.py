@@ -1907,7 +1907,7 @@ class SaleOrderLine(models.Model):
                 # XXX Remove used qty during assign process:
                 # TODO problem if qty_qvailable dont update with quants created
                 stock_qty = used_product.qty_available - \
-                    quant_used.get(product, 0.0)
+                    quant_used.get(used_product, 0.0)
 
                 # -------------------------------------------------------------
                 # Manage mode of use stock: (TODO better available)
@@ -1935,7 +1935,14 @@ class SaleOrderLine(models.Model):
                         # Link field:
                         'logistic_assigned_id': line.id,
                         }            
-                    quant_pool.create(data)
+                    try:    
+                        quant_pool.create(data)
+                    except:
+                        _logger.error('Product is service? [%s - %s]' % (
+                            used_product.product_tmpl_id.default_code or '',
+                            used_product.name,
+                            ))
+                        continue    
                     
                     # ---------------------------------------------------------
                     # Save used stock for next elements:
