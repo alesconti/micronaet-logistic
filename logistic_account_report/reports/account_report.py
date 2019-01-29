@@ -86,8 +86,8 @@ class StockPicking(models.AbstractModel):
         # TODO Sanitize file name:
         # Different name from NC and Invoice
         filename = (
-            self.invoice_number or 'not_confirmed.pdf').replace('/', '_')
-        fullname = os.path.join(folder, filename)
+            self.invoice_number or 'not_confirmed').replace('/', '_')
+        fullname = os.path.join(folder, '%s.pdf' % filename)
         
         REPORT_ID = 'logistic_account_report.action_report_invoice_lang'        
         pdf = self.env.ref(REPORT_ID).render_qweb_pdf(self.ids)
