@@ -672,7 +672,6 @@ class StockPicking(models.Model):
         #    company_unique_code,
         #    xml_code,
         #    )
-
         #self.xml_code = xml_code # Save code for next print (always updated)    
         
         filename = (
