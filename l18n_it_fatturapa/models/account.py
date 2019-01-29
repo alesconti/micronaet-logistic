@@ -291,6 +291,8 @@ class ResCompany(models.Model):
         ('LN', 'Not in liquidation'),
         ], related='partner_id.rea_liquidation_state', 
         string='Liquidation State')
+    fatturapa_vat_sender = fields.Char('VAT Sender', size=13)
+        
     fatturapa_tax_representative = fields.Many2one(
         'res.partner', 'Legal Tax Representative'
         )
@@ -599,7 +601,9 @@ class StockPicking(models.Model):
         rea_partner = company.fatturapa_rea_partner
         rea_liquidation = company.fatturapa_rea_liquidation
         
-        company_unique_code = company.partner_id.fatturapa_unique_code # TODO company or destin.?
+        # TODO company or destin.?
+        company_unique_code = company.partner_id.fatturapa_unique_code 
+        company_vat_sender = company.fatturapa_vat_sender
 
         # ---------------------------------------------------------------------
         # Invoice / Picking parameters: TODO Put in loop
@@ -679,7 +683,7 @@ class StockPicking(models.Model):
 
         # XXX Note: ERROR external field not declared here:
         filename = '%s_%s.xml' % (            
-            company_unique_code,
+            company_vat_sender or company_vat,
             xml_code,
             )
         #filename = (
@@ -1241,7 +1245,8 @@ class StockPicking(models.Model):
 
             # Obbligatorio se IVA 0:
             f_invoice.write(# TODO Descrizione eventuale esenzione
-                self.get_tag('2.2.1.14', 'Natura', record['nature']))
+                self.get_tag('2.2.1.14', 'Natura', record['nature'], 
+                cardinality='0:1'))
             #f_invoice.write(# Codice identificativo ai fini amministrativi
             #    self.get_tag('2.2.1.15', 'RiferimentoAmministrazione', ))
 
