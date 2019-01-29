@@ -569,13 +569,13 @@ class StockPicking(models.Model):
         fiscal_position = partner.property_account_position_id
         sale = picking.sale_order_id
 
-        # Send code:
-        xml_code = picking.get_next_xml_id()
-        picking.xml_code = xml_code # Save code for next print (always updated)    
-
         # Check if needed:
         if not partner.property_account_position_id.fatturapa:
             _logger.warning('No need XML invoice: %s' % picking.name)
+
+        # Send code:
+        xml_code = picking.get_next_xml_id()
+        picking.xml_code = xml_code # Save code for next print (always updated)    
         
         # ---------------------------------------------------------------------
         # Company parameters:                
