@@ -107,7 +107,7 @@
                                         </t>
                                     </div>    
                                     <div class="col-xs-6">
-                                        <h4 t-field="move[0].name" />
+                                        <h4 t-field="move[16].name" />
                                     </div>    
                                 </div> 
                             </t>

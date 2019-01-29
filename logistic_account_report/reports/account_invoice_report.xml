@@ -117,7 +117,7 @@
                                         <i><span t-if="move[2]" t-field="move[2].product_tmpl_id.default_code" /></i>
                                     </div>    
                                     <div class="col-xs-5">
-                                        <span t-field="move[0].name" />
+                                        <span t-field="move[16].name" />
                                     </div>    
                                     <div class="col-xs-1" style="text-align:right;">
                                         <span t-esc="move[1]" />
