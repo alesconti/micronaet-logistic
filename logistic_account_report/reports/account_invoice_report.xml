@@ -20,7 +20,12 @@
                                     <h3 t-field="res_company.partner_id.name" />                                    
                                     <hr/>
                                     <span t-field="res_company.partner_id.contact_info" /><br/>
-                                    P. IVA: <span t-field="res_company.partner_id.vat" />                                    
+                                    P. IVA: <span t-field="res_company.partner_id.vat" /> 
+                                    <t t-if="res_company.partner_id.uk_vat">                                   
+                                    <br/>
+                                    <span t-field="res_company.partner_id.contact_info" /><br/>
+                                    UK VAT: <span t-field="res_company.uk_vat" />
+                                    </t>
                                 </div>    
                             </div>                            
                             <div class="oe_structure"/>

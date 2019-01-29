@@ -39,6 +39,7 @@ from openerp.tools import (
 
 _logger = logging.getLogger(__name__)
 
+
 class ResCompany(models.Model):
     """ Model name: ResCompany
     """
@@ -48,6 +49,7 @@ class ResCompany(models.Model):
     # -------------------------------------------------------------------------
     # COLUMNS:
     # -------------------------------------------------------------------------
+    uk_vat = fields.Char('UK VAT', size=13)
     report_text_thanks = fields.Text('Report text: Thanks')
     report_text_privacy = fields.Text('Report text: Privacy')
     report_text_invoice = fields.Text('Report text: Invoice')
