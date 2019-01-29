@@ -2,6 +2,17 @@
 <openerp>
     <data noupdate="1"><!--noupdate="1"-->
 
+        <!-- Invoice Bundle Sequence -->
+        <!--<record id="seq_type_fatturapa" model="ir.sequence.type">
+            <field name="name">FatturaPA</field>
+            <field name="code">account.invoice.fatturapa</field>
+        </record>-->
+        <record id="seq_picking_fatturapa" model="ir.sequence">
+            <field name="name">FatturaPA</field>
+            <field name="code">stock.picking.fatturapa</field>
+            <field name="padding">5</field>
+        </record>
+
         <!-- FatturaPA Document Type -->
         <record id="fatturapa_TD01" model="fatturapa.document_type">
             <field name="code">TD01</field>

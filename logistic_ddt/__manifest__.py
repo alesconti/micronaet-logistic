@@ -32,6 +32,7 @@
     'website': 'http://www.micronaet.com',
     'depends': [
         'stock',
+        #'l18n_it_fatturapa',
         ],
     'data': [
         'security/ir.model.access.csv',

@@ -55,6 +55,7 @@
 
         # Views:
         'views/logistic_management_view.xml',
+        'views/fatturapa_view.xml',
         'wizard/manual_operation_view.xml', # Test events
         'wizard/status_extract_view.xml', # Extract operation
         #'views/account_parameter_view.xml', # XXX move in logistic_ddt

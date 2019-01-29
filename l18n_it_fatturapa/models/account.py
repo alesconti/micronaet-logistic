@@ -374,6 +374,32 @@ class StockPicking(models.Model):
     '''
     _inherit = 'stock.picking'
 
+    # -------------------------------------------------------------------------
+    # Utility:
+    # -------------------------------------------------------------------------
+    #@api.multi
+    #def get_next_xml_id(self):
+    #    ''' Return next number code exadecimal 5 char
+    #    '''
+    #    self.xml_code
+
+    @api.multi
+    def get_next_xml_id(self):
+        ''' Return next number code exadecimal 5 char
+        '''
+        sequence_pool = self.env['ir.sequence']
+        sequence = sequence_pool.search([
+            ('code', '=', 'stock.picking.fatturapa'),
+            ])
+
+        next_counter = sequence.next_by_id()
+        next_hex = ('%s' % hex(int(next_counter)))[2:]
+        return '0' * (5 - len(next_hex)) + next_hex
+        
+    # COLUMNS: 
+    xml_code = fields.Char('XML Code', size=5, 
+        help='Code for sequence of XML invoice')
+    
     # TODO create fields for write DDT / Invoice lines:
 
     @api.model
@@ -636,6 +662,19 @@ class StockPicking(models.Model):
         path = self.get_default_folder_xml_invoice()
 
         # XXX Note: ERROR external field not declared here:
+        
+        # ---------------------------------------------------------------------
+        # Generate filename:
+        # ---------------------------------------------------------------------
+        # TODO generate file name, used?
+        #xml_code = picking.get_next_xml_id()
+        #filename = '%s_%s.xml' % (            
+        #    company_unique_code,
+        #    xml_code,
+        #    )
+
+        #self.xml_code = xml_code # Save code for next print (always updated)    
+        
         filename = (
             '%s.xml' % (self.invoice_number or 'no_number')).replace('/', '_')
         fullname = os.path.join(path, filename)
