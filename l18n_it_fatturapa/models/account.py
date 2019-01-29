@@ -219,9 +219,9 @@ class ResPartner(models.Model):
     fatturapa_unique_code = fields.Char('Unique code SDI', size=7)
     fatturapa_pec = fields.Char('Fattura PA PEC', size=120)
     fatturapa_fiscalcode = fields.Char(
-        'Fattura fiscal code', size=13)
+        'Fattura fiscal code', size=16)
     fatturapa_private_fiscalcode = fields.Char(
-        'Fattura private fiscal code', size=20)
+        'Fattura private fiscal code', size=16)
 
     eori_code = fields.Char('EORI Code', size=20)
     license_number = fields.Char('License Code', size=20)
