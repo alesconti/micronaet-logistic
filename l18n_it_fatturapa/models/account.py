@@ -558,11 +558,17 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         company_pool = self.env['res.company']
 
+
         # Readability:
         picking = self
         company = company_pool.search([])[0]
         partner = picking.partner_id
         fiscal_position = partner.property_account_position_id
+        sale = picking.sale_order_id
+
+        # Send code:
+        xml_code = picking.get_next_xml_id()
+        picking.xml_code = xml_code # Save code for next print (always updated)    
 
         # Check if needed:
         if not partner.property_account_position_id.fatturapa:
@@ -598,7 +604,12 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Invoice / Picking parameters: TODO Put in loop
         # ---------------------------------------------------------------------
-        invoice_number = picking.invoice_number
+        payment = sale.payment_term_id
+        
+        payment_pt = payment.fatturapa_pt_id.code # Payment term TP*
+        payment_pm = payment.fatturapa_pm_id.code # Payment method MP*
+        
+        invoice_number = (picking.invoice_number or '').split('/')[-1]
         invoice_date = picking.invoice_date # TODO prepare
         invoice_type = 'TD01' # TODO 
         invoice_currency = 'EUR'
@@ -607,8 +618,12 @@ class StockPicking(models.Model):
         # Extra table from picking:
         detail_table, vat_table, ddt_reference = \
             picking.fatturapa_get_details()
+
+        # Extract totals:
+        total_db = picking.move_lines_for_report_total()
+        
         # amount:
-        invoice_amount = 0.0 # TODO 
+        invoice_amount = total_db['total']
         invoice_vat_total = 0.0 # TODO 
 
         # ---------------------------------------------------------------------
@@ -625,6 +640,7 @@ class StockPicking(models.Model):
         # Codes:
         empty_unique = fiscal_position.fatturapa_empty_code
         partner_unique_code = partner.fatturapa_unique_code # TODO company or destin.?
+        partner_unique_text = partner_unique_code or '0000000'
         unique_pec = partner.fatturapa_pec
         fatturapa_private_fiscalcode = partner.fatturapa_private_fiscalcode
 
@@ -662,20 +678,12 @@ class StockPicking(models.Model):
         path = self.get_default_folder_xml_invoice()
 
         # XXX Note: ERROR external field not declared here:
-        
-        # ---------------------------------------------------------------------
-        # Generate filename:
-        # ---------------------------------------------------------------------
-        # TODO generate file name, used?
-        #xml_code = picking.get_next_xml_id()
-        #filename = '%s_%s.xml' % (            
-        #    company_unique_code,
-        #    xml_code,
-        #    )
-        #self.xml_code = xml_code # Save code for next print (always updated)    
-        
-        filename = (
-            '%s.xml' % (self.invoice_number or 'no_number')).replace('/', '_')
+        filename = '%s_%s.xml' % (            
+            company_unique_code,
+            xml_code,
+            )
+        #filename = (
+        #    '%s.xml' % (self.invoice_number or 'no_number')).replace('/', '_')
         fullname = os.path.join(path, filename)
         f_invoice = open(fullname, 'w')
         _logger.warning('Output invoice XML: %s' % fullname)
@@ -705,12 +713,12 @@ class StockPicking(models.Model):
             self.start_tag('1.1.1', 'IdTrasmittente', mode='close'))
         
         f_invoice.write( # Invoice number
-            self.get_tag('1.1.2', 'ProgressivoInvio', invoice_number))        
+            self.get_tag('1.1.2', 'ProgressivoInvio', xml_code))        
         f_invoice.write(
             self.get_tag('1.1.3', 'FormatoTrasmissione', send_format))
         # Codice univoco destinatario (7 caratteri PR, 6 PA) tutti 0 alt.
         f_invoice.write(
-            self.get_tag('1.1.4', 'CodiceDestinatario', partner_unique_code))
+            self.get_tag('1.1.4', 'CodiceDestinatario', partner_unique_text))
 
         # ---------------------------------------------------------------------
         # 1.1.5 (alternative 1.1.6) <ContattiTrasmittente>
@@ -1164,7 +1172,7 @@ class StockPicking(models.Model):
             record = detail_table[seq]
             product = record['product']
             default_code = product.product_tmpl_id.default_code
-            name = product.name
+            name = record.get('name', product.name) # Name from sale 
             uom = product.uom_id.fatturapa_code or product.uom_id.name
 
             f_invoice.write(
@@ -1206,7 +1214,7 @@ class StockPicking(models.Model):
                 format_param.format_decimal(record['price'])))
 
             """
-            # ---------------------------------------------------------------------
+            # -----------------------------------------------------------------
             # Sconto manuale (opzionale:
             f_invoice.write(
                 self.start_tag('2.2.1.10', 'ScontoMaggiorazione'))
@@ -1301,36 +1309,35 @@ class StockPicking(models.Model):
         """
 
         # ---------------------------------------------------------------------
-        # Pagamento: TODO 
+        # Pagamento:
         # ---------------------------------------------------------------------
-        """
         f_invoice.write(
             self.start_tag('2.4', 'DatiPagamento'))
         f_invoice.write(# TODO tabelle TP01 a rate TP02 pagamento completo TP03 anticipo
-            self.get_tag('2.4.1', 'CondizioniPagamento', ))
-
+            self.get_tag('2.4.1', 'CondizioniPagamento', payment_pt))
             
-        # LOOP RATE (1:N):
+        # LOOP RATE (1:N): XXX now 1!
         f_invoice.write(
             self.start_tag('2.4.2', 'DettaglioPagamento'))
-        f_invoice.write( # TODO se differente dal cedente
-            self.get_tag('2.4.2.1', 'Beneficiario', '', # TODO
-            cardinality='0:1'))
+        #f_invoice.write( # TODO se differente dal cedente
+        #    self.get_tag('2.4.2.1', 'Beneficiario', '', # TODO
+        #    cardinality='0:1'))
         f_invoice.write( # TODO Tabella MP
-            self.get_tag('2.4.2.2', 'ModalitaPagamento', ))
+            self.get_tag('2.4.2.2', 'ModalitaPagamento', payment_pm))
         f_invoice.write( # TODO Tabella MP
-            self.get_tag('2.4.2.3', 'DataRiferimentoTerminiPagamento', ))
+            self.get_tag('2.4.2.3', 'DataRiferimentoTerminiPagamento', 
+                format_param.format_date(invoice_date)))
+        #f_invoice.write( # TODO Tabella MP
+        #    self.get_tag('2.4.2.4', 'GiorniTerminiPagamento', ))
+        #f_invoice.write( # TODO Tabella MP
+        #    self.get_tag('2.4.2.5', 'DataScadenzaPagamento', ))
         f_invoice.write( # TODO Tabella MP
-            self.get_tag('2.4.2.4', 'GiorniTerminiPagamento', ))
-        f_invoice.write( # TODO Tabella MP
-            self.get_tag('2.4.2.5', 'DataScadenzaPagamento', ))
-        f_invoice.write( # TODO Tabella MP
-            self.get_tag('2.4.2.6', 'ImportoPagamento', ))
+            self.get_tag('2.4.2.6', 'ImportoPagamento', 
+            format_param.format_decimal(invoice_amount)))
         
         # ---------------------------------------------------------------------
         # Ufficio postale:        
         # ---------------------------------------------------------------------
-        """
         # 2.4.2.7 <CodUfficioPostale>        
         # 2.4.2.8 <CognomeQuietanzante>        
         # 2.4.2.9 <NomeQuietanzante>        
@@ -1360,12 +1367,10 @@ class StockPicking(models.Model):
         # 2.4.2.21 <CodicePagamento>
         """
         # ---------------------------------------------------------------------
-        """
         f_invoice.write(
             self.start_tag('2.4.2', 'DettaglioPagamento', mode='close'))
         f_invoice.write(
             self.start_tag('2.4', 'DatiPagamento', mode='close'))
-        """
         
         # ---------------------------------------------------------------------
 

@@ -415,7 +415,7 @@ class StockPicking(models.Model):
         # TODO order?
         
         # XXX Always present and one only!
-        ddt_number = picking.ddt_number
+        ddt_number = (picking.ddt_number or '').strip('/')[-1]
         ddt_date = picking.ddt_date
         
         i = 0
@@ -426,6 +426,7 @@ class StockPicking(models.Model):
             subtotal = float(move[9])
             vat = move[3].amount
             subtotal_vat = float(move[10]) - subtotal # XXX check approx!
+            name = move[16].name
 
             # -----------------------------------------------------------------            
             # Detail data:
@@ -442,6 +443,7 @@ class StockPicking(models.Model):
                 'vat': self.qweb_format_float(vat), # %
                 'retention': '', # No retention
                 'subtotal': self.qweb_format_float(subtotal), # VAT excluded
+                'name': name,
                 }
 
             # -----------------------------------------------------------------            
