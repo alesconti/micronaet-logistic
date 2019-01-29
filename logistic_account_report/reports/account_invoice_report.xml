@@ -21,7 +21,7 @@
                                     <hr/>
                                     <span t-field="res_company.partner_id.contact_info" /><br/>
                                     P. IVA: <span t-field="res_company.partner_id.vat" /> 
-                                    <t t-if="res_company.partner_id.uk_vat">                                   
+                                    <t t-if="res_company.uk_vat">                                   
                                     <br/>
                                     <span t-field="res_company.partner_id.contact_info" /><br/>
                                     UK VAT: <span t-field="res_company.uk_vat" />
