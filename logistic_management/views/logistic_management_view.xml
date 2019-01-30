@@ -364,6 +364,7 @@
                                      <field name="ddt_number" />
                                      <field name="invoice_number" />
                                      <field name="refund_number" />
+                                     <field name="xml_code" />
                                      <field name="state" invisible="1"/>
                                  </tree>
                              </field>

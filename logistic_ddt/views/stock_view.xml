@@ -45,6 +45,9 @@
                             <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}"/>
                             <field name="invoice_date" attrs="{'invisible': [('invoice_number','=',False)]}"/>
                             
+                            <field name="xml_code" />
+                            <newline/>
+                                                                 
                             <field name="carriage_condition_id" />
                             <field name="goods_description_id" />
                             <field name="transportation_reason_id" />
