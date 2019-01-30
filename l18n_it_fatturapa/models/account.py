@@ -25,6 +25,7 @@
 import os
 import sys
 import logging
+import string
 from odoo import api, models, fields
 from odoo import tools
 from odoo.tools.translate import _
@@ -385,6 +386,29 @@ class StockPicking(models.Model):
     #    '''
     #    self.xml_code
 
+    """@api.multi
+    def get_next_xml_id(self):
+        ''' Generate CODE progress number
+        '''
+        # Generate seed data:
+        seed = string.digits + string.ascii_uppercase + string.ascii_lowercase
+        base = len(seed)
+
+        # Get counter:
+        sequence_pool = self.env['ir.sequence']
+        sequence = sequence_pool.search([
+            ('code', '=', 'stock.picking.fatturapa'),
+            ])
+        remain = int(sequence.next_by_id())
+        res = ''
+        while remain >= base:
+            division = remain // base             
+            remain = remain % base 
+            res += seed[division]
+        res += seed[division]
+        return '0' * (5 - len(res)) + res
+    """    
+    
     @api.multi
     def get_next_xml_id(self):
         ''' Return next number code exadecimal 5 char
