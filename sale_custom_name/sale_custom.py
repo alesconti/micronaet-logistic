@@ -62,7 +62,5 @@ class SaleOrderLine(models.Model):
         res['value']['name'] = self.product_id.mmac_product_name or \
             self.product_id.name 
         return res
-        
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
