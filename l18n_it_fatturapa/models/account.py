@@ -413,14 +413,23 @@ class StockPicking(models.Model):
     def get_next_xml_id(self):
         ''' Return next number code exadecimal 5 char
         '''
+        seed = string.digits + string.ascii_uppercase
+        base = len(seed)
+        
         sequence_pool = self.env['ir.sequence']
         sequence = sequence_pool.search([
             ('code', '=', 'stock.picking.fatturapa'),
             ])
-
-        next_counter = sequence.next_by_id()
-        next_hex = ('%s' % hex(int(next_counter)))[2:]
-        return '0' * (5 - len(next_hex)) + next_hex
+        
+        res = ''
+        remain = int(sequence.next_by_id())
+        while remain >= base:
+            division = remain // base # INT division
+            remain = remain % base # Rest of division
+            res += seed[division]
+        res += seed[remain] # Lasst
+        res = '0' * (5 - len(res)) + res            
+        return res
         
     # COLUMNS: 
     xml_code = fields.Char('XML Code', size=5, 
