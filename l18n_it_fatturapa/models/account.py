@@ -666,6 +666,7 @@ class StockPicking(models.Model):
         # Extra table from picking:
         detail_table, vat_table, ddt_reference = \
             picking.fatturapa_get_details()
+        import pdb; pdb.set_trace()    
 
         # Extract totals:
         total_db = picking.move_lines_for_report_total()
