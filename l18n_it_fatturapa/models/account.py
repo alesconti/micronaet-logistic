@@ -503,6 +503,7 @@ class StockPicking(models.Model):
         # TODO order?
         
         # XXX Always present and one only!
+        import pdb; pdb.set_trace()
         ddt_number = picking.ddt_number or ''
         # Keep only number:
         ddt_number = picking.ddt_number.split('/')[-1] 
@@ -666,7 +667,6 @@ class StockPicking(models.Model):
         # Extra table from picking:
         detail_table, vat_table, ddt_reference = \
             picking.fatturapa_get_details()
-        import pdb; pdb.set_trace()    
 
         # Extract totals:
         total_db = picking.move_lines_for_report_total()
