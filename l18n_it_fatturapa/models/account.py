@@ -608,7 +608,12 @@ class StockPicking(models.Model):
         newline = '\n'        
         doc_part = format_param.doc_part + newline
         company_vat = company.vat
-        company_fiscal = company.vat
+
+        # If not country char use IT
+        if company_vat and company_vat[:2].isdigit():
+            company_vat = 'IT' + company_vat
+
+        company_fiscal = company.vat # Use vat for now
         company_fiscal_mode = 'RF01' # TODO 
         esigibility = 'I' # TODO
 
@@ -684,7 +689,12 @@ class StockPicking(models.Model):
             partner_company = partner.name # No Company name written    
         
         # Reference:
-        partner_vat = partner.vat # XXX needed?
+        partner_vat = partner.vat or '' # XXX needed?
+
+        # If not country char use IT
+        if partner_vat and partner_vat[:2].isdigit():
+            partner_vat = 'IT' + partner_vat
+
         partner_fiscal = partner_vat or \
             partner.fatturapa_private_fiscalcode or \
             partner.fatturapa_fiscalcode
