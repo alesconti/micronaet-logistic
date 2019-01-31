@@ -494,10 +494,13 @@ class StockPicking(models.Model):
         # TODO order?
         
         # XXX Always present and one only!
-        ddt_number = picking.ddt_number
+        ddt_number = picking.ddt_number or ''
+        # Keep only number:
+        ddt_number = picking.ddt_number.split('/')[-1] 
+        
         ddt_date = picking.ddt_date
         
-        i = 0
+        i = 0 # Row sequence
         for line in picking.move_lines:
             # Parameters:
             price = line.price_unit # TODO!
