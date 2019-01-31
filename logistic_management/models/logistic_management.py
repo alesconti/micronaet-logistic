@@ -415,7 +415,7 @@ class StockPicking(models.Model):
         # TODO order?
         
         # XXX Always present and one only!
-        ddt_number = (picking.ddt_number or '').strip('/')[-1]
+        ddt_number = (picking.ddt_number or '').split('/')[-1]
         ddt_date = picking.ddt_date
         
         i = 0
