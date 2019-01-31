@@ -553,8 +553,10 @@ class StockPicking(models.Model):
             # DDT reference:
             # -----------------------------------------------------------------            
             if ddt_number in ddt_reference:
+                # Update list of row number
                 ddt_reference[ddt_number][0].append(str(i))
-            else:    
+            else:
+                # Create record reference
                 ddt_reference[ddt_number] = [
                     [str(i), ], ddt_date]
             
