@@ -59,7 +59,8 @@ class SaleOrderLine(models.Model):
             return res
         if 'value' not in res:
             res['value'] = {}
-        res['value']['name'] = self.product_id.mmac_product_name
+        res['value']['name'] = self.product_id.mmac_product_name or \
+            self.product_id.name 
         return res
         
 
