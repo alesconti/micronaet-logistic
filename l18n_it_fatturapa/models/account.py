@@ -664,7 +664,6 @@ class StockPicking(models.Model):
         invoice_causal = 'VENDITA'
         
         # Extra table from picking:
-        import pdb; pdb.set_trace()
         detail_table, vat_table, ddt_reference = \
             picking.fatturapa_get_details()
 
