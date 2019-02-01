@@ -838,6 +838,22 @@
              <field name="context">{}</field>
              <field name="domain">[('picking_type_code', '=', 'outgoing')]</field>
          </record>
+         <record model="ir.actions.act_window" id="action_stock_picking_fattura_pa">
+             <field name="name">Fattura PA</field>
+             <field name="res_model">stock.picking</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('xml_code', '!=', False)]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_stock_picking_invoice_out">
+             <field name="name">Invoice all</field>
+             <field name="res_model">stock.picking</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('invoice_number', '!=', False)]</field>
+         </record>
          
          <!--purchase.order.line-->
          <record model="ir.actions.act_window" id="action_purchase_order_line">
@@ -1090,6 +1106,20 @@
                      name="BC unload document"
                      action="action_stock_picking_out"
                      sequence="10"             
+                     />
+                 <menuitem
+                     id="menu_logistic_left_pick_out_document_invoice" 
+                     parent="menu_logistic_left_pick_out_root"
+                     name="Invoice"
+                     action="action_stock_picking_invoice_out"
+                     sequence="20"             
+                     />
+                 <menuitem
+                     id="menu_logistic_left_pick_out_document_fattura_pa" 
+                     parent="menu_logistic_left_pick_out_root"
+                     name="Fattura PA"
+                     action="action_stock_picking_fattura_pa"
+                     sequence="30"             
                      />
 
              <menuitem

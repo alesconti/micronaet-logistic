@@ -659,6 +659,9 @@ class StockPicking(models.Model):
         payment_pm = payment.fatturapa_pm_id.code # Payment method MP*
         
         invoice_number = (picking.invoice_number or '').split('/')[-1]
+        # Format used for invoice:
+        invoice_number = '%s/FE' % int(invoice_number)
+        
         invoice_date = picking.invoice_date # TODO prepare
         invoice_type = 'TD01' # TODO 
         invoice_currency = 'EUR'
