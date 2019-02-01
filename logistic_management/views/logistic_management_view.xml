@@ -98,6 +98,7 @@
                  </field>
                  <field name="origin" position="after">
                     <field name="sale_order_id" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
+                    <field name="xml_code" />
                  </field>
              </field>
          </record>
