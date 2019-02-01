@@ -613,6 +613,8 @@ class StockPicking(models.Model):
         # Parameter:
         # ---------------------------------------------------------------------
         company_pool = self.env['res.company']
+        italy_code = 'IT'
+        italy_prefix = '+39'
 
         # ---------------------------------------------------------------------
         # Readability:
@@ -646,7 +648,7 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Variable to manage:
         # ---------------------------------------------------------------------
-        company_vat = self.clean_vat(company.vat, 'IT')            
+        company_vat = self.clean_vat(company.vat, italy_code)            
         params['company'] = {
             # Anagrafic:
             # Sede:        
@@ -657,7 +659,7 @@ class StockPicking(models.Model):
             'city': company.city,
             'zip': company.zip,
             'province': 'BS', # TODO 
-            'country': 'IT', #TODO
+            'country': italy_code, #TODO
             'rea_office': 'BS', # company.fatturapa_rea_number
             'rea_number': company.fatturapa_rea_number,
             'rea_capital': company.fatturapa_rea_capital,
@@ -682,9 +684,11 @@ class StockPicking(models.Model):
             'esigibility': 'I',
 
             # Contact:
-            'phone': self.clean_phone(company.phone or '', '+39'), # 12 max
+            # (12 char max!)
+            'phone': self.clean_phone(company.phone or '', italy_prefix),
             # TODO create field
-            'fax': self.clean_phone('', '+39'), # 12 char max!
+            'fax': self.clean_phone('', italy_prefix), 
+
             'email': company.email or '',
             }            
         # Update for test:
@@ -695,7 +699,7 @@ class StockPicking(models.Model):
         #                          SENDER PARAMETERS:
         # ---------------------------------------------------------------------
         # TODO Sender change reference now company:
-        sender_vat = self.clean_vat(company_vat, 'IT')
+        sender_vat = self.clean_vat(company_vat, italy_code)
         params['sender'] = {
             'vat': sender_vat,
             'vat_code': sender_vat[:2],
@@ -742,7 +746,9 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Partner:
         # ---------------------------------------------------------------------
-        partner_vat = self.clean_vat(partner.vat, 'IT')            
+        partner_vat = self.clean_vat(partner.vat, italy_code)            
+        fiscalcode = (partner_vat or partner.fatturapa_private_fiscalcode \
+            or partner.fatturapa_fiscalcode).lstrip(italy_code)
         params['partner'] = {
             'company': '' if partner.fatturapa_name else partner.name,
             'name': partner.fatturapa_name, 
@@ -753,13 +759,12 @@ class StockPicking(models.Model):
             'city': partner.city,
             'zip': partner.zip,
             'province': '', #'BS' # 0.1 TODO 
-            'country': 'IT', #TODO            
+            'country': italy_code, #TODO            
             
             #'empty_unique': fiscal_position.fatturapa_empty_code,
             'unique_code': partner.fatturapa_unique_code, # TODO company or destin.?
             'unique_pec': partner.fatturapa_pec,
-            'fiscalcode': partner_vat[2:] or partner.fatturapa_private_fiscalcode \
-                or partner.fatturapa_fiscalcode,
+            'fiscalcode': fiscalcode,
             
             # name:
             'name': partner.fatturapa_name,
