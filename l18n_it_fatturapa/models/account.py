@@ -632,7 +632,15 @@ class StockPicking(models.Model):
         company_fiscal_mode = 'RF01' # TODO 
         esigibility = 'I' # TODO
 
-        # Sede:
+        # Contact:
+        company_phone = company.phone or '' # 12 char max!
+        company_phone = company_phone.replace('+39', '').replace(' ', '')
+
+        company_email = company.email or ''
+        company_fax = ''
+        #TODO company_fax = company.fax or ''
+        
+        # Sede:        
         company_company = company.name
         company_street = company.street
         # company_number = '' # in street!
@@ -890,11 +898,22 @@ class StockPicking(models.Model):
             self.start_tag('1.2.4', 'IscrizioneREA', mode='close'))
         
         # NOT MANDATORY:
-        # 1.2.5 <Contatti>        
-        # 1.2.5.1 <Telefono>
-        # 1.2.5.2 <Fax>
-        # 1.2.5.2 <Email>
-        #       </Contatti>
+        if company_phone or company_fax or company_email:
+            f_invoice.write(
+                self.start_tag('1.2.5', 'Contatti'))
+
+            f_invoice.write(
+                self.get_tag('1.2.5.1', 'Telefono', 
+                company_phone, cardinality='0:1'))
+            f_invoice.write(
+                self.get_tag('1.2.5.2', 'Fax', 
+                company_fax, cardinality='0:1'))
+            f_invoice.write(
+                self.get_tag('1.2.5.3', 'Email', 
+                company_email, cardinality='0:1'))
+
+            f_invoice.write(
+                self.start_tag('1.2.5', 'Contatti', mode='close'))
         
         # NOT MANDATORY:
         # 1.2.6 RiferimentoAmministrazione
