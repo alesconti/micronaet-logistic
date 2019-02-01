@@ -109,11 +109,11 @@
              <field name="inherit_id" ref="stock.vpicktree"/>
              <field name="arch" type="xml">
                  <field name="state" position="before">
+                    <field name="xml_code" />
                     <field name="sale_order_id" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
                  </field>
              </field>
          </record>
-                
          
          <!--stock.move-->
          <record model="ir.ui.view" id="view_stock_move_logistic_tree">
