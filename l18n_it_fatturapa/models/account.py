@@ -486,6 +486,20 @@ class StockPicking(models.Model):
             newline,
             )
 
+    @api.model
+    def clean_vat(self, vat, code='IT'):
+        ''' Add extra code if not present
+        '''
+        return '%s%s' % (
+            code if vat[:2].isdigit() else '',
+            vat,
+            )
+
+    def clean_phone(self, phone, country_code='+39'):
+        ''' Add extra code if not present
+        '''
+        reutnr phone.replace(' ', '').replace(country_code, '')
+        
     # -------------------------------------------------------------------------
     # XXX IMPORTANT: To beoverrided in another module:
     # -------------------------------------------------------------------------
@@ -600,63 +614,95 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         company_pool = self.env['res.company']
 
-
+        # ---------------------------------------------------------------------
         # Readability:
+        # ---------------------------------------------------------------------
         picking = self
         company = company_pool.search([])[0]
         partner = picking.partner_id
-        fiscal_position = partner.property_account_position_id
+        fiscal_position = partner.property_account_position_id # TODO remove
         sale = picking.sale_order_id
 
         # Check if needed:
         if not partner.property_account_position_id.fatturapa:
             _logger.warning('No need XML invoice: %s' % picking.name)
 
+        # ---------------------------------------------------------------------
+        # Subject database:        
+        # ---------------------------------------------------------------------
+        subjects = {
+            'partner': {},
+            }
+        
         # Send code:
         xml_code = picking.get_next_xml_id()
         picking.xml_code = xml_code # Save code for next print (always updated)    
         
         # ---------------------------------------------------------------------
-        # Company parameters:                
+        #                          COMPANY PARAMETERS:
         # ---------------------------------------------------------------------
         format_param = company.fatturapa_format_id
         newline = '\n'        
         doc_part = format_param.doc_part + newline
-        company_vat = company.vat
 
-        # If not country char use IT
-        if company_vat and company_vat[:2].isdigit():
-            company_vat = 'IT' + company_vat
+        # ---------------------------------------------------------------------
+        # Variable to manage:
+        # ---------------------------------------------------------------------
+        company_vat = self.clean_vat(company.vat, 'IT')            
+        subjects['company'] = {
+            # Anagrafic:
+            # Sede:        
+            'company': company.name or '',
+            'street': company.street,
+            'number': '', # XXX Not used
 
-        company_fiscal = company.vat # Use vat for now
-        company_fiscal_mode = 'RF01' # TODO 
-        esigibility = 'I' # TODO
+            'city': company.city,
+            'zip': company.zip,
+            'province': 'BS', # TODO 
+            'country': 'IT', #TODO
+            'rea_office': 'BS', # company.fatturapa_rea_number
+            'rea_number': company.fatturapa_rea_number,
+            'rea_capital': company.fatturapa_rea_capital,
+            'rea_partner': company.fatturapa_rea_partner,
+            'rea_liquidation': company.fatturapa_rea_liquidation,
+            
+            # TODO company or destin.?
+            #'unique_code': company.partner_id.fatturapa_unique_code,
+            'vat_sender': company.fatturapa_vat_sender, # TODO use partner!!! <<< for filename!!
+            
+            'vat': company_vat,
+            'vat_code' : company_vat[:2],
+            'vat_number':  company_vat[2:],
+            
+            # TODO change fiscal code (add field, for now VAT)
+            'fiscalcode': company_vat,
+            
+            # TODO change (add list field in company)
+            'mode': 'RF01',
+            
+            # TODO add field:
+            'esigibility': 'I',
 
-        # Contact:
-        company_phone = company.phone or '' # 12 char max!
-        company_phone = company_phone.replace('+39', '').replace(' ', '')
-
-        company_email = company.email or ''
-        company_fax = ''
-        #TODO company_fax = company.fax or ''
-        
-        # Sede:        
-        company_company = company.name
-        company_street = company.street
-        # company_number = '' # in street!
-        company_city = company.city
-        company_zip = company.zip
-        company_province = 'BS' # TODO 
-        company_country = 'IT' #TODO
-        rea_office = 'BS' # company.fatturapa_rea_number
-        rea_number = company.fatturapa_rea_number
-        rea_capital = company.fatturapa_rea_capital
-        rea_partner = company.fatturapa_rea_partner
-        rea_liquidation = company.fatturapa_rea_liquidation
-        
-        # TODO company or destin.?
-        company_unique_code = company.partner_id.fatturapa_unique_code 
-        company_vat_sender = company.fatturapa_vat_sender
+            # Contact:
+            'phone': self.clean_phone(company.phone or '', '+39'), # 12 max
+            # TODO create field
+            'fax': self.clean_phone('', '+39'), # 12 char max!
+            'email': company.email or '',
+            }            
+        # Update for test:
+        subjects['company']['has_contact'] = subjects['company']['phone'] or \
+            subjects['company']['fax'] or subjects['company']['mail']
+            
+        # ---------------------------------------------------------------------
+        #                          SENDER PARAMETERS:
+        # ---------------------------------------------------------------------
+        # TODO Sender change reference now company:
+        sender_vat = self.clean_vat(company_vat, 'IT')
+        subjects['sender'] = {
+            'vat': sender_vat,
+            'vat_code': sender_vat[:2]
+            'vat_number': sender_vat[2:]
+            }
 
         # ---------------------------------------------------------------------
         # Invoice / Picking parameters: TODO Put in loop
@@ -689,49 +735,47 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Partner:
         # ---------------------------------------------------------------------
-        # Address:
-        partner_street = partner.street
-        partner_number = '' # in street!
-        partner_city = partner.city
-        partner_zip = partner.zip
-        partner_province = '' #'BS' # 0.1 TODO 
-        partner_country = 'IT' #TODO
+        partner_vat = self.clean_vat(partner.vat, 'IT')            
+        subjects['partner'] = {
+            'company': '' if partner.fatturapa_name else partner.name,
+            'name': partner.fatturapa_name, 
+            'surname': partner.fatturapa_surname,
+            # Address:
+            'street': partner.street,
+            'number': '', # in street!
+            'city': partner.city,
+            'zip': partner.zip,
+            'province': '', #'BS' # 0.1 TODO 
+            'country': 'IT', #TODO            
+            
+            #'empty_unique': fiscal_position.fatturapa_empty_code,
+            'unique_code': partner.fatturapa_unique_code, # TODO company or destin.?
+            'unique_pec': partner.fatturapa_pec,
+            'fiscalcode': partner.vat or partner.fatturapa_private_fiscalcode \
+                or partner.fatturapa_fiscalcode,
+
+            
+            # name:
+            'name': partner.fatturapa_name,
+            'surname': partner.fatturapa_surname,
+            
+            'vat': partner_vat,
+            'vat_code' : partner_vat[:2],
+            'vat_number':  partner_vat[2:],            
+            }
+            
+        # partner_fiscal = 'RF01' # TODO Regime ordinario
+        # TODO parametrize:
+        subjects['partner']['unique_text'] = \
+            subjects['partner']['unique_code'] or '0000000'
         
-        # Codes:
-        empty_unique = fiscal_position.fatturapa_empty_code
-        partner_unique_code = partner.fatturapa_unique_code # TODO company or destin.?
-        partner_unique_text = partner_unique_code or '0000000'
-        unique_pec = partner.fatturapa_pec
-        fatturapa_private_fiscalcode = partner.fatturapa_private_fiscalcode
-
-        partner_fiscal = 'RF01' # TODO Regime ordinario
-        
-        # name:
-        partner_name = partner.fatturapa_name
-        partner_surname = partner.fatturapa_surname
-        if partner_name:
-            partner_company = ''
-        else:
-            partner_company = partner.name # No Company name written    
-        
-        # Reference:
-        partner_vat = partner.vat or '' # XXX needed?
-
-        # If not country char use IT
-        if partner_vat and partner_vat[:2].isdigit():
-            partner_vat = 'IT' + partner_vat
-
-        partner_fiscal = partner_vat or \
-            partner.fatturapa_private_fiscalcode or \
-            partner.fatturapa_fiscalcode
-
         # ---------------------------------------------------------------------
         # Check parameter:
         # ---------------------------------------------------------------------
         # format_param
         # doc_part
         # VAT 13 char UPPER
-        # unique_pec or partner_unique_code!!
+        # unique_pec or subjects['partner']['unique_code']!!
         # partner_unique_code = '0000000'   or 'XXXXXXX'
         # need vat, fiscalcode, pec check
         # check partner_vat | partner_fiscal
@@ -744,7 +788,7 @@ class StockPicking(models.Model):
 
         # XXX Note: ERROR external field not declared here:
         filename = '%s_%s.xml' % (            
-            company_vat_sender or company_vat,
+            subjects['company']['vat_sender'] or subjects['company']['vat'],
             xml_code,
             )
         #filename = (
@@ -771,8 +815,10 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('1.1.1', 'IdTrasmittente'))
         
-        f_invoice.write(self.get_tag('1.1.1.1', 'IdPaese', company_vat[:2]))
-        f_invoice.write(self.get_tag('1.1.1.2', 'IdCodice', company_vat[2:]))
+        f_invoice.write(self.get_tag('1.1.1.1', 'IdPaese', 
+            subjects['sender']['vat_code']))
+        f_invoice.write(self.get_tag('1.1.1.2', 'IdCodice', 
+            subjects['sender']['vat_number']))
         
         f_invoice.write(
             self.start_tag('1.1.1', 'IdTrasmittente', mode='close'))
@@ -783,7 +829,8 @@ class StockPicking(models.Model):
             self.get_tag('1.1.3', 'FormatoTrasmissione', send_format))
         # Codice univoco destinatario (7 caratteri PR, 6 PA) tutti 0 alt.
         f_invoice.write(
-            self.get_tag('1.1.4', 'CodiceDestinatario', partner_unique_text))
+            self.get_tag('1.1.4', 'CodiceDestinatario', 
+            subjects['partner']['unique_text']))
 
         # ---------------------------------------------------------------------
         # 1.1.5 (alternative 1.1.6) <ContattiTrasmittente>
@@ -794,7 +841,8 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # 1.1.6 (alternative 1.1.5)
         f_invoice.write(
-            self.get_tag('1.1.4', 'PECDestinatario', unique_pec, 
+            self.get_tag('1.1.4', 'PECDestinatario', 
+            subjects['partner']['unique_pec'], 
                 cardinality='0:1'))
         f_invoice.write(
             self.start_tag('1.1', 'DatiTrasmissione', mode='close'))
@@ -802,68 +850,72 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         f_invoice.write(
             self.start_tag('1.2', 'CedentePrestatore'))
+
         f_invoice.write(
             self.start_tag('1.2.1', 'DatiAnagrafici'))
         f_invoice.write(
             self.start_tag('1.2.1.1', 'IdFiscaleIVA'))
-        
         f_invoice.write(
-            self.get_tag('1.2.1.1.1', 'IdPaese', company_vat[:2]))
-        f_invoice.write( # TODO - IT?
-            self.get_tag('1.2.1.1.2', 'IdCodice', company_vat[2:]))
-
+            self.get_tag('1.2.1.1.1', 'IdPaese', 
+            subjects['company']['vat_code']))
+        f_invoice.write(
+            self.get_tag('1.2.1.1.2', 'IdCodice', 
+            subjects['company']['vat_number']))
         f_invoice.write(
             self.start_tag('1.2.1.1', 'IdFiscaleIVA', mode='close'))
-
         # TODO strano!
-        f_invoice.write( # TODO ???
-            self.get_tag('1.2.1.2', 'CodiceFiscale', company_fiscal[2:]))
-
+        f_invoice.write(
+            self.get_tag('1.2.1.2', 'CodiceFiscale',
+            subjects['company']['fiscalcode']))
         f_invoice.write(
             self.start_tag('1.2.1.3', 'Anagrafica'))
         # ---------------------------------------------------------------------                
-        if company_company: # 1.2.1.3.1 (alternative 1.2.1.3.2 - 1.2.1.3.3)
+        if subjects['company']['company']: # 1.2.1.3.1 (alternative 1.2.1.3.2 - 1.2.1.3.3)
             f_invoice.write(
-                self.get_tag('1.2.1.3.1', 'Denominazione', company_company))
+                self.get_tag('1.2.1.3.1', 'Denominazione', 
+                subjects['company']['company']))
         else:
             f_invoice.write(
-                self.get_tag('1.2.1.3.1.2', 'Nome', company_name))
+                self.get_tag('1.2.1.3.1.2', 'Nome', 
+                subjects['company']['name']))
             f_invoice.write(
-                self.get_tag('1.2.1.3.1.3', 'Cognome', company_surname))
+                self.get_tag('1.2.1.3.1.3', 'Cognome', 
+                subjects['company']['surname']))
 
         # 1.2.3.1.4 <Titolo> partner_title            
         # 1.2.3.1.5 <CodEORI> newline 
         f_invoice.write(
             self.start_tag('1.2.1.3', 'Anagrafica', mode='close'))
-
         # 1.2.1.4 <AlboProfessionale>
         # 1.2.1.5 <ProvinciaAlbo>
         # 1.2.1.6 <NumeroIscrizioneAlbo>
         # 1.2.1.7 <DataIscrizioneAlbo>
-
         f_invoice.write(
-            self.get_tag('1.2.1.8', 'RegimeFiscale', company_fiscal_mode))
-
+            self.get_tag('1.2.1.8', 'RegimeFiscale', 
+            subjects['company']['mode']))
         f_invoice.write(
             self.start_tag('1.2.1', 'DatiAnagrafici', mode='close'))
 
         f_invoice.write(
-            self.start_tag('1.2.2', 'Sede'))
-        
+            self.start_tag('1.2.2', 'Sede'))        
         f_invoice.write(
-            self.get_tag('1.2.2.1', 'Indirizzo', company_street))
+            self.get_tag('1.2.2.1', 'Indirizzo', 
+            subjects['company']['street']))
         #f_invoice.write(
-        #    self.get_tag('1.2.2.2', 'NumeroCivico', company_number))
+        #    self.get_tag('1.2.2.2', 'NumeroCivico', 
+        #        subjects['company']['number']))
         f_invoice.write(
-            self.get_tag('1.2.2.3', 'CAP', company_zip))
+            self.get_tag('1.2.2.3', 'CAP', 
+            subjects['company']['zip']))
         f_invoice.write(
-            self.get_tag('1.2.2.4', 'Comune', company_city))
+            self.get_tag('1.2.2.4', 'Comune', 
+            subjects['company']['city']))
         f_invoice.write(
-            self.get_tag('1.2.2.5', 'Provincia', company_province, 
-                cardinality='0:1'))
+            self.get_tag('1.2.2.5', 'Provincia', 
+            subjects['company']['province'], cardinality='0:1'))
         f_invoice.write(
-            self.get_tag('1.2.2.6', 'Nazione', company_country))
-
+            self.get_tag('1.2.2.6', 'Nazione', 
+            subjects['company']['country']))
         f_invoice.write(
             self.start_tag('1.2.2', 'Sede', mode='close'))
 
@@ -882,36 +934,39 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('1.2.4', 'IscrizioneREA'))
         f_invoice.write(
-            self.get_tag('1.2.4.1', 'Ufficio', rea_office))
+            self.get_tag('1.2.4.1', 'Ufficio', 
+            subjects['company']['rea_office']))
         f_invoice.write(
-            self.get_tag('1.2.4.2', 'NumeroREA', rea_number))
+            self.get_tag('1.2.4.2', 'NumeroREA', 
+            subjects['company']['rea_number']))
         f_invoice.write(
             self.get_tag('1.2.4.3', 'CapitaleSociale', 
-            format_param.format_decimal(rea_capital), cardinality='0:1'))
+            format_param.format_decimal(
+                subjects['company']['rea_capital']), cardinality='0:1'))
         f_invoice.write(
-            self.get_tag('1.2.4.4', 'SocioUnico', rea_partner, 
+            self.get_tag('1.2.4.4', 'SocioUnico', 
+            subjects['company']['rea_partner'], 
                 cardinality='0:1'))
         f_invoice.write(
-            self.get_tag('1.2.4.5', 'StatoLiquidazione', rea_liquidation, 
+            self.get_tag('1.2.4.5', 'StatoLiquidazione', 
+            subjects['company']['rea_liquidation'], 
                 cardinality='0:1'))
         f_invoice.write(
             self.start_tag('1.2.4', 'IscrizioneREA', mode='close'))
         
         # NOT MANDATORY:
-        if company_phone or company_fax or company_email:
+        if subjects['company']['has_contact']:
             f_invoice.write(
                 self.start_tag('1.2.5', 'Contatti'))
-
             f_invoice.write(
                 self.get_tag('1.2.5.1', 'Telefono', 
-                company_phone, cardinality='0:1'))
+                subjects['company']['phone'], cardinality='0:1'))
             f_invoice.write(
                 self.get_tag('1.2.5.2', 'Fax', 
-                company_fax, cardinality='0:1'))
+                subjects['company']['fax'], cardinality='0:1'))
             f_invoice.write(
                 self.get_tag('1.2.5.3', 'Email', 
-                company_email, cardinality='0:1'))
-
+                subjects['company']['email'], cardinality='0:1'))
             f_invoice.write(
                 self.start_tag('1.2.5', 'Contatti', mode='close'))
         
@@ -948,29 +1003,35 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('1.4.1', 'DatiAnagrafici'))
         
-        if partner_vat: # Alternativo al blocco 1.4.1.2
+        if subjects['partner']['vat']: # Alternativo al blocco 1.4.1.2
             f_invoice.write(
                 self.start_tag('1.4.1.1', 'IdFiscaleIVA'))
             f_invoice.write(
-                self.get_tag('1.4.1.1.1', 'IdPaese', partner_vat[:2]))
+                self.get_tag('1.4.1.1.1', 'IdPaese', 
+                    subjects['partner']['vat_code']))
             f_invoice.write(
-                self.get_tag('1.4.1.1.2', 'IdCodice', partner_vat[2:]))
+                self.get_tag('1.4.1.1.2', 'IdCodice', 
+                    subjects['partner']['vat_number']))
             f_invoice.write(
                 self.start_tag('1.4.1.1', 'IdFiscaleIVA', mode='close'))
         else: # partner_fiscal Alternativo al blocco 1.4.1.1
             f_invoice.write(
-                self.get_tag('1.4.1.2', 'CodiceFiscale', partner_fiscal))
+                self.get_tag('1.4.1.2', 'CodiceFiscale', 
+                subjects['partner']['fiscalcode']))
 
         f_invoice.write(
             self.start_tag('1.4.1.3', 'Anagrafica'))
-        if partner_company: # 1.4.1.3.1 (alternative 1.2.1.3.2   1.2.1.3.3)
+        if subjects['partner']['company']: # 1.4.1.3.1 (alternative 1.2.1.3.2   1.2.1.3.3)
             f_invoice.write(
-                self.get_tag('1.4.1.3.1', 'Denominazione', partner_company))
+                self.get_tag('1.4.1.3.1', 'Denominazione',
+                subjects['partner']['company']))
         else: # 1.4.3.1.2 (altenative 1.2.1.3.1)
             f_invoice.write(
-                self.get_tag('1.4.1.3.2', 'Nome', partner_name))
+                self.get_tag('1.4.1.3.2', 'Nome', 
+                subjects['partner']['name']))
             f_invoice.write(
-                self.get_tag('1.4.1.3.3', 'Cognome', partner_surname))
+                self.get_tag('1.4.1.3.3', 'Cognome', 
+                subjects['partner']['surname']))
             # 1.4.3.1.4 <Titolo>partner_title
             # 1.4.3.1.5 <CodEORI> partner_eori
         f_invoice.write(
@@ -979,19 +1040,25 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('1.4.2', 'Sede'))
         f_invoice.write(
-            self.get_tag('1.4.2.1', 'Indirizzo', partner_street))
+            self.get_tag('1.4.2.1', 'Indirizzo', 
+            subjects['partner']['street']))
         f_invoice.write(
-            self.get_tag('1.4.2.2', 'NumeroCivico', partner_number, 
+            self.get_tag('1.4.2.2', 'NumeroCivico', 
+            subjects['partner']['number'], 
                 cardinality='0:1'))
         f_invoice.write(
-            self.get_tag('1.4.2.3', 'CAP', partner_zip))
+            self.get_tag('1.4.2.3', 'CAP', 
+            subjects['partner']['zip']))
         f_invoice.write(
-            self.get_tag('1.4.2.4', 'Comune', partner_city))
+            self.get_tag('1.4.2.4', 'Comune', 
+            subjects['partner']['city']))
         f_invoice.write(
-            self.get_tag('1.4.2.5', 'Provincia', partner_province, 
+            self.get_tag('1.4.2.5', 'Provincia', 
+            subjects['partner']['province'], 
                 cardinality='0:1'))
         f_invoice.write(
-            self.get_tag('1.4.2.6', 'Nazione', partner_country))
+            self.get_tag('1.4.2.6', 'Nazione', 
+            subjects['partner']['country']))
         f_invoice.write(
             self.start_tag('1.4.2', 'Sede', mode='close'))
 
@@ -1104,7 +1171,7 @@ class StockPicking(models.Model):
             self.get_tag('2.1.1.11', 'Causale', invoice_causal, 
                 cardinality='0:N'))
 
-        # 2.1.1.12 <Art73>
+        # 2.1.1.12 <Art73> Reverse Charge
         f_invoice.write(
             self.start_tag('2.1.1', 'DatiGeneraliDocumento', mode='close'))
 
@@ -1368,7 +1435,8 @@ class StockPicking(models.Model):
                 self.get_tag('2.2.2.6', 'Imposta', 
                 format_param.format_decimal(item_subtotal_vat)))
             f_invoice.write(# % Tabella
-                self.get_tag('2.2.2.7', 'EsigibilitaIVA', esigibility))
+                self.get_tag('2.2.2.7', 'EsigibilitaIVA', 
+                subjects['company']['esigibility']))
             #f_invoice.write(# % Tabella se presente Natura
             #    self.get_tag('2.2.2.8', 'RiferimentoNormativo', ))
             f_invoice.write(
