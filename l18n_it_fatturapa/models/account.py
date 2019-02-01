@@ -1043,6 +1043,8 @@ class StockPicking(models.Model):
             # 1.4.3.1.5 <CodEORI> partner_eori
         f_invoice.write(
             self.start_tag('1.4.1.3', 'Anagrafica', mode='close'))
+        f_invoice.write(
+            self.start_tag('1.4.1', 'DatiAnagrafici', mode='close'))
 
         f_invoice.write(
             self.start_tag('1.4.2', 'Sede'))
@@ -1090,8 +1092,6 @@ class StockPicking(models.Model):
         # 1.4.4.3 <Nome>
         # 1.4.4.4 <Cognome>
         #       <RappresentanteFiscale>
-        f_invoice.write(
-            self.start_tag('1.4.1', 'DatiAnagrafici', mode='close'))
         f_invoice.write(
             self.start_tag('1.4', 'CessionarioCommittente', mode='close'))
 

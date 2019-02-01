@@ -432,7 +432,7 @@ class StockPicking(models.Model):
             # -----------------------------------------------------------------            
             # Detail data:
             # -----------------------------------------------------------------            
-            i += 1     
+            i += 1
             # TODO remove from here: self.qweb_format_float(
             detail_table[str(i)] = {
                 'mode': '', # No mode = product line (else SC, PR, AB, AC)
