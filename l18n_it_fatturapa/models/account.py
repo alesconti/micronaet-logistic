@@ -493,6 +493,7 @@ class StockPicking(models.Model):
     def fatturapa_get_details(self):
         ''' Extract line detail sumary
         '''
+        # XXX NOT USED HERE (OVERRIDED)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         self.ensure_one()
         
         picking = self[0]

@@ -421,7 +421,7 @@ class StockPicking(models.Model):
         i = 0
         for move in picking.move_lines_for_report():
             # Parameters:
-            price = float(move[5]) # price_reduce from sale order line
+            price = float(move[7]) # price_reduce from sale order line
             qty = float(move[1]) # q. from sale order line
             subtotal = float(move[9])
             vat = move[3].amount
