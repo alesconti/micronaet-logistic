@@ -758,9 +758,8 @@ class StockPicking(models.Model):
             #'empty_unique': fiscal_position.fatturapa_empty_code,
             'unique_code': partner.fatturapa_unique_code, # TODO company or destin.?
             'unique_pec': partner.fatturapa_pec,
-            'fiscalcode': partner.vat or partner.fatturapa_private_fiscalcode \
+            'fiscalcode': partner_vat[2:] or partner.fatturapa_private_fiscalcode \
                 or partner.fatturapa_fiscalcode,
-
             
             # name:
             'name': partner.fatturapa_name,
