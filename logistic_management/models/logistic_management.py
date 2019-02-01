@@ -408,9 +408,10 @@ class StockPicking(models.Model):
         self.ensure_one()
         
         picking = self[0]
+
         # Result dict:
         detail_table = {}
-        vat_table = {}        
+        vat_table = {}
         ddt_reference = {}
         # TODO order?
         

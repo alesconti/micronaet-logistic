@@ -712,7 +712,7 @@ class StockPicking(models.Model):
             }
 
         # ---------------------------------------------------------------------
-        # Invoice / Picking parameters: TODO Put in loop
+        # Loop elements:
         # ---------------------------------------------------------------------
         # Extra table from picking:
         detail_table, vat_table, ddt_reference = \
@@ -721,6 +721,9 @@ class StockPicking(models.Model):
         # Extract totals:
         total_db = picking.move_lines_for_report_total()
 
+        # ---------------------------------------------------------------------
+        # Invoice / Picking parameters: TODO Put in loop
+        # ---------------------------------------------------------------------
         invoice_number = (picking.invoice_number or '').split('/')[-1]
         params['invoice'] = {                
             # Format used for invoice:
@@ -874,7 +877,7 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('1.2.1.3', 'Anagrafica'))
         # ---------------------------------------------------------------------                
-        if params['company']['company']: # 1.2.1.3.1 (alternative 1.2.1.3.2 - 1.2.1.3.3)
+        if params['company']['company']: # 1.2.1.3.1 (alt. 1.2.1.3.2-1.2.1.3.3)
             f_invoice.write(
                 self.get_tag('1.2.1.3.1', 'Denominazione', 
                 params['company']['company']))
