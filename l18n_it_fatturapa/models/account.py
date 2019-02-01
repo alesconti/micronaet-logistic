@@ -675,7 +675,7 @@ class StockPicking(models.Model):
             'vat_number':  company_vat[2:],
             
             # TODO change fiscal code (add field, for now VAT)
-            'fiscalcode': company_vat,
+            'fiscalcode': (company_vat).lstrip(italy_code),
             
             # TODO change (add list field in company)
             'mode': 'RF01',
