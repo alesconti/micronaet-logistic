@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_stock_ddt_cancel_form">
+            <field name="name">stock.ddt.cancel.form</field>
+            <field name="model">stock.ddt.cancel</field>
+            <field name="arch" type="xml">
+                <form string="DDT Cancel" version="7.0">        
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="ddt_number" />
+                            <field name="ddt_date" />
+                            
+                            <field name="date" />
+                            <newline/>
+                            <field name="picking_id" />
+                            <field name="order_id" />
+
+                            <separator string="Detail" colspan="4"/>  
+                            <field name="detail" nolabel="1" colspan="4" widget="html"/>
+                            
+                            <separator string="Detail" colspan="4"/>  
+                            <field name="reason" nolabel="1" colspan="4" />                            
+                        </group>
+                    </sheet>        
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_stock_ddt_cancel_tree">
+            <field name="name">stock.ddt.cancel.tree</field>
+            <field name="model">stock.ddt.cancel</field>
+            <field name="arch" type="xml">
+                <tree string="DDT Cancel">
+                    <field name="ddt_number" />
+                    <field name="ddt_date" />
+                    
+                    <field name="date" />
+                    <field name="order_id" />
+
+                    <field name="reason" nolabel="1" colspan="4" />                            
+                    
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="action_stock_ddt_cancel_form">
+            <field name="name">DDT cancel</field>
+            <field name="res_model">stock.ddt.cancel</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_stock_ddt_cancel_tree"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+        
+        <menuitem 
+            parent="logistic_management.menu_logistic_left_pick_out_document" 
+            id="menu_action_stock_ddt_cancel_form" 
+            action="action_stock_ddt_cancel_form"
+            />
+        
+    </data>
+</openerp>
+

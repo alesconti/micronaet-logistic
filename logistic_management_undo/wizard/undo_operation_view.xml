@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <form string="Undo order" version="7.0">        
                     <header>
-                        <button name="undo_button" string="Undo order" type="object" class="btn-primary"/>
+                        <!--<button name="undo_button" string="Undo order" type="object" class="btn-primary"/>-->
                     </header>
                     <sheet>
                         <group col="4" colspan="4">
@@ -55,7 +55,7 @@
                                 </page>
                                 <page string="8. DDT" attrs="{'invisible': [('state','not in',('ddt',))]}">
                                     <group col="4" colspan="4">
-                                        <button name="undo_ddt_cancel" string="Order / DDT cancel" type="object" help="DDT and stock move will be cancelled, stock restored and order in cancel status" confirm="DDT removed, Stock reloaded, Order cancel, confirm?"/>
+                                        <button name="undo_ddt_cancel" string="Order / DDT cancel" type="object" help="DDT and stock move will be cancelled, stock restored and order in cancel status" confirm="DDT removed, Stock reloaded, Order cancel, confirm?" class="btn-primary"/>
                                         <separator string="Reason of DDT remove:" colspan="4"/>
                                         <field name="ddt_reason" nolabel="1" colspan="4"/>
                                     </group>

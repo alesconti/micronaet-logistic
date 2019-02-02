@@ -43,10 +43,16 @@ class StockDdtcancel(models.Model):
     # -------------------------------------------------------------------------
     # COLUMNS:
     # -------------------------------------------------------------------------
-    date = fields.Date('Date')
-    picking_id = fields.Many2one('stock.picking', 'DDT')
-    reason = fields.Text('Reason')
-    detail = fields.Text('Detail', widget='html')
+    date = fields.Date('Date', readonly=1)
+    picking_id = fields.Many2one('stock.picking', 'DDT', readonly=1)
+    order_id = fields.Many2one('sale.order', 'Origin: Sale order', readonly=1)
+    
+    ddt_date = fields.Date('DDT Date', readonly=1)
+    ddt_number = fields.Char('DDT Number', size=20, readonly=1)
+    
+    date = fields.Date('Date', readonly=1)
+    reason = fields.Text('Reason', readonly=1)
+    detail = fields.Text('Detail', widget='html', readonly=1)
     # -------------------------------------------------------------------------
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

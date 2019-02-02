@@ -172,80 +172,99 @@ class SaleOrderUndoWizard(models.TransientModel):
     def undo_ddt_cancel(self):
         ''' Delete picking ordine annullato
         '''
+        self.ensure_one()
+        
         quant_pool = self.env['stock.quant']
         cancel_pool = self.env['stock.ddt.cancel']
         
-        import pdb; pdb.set_trace()
         order = self.order_id
-        now = fields.Date.now()
+        now = fields.Date.today()
         
         delete_move = []
-        for picking in order.picking_ids: # Normally only one!
+        for picking in order.logistic_picking_ids: # Normally only one!
             # Collect detail text:
             detail = ''
-            for line in picking.move_lines_for_report:
-                detail += '' # TODO 
+            for record in picking.move_lines_for_report():
+                detail += u'Cod.: %s Q. %s VAT Price: %s = %s<br/>' % ( 
+                    record[0].product_tmpl_id.default_code or '?',
+                    record[1],
+                    record[4],                    
+                    record[10],
+                    )
 
             # Collect data for deletion and stock operation:
             for line in picking.move_lines: # only done state
-                product = line.used_product_id
+                product = line.product_id
+                default_code = product.product_tmpl_id.default_code
 
                 # -------------------------------------------------------------                    
                 # To be removed:
                 # -------------------------------------------------------------                    
-                delete_move.append(line.id)
+                delete_move.append(line)
 
                 # -------------------------------------------------------------                    
                 # Reload stock:
                 # -------------------------------------------------------------                    
-                # Only loaded product will be reloaded:
-                # no product: consu, service 
-                if line.logistic_state in ('unused', ) or \
-                        product.type != 'product':
+                if product.type != 'product':                
+                    _logger.error(
+                        'Product service or consu: %s [%s]' % (
+                            product.name, default_code or ''))
                     continue
                 data = {
                     'company_id': product.company_id.id,
                     'in_date': now,
                     'location_id': 
-                        product.company_id.logistic_location_id.id
+                        product.company_id.logistic_location_id.id,
                     'product_id': product.id,
                     'quantity': line.product_uom_qty,
                     }            
-                try:    
-                    quant_pool.create(data)
-                except:
-                    _logger.error('Product is service? [%s - %s]\n%s' % (
-                        product.product_tmpl_id.default_code or '',
-                        product.name,
-                        sys.exc_info(),
-                        ))
-                    continue                      
+                quant_pool.create(data)
 
             # -----------------------------------------------------------------
             # Remove operations:
             # -----------------------------------------------------------------
-            # Move:            
-            self.env['stock.move'].unlink(delete_move)
+            # Move:     
+            for line in delete_move:    
+                line.state = 'draft'   
+                line.unlink()
             
             # Picking
-            self.logistic_picking_ids.unlink()
+            #order.logistic_picking_ids.unlink()
 
             # -----------------------------------------------------------------
             # Cancel order and lined:
             # -----------------------------------------------------------------
             for line in order.order_line:
-                # Line in draft (for future reload? XXX check assignements!)
-                line.logistic_state = 'draft'
+                # Line in draft (for future reload? XXX check assignements!)                
+                line.logistic_state = 'draft' # TODO debug!! assiged?
             order.logistic_state = 'cancel'
             
             # -----------------------------------------------------------------
             # Create new record for Undo registry:
             # -----------------------------------------------------------------
-            cancel_pool.create({
-                'date': field.Date.now(),
+            cancel_id = cancel_pool.create({
+                'date': now,
                 'reason': self.ddt_reason,
                 'detail': detail,
-                })    
+                'ddt_number': picking.ddt_number,
+                'ddt_date': picking.ddt_date,
+                'order_id': order.id,
+                'picking_id': picking.id,
+                }).id
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('DDT remove'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': cancel_id,
+            'res_model': 'stock.ddt.cancel',
+            'view_id': False,
+            'views': [(False, 'form'), (False, 'tree')],
+            'domain': [],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }           
         return True
 
     @api.multi

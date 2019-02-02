@@ -40,7 +40,9 @@
         ],
     'data': [
         'security/ir.model.access.csv',
+        
         # Views:
+        'views/cancel_view.xml',
         'wizard/undo_operation_view.xml',
         ],
     'demo': [],
