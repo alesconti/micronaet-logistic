@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_sale_order_undo_wizard_form">
+            <field name="name">sale.order.undo.wizard.form</field>
+            <field name="model">sale.order.undo.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Undo order" version="7.0">        
+                    <header>
+                        <button name="undo_button" string="Undo order" type="object" class="btn-primary"/>
+                    </header>
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="order_id" />
+                            <field name="partner_id" />
+                            
+                            <field name="state" />
+                            <field name="state_undo" />
+                            
+                            <separator string="Order state" colspan="2" />
+                            <separator string="Order undo" colspan="2" />
+                            
+                            <field name="state_text" nolabel="1" widget="html" colspan="2"/>
+                            <field name="undo_text" nolabel="1" widget="html" colspan="2"/>
+                            
+                            <notebook colspan="4">
+                                <page string="1. New" attrs="{'invisible': [('state','not in',('draft',))]}">
+                                    <group col="4" colspan="4">
+                                    </group>
+                                </page>
+                                <page string="2. Payed" attrs="{'invisible': [('state','not in',('payed', ))]}">
+                                    <group col="4" colspan="4">
+                                    </group>
+                                </page>
+                                <page string="3. Order" attrs="{'invisible': [('state','not in',('order', ))]}">
+                                    <group col="4" colspan="4">
+                                    </group>
+                                </page>
+                                <page string="4. Covered" attrs="{'invisible': [('state','not in',('covered',))]}">>
+                                    <group col="4" colspan="4">
+                                    </group>
+                                </page>
+                                <page string="5. Ordered" attrs="{'invisible': [('state','not in',('ordered',))]}">
+                                    <group col="4" colspan="4">
+                                    </group>
+                                </page>
+                                <page string="6. Delivered" attrs="{'invisible': [('state','not in',('delivered',))]}">>
+                                    <group col="4" colspan="4">
+                                    </group>
+                                </page>
+                                <page string="7. Ready" attrs="{'invisible': [('state','not in',('ready',))]}">
+                                    <group col="4" colspan="4">
+                                    </group>
+                                </page>
+                                <page string="8. DDT" attrs="{'invisible': [('state','not in',('ddt',))]}">
+                                    <group col="4" colspan="4">
+                                        <button name="undo_ddt_cancel" string="Order / DDT cancel" type="object" help="DDT and stock move will be cancelled, stock restored and order in cancel status" confirm="DDT removed, Stock reloaded, Order cancel, confirm?"/>
+                                        <separator string="Reason of DDT remove:" colspan="4"/>
+                                        <field name="ddt_reason" nolabel="1" colspan="4"/>
+                                    </group>
+                                </page>
+                                <page string="9. Invoice" attrs="{'invisible': [('state','not in',('invoice',))]}">
+                                    <group col="4" colspan="4">
+                                    </group>
+                                </page>
+                                <page string="10. NC" attrs="{'invisible': [('state','not in',('done',))]}">
+                                    <group col="4" colspan="4">
+                                    </group>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>        
+                </form>
+            </field>
+        </record>
+        <record id="action_undo_order_wizard" model="ir.actions.act_window">
+            <field name="name">Undo order</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.undo.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_sale_order_undo_wizard_form"/>
+            <field name="target">new</field>
+        </record>        
+        <!--<menuitem 
+            parent="logistic_management.menu_logistic_management_root"
+            sequence="5"
+            id="menu_undo_order_wizard" 
+            action="action_undo_order_wizard"
+             />-->
+
+         <record model="ir.ui.view" id="view_sale_order_logistic_tree">
+             <field name="name">sale.order.logistic.tree</field>
+             <field name="model">sale.order</field>             
+             <field name="inherit_id" ref="logistic_management.view_sale_order_logistic_tree"/>
+             <field name="arch" type="xml">
+                  <field name="logistic_state" position="after">
+                      <button name="%(action_undo_order_wizard)d" string="Undo" type="action" icon="fa-mail-reply" context="{'default_order_id': active_id}"/>
+                  </field>
+              </field>
+         </record>    
+             
+    </data>
+</openerp>
+
