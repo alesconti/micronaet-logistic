@@ -205,7 +205,17 @@ class SaleOrderUndoWizard(models.TransientModel):
                 # -------------------------------------------------------------                    
                 # Reload stock:
                 # -------------------------------------------------------------                    
-                if product.type != 'product':                
+                if product.is_kit:
+                    _logger.error(
+                        'Kit line uploaded as component %s [%s]' % (
+                            product.name, default_code or ''))
+                    reload_stock += 'NOT LOAD KIT %s: Q. %s<br/>' % (
+                        default_code or product.name,
+                        line.product_uom_qty
+                        )
+                    continue    
+                    
+                if product.type != 'product':
                     _logger.error(
                         'Product service or consu: %s [%s]' % (
                             product.name, default_code or ''))
