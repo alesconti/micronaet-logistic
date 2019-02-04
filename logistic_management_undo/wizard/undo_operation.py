@@ -183,10 +183,10 @@ class SaleOrderUndoWizard(models.TransientModel):
         delete_move = []
         for picking in order.logistic_picking_ids: # Normally only one!
             # Collect detail text:
-            detail = ''
+            detail = reload_stock = ''
             for record in picking.move_lines_for_report():
-                detail += u'Cod.: %s Q. %s VAT Price: %s = %s<br/>' % ( 
-                    record[0].product_tmpl_id.default_code or '?',
+                detail += u'%s: Q. %s VAT Price: %s = %s<br/>' % ( 
+                    record[0].product_tmpl_id.default_code or record[0].name,
                     record[1],
                     record[4],                    
                     record[10],
@@ -209,6 +209,10 @@ class SaleOrderUndoWizard(models.TransientModel):
                     _logger.error(
                         'Product service or consu: %s [%s]' % (
                             product.name, default_code or ''))
+                    reload_stock += 'NOT LOAD %s: Q. %s<br/>' % (
+                        default_code or product.name,
+                        line.product_uom_qty
+                        )
                     continue
                 data = {
                     'company_id': product.company_id.id,
@@ -219,6 +223,10 @@ class SaleOrderUndoWizard(models.TransientModel):
                     'quantity': line.product_uom_qty,
                     }            
                 quant_pool.create(data)
+                reload_stock += '%s: Q. %s<br/>' % (
+                    default_code or product.name,
+                    line.product_uom_qty
+                    )
 
             # -----------------------------------------------------------------
             # Remove operations:
@@ -250,7 +258,9 @@ class SaleOrderUndoWizard(models.TransientModel):
                 'ddt_date': picking.ddt_date,
                 'order_id': order.id,
                 'picking_id': picking.id,
+                'reload_stock': reload_stock,
                 }).id
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('DDT remove'),

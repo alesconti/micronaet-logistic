@@ -99,7 +99,6 @@ class StockPicking(models.Model):
                     'invoice_number': sequence_number,
                     'invoice_date': fields.Datetime.now(),
                     })
-            
         return True
                 
     @api.multi

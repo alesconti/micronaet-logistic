@@ -16,11 +16,14 @@
                             <field name="picking_id" />
                             <field name="order_id" />
 
-                            <separator string="Detail" colspan="4"/>  
+                            <separator string="Detail:" colspan="4"/>  
                             <field name="detail" nolabel="1" colspan="4" widget="html"/>
+
+                            <separator string="Reload stock:" colspan="4"/>  
+                            <field name="reload_stock" nolabel="1" colspan="4"  widget="html"/>                            
                             
-                            <separator string="Detail" colspan="4"/>  
-                            <field name="reason" nolabel="1" colspan="4" />                            
+                            <separator string="Reason:" colspan="4"/>  
+                            <field name="reason" nolabel="1" colspan="4" widget="html"/>                            
                         </group>
                     </sheet>        
                 </form>

@@ -52,7 +52,9 @@ class StockDdtcancel(models.Model):
     
     date = fields.Date('Date', readonly=1)
     reason = fields.Text('Reason', readonly=1)
+
     detail = fields.Text('Detail', widget='html', readonly=1)
+    reload_stock = fields.Text('Reload stock', widget='html', readonly=1)
     # -------------------------------------------------------------------------
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
