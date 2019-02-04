@@ -1371,7 +1371,7 @@ class StockPicking(models.Model):
             f_invoice.write(# unitario, totale sconto (anche negativo)
                 # Anche negativo # Vedi 2.2.1.2
                 self.get_tag('2.2.1.9', 'PrezzoUnitario', 
-                format_param.format_decimal(record['price'])))
+                format_param.format_decimal(record['price'], decimal=6)))
 
             """
             # -----------------------------------------------------------------
