@@ -420,6 +420,7 @@ class StockPicking(models.Model):
         ddt_date = picking.ddt_date
         
         i = 0
+        import pdb; pdb.set_trace()
         for move in picking.move_lines_for_report():
             # Parameters:
             price = float(move[7]) # price_reduce from sale order line
