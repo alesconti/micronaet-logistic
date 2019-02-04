@@ -439,7 +439,7 @@ class StockPicking(models.Model):
                 'discount': '', # No discount
                 'nature': '', # No nature (always 22)
                 'product': move[0], # Browse
-                'price': self.qweb_format_float(price),
+                'price': self.qweb_format_float(price, decimal=6),
                 'qty': self.qweb_format_float(qty),
                 'vat': self.qweb_format_float(vat), # %
                 'retention': '', # No retention
