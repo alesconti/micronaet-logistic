@@ -590,7 +590,7 @@ class StockPicking(models.Model):
         # Setup page:
         # ---------------------------------------------------------------------
         excel_pool.column_width(ws_name, [
-            15, 15, 30, 15, 
+            15, 15, 20, 30, 15, 
             10, 10, 10,
             ])
 
@@ -601,7 +601,7 @@ class StockPicking(models.Model):
 
         row += 1
         excel_pool.write_xls_line(ws_name, row, [
-             'Data', 'Ordine', 'Cliente', 'Posizione fiscale', 
+             'Data', 'Ordine', 'Stato', 'Cliente', 'Posizione fiscale', 
              'Imponibile', 'IVA', 'Totale',
              ], default_format=f_header)
         
@@ -651,6 +651,7 @@ class StockPicking(models.Model):
             excel_pool.write_xls_line(ws_name, row, (
                 picking.ddt_date,
                 order.name,
+                order.logistic_state,
                 partner.name,
                 partner.property_account_position_id.name, # Fiscal position
                 (subtotal['amount'], f_number),
