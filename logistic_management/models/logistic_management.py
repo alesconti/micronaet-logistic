@@ -1091,6 +1091,7 @@ class StockPicking(models.Model):
                 sale_line, # 16 For every extra reference
                 ))
             ddt_reference = '' # only first line print DDT reference    
+        _logger.warning('>>> Picking line: %s ' % (res, ))
         return res
 
     # -------------------------------------------------------------------------
