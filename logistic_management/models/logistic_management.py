@@ -666,7 +666,7 @@ class StockPicking(models.Model):
             (total['amount'], f_number),
             (total['vat'], f_number),
             (total['total'], f_number),
-            ), default_format=f_header, col=3)
+            ), default_format=f_header, col=4)
         
         # ---------------------------------------------------------------------                 
         # Define filename and save:
