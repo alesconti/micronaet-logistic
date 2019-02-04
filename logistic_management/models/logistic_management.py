@@ -617,9 +617,9 @@ class StockPicking(models.Model):
                 'total': 0.0,
                 }
             for move in picking.move_lines_for_report():
-                subtotal['amount'] += move[9] # Total without VAT 
-                subtotal['vat'] += move[6] # VAT Total
-                subtotal['total'] += move[10] # Total with VAT
+                subtotal['amount'] += float(move[9]) # Total without VAT 
+                subtotal['vat'] += float(move[6]) # VAT Total
+                subtotal['total'] += float(move[10]) # Total with VAT
             '''
             #0. original_product,
             #1. int(sale_line.product_uom_qty), # XXX Note: Not stock.move qty
