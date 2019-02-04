@@ -51,10 +51,9 @@
                           <button name="load_position_print" string="Load position report" type="object" class="btn-primary" />
                       </group>                          
 
-                      <group colspan="4" col="2">
-                          <separator string="Report: Accounting Fees" colspan="2"/>
-                          <field name="evaluation_date" />
-                          <button name="print_report_account_fees_month" string="Print account fees" type="object" class="btn-primary" />
+                      <group colspan="4" col="5">
+                          <separator string="Report: Accounting Fees" colspan="2"/><field name="evaluation_date" />
+                          <button name="print_report_account_fees_month" string="Print account fees" type="object" class="btn-primary" colspan="1"/>
                           
                       </group>                          
 
