@@ -1368,8 +1368,9 @@ class StockPicking(models.Model):
             #f_invoice.write(
             #    self.get_tag('2.2.1.8', 'DataFinePeriodo', , 
             #        cardinality='0:1'))
+            import pdb; pdb.set_trace()
             f_invoice.write(# unitario, totale sconto (anche negativo)
-                # Anche negativo # Vedi 2.2.1.2
+                # Anche negativo # Vedi 2.2.1.2                
                 self.get_tag('2.2.1.9', 'PrezzoUnitario', 
                 format_param.format_decimal(record['price'], decimal=6)))
 
