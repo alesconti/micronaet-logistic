@@ -40,6 +40,7 @@ class StockChangeStandardPrice(models.TransientModel):
     # -------------------------------------------------------------------------    
     limit = fields.Integer('Limit', default=10)
     loop = fields.Integer('Loop', default=5, required=True)
+    evaluation_date = fields.Date('Evaluation date')
 
     # -------------------------------------------------------------------------
     #                               BUTTON EVENT:    
@@ -150,8 +151,9 @@ class StockChangeStandardPrice(models.TransientModel):
     def print_report_account_fees_month(self):
         """ Account fees report
         """
-        stock_pool = self.env['stock.picking']
-        return stock_pool.excel_report_extract_accounting_fees()
+        stock_pool = self.env['stock.picking']        
+        return stock_pool.excel_report_extract_accounting_fees(
+            self.evaluation_date)
 
     @api.multi
     def print_bug_check_pending_draft_line(self):

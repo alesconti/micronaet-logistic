@@ -537,7 +537,7 @@ class StockPicking(models.Model):
             }
 
     @api.model
-    def excel_report_extract_accounting_fees(self, ):
+    def excel_report_extract_accounting_fees(self, evaluation_date=False):
         ''' Extract file account fees
         '''
         
@@ -549,7 +549,12 @@ class StockPicking(models.Model):
         fees_path = companys[0]._logistic_folder('corrispettivi')
 
         # Period current date:        
-        now_dt = datetime.now()
+        if evaluation_date: # use evaluation
+            now_dt = datetime.strptime(evaluation_date, '%Y-%m-%d')
+        else: # use now
+            now_dt = datetime.now()
+        _logger.warning('Account Fees evalutation: %s' % now_dt)
+    
         from_date = now_dt.strftime('%Y-%m-01')
         now_dt += relativedelta(months=1)
         to_date = now_dt.strftime('%Y-%m-01')        
