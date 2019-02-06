@@ -35,10 +35,7 @@
                             <field name="stock_mode" readonly="1"/>
                             <field name="refund_origin_id" readonly="1" attrs="{'invisible': [('stock_mode','!=','in')]}"/>
                             
-                            <field name="refund_number" attrs="{'invisible': [('refund_number','=',False)]}"/>
-                            <field name="refund_date" attrs="{'invisible': [('refund_number','=',False)]}"/>
-
-                            <field name="ddt_number" attrs="{'invisible': [('ddt_number','=',False)]}"/>
+                            <field name="ddt_number" attrs="{'invisible': [('ddt_number','=',False)]}" />
                             <field name="ddt_date" attrs="{'invisible': [('ddt_number','=',False)]}"/>
                             
                             <!--Invoice or credit note:-->
@@ -71,7 +68,6 @@
              <field name="inherit_id" ref="stock.vpicktree"/>
              <field name="arch" type="xml">
                  <field name="state" position="before">
-                    <field name="refund_number" />
                     <field name="ddt_number" />
                     <field name="invoice_number" />
                  </field>

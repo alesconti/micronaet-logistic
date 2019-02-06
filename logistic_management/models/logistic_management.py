@@ -616,8 +616,8 @@ class StockPicking(models.Model):
             total['total'] += subtotal['total']
             
             excel_pool.write_xls_line(ws_name, row, (
-                picking.refund_date or picking.ddt_date,
-                picking.refund_number or order.name,
+                picking.ddt_date,
+                picking.ddt_number if stock_mode == 'in' else order.name,
                 picking.name,
                 '' if stock_mode == 'in' else order.logistic_state,
                 partner.name,
@@ -972,18 +972,14 @@ class StockPicking(models.Model):
             ))
         if not sorted_lines:
             return res
-        
+
+        # DDT or RC header text:        
         header_picking = sorted_lines[0].picking_id
-        if header_picking.stock_mode == 'in':
-            ddt_reference = _('%s del %s') % (
-                header_picking.refund_number,
-                header_picking.refund_date,
-                )
-        else:    
-            ddt_reference = _('%s del %s') % (
-                sorted_lines[0].picking_id.ddt_number,
-                sorted_lines[0].picking_id.ddt_date,
-                )
+        ddt_reference = _('%s del %s') % (
+            sorted_lines[0].picking_id.ddt_number,
+            sorted_lines[0].picking_id.ddt_date,
+            )
+            
         #total = []
         refund_kit = [] # Kit will be printed once!
         for line in sorted_lines:

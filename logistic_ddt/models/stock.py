@@ -158,21 +158,19 @@ class StockPicking(models.Model):
             partner configuration
         '''
         # TODO Manage sequence from fiscal position
-        for picking in self:
-            # Use DDT counter:
+        for picking in self: # Use DDT counter:
             if picking.stock_mode == 'out':
-                picking.write({
-                    'ddt_number': self.env['ir.sequence'].next_by_code(
-                        'stock.picking.ddt.sequence'),
-                    'ddt_date': fields.Datetime.now(),    
-                    })
+                counter = self.env['ir.sequence'].next_by_code(
+                'stock.picking.ddt.sequence')
             else: # in >> Refund value:
-                # Use refund counter:
-                picking.write({
-                    'refund_number': self.env['ir.sequence'].next_by_code(
-                        'stock.picking.refund.sequence'),
-                    'refund_date': fields.Datetime.now(),    
-                    })
+                counter = self.env['ir.sequence'].next_by_code(
+                    'stock.picking.refund.sequence'),
+
+            # Update Document data (DDT or FC)
+            picking.write({
+                'ddt_number': counter,
+                'ddt_date': fields.Datetime.now(),    
+                })
         return True
 
     # -------------------------------------------------------------------------
@@ -185,10 +183,8 @@ class StockPicking(models.Model):
     refund_origin_id = fields.Many2one(
         'stock.picking', string='Back document refunded')
         
-    refund_number = fields.Char('Refund number')
-    refund_date = fields.Datetime('Refund date')
-    ddt_number = fields.Char('DDT number')
-    ddt_date = fields.Datetime('DDT date')
+    ddt_number = fields.Char('Document number')
+    ddt_date = fields.Datetime('Document date')
     invoice_number = fields.Char('Invoice number') 
     invoice_date = fields.Datetime('Invoice date')
 
