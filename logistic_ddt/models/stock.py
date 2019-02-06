@@ -164,7 +164,7 @@ class StockPicking(models.Model):
                 'stock.picking.ddt.sequence')
             else: # in >> Refund value:
                 counter = self.env['ir.sequence'].next_by_code(
-                    'stock.picking.refund.sequence'),
+                    'stock.picking.refund.sequence')
 
             # Update Document data (DDT or FC)
             picking.write({

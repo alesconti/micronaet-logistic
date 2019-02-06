@@ -538,7 +538,8 @@ class StockPicking(models.Model):
         excel_pool.set_format()
         f_title = excel_pool.get_format('title')
         f_header = excel_pool.get_format('header')
-        f_text = excel_pool.get_format('text')
+        f_text_black = excel_pool.get_format('text')
+        f_text_red = excel_pool.get_format('text_red')
         f_number_black = excel_pool.get_format('number')
         f_number_red = excel_pool.get_format('number_red')
         #f_green_text = excel_pool.get_format('bg_green')
@@ -579,8 +580,10 @@ class StockPicking(models.Model):
             if stock_mode == 'in':
                 sign = -1.0
                 f_number = f_number_red
+                f_text = f_text_red
             else:
                 f_number = f_number_black
+                f_text = f_text_black
                 sign = +1.0
             
             subtotal = {
@@ -634,7 +637,7 @@ class StockPicking(models.Model):
             (total['amount'], f_number_black),
             (total['vat'], f_number_black),
             (total['total'], f_number_black),
-            ), default_format=f_header, col=4)
+            ), default_format=f_header, col=5)
         
         # ---------------------------------------------------------------------                 
         # Define filename and save:
