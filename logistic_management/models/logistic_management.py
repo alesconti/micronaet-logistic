@@ -315,6 +315,13 @@ class StockMoveIn(models.Model):
     #    )
 
     # Direct link to sale order line (generated from purchase order):    
+    logistic_refund_id = fields.Many2one(
+        'sale.order.line', 'Link refund to sale', 
+        help='Link pick refund line to original sale line',
+        index=True, ondelete='set null',
+        )
+
+    # Direct link to sale order line (generated from purchase order):    
     logistic_load_id = fields.Many2one(
         'sale.order.line', 'Link load to sale', 
         help='Link pick in line to original sale line (bypass purchase)',
@@ -567,6 +574,11 @@ class StockPicking(models.Model):
             # Readability:
             order = picking.sale_order_id 
             partner = order.partner_id
+            stock_mode = picking.stock_mode #in: refund, out: DDT
+            if stock_mode == 'in':
+                sign = -1.0
+            else:
+                sign = +1.0
             
             subtotal = {
                 'amount': 0.0,
@@ -574,9 +586,9 @@ class StockPicking(models.Model):
                 'total': 0.0,
                 }
             for move in picking.move_lines_for_report():
-                subtotal['amount'] += float(move[9]) # Total without VAT 
-                subtotal['vat'] += float(move[6]) # VAT Total
-                subtotal['total'] += float(move[10]) # Total with VAT
+                subtotal['amount'] += sign * float(move[9]) # Total without VAT 
+                subtotal['vat'] += sign * float(move[6]) # VAT Total
+                subtotal['total'] += sign * float(move[10]) # Total with VAT
             '''
             #0. original_product,
             #1. int(sale_line.product_uom_qty), # XXX Note: Not stock.move qty
@@ -601,9 +613,9 @@ class StockPicking(models.Model):
             total['total'] += subtotal['total']
             
             excel_pool.write_xls_line(ws_name, row, (
-                picking.ddt_date,
-                order.name,
-                order.logistic_state,
+                picking.refund_date or picking.ddt_date,
+                picking.refund_number or order.name,
+                '' if stock_mode == 'in' else order.logistic_state,
                 partner.name,
                 partner.property_account_position_id.name, # Fiscal position
                 (subtotal['amount'], f_number),
@@ -956,15 +968,35 @@ class StockPicking(models.Model):
             ))
         if not sorted_lines:
             return res
-            
-        ddt_reference = '%s del %s' % (
-            sorted_lines[0].picking_id.ddt_number,
-            sorted_lines[0].picking_id.ddt_date,
-            )
+        
+        header_picking = sorted_lines[0].picking_id
+        if header_picking.stock_mode == 'in':
+            ddt_reference = _('%s del %s') % (
+                header_picking.refund_number,
+                header_picking.refund_date,
+                )
+        else:    
+            ddt_reference = _('%s del %s') % (
+                sorted_lines[0].picking_id.ddt_number,
+                sorted_lines[0].picking_id.ddt_date,
+                )
         #total = []
+        refund_kit = [] # Kit will be printed once!
         for line in sorted_lines:
             picking = line.picking_id
-            sale_line = line.logistic_unload_id # Link to origin sale line
+            if picking.stock_mode == 'in': # Refund
+                # Kit component?
+                if line.logistic_refund_id.kit_line_id:
+                    if line.logistic_refund_id.kit_line_id not in refund_kit:
+                        sale_line = line.logistic_refund_id.kit_line_id
+                        refund_kit.append(line.logistic_refund_id.kit_line_id)
+                    else:
+                        continue # Kit yet printed    
+                else: # Product line
+                    sale_line = line.logistic_refund_id
+                
+            else: # DDT:
+                sale_line = line.logistic_unload_id
             
             if sale_line.kit_line_id:
                 # Kit exploded line not used:
@@ -1050,6 +1082,7 @@ class StockPicking(models.Model):
                 ))
             ddt_reference = '' # only first line print DDT reference    
         _logger.warning('>>> Picking line: %s ' % (res, ))
+        _logger.warning(res)
         return res
 
     # -------------------------------------------------------------------------

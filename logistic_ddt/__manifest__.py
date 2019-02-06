@@ -32,6 +32,7 @@
     'website': 'http://www.micronaet.com',
     'depends': [
         'stock',
+        'sale',
         #'l18n_it_fatturapa',
         ],
     'data': [

@@ -167,7 +167,7 @@ msgstr "Annulla"
 #: model:ir.ui.menu,name:logistic_management.menu_logistic_manual_operation_wizard
 #: model:ir.ui.menu,name:logistic_management.menu_logistic_manual_operation_wizard_master
 msgid "Change Standard Price"
-msgstr "Modifica Prezzo Standard"
+msgstr "Wizard Logistica"
 
 #. module: logistic_management
 #: model:ir.model,name:logistic_management.model_res_company

@@ -84,13 +84,14 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
         # Readability:
         now = fields.Datetime.now()
         partner = from_picking.partner_id
+        order = from_picking.sale_order_id
         origin = from_picking.invoice_number or from_picking.ddt_number or \
             from_picking.name
         
         to_picking = picking_pool.create({
             'refund_origin_id': from_picking.id,
             'stock_mode': 'in', # refund mode
-            'sale_order_id': from_picking.sale_order_id.id, # XXX need?
+            'sale_order_id': order.id, # XXX need?
             'partner_id': partner.id,
             'scheduled_date': now,
             'origin': origin,
@@ -131,6 +132,7 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
                 'state': 'done',
                 'origin': origin,
                 'price_unit': product.standard_price,
+                'logistic_refund_id': line.line_id.id,
                 
                 # Sale order line link:
                 #'logistic_unload_id': line.id,
@@ -142,10 +144,6 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
                 #'product_qty': select_qty,
                 }).id
                 
-            # If is KIT add also KIT line
-            if line.kit_line_id:
-            
-
             if quant_qty <= 0:
                 continue # no stock load
 
@@ -158,7 +156,6 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
                 #'product_tmpl_id': used_product.product_tmpl_id.id,
                 #'lot_id' #'package_id'
                 })
-
 
         # ---------------------------------------------------------------------
         # Confirm picking (Refund and Credit note)
@@ -206,6 +203,7 @@ class StockPickingRefundDocumentLineWizard(models.TransientModel):
         help='Refund q. from customer delivery document')
     stock_qty = fields.Float('Q. in stock', digits=(16, 2),
         help='Refund q. real returned in stock, generate load of stock')
+    line_id = fields.Many2one('sale.order.line', 'Refund reference')    
 
 class StockPickingRefundDocumentWizard(models.TransientModel):
     ''' Wizard for generate refund document

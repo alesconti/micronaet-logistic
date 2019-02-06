@@ -622,12 +622,13 @@ class StockPicking(models.Model):
         picking = self
         company = company_pool.search([])[0]
         partner = picking.partner_id
-        fiscal_position = partner.property_account_position_id # TODO remove
+        fiscal_position = partner.property_account_position_id
         sale = picking.sale_order_id
 
         # Check if needed:
-        if not partner.property_account_position_id.fatturapa:
+        if not fiscal_position or not fiscal_position.fatturapa:
             _logger.warning('No need XML invoice: %s' % picking.name)
+            return True
 
         # ---------------------------------------------------------------------
         # Params database:        

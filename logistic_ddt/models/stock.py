@@ -93,7 +93,7 @@ class StockPicking(models.Model):
             'picking_id': self.id,
             }).id
 
-        for line in self.move_lines:#move_lines_for_report()
+        for line in self.move_lines: #move_lines_for_report()
             product_qty = line.product_qty
             if not product_qty:
                 continue # jump empty q (es. Kit)
@@ -106,6 +106,8 @@ class StockPicking(models.Model):
                 'product_qty': product_qty,            
                 'refund_qty': product_qty, # Same q. (returned from customer)
                 'stock_qty': product_qty, # Same q. (load stock)
+                # Reference for description in report:
+                'line_id': line.logistic_unload_id.id, 
                 })
         
         # ---------------------------------------------------------------------
@@ -214,5 +216,6 @@ class StockPicking(models.Model):
     # Columns: 
     # -------------------------------------------------------------------------
     refunded_ids = fields.One2many(
-        'stock.picking', 'refund_origin_id', string='Document refunded this BC')
+        'stock.picking', 'refund_origin_id', 
+        string='Document refunded this BC')
 
