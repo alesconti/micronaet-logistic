@@ -518,12 +518,12 @@ class StockPicking(models.Model):
         now_dt += relativedelta(months=1)
         to_date = now_dt.strftime('%Y-%m-01')        
 
-        # Picking not invoiced:
+        # Picking not invoiced (DDT and Refund):
         pickings = self.search([
             # Period:
             ('ddt_date', '>=', from_date),
             ('ddt_date', '<', to_date),
-            
+
             # Not invoiced (only DDT):
             ('ddt_number', '!=', False),
             ('invoice_number', '=', False),
@@ -539,7 +539,8 @@ class StockPicking(models.Model):
         f_title = excel_pool.get_format('title')
         f_header = excel_pool.get_format('header')
         f_text = excel_pool.get_format('text')
-        f_number = excel_pool.get_format('number')
+        f_number_black = excel_pool.get_format('number')
+        f_number_red = excel_pool.get_format('number_red')
         #f_green_text = excel_pool.get_format('bg_green')
         #f_yellow_text = excel_pool.get_format('bg_yellow')
         #f_green_number = excel_pool.get_format('bg_green_number')
@@ -549,7 +550,7 @@ class StockPicking(models.Model):
         # Setup page:
         # ---------------------------------------------------------------------
         excel_pool.column_width(ws_name, [
-            15, 15, 20, 30, 15, 
+            15, 25, 15, 15, 30, 25, 
             10, 10, 10,
             ])
 
@@ -560,7 +561,7 @@ class StockPicking(models.Model):
 
         row += 1
         excel_pool.write_xls_line(ws_name, row, [
-             'Data', 'Ordine', 'Stato', 'Cliente', 'Posizione fiscale', 
+             'Data', 'Ordine', 'Picking', 'Stato', 'Cliente', 'Posizione fiscale', 
              'Imponibile', 'IVA', 'Totale',
              ], default_format=f_header)
         
@@ -577,7 +578,9 @@ class StockPicking(models.Model):
             stock_mode = picking.stock_mode #in: refund, out: DDT
             if stock_mode == 'in':
                 sign = -1.0
+                f_number = f_number_red
             else:
+                f_number = f_number_black
                 sign = +1.0
             
             subtotal = {
@@ -615,6 +618,7 @@ class StockPicking(models.Model):
             excel_pool.write_xls_line(ws_name, row, (
                 picking.refund_date or picking.ddt_date,
                 picking.refund_number or order.name,
+                picking.name,
                 '' if stock_mode == 'in' else order.logistic_state,
                 partner.name,
                 partner.property_account_position_id.name, # Fiscal position
@@ -627,9 +631,9 @@ class StockPicking(models.Model):
         row += 1        
         excel_pool.write_xls_line(ws_name, row, (
             'Totali:',
-            (total['amount'], f_number),
-            (total['vat'], f_number),
-            (total['total'], f_number),
+            (total['amount'], f_number_black),
+            (total['vat'], f_number_black),
+            (total['total'], f_number_black),
             ), default_format=f_header, col=4)
         
         # ---------------------------------------------------------------------                 
