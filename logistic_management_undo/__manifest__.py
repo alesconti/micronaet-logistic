@@ -37,6 +37,7 @@
         'account',
         'stock',
         'purchase',
+        'logistic_ddt',
         ],
     'data': [
         'security/ir.model.access.csv',

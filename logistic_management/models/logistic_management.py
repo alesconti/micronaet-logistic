@@ -488,54 +488,6 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     # Extract Excel:
     # -------------------------------------------------------------------------
-    @api.multi
-    def generate_refund_document(self):
-        ''' Open refund management from this documet
-        '''
-        # Pool used:
-        wizard_pool = self.env['stock.picking.refund.wizard']
-        line_pool = self.env['stock.picking.refund.line.wizard']
-
-        # ---------------------------------------------------------------------
-        # Create wizard element
-        # ---------------------------------------------------------------------
-        wizard_id = wizard_pool.create({
-            'picking_id': self.id,
-            }).id
-
-        for line in self.move_lines:#move_lines_for_report()
-            product_qty = line.product_qty
-            if not product_qty:
-                continue # jump empty q (es. Kit)
-            if line.product_id.type == 'service':
-                continue # no service product (expense and lavoration)
-
-            line_pool.create({
-                'wizard_id': wizard_id,
-                'product_id': line.product_id.id,
-                'product_qty': product_qty,            
-                'refund_qty': product_qty, # Same q. (returned from customer)
-                'stock_qty': product_qty, # Same q. (load stock)
-                })
-        
-        # ---------------------------------------------------------------------
-        # Open wizard element
-        # ---------------------------------------------------------------------        
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Refund wizard'),
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_id': wizard_id,
-            'res_model': 'stock.picking.refund.wizard',
-            'view_id': False,
-            'views': [(False, 'form')],
-            'domain': [],
-            'context': self.env.context,
-            'target': 'new',
-            'nodestroy': False,
-            }
-
     @api.model
     def excel_report_extract_accounting_fees(self, evaluation_date=False):
         ''' Extract file account fees

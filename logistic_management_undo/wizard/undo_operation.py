@@ -288,6 +288,11 @@ class SaleOrderUndoWizard(models.TransientModel):
         return True
 
     @api.multi
+    def generate_refund_document(self):
+        ''' Open Refund management
+        '''
+        
+    @api.multi
     def undo_button(self):
         ''' Undo operation on order
         '''

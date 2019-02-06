@@ -66,6 +66,7 @@
                                 </page>
                                 <page string="10. NC" attrs="{'invisible': [('state','not in',('done',))]}">
                                     <group col="4" colspan="4">
+                                        <button name="generate_refund_document" string="Generate Refund" type="object" />
                                     </group>
                                 </page>
                             </notebook>
