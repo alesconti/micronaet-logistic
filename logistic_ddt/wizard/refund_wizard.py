@@ -141,6 +141,10 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
                 # procure_method,
                 #'product_qty': select_qty,
                 }).id
+                
+            # If is KIT add also KIT line
+            if line.kit_line_id:
+            
 
             if quant_qty <= 0:
                 continue # no stock load

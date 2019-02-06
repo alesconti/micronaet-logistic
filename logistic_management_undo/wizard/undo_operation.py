@@ -291,6 +291,12 @@ class SaleOrderUndoWizard(models.TransientModel):
     def generate_refund_document(self):
         ''' Open Refund management
         '''
+        pickings = self.order_id.logistic_picking_ids
+        if len(pickings) > 1:
+            raise exceptions.Warning(
+                _('More picking out, open one by one and refund manually!'))
+
+        return pickings.generate_refund_document()
         
     @api.multi
     def undo_button(self):
