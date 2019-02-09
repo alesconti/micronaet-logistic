@@ -525,11 +525,14 @@ class StockPicking(models.Model):
 
             # Not invoiced (only DDT):
             ('ddt_number', '!=', False),
-            ('invoice_number', '=', False),
+            #('invoice_number', '=', False),
             ])
 
-        ws_name = 'Dettaglio'
+        ws_name = 'Registro corrispettivi'
         excel_pool.create_worksheet(ws_name)
+
+        ws_invoice = 'Fatturato'
+        excel_pool.create_worksheet(ws_invoice)
         
         # ---------------------------------------------------------------------
         # Format:
@@ -547,7 +550,7 @@ class StockPicking(models.Model):
         #f_yellow_number = excel_pool.get_format('bg_yellow_number')
         
         # ---------------------------------------------------------------------
-        # Setup page:
+        # Setup page: Corrispettivo
         # ---------------------------------------------------------------------
         excel_pool.column_width(ws_name, [
             15, 25, 15, 15, 30, 25, 
@@ -556,12 +559,34 @@ class StockPicking(models.Model):
 
         row = 0
         excel_pool.write_xls_line(ws_name, row, [
-             'Corrispettivi periodo: [%s - %s]' % (from_date, to_date)
+             'Corrispettivi del periodo: [%s - %s]' % (from_date, to_date)
              ], default_format=f_title)
 
         row += 1
         excel_pool.write_xls_line(ws_name, row, [
-             'Data', 'Ordine', 'Picking', 'Stato', 'Cliente', 'Posizione fiscale', 
+             'Data', 'Ordine', 'Picking', 'Stato', 
+             'Cliente', 'Posizione fiscale', 
+             'Imponibile', 'IVA', 'Totale',
+             ], default_format=f_header)
+
+        # ---------------------------------------------------------------------
+        # Setup page: Fatturato
+        # ---------------------------------------------------------------------
+        excel_pool.column_width(ws_invoice, [
+            15, 25, 15, 15, 
+            20, 30, 25, 
+            10, 10, 10,
+            ])
+
+        row_invoice = 0
+        excel_pool.write_xls_line(ws_invoice, row_invoice, [
+             'Fatture del periodo: [%s - %s]' % (from_date, to_date)
+             ], default_format=f_title)
+
+        row_invoice += 1
+        excel_pool.write_xls_line(ws_invoice, row_invoice, [
+             'Data', 'Ordine', 'Picking', 'Stato', 
+             'Fattura', 'Cliente', 'Posizione fiscale', 
              'Imponibile', 'IVA', 'Totale',
              ], default_format=f_header)
         
@@ -570,12 +595,18 @@ class StockPicking(models.Model):
             'vat': 0.0,
             'total': 0.0,
             }
+
+        total_invoice = {
+            'amount': 0.0,
+            'vat': 0.0,
+            'total': 0.0,
+            }
         for picking in pickings:
-            row +=1
             # Readability:
             order = picking.sale_order_id 
             partner = order.partner_id
             stock_mode = picking.stock_mode #in: refund, out: DDT
+
             if stock_mode == 'in':
                 sign = -1.0
                 f_number = f_number_red
@@ -584,52 +615,66 @@ class StockPicking(models.Model):
                 f_number = f_number_black
                 f_text = f_text_black
                 sign = +1.0
-            
-            subtotal = {
+                
+            subtotal = { # common subtotal
                 'amount': 0.0,
                 'vat': 0.0,
                 'total': 0.0,
                 }
-            for move in picking.move_lines_for_report():
-                subtotal['amount'] += sign * float(move[9]) # Total without VAT 
-                subtotal['vat'] += sign * float(move[6]) # VAT Total
-                subtotal['total'] += sign * float(move[10]) # Total with VAT
-            '''
-            #0. original_product,
-            #1. int(sale_line.product_uom_qty), # XXX Note: Not stock.move qty
-            #2. replaced_product,
-            #3. sale_line.tax_id,
-            #4. sale_line.price_unit, # Unit no discount
-            #5. sale_line.price_reduce, # Unit discounted
-            6. sale_line.price_tax, # Vat total
-            #7. sale_line.price_reduce_taxexcl, # Unit Without VAT
-            #8. sale_line.price_reduce_taxinc, # Unit With VAT=price_unit-red
-            9. sale_line.price_subtotal, # Tot without VAT
-            10. sale_line.price_total, # Tot With VAT
 
-            #sale_line.amt_to_invoice, # Not used
-            #sale_line.amt_invoiced, # Not used
-            #sale_line.discount, # not used for now
-            '''
+            if picking.invoice_number:
+                row_invoice +=1
+                for move in picking.move_lines_for_report():
+                    subtotal['amount'] += sign * float(move[9]) # Total without VAT 
+                    subtotal['vat'] += sign * float(move[6]) # VAT Total
+                    subtotal['total'] += sign * float(move[10]) # Total with VAT
+                    
+                # Update total:    
+                total['amount'] += subtotal['amount']
+                total['vat'] += subtotal['vat']
+                total['total'] += subtotal['total']
                 
-            # Update total:    
-            total['amount'] += subtotal['amount']
-            total['vat'] += subtotal['vat']
-            total['total'] += subtotal['total']
-            
-            excel_pool.write_xls_line(ws_name, row, (
-                picking.ddt_date,
-                picking.ddt_number if stock_mode == 'in' else order.name,
-                picking.name,
-                '' if stock_mode == 'in' else order.logistic_state,
-                partner.name,
-                partner.property_account_position_id.name, # Fiscal position
-                (subtotal['amount'], f_number),
-                (subtotal['vat'], f_number),
-                (subtotal['total'], f_number),
-                ), default_format=f_text)
+                excel_pool.write_xls_line(ws_invoice, row_invoice, (
+                    picking.ddt_date,
+                    picking.ddt_number if stock_mode == 'in' else order.name,
+                    picking.name,
+                    '' if stock_mode == 'in' else order.logistic_state,
+                    picking.invoice_number,
+                    partner.name,
+                    partner.property_account_position_id.name,
+                    (subtotal['amount'], f_number),
+                    (subtotal['vat'], f_number),
+                    (subtotal['total'], f_number),
+                    ), default_format=f_text)
+                
+            else: # No invoice:
+                row +=1
+                for move in picking.move_lines_for_report():
+                    subtotal['amount'] += sign * float(move[9]) # Total without VAT 
+                    subtotal['vat'] += sign * float(move[6]) # VAT Total
+                    subtotal['total'] += sign * float(move[10]) # Total with VAT
+                    
+                # Update total:    
+                total['amount'] += subtotal['amount']
+                total['vat'] += subtotal['vat']
+                total['total'] += subtotal['total']
+                
+                excel_pool.write_xls_line(ws_name, row, (
+                    picking.ddt_date,
+                    picking.ddt_number if stock_mode == 'in' else order.name,
+                    picking.name,
+                    '' if stock_mode == 'in' else order.logistic_state,
+                    partner.name,
+                    partner.property_account_position_id.name, # Fiscal position
+                    (subtotal['amount'], f_number),
+                    (subtotal['vat'], f_number),
+                    (subtotal['total'], f_number),
+                    ), default_format=f_text)
         
-        # Total line:
+        # ---------------------------------------------------------------------
+        # Totals:
+        # ---------------------------------------------------------------------
+        # Corrispettivi:
         row += 1        
         excel_pool.write_xls_line(ws_name, row, (
             'Totali:',
@@ -637,6 +682,15 @@ class StockPicking(models.Model):
             (total['vat'], f_number_black),
             (total['total'], f_number_black),
             ), default_format=f_header, col=5)
+
+        # Invoice:
+        row_invoice += 1        
+        excel_pool.write_xls_line(ws_invoice, row_invoice, (
+            'Totali:',
+            (total['amount'], f_number_black),
+            (total['vat'], f_number_black),
+            (total['total'], f_number_black),
+            ), default_format=f_header, col=6)
         
         # ---------------------------------------------------------------------                 
         # Define filename and save:

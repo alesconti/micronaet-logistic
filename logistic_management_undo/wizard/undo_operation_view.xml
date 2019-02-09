@@ -58,7 +58,6 @@
                                         <button name="undo_ddt_cancel" string="Order / DDT cancel" type="object" help="DDT and stock move will be cancelled, stock restored and order in cancel status" confirm="DDT removed, Stock reloaded, Order cancel, confirm?" class="btn-primary"/>
                                         <separator string="Reason of DDT remove:" colspan="4"/>
                                         <field name="ddt_reason" nolabel="1" colspan="4"/>
-                                        <button name="generate_refund_document" string="Generate Refund Doc" type="object" />
                                     </group>
                                 </page>
                                 <page string="9. Invoice" attrs="{'invisible': [('state', 'not in', ('invoice', ))]}">
