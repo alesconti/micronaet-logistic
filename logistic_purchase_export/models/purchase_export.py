@@ -124,6 +124,11 @@ class PurchaseOrder(models.Model):
     
     _inherit = 'purchase.order'
 
+    # -------------------------------------------------------------------------
+    #                       COLUMNS:
+    # -------------------------------------------------------------------------
+    filename = fields.Char('Filename', size=100)
+
     @api.multi    
     def export_purchase_order(self):
         ''' Export purchase order
@@ -201,13 +206,22 @@ class PurchaseOrder(models.Model):
             fullpath = partner.purchase_folder_id.fullpath
             
             export = partner.purchase_export_id
-            filename = clean('%s_%s.%s' % (
-                partner.name,
-                purchase.name,
-                #purchase.date_order,
-                export.mode,
-                ))
+            
+            # Name was generated once:
+            if purchase.filename:
+                filename = purchase.filename
+            else:
+                filename = clean('%s_%s.%s' % (
+                    partner.name,
+                    purchase.name,
+                    #purchase.date_order,
+                    export.mode,
+                    ))
+                purchase.filename = filename
+    
             fullname = os.path.join(fullpath, filename)
+            _logger.warning('Purchase export: %s' % fullname)
+
             if export.mode == 'csv':
                 # -------------------------------------------------------------                
                 #                               CSV:

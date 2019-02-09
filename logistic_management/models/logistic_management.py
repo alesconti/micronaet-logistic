@@ -26,7 +26,6 @@ import sys
 import logging
 import odoo
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
-from odoo import exceptions
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
 
@@ -1780,6 +1779,49 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     #                           BUTTON EVENT:
     # -------------------------------------------------------------------------
+    @api.multi
+    def chain_broken_purchase_line(self):
+        ''' Order undo line:
+            If product ordered to supplier not delivered or in late:
+            1. Delete purchase line so unlinked the future delivery
+            2. Order line will be reset to 'draft' mode (check assign)
+            3. Order will be recheck when triggered
+        '''
+        self.ensure_one()
+        
+        # Note: now it's not possibile, evaluate if necessary to reload 
+        # Stock with that qty:
+        # 0. Has delivered Qty
+        if self.load_line_ids:
+            raise exceptions.UserError(
+                _('Has delivered qty associated, cannot return!'))            
+
+        # 1. Unlink assigned q from stock:
+        self.assigned_line_ids.unlink()
+
+        # 2. Unlink purchase order line:
+        for line in self.purchase_line_ids:
+            # Log deleted reference in purchase order:
+            message = _(
+                ''' Customer order: %s
+                    Product: [%s] %s
+                    Q. removed: %s
+                    ''' % (
+                        self.order_id.name,
+                        self.product_id.product_tmpl_id.default_code,
+                        self.product_id.name,
+                        line.product_qty, # Q in order!
+                        )
+                )
+            line.order_id.message_post(
+                body=message, subtype='mt_comment')
+        self.purchase_line_ids.unlink()
+        
+        # 3. Change line state:
+        # Order will be remanaged when retrigger procedure!
+        self.logistic_state = 'draft'
+        return True
+        
     @api.multi
     def open_view_sale_order(self):
         ''' Open order view
