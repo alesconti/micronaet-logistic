@@ -1817,9 +1817,10 @@ class SaleOrderLine(models.Model):
                 body=message, subtype='mt_comment')
         self.purchase_line_ids.unlink()
         
-        # 3. Change line state:
+        # 3. Change line state and header:
         # Order will be remanaged when retrigger procedure!
         self.logistic_state = 'draft'
+        self.order_id.logistic_state = 'order'
         return True
         
     @api.multi
