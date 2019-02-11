@@ -674,7 +674,7 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Totals:
         # ---------------------------------------------------------------------
-        # Corrispettivi:
+        # 1. Corrispettivi:
         row += 1        
         excel_pool.write_xls_line(ws_name, row, (
             'Totali:',
@@ -683,13 +683,13 @@ class StockPicking(models.Model):
             (total['total'], f_number_black),
             ), default_format=f_header, col=5)
 
-        # Invoice:
+        # 2. Invoice:
         row_invoice += 1        
         excel_pool.write_xls_line(ws_invoice, row_invoice, (
             'Totali:',
-            (total['amount'], f_number_black),
-            (total['vat'], f_number_black),
-            (total['total'], f_number_black),
+            (total_invoice['amount'], f_number_black),
+            (total_invoice['vat'], f_number_black),
+            (total_invoice['total'], f_number_black),
             ), default_format=f_header, col=6)
         
         # ---------------------------------------------------------------------                 
