@@ -1393,7 +1393,7 @@ class SaleOrder(models.Model):
             ('order_id.logistic_state', '=', 'draft'), # Draft order
             ('logistic_state', '=', 'draft'), # Draft line
             ('product_id.type', '=', 'service'), # Direct ready
-            ('product_id.is_expense', '=', True), # Direct ready
+            ('product_id.is_expence', '=', True), # Direct ready
             #('kit_line_id', '=', False), # Not the kit line (service = mrp)
             ])
         _logger.info('New order: Check product-service [# %s]' % len(lines))
