@@ -20,7 +20,7 @@
                                     P. IVA: <span t-field="res_company.partner_id.vat" />
                                 </div>    
                                 <div class="col-xs-6">
-                                    <h1 t-field="o.partner_id.country_id.code" /><br />
+                                    <h1 t-esc="o.sale_order_id.partner_shipping_id.country_id.code if o.sale_order_id.partner_shipping_id else o.partner_id.country_id.code" /><br />
                                     <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('Code128', (o.ddt_number or '').split('/')[-1], 800, 50)" style="width:400px;height:50px;" /><br/>
                                     <span t-esc="'Reso cliente nr. ' if o.stock_mode == 'in' else 'Doc. di trasporto nr. '" /><span t-esc="o.ddt_number" /> del <span t-esc="o.ddt_date" />
                                 </div>    
