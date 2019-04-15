@@ -553,7 +553,7 @@ class StockPicking(models.Model):
         # Setup page: Corrispettivo
         # ---------------------------------------------------------------------
         excel_pool.column_width(ws_name, [
-            15, 25, 15, 15, 30, 25, 
+            15, 15, 25, 15, 15, 30, 25, 
             10, 10, 10,
             ])
 
@@ -564,7 +564,7 @@ class StockPicking(models.Model):
 
         row += 1
         excel_pool.write_xls_line(ws_name, row, [
-             'Data', 'Ordine', 'Picking', 'Stato', 
+             'Data', 'Data X', 'Ordine', 'Picking', 'Stato', 
              'Cliente', 'Posizione fiscale', 
              'Imponibile', 'IVA', 'Totale',
              ], default_format=f_header)
@@ -573,7 +573,7 @@ class StockPicking(models.Model):
         # Setup page: Fatturato
         # ---------------------------------------------------------------------
         excel_pool.column_width(ws_invoice, [
-            15, 25, 15, 15, 
+            15, 15, 25, 15, 15, 
             20, 30, 25, 
             10, 10, 10,
             ])
@@ -585,7 +585,7 @@ class StockPicking(models.Model):
 
         row_invoice += 1
         excel_pool.write_xls_line(ws_invoice, row_invoice, [
-             'Data', 'Ordine', 'Picking', 'Stato', 
+             'Data', 'Data X', 'Ordine', 'Picking', 'Stato', 
              'Fattura', 'Cliente', 'Posizione fiscale', 
              'Imponibile', 'IVA', 'Totale',
              ], default_format=f_header)
@@ -636,6 +636,7 @@ class StockPicking(models.Model):
                 
                 excel_pool.write_xls_line(ws_invoice, row_invoice, (
                     picking.ddt_date,
+                    order.x_ddt_date,
                     picking.ddt_number if stock_mode == 'in' else order.name,
                     picking.name,
                     '' if stock_mode == 'in' else order.logistic_state,
@@ -661,6 +662,7 @@ class StockPicking(models.Model):
                 
                 excel_pool.write_xls_line(ws_name, row, (
                     picking.ddt_date,
+                    order.x_ddt_date,
                     picking.ddt_number if stock_mode == 'in' else order.name,
                     picking.name,
                     '' if stock_mode == 'in' else order.logistic_state,
@@ -681,7 +683,7 @@ class StockPicking(models.Model):
             (total['amount'], f_number_black),
             (total['vat'], f_number_black),
             (total['total'], f_number_black),
-            ), default_format=f_header, col=5)
+            ), default_format=f_header, col=6)
 
         # 2. Invoice:
         row_invoice += 1        
@@ -690,7 +692,7 @@ class StockPicking(models.Model):
             (total_invoice['amount'], f_number_black),
             (total_invoice['vat'], f_number_black),
             (total_invoice['total'], f_number_black),
-            ), default_format=f_header, col=6)
+            ), default_format=f_header, col=7)
         
         # ---------------------------------------------------------------------                 
         # Define filename and save:
