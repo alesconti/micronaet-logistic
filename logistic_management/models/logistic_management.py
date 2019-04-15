@@ -630,9 +630,9 @@ class StockPicking(models.Model):
                     subtotal['total'] += sign * float(move[10]) # Total with VAT
                     
                 # Update total:    
-                total['amount'] += subtotal['amount']
-                total['vat'] += subtotal['vat']
-                total['total'] += subtotal['total']
+                total_invoice['amount'] += subtotal['amount']
+                total_invoice['vat'] += subtotal['vat']
+                total_invoice['total'] += subtotal['total']
                 
                 excel_pool.write_xls_line(ws_invoice, row_invoice, (
                     picking.ddt_date,
