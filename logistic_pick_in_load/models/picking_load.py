@@ -87,6 +87,7 @@ class StockPicking(models.Model):
         # Sorted with create date (first will be linked first)!    
         product_line_db = {}
         purchase_order_touched = []
+        import pdb; pdb.set_trace()
         for line in purchase_lines.sorted(
                 key=lambda x: x.order_id.create_date):
             
@@ -211,6 +212,7 @@ class StockPicking(models.Model):
                         # procure_method,
                         #'product_qty': select_qty,
                         }).id)
+
                     if product_qty <= 0.0:
                         break    
                 
