@@ -84,12 +84,13 @@ class StockPicking(models.Model):
             ('order_id.logistic_state', '=', 'confirmed'), # draft, done
             ])
             
-        # Sorted with create date (first will be linked first!    
+        # Sorted with create date (first will be linked first)!    
         product_line_db = {}
         purchase_order_touched = []
         for line in purchase_lines.sorted(
                 key=lambda x: x.order_id.create_date):
             
+            # Remember for get selected header:
             purchase_id = line.order_id.id
             if purchase_id not in purchase_order_touched:
                 purchase_order_touched.append(purchase_id)
@@ -107,8 +108,7 @@ class StockPicking(models.Model):
             product = line.product_id
             if product not in product_line_db:
                 product_line_db[product] = []
-            product_line_db[product].append(
-                [line, line.logistic_undelivered_qty])    
+            product_line_db[product].append([line, logistic_undelivered_qty])    
 
         # ---------------------------------------------------------------------
         #                         DB from order temp:
@@ -158,6 +158,10 @@ class StockPicking(models.Model):
                 # -------------------------------------------------------------
                 for purchase_line in product_line_db.get(product, []):
                     load_line, logistic_undelivered_qty = purchase_line
+
+                    # Yet used:
+                    if logistic_undelivered_qty <= 0.0:
+                        continue
                     
                     if product_qty >= logistic_undelivered_qty:
                         # -----------------------------------------------------
