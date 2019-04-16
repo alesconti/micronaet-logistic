@@ -177,7 +177,11 @@ class StockPicking(models.Model):
                         # -----------------------------------------------------
                         select_qty = product_qty # all
 
-                    product_qty -= select_qty # Remain q.
+                    # Update database:
+                    purchase_line[1] -= select_qty
+
+                    # Update OC: Remain q.
+                    product_qty -= select_qty
                     
                     # ---------------------------------------------------------
                     # Create movement (not load stock):
