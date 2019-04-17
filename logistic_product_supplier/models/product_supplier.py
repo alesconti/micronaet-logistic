@@ -56,6 +56,7 @@ class ProductTemplateSupplierStock(models.Model):
     quotation = fields.Float(
         'Price', digits=dp.get_precision('Product Unit of Measure'))
     best_price = fields.Boolean('Best price')    
+    ipcode = fields.Char('Supplier code', size=24)
 
 class ProductTemplate(models.Model):
     """ Model name: ProductTemplate

@@ -10,6 +10,7 @@
                 <tree string="Supplier stock" editable="bottom" decoration-info="best_price==True">
                     <field name="best_price" />
                     <field name="product_id" />
+                    <field name="ipcode" />
                     <field name="supplier_id" context="{'default_supplier': True}"/>
                     <field name="stock_qty" />
                     <field name="quotation" />
@@ -23,6 +24,7 @@
                 <tree string="Supplier stock" editable="bottom" decoration-info="best_price==True">
                     <field name="best_price" />
                     <field name="supplier_id" context="{'default_supplier': True}" />
+                    <field name="ipcode" />
                     <field name="stock_qty" />
                     <field name="quotation" />
                 </tree>
@@ -37,6 +39,7 @@
                         <field name="best_price" />
                         <field name="product_id" />
                         <field name="supplier_id" />
+                        <field name="ipcode" />
                         <field name="stock_qty" />
                         <field name="quotation" />
                    </group>
