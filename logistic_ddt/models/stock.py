@@ -24,8 +24,15 @@
 #
 ##############################################################################
 
+import os
+import sys
+import logging
 from odoo import fields, models, api
 from odoo import _
+
+
+_logger = logging.getLogger(__name__)
+
 
 class AccountFiscalPosition(models.Model):
     """ Model name: Fiscal position
