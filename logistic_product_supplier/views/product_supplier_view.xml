@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <!--product.template.supplier.stock-->
+        <record model="ir.ui.view" id="view_product_template_supplier_stock_tree">
+            <field name="name">product.template.supplier.stock.tree</field>
+            <field name="model">product.template.supplier.stock</field>
+            <field name="priority" eval="30" />
+            <field name="arch" type="xml">
+                <tree string="Supplier stock" editable="bottom" decoration-info="best_price==True">
+                    <field name="best_price" />
+                    <field name="product_id" />
+                    <field name="supplier_id" context="{'default_supplier': True}"/>
+                    <field name="stock_qty" />
+                    <field name="quotation" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_product_template_supplier_stock_embedded_tree">
+            <field name="name">product.template.supplier.stock.embedded.tree</field>
+            <field name="model">product.template.supplier.stock</field>
+            <field name="arch" type="xml">
+                <tree string="Supplier stock" editable="bottom" decoration-info="best_price==True">
+                    <field name="best_price" />
+                    <field name="supplier_id" context="{'default_supplier': True}" />
+                    <field name="stock_qty" />
+                    <field name="quotation" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_product_template_supplier_stock_form">
+            <field name="name">product.template.supplier.stock.form</field>
+            <field name="model">product.template.supplier.stock</field>
+            <field name="arch" type="xml">
+                <form string="Supplier stock">
+                   <group colspan="4" col="4">                    
+                        <field name="best_price" />
+                        <field name="product_id" />
+                        <field name="supplier_id" />
+                        <field name="stock_qty" />
+                        <field name="quotation" />
+                   </group>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="action_view_product_template_supplier_stock_tree">
+            <field name="name">Product quotation</field>
+            <field name="res_model">product.template.supplier.stock</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_product_template_supplier_stock_tree"/>
+        </record>
+        
+        
+        <record model="ir.ui.view" id="view_product_template_kit_page_form">
+            <field name="name">product.template.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[1]" position="after">
+                    <page string="Supplier stock">
+                        <group colspan="4" col="4">
+                             <separator string="Supplier information:" colspan="4"/>
+                             <field name="supplier_stock_ids" colspan="4" nolabel="1"/>
+                        </group>                        
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        
+        <menuitem 
+            parent="stock.menu_product_variant_config_stock" 
+            id="menu_product_template_supplier_stock_bom" 
+            action="action_view_product_template_supplier_stock_tree"
+            sequence="10"
+            />
+        
+    </data>
+</openerp>
+

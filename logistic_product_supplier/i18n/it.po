@@ -1,0 +1,105 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* logistic_product_supplier
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-17 09:46+0000\n"
+"PO-Revision-Date: 2019-04-17 11:47+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: logistic_product_supplier
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_template_supplier_stock_best_price
+msgid "Best price"
+msgstr "Prezzo migliore"
+
+#. module: logistic_product_supplier
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_template_supplier_stock_create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: logistic_product_supplier
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_template_supplier_stock_create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: logistic_product_supplier
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_template_supplier_stock_display_name
+msgid "Display Name"
+msgstr "Nome Completo"
+
+#. module: logistic_product_supplier
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_template_supplier_stock_id
+msgid "ID"
+msgstr "ID"
+
+#. module: logistic_product_supplier
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_template_supplier_stock___last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: logistic_product_supplier
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_template_supplier_stock_write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: logistic_product_supplier
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_template_supplier_stock_write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: logistic_product_supplier
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_template_supplier_stock_supplier_id
+msgid "Partner"
+msgstr "Partner"
+
+#. module: logistic_product_supplier
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_template_supplier_stock_quotation
+msgid "Price"
+msgstr "Prezzo"
+
+#. module: logistic_product_supplier
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_template_supplier_stock_product_id
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: logistic_product_supplier
+#: model:ir.model,name:logistic_product_supplier.model_product_template
+msgid "Product Template"
+msgstr "Modello Prodotto"
+
+#. module: logistic_product_supplier
+#: model:ir.actions.act_window,name:logistic_product_supplier.action_view_product_template_supplier_stock_tree
+#: model:ir.ui.menu,name:logistic_product_supplier.menu_product_template_supplier_stock_bom
+msgid "Product quotation"
+msgstr "Prezzo"
+
+#. module: logistic_product_supplier
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_template_supplier_stock_stock_qty
+msgid "Quantity"
+msgstr "Quantità"
+
+#. module: logistic_product_supplier
+#: model:ir.ui.view,arch_db:logistic_product_supplier.view_product_template_kit_page_form
+msgid "Supplier information:"
+msgstr "Informazioni fornitore:"
+
+#. module: logistic_product_supplier
+#: model:ir.model,name:logistic_product_supplier.model_product_template_supplier_stock
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_product_supplier_stock_ids
+#: model:ir.model.fields,field_description:logistic_product_supplier.field_product_template_supplier_stock_ids
+#: model:ir.ui.view,arch_db:logistic_product_supplier.view_product_template_kit_page_form
+#: model:ir.ui.view,arch_db:logistic_product_supplier.view_product_template_supplier_stock_embedded_tree
+#: model:ir.ui.view,arch_db:logistic_product_supplier.view_product_template_supplier_stock_form
+#: model:ir.ui.view,arch_db:logistic_product_supplier.view_product_template_supplier_stock_tree
+msgid "Supplier stock"
+msgstr "Magazzino"

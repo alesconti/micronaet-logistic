@@ -21,27 +21,4 @@
 #
 ###############################################################################
 
-{
-    'name': 'Product Kit Management',
-    'version': '1.0',
-    'category': 'Product',
-    'sequence': 5,
-    'summary': 'Product, kit management',
-    #'description': '',
-    'website': 'https://micronaet.com',
-    'depends': [
-        'base',
-        'product',
-        'stock', # Group management
-        ],
-    'data': [
-        'security/ir.model.access.csv',
-
-        'views/product_kit_view.xml',
-        ],
-    'demo': [],
-    'css': [],
-    'installable': True,
-    'application': False,
-    'auto_install': False,
-    }
+from . import product_supplier

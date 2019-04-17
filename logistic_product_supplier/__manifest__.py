@@ -22,11 +22,11 @@
 ###############################################################################
 
 {
-    'name': 'Product Kit Management',
+    'name': 'Product Supplier info',
     'version': '1.0',
     'category': 'Product',
     'sequence': 5,
-    'summary': 'Product, kit management',
+    'summary': 'Product, supplier info',
     #'description': '',
     'website': 'https://micronaet.com',
     'depends': [
@@ -37,7 +37,7 @@
     'data': [
         'security/ir.model.access.csv',
 
-        'views/product_kit_view.xml',
+        'views/product_supplier_view.xml',
         ],
     'demo': [],
     'css': [],
