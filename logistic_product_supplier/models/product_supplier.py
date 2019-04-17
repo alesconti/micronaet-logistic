@@ -38,7 +38,7 @@ class ProductTemplateSupplierStock(models.Model):
     _name = 'product.template.supplier.stock'
     _description = 'Supplier stock'
     _rec_name = 'supplier_id'
-    _order = 'supplier_id'
+    _order = 'quotation'
     
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
