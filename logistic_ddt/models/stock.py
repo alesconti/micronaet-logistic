@@ -146,13 +146,15 @@ class StockPicking(models.Model):
             if not partner.property_account_position_id:
                 _logger.error(
                     'Partner %s with no fiscal position' % partner.name)
-                import pdb; pdb.set_trace()   
+                return False    
+
             sequence = partner.property_account_position_id.sequence_id
             if not sequence:
                 _logger.error(
                     'Partner %s no sequence found in fiscal position' % (
                         partner.name))
-                import pdb; pdb.set_trace()
+                return False    
+
             sequence_number = sequence.next_by_id()
             if picking.stock_mode == 'out':
                 picking.write({
