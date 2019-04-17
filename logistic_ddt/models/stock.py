@@ -136,7 +136,15 @@ class StockPicking(models.Model):
         for picking in self:
             # Load partner sequence (depend on fiscal position)
             partner = picking.partner_id
+            if not partner.property_account_position_id:
+                _logger.error(
+                    'Partner %s with no fiscal position' % partner.name)
             sequence = partner.property_account_position_id.sequence_id
+            if not sequence:
+                _logger.error(
+                    'Partner %s no sequence found in fiscal position' % (
+                        partner.name))
+                
             sequence_number = sequence.next_by_id()
             if picking.stock_mode == 'out':
                 picking.write({
