@@ -8,7 +8,7 @@
             <field name="priority" eval="30" />
             <field name="arch" type="xml">
                 <tree string="Supplier stock" editable="bottom" decoration-info="best_price==True">
-                    <field name="best_price" invisible="1"/>
+                    <field name="best_price" />
                     <field name="product_id" />
                     <field name="ipcode" />
                     <field name="supplier_id" context="{'default_supplier': True}"/>
@@ -22,7 +22,7 @@
             <field name="model">product.template.supplier.stock</field>
             <field name="arch" type="xml">
                 <tree string="Supplier stock" editable="bottom" decoration-info="best_price==True">
-                    <field name="best_price" />
+                    <field name="best_price" invisible="1"/>
                     <field name="supplier_id" context="{'default_supplier': True}" />
                     <field name="ipcode" />
                     <field name="stock_qty" />
