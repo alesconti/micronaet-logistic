@@ -33,6 +33,7 @@
         'base',
         'product',
         'stock', # Group management
+        'sale',
         ],
     'data': [
         'security/ir.model.access.csv',
