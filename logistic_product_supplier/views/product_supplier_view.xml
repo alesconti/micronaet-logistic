@@ -126,13 +126,14 @@
                                     <field name="best_price" invisible="1"/>
                                     <field name="supplier_id" context="{'default_supplier': True}" />
                                     <field name="ipcode" />
-                                    <field name="stock_qty" />
                                     <field name="quotation" />
-                                    <button name="assign_to_purchase_this" string="this" type="object" />
-                                    <button name="assign_to_purchase_minus" string="-" type="object" />
-                                    <button name="assign_to_purchase_plus" string="+" type="object" />
-                                    <button name="assign_to_purchase_none" string="0" type="object" />
-                                    <button name="assign_to_purchase_all" string="all" type="object" class="oe_highlight" context="{'sale_order_id': parent.id}"/>
+
+                                    <button name="assign_to_purchase_this" string="this" type="object" context="{'sale_order_id': parent.id}" icon="fa-forward" /><!--class="oe_highlight"-->
+                                    <field name="stock_qty" />
+                                    <button name="assign_to_purchase_minus" string="-" type="object" context="{'sale_order_id': parent.id}" icon="fa-minus-circle"/>
+                                    <button name="assign_to_purchase_plus" string="+" type="object" context="{'sale_order_id': parent.id}" icon="fa-plus-circle"/>
+                                    <button name="assign_to_purchase_none" string="0" type="object" context="{'sale_order_id': parent.id}" icon="fa-dot-circle-o"/>
+                                    <button name="assign_to_purchase_all" string="all" type="object" context="{'sale_order_id': parent.id}" icon="fa-fast-forward"/>
                                 </tree>
                              </field>
                              

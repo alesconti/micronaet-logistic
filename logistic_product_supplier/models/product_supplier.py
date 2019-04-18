@@ -27,6 +27,7 @@ import logging
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
+from odoo import exceptions 
 
 
 _logger = logging.getLogger(__name__)
@@ -67,23 +68,44 @@ class ProductTemplateSupplierStock(models.Model):
     def assign_to_purchase_all(self):
         ''' Assign all order to this supplier
         '''
-        _logger.info(self.env.context)
-        import pdb; pdb.set_trace()
+        # Selected sale line:
+        stock = self
         line = self.get_context_sale_order_id()
-        product_uom_qty = line.product_uom_qty
         supplier_id = self.supplier_id.id
-        
+        product_uom_qty = line.product_uom_qty
+        stock_qty = stock.stock_qty 
+        if stock_qty >= product_uom_qty:
+            used_qty = product_uom_qty
+        else:
+            used_qty = stock_qty
+            # TODO create row with partial load:
+
+            # If previously all saved:
+            #line.clean_auto_splitted_reference()
+            #line.splitted = True
+            
+            # Create partial load
+            #self.create({
+            #    'splitted_parent_id': line.id,
+            #    'splitted': False,
+            #    'purchase_price': stock.quotation,
+            #    'supplier_id': stock.supplier_id.id,
+            #    'product_uom_qty': stock_qty
+            #    })
+            
+
         # Remove all splitted line except this:
         for splitted in line.splitted_child_ids:
-            if splitted != self:
+            if splitted != line: # Remove all splitted (without current line)
                 splitted.unlink()
 
-        # Assign all quantity to this line:
-        line.splitted_parent_id = self.id
+        # Create assigned for purchase:
+        line.splitted_parent_id = line.id
         line.supplier_id = supplier_id
         line.purchase_price = self.quotation
         line.splitted = False # All line for this supplier!
-        
+        # XXX quantity was yet correct
+
         # TODO update line status and order status
         return True
 
@@ -91,16 +113,67 @@ class ProductTemplateSupplierStock(models.Model):
     def assign_to_purchase_none(self):
         ''' Remove this supplier
         '''
-        line = self.get_context_sale_order_id()
+        stock = self # Readability:
+        
+        # Selected sale line:
+        line = stock.get_context_sale_order_id()
+
+        # Remove all splitted line except this:
+        for splitted in line.splitted_child_ids:
+            if stock.supplier_id == splitted.supplier_id:              
+                if splitted == line: # Clean
+                    line.clean_auto_splitted_reference()
+                else: # Remove
+                    splitted.unlink()
+
+        # TODO update line status and order status
         return True
 
     @api.multi
     def assign_to_purchase_this(self):
-        ''' Assign max stock from this supplier
+        ''' Assign max stock from this supplier (or remain)
         '''
-        line = self.get_context_sale_order_id()
-        return True
+        stock = self # Readability:
+        
+        # Selected sale line:
+        line = stock.get_context_sale_order_id()
 
+        product_uom_qty = line.product_uom_qty
+        stock_qty = stock.stock_qty
+
+        # Remove all splitted line except this:
+        selected_purchase = False
+        current_total = 0.0        
+        for splitted in line.splitted_child_ids:            
+            if stock.supplier_id == splitted.supplier_id:
+                selected_purchase = splitted
+            else:
+                current_total += splitted.product_uom_qty
+        uncovered_qty = product_uom_qty - current_total
+        if stock_qty >= uncovered_qty:
+            select_qty = uncovered_qty
+        else:
+            select_qty = stock_qty
+        
+        if selected_purchase: # found
+            if splitted == line:
+                
+        
+        else:    
+            # If previously all saved:
+            line.clean_auto_splitted_reference()
+            line.splitted = True
+            # Create partial load
+            self.create({
+                'splitted_parent_id': line.id,
+                'splitted': False,
+                'purchase_price': stock.quotation,
+                'supplier_id': stock.supplier_id.id,
+                'product_uom_qty': stock_qty
+                })
+
+        # TODO update line status and order status
+        return True
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------    
@@ -137,19 +210,25 @@ class SaleOrderLine(models.Model):
     
     _inherit = 'sale.order.line'
     
+    @api.model
+    def clean_auto_splitted_reference(self):
+        ''' Clean reference for splitted himself
+        '''
+        self.splitted = False
+        self.supplier_id = False
+        self.purchase_price = 0.0        
+        self.splitted_parent_id = False
+    
     @api.multi
     def clean_all_purchase_selected(self):
         ''' Clean all selected elements
         '''
-        import pdb; pdb.set_trace()
         for splitted in self.splitted_child_ids:
             if splitted != self:
                 splitted.unlink()
         
-        # Reset information:
-        self.splitted = False
-        self.supplier_id = False
-        self.purchase_price = 0.0        
+        # Update information:
+        self.clean_auto_splitted_reference()
         return True
 
     # -------------------------------------------------------------------------
@@ -178,25 +257,6 @@ class SaleOrderLine(models.Model):
     
     _inherit = 'sale.order.line'
 
-    '''
-    @api.multi
-    def _get_product_supplier_stock_info(self):
-        '' List of product supplier available
-        ''
-        #self.ensure_one()
-        res = [
-            item.id for item in self.product_id.supplier_stock_ids]
-
-        self.product_supplier_ids = res
-        #self = self.with_context(sale_order_id=self.id)
-
-        #self.product_supplier_ids = res
-        #self.env.context.update({'sale_order_id': self.id})    
-        #self.product_supplier_ids = res
-        #[
-        #    (6, 0, {'product_id': 1, 'supplier_id': 1, 'stock_qty': 10.0})
-        #    ]#res'''
-
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
@@ -207,11 +267,6 @@ class SaleOrderLine(models.Model):
         'product.template.supplier.stock', 
         related='product_id.supplier_stock_ids',
         )
-    #product_supplier_ids = fields.Many2many(
-    #    'product.template.supplier.stock', 
-    #    compute='_get_product_supplier_stock_info', 
-    #    string='Supplier info', store=False,
-    #    column1='line_id', column2='stock_id')
     
 
 class SaleOrder(models.Model):
