@@ -67,6 +67,7 @@ class ProductTemplateSupplierStock(models.Model):
     def assign_to_purchase_all(self):
         ''' Assign all order to this supplier
         '''
+        _logger.info(self.env.context)
         import pdb; pdb.set_trace()
         line = self.get_context_sale_order_id()
         product_uom_qty = line.product_uom_qty
@@ -177,14 +178,24 @@ class SaleOrderLine(models.Model):
     
     _inherit = 'sale.order.line'
 
+    '''
     @api.multi
     def _get_product_supplier_stock_info(self):
-        ''' List of product supplier available
-        '''
-        self.ensure_one()
+        '' List of product supplier available
+        ''
+        #self.ensure_one()
         res = [
             item.id for item in self.product_id.supplier_stock_ids]
+
         self.product_supplier_ids = res
+        #self = self.with_context(sale_order_id=self.id)
+
+        #self.product_supplier_ids = res
+        #self.env.context.update({'sale_order_id': self.id})    
+        #self.product_supplier_ids = res
+        #[
+        #    (6, 0, {'product_id': 1, 'supplier_id': 1, 'stock_qty': 10.0})
+        #    ]#res'''
 
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
@@ -192,11 +203,15 @@ class SaleOrderLine(models.Model):
     splitted_child_ids = fields.One2many(
         'sale.order.line', 'splitted_parent_id', 'Splitted child',
         help='List of splitted child')
-    product_supplier_ids = fields.Many2many(
+    product_supplier_ids = fields.One2many(
         'product.template.supplier.stock', 
-        compute='_get_product_supplier_stock_info', 
-        string='Supplier info', store=False,
-        column1='line_id', column2='stock_id')
+        related='product_id.supplier_stock_ids',
+        )
+    #product_supplier_ids = fields.Many2many(
+    #    'product.template.supplier.stock', 
+    #    compute='_get_product_supplier_stock_info', 
+    #    string='Supplier info', store=False,
+    #    column1='line_id', column2='stock_id')
     
 
 class SaleOrder(models.Model):

@@ -121,7 +121,7 @@
                              <field name="supplier_id" />
 
                              <separator string="Purchase stock" colspan="4"/>
-                             <field name="product_supplier_ids" nolabel="1" editable="bottom" colspan="4" context="{'sale_order_id': active_id}">
+                             <field name="product_supplier_ids" nolabel="1" editable="bottom" colspan="4" context="{'sale_order_id': parent.id}">
                                 <tree string="Supplier stock" editable="bottom" decoration-info="best_price==True">
                                     <field name="best_price" invisible="1"/>
                                     <field name="supplier_id" context="{'default_supplier': True}" />
@@ -132,7 +132,7 @@
                                     <button name="assign_to_purchase_minus" string="-" type="object" />
                                     <button name="assign_to_purchase_plus" string="+" type="object" />
                                     <button name="assign_to_purchase_none" string="0" type="object" />
-                                    <button name="assign_to_purchase_all" string="all" type="object" class="oe_highlight" context="{'sale_order_id': context.get('sale_order_id')}"/>
+                                    <button name="assign_to_purchase_all" string="all" type="object" class="oe_highlight" context="{'sale_order_id': parent.id}"/>
                                 </tree>
                              </field>
                              
