@@ -93,7 +93,7 @@
                                 <!--DATA ROW:-->
                                 <div class="row" style="max-height 80px">
                                     <div class="col-xs-2">
-                                        <t t-if="move[0].type != 'service'">
+                                        <t t-if="move[0].is_expence">
                                             <img t-att-src="'data:image/png;base64,%s' % to_text(move[0].new_image)" style="max-height:80px;max-width:80px"/>
                                         </t>
                                     </div>    
@@ -114,7 +114,7 @@
                                     </div>    
 
                                     <div class="col-xs-5" style="float: left; align:text-left;">
-                                        <t t-if="move[0].type != 'service'">
+                                        <t t-if="move[0].is_expence">
                                             <img t-if="move[0].product_tmpl_id.default_code" t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('Code128', move[0].product_tmpl_id.default_code, 800, 50)" style="width:400px;height:25px;"/><br/>
                                         </t>
                                     </div>    
