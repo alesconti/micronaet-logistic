@@ -62,6 +62,37 @@ class ProductTemplateSupplierStock(models.Model):
         ''' Assign +1 to this supplier
         '''
         line = self.get_context_sale_order_object()
+        
+        product_uom_qty = line.product_uom_qty
+        stock_qty = self.stock_qty
+
+        current_qty = 0.0     
+        current_line = False   
+        for splitted in line.purchase_split_ids:
+            current_qty += splitted.product_uom_qty
+            if splitted.supplier_id == self.supplier_id:
+                current_line = splitted
+        
+        # Check if stock cover remain:
+        if stock_qty >= current_qty:
+            used_qty = current_qty
+        else:
+            used_qty = stock_qty
+        if used_qty <= 0:    
+            return True
+
+        if current_line: # Update:
+            current_line.write({
+                'purchase_price': self.quotation,
+                'product_uom_qty': used_qty,
+                })
+        else:        
+            purchase_pool.create({
+                'line_id': line.id,
+                'purchase_price': self.quotation,
+                'supplier_id': self.supplier_id.id,
+                'product_uom_qty': used_qty,
+                })                        
         return True
 
     @api.multi
@@ -69,11 +100,10 @@ class ProductTemplateSupplierStock(models.Model):
         ''' Assign all order to this supplier
         '''
         # Selected sale line:
-        line_pool = self.env['sale.order.line']
         purchase_pool = self.env['sale.order.line.purchase']
         
         line = self.get_context_sale_order_object()
-        line_pool.clean_all_purchase_selected() # Remove all
+        line.clean_all_purchase_selected() # Remove all
         
         # Collect fields:
         product_uom_qty = line.product_uom_qty
@@ -92,17 +122,6 @@ class ProductTemplateSupplierStock(models.Model):
             })
 
     @api.multi
-    def assign_to_purchase_none(self):
-        ''' Remove this supplier
-        '''
-        line = stock.get_context_sale_order_object()
-        
-        for splitted in line.purchase_split_ids:
-            if splitted.supplier_id == self.supplier_id:
-                splitted.unlink()
-        return True
-
-    @api.multi
     def assign_to_purchase_this(self):
         ''' Assign max stock from this supplier (or remain)
         '''
@@ -115,17 +134,24 @@ class ProductTemplateSupplierStock(models.Model):
         product_uom_qty = line.product_uom_qty
         stock_qty = self.stock_qty
 
-        current_qty = 0.0        
+        current_qty = product_uom_qty
+        current_line = False   
         for splitted in line.purchase_split_ids:
-            current_qty += splitted.product_uom_qty
-            if splitted.supplier_id = self.supplier_id:
-                current_line = line
+            if splitted.supplier_id == self.supplier_id:
+                current_line = splitted
+            else:    
+                current_qty -= splitted.product_uom_qty
         
+        if current_qty <= 0.0:
+            return True
+
         # Check if stock cover remain:
         if stock_qty >= current_qty:
             used_qty = current_qty
         else:
             used_qty = stock_qty
+        if used_qty <= 0.0:
+            return True    
 
         if current_line: # Update:
             current_line.write({
@@ -171,32 +197,21 @@ class ProductTemplate(models.Model):
     supplier_stock_ids = fields.One2many(
         'product.template.supplier.stock', 'product_id', 'Supplier stock')
 
-class SaleOrderLine(models.Model):
-    """ Model name: Sale order line
-    """
-    
-    _inherit = 'sale.order.line'
-    
-    @api.multi
-    def clean_all_purchase_selected(self):
-        ''' Clean all selected elements
-        '''
-        return self.purchase_split_ids.unlink()
-        #for splitted in self.purchase_split_ids:
-        #    splitted.unlink()
-        #return True
-
-    # TODO field for state of purchase 
-    # TODO field for purchase supplier present    
-
 class SaleOrderLinePurchase(models.Model):
     """ Model name: Temp reference that will generare purchase order
     """
     
     _name = 'sale.order.line.purchase'
     _description = 'Sale purchase line'
-    _rec_name = 'product_id'
+    _rec_name = 'line_id'
     
+    @api.model
+    def clean_purchase_selected(self):
+        ''' Remove in readonly mode
+        '''
+        import pdb; pdb.set_trace()
+        return self.unlink()
+
     # -------------------------------------------------------------------------
     # COLUMNS:
     # -------------------------------------------------------------------------
@@ -218,9 +233,19 @@ class SaleOrderLine(models.Model):
     
     _inherit = 'sale.order.line'
 
+    @api.multi
+    def clean_all_purchase_selected(self):
+        ''' Clean all selected elements
+        '''
+        for splitted in self.purchase_split_ids:
+            splitted.unlink()
+        return True
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
+    # TODO field for state of purchase 
+    # TODO field for purchase supplier present    
     product_supplier_ids = fields.One2many(
         'product.template.supplier.stock', 
         related='product_id.supplier_stock_ids',
@@ -248,8 +273,7 @@ class SaleOrder(models.Model):
             'logistic_product_supplier', 
             'view_sale_order_line_purchase_management_form')[1]
 
-        line_ids = [item.id for item in self.order_line \
-            if not item.splitted]
+        line_ids = [item.id for item in self.order_line]
         
         return {
             'type': 'ir.actions.act_window',

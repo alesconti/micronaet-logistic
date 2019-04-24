@@ -130,7 +130,6 @@
                                     <field name="stock_qty" />
                                     <button name="assign_to_purchase_minus" string="-" type="object" context="{'sale_order_id': parent.id}" icon="fa-minus-circle"/>
                                     <button name="assign_to_purchase_plus" string="+" type="object" context="{'sale_order_id': parent.id}" icon="fa-plus-circle"/>
-                                    <button name="assign_to_purchase_none" string="0" type="object" context="{'sale_order_id': parent.id}" icon="fa-dot-circle-o"/>
                                     <button name="assign_to_purchase_all" string="all" type="object" context="{'sale_order_id': parent.id}" icon="fa-fast-forward"/>
                                 </tree>
                              </field>
@@ -138,10 +137,11 @@
                              <separator string="Purchase order:" colspan="3"/>
                              <button name="clean_all_purchase_selected" string="Clean selection" type="object" colspan="1" confirm="Delete all selection for purchase order?"/>
                              <field name="purchase_split_ids" nolabel="1" colspan="4">
-                                 <tree name="Purchase reference" editable="bottom" readonly="1">
-                                     <field name="supplier_id" />
+                                 <tree name="Purchase reference" editable="bottom">
+                                     <field name="supplier_id" readonly="1"/>
                                      <field name="product_uom_qty" />
                                      <field name="purchase_price" />
+                                     <button name="clean_purchase_selected" string="Clean selected" type="object" icon="fa-bitbucket"/>
                                  </tree>
                              </field>
                          </group>
