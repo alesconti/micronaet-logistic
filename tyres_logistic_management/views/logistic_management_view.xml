@@ -98,7 +98,6 @@
                  </field>
                  <field name="origin" position="after">
                     <field name="sale_order_id" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
-                    <field name="xml_code" />
                  </field>
              </field>
          </record>
@@ -109,7 +108,6 @@
              <field name="inherit_id" ref="stock.vpicktree"/>
              <field name="arch" type="xml">
                  <field name="state" position="before">
-                    <field name="xml_code" />
                     <field name="sale_order_id" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
                  </field>
              </field>
@@ -139,8 +137,8 @@
 
                      <field name="logistic_unload_id" />
 
-                     <field name="logistic_quant_id" />
-                     <field name="slot_id" />
+                     <!--<field name="logistic_quant_id" />
+                     <field name="slot_id" />-->
                      <field name="state" invisible="1" />
                  </tree>
              </field>
@@ -312,18 +310,12 @@
                                          <separator string="Logistic parameters:" colspan="4"/>
                                          <field name="logistic_location_id" widget="selection" domain="[('usage', '!=', 'view')]"/>                                         
                                          
-                                         <field name="logistic_assign_mode" />
-                                         <field name="logistic_order_sort" />
-                                         
                                          <separator string="Output folder:" colspan="4"/>
                                          <field name="logistic_root_folder" colspan="4"/>
                                          
                                          <separator string="Load document:" colspan="4"/>
                                          <field name="logistic_pick_in_type_id" />
                                          <field name="logistic_pick_out_type_id" />
-                                         
-                                         <separator string="Order unification:" colspan="4"/>
-                                         <field name="unificate_period" />
                                      </group>
                                  </page>
                              </notebook>
@@ -338,7 +330,7 @@
              <field name="view_type">form</field>
              <field name="view_mode">tree,form</field>
              <!--<field name="view_id" ref="view_model_name_form"/>-->          
-             <field name="context">{'form_view_ref': 'logistic_management.view_res_company_logistic_parameter_form'}</field>
+             <field name="context">{'form_view_ref': 'tyres_logistic_management.view_res_company_logistic_parameter_form'}</field>
              <field name="domain">[]</field>
          </record>
          
@@ -364,7 +356,6 @@
                                      <field name="scheduled_date" />
                                      <field name="ddt_number" />
                                      <field name="invoice_number" />
-                                     <field name="xml_code" />
                                      <field name="state" invisible="1"/>
                                  </tree>
                              </field>
@@ -422,11 +413,11 @@
              <field name="inherit_id" ref="sale.view_sales_order_filter"/>
              <field name="arch" type="xml">
                  <field name="user_id" position="after">
-                     <field name="default_supplier_id" />
+                     <!--<field name="default_supplier_id" />-->
                      <field name="logistic_state" />
                  </field>
                  <xpath expr="/search/group/filter[2]" position="after">
-                     <filter string="Default supplier" domain="[]" context="{'group_by':'default_supplier_id'}"/>
+                     <!--<filter string="Default supplier" domain="[]" context="{'group_by':'default_supplier_id'}"/>-->
                      <filter string="Logistic state" domain="[]" context="{'group_by':'logistic_state'}"/>
                  </xpath>
              </field>
@@ -438,17 +429,11 @@
              <field name="model">sale.order.line</field>
              <field name="priority" eval="40" />
              <field name="arch" type="xml">
-                 <tree string="Sale line logistic" decoration-muted="is_kit==True" decoration-warning="kit_product_id != False">
-                     <field name="is_kit" />
+                 <tree string="Sale line logistic">
                      <button name="open_view_sale_order" string="Open sale order" type="object" icon="fa-arrow-circle-o-right"/>
                      <field name="order_id" />
                      <button name="open_view_sale_order_product" string="Open sale order product" type="object" icon="fa-arrow-circle-o-right"/>
                      <field name="product_id" />
-                     <button name="open_view_sale_order_kit_product" string="Open sale order kit product" type="object" icon="fa-arrow-circle-o-right" attrs="{'invisible': [('kit_product_id','=',False)]}"/>
-                     <field name="kit_product_id" />
-                     <button name="open_view_sale_order_original_product" string="Open sale order original product" type="object" icon="fa-arrow-circle-o-right" attrs="{'invisible': [('origin_product_id','=',False)]}"/>
-                     <field name="origin_product_id" />
-                     <field name="linked_mode" />
                      <button name="chain_broken_purchase_line" attrs="{'invisible': [('logistic_state','!=','ordered')]}" string="" help="Delete purchase line and return to order phase" type="object" icon="fa-chain-broken" confirm="Reassign product if needed, program delete purchase line and return do order step, confirm?"/>
                      <field name="name" />
                      <field name="product_uom_qty" />
@@ -459,29 +444,7 @@
                      <field name="logistic_remain_qty" />
                      <field name="logistic_delivered_qty" />
                      <field name="logistic_undelivered_qty" />
-                     <field name="mrp_state" />
                      <field name="logistic_state" />
-                 </tree>
-             </field>
-         </record>
-         <record model="ir.ui.view" id="view_sale_order_line_logistic_mrp_tree">
-             <field name="name">sale.order.line.logistic.mrp.tree</field>
-             <field name="model">sale.order.line</field>
-             <field name="priority" eval="40" />
-             <field name="arch" type="xml">
-                 <tree string="MRP lavoration" decoration-muted="mrp_state=='draft'" decoration-warning="mrp_state=='progress'">
-                     <field name="order_id" />
-                     <field name="product_id" />
-                     <field name="origin_product_id" />
-                     <field name="linked_mode" />
-                     <field name="name" />
-                     <field name="product_uom_qty" />
-                     <!--<field name="logistic_covered_qty" />
-                     <field name="logistic_uncovered_qty" />-->
-                     <field name="mrp_state" />
-                     <button name="workflow_mrp_draft_to_progress" string="Lavoration Progress" type="object" attrs="{'invisible': [('mrp_state','!=','draft')]}" icon="fa-calendar"/>
-                     <button name="workflow_mrp_progress_to_done" string="Lavoration Done" type="object" attrs="{'invisible': [('mrp_state','!=','progress')]}" icon="fa-check-square"/>
-                     <field name="logistic_state" />                     
                  </tree>
              </field>
          </record>
@@ -512,47 +475,6 @@
                          <filter name="group_order" string="Order" context="{'group_by': 'order_id'}"/>
                          <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
                          <filter name="group_logistic" string="Logistic" context="{'group_by': 'logistic_state'}"/>
-                         <filter name="group_mrp" string="MRP" context="{'group_by': 'mrp_state'}"/>
-                     </group>
-                 </search>
-             </field>
-         </record>
-         <record model="ir.ui.view" id="view_sale_order_line_mrp_search">
-             <field name="name">sale.order.line.search</field>
-             <field name="model">sale.order.line</field>
-             <field name="priority" eval="40" />
-             <field name="arch" type="xml">
-                 <search string="Lavoration sale">
-                     <field name="name" />
-                     
-                     <field name="product_id" domain="[('product_id.product_tmpl_id.default_code', 'ilike', self)]" />
-                     <!--<field name="product_id" filter_domain="[('product_id','=',self)]"/>-->
-                     <field name="order_id" filter_domain="[('order_id','=',self)]"/>            
-                     <!--<field name="partner_name" filter_domain="[('order_id.partner_id.name','ilike',self)]"/>-->
-
-                     <!--<field name="data_ordine"/>
-                     <field name="sku"/>-->
-                     <filter string="Today" domain="[('order_id.date_order', '&gt;=', datetime.datetime.now().strftime('%Y-%m-%d 00:00:00')),('order_id.date_order', '&lt;=', datetime.datetime.now().strftime('%Y-%m-%d 23:23:59'))]"/>
-
-                     <filter string="Yellow" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'YE')]" />
-                     <filter string="Blue" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'BL')]" />
-                     <filter string="Green" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'GR')]" />
-                     <filter string="Orange" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'OR')]" />
-                     <filter string="Gold" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'GO')]" />
-                     <filter string="Silver" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'SI')]" />
-                     <filter string="Red" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'RE')]" />
-                     <filter string="Black" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'BK')]" />
-                     <filter string="White" domain="[('product_id.product_tmpl_id.default_code', 'ilike', 'WH')]" />
-                     
-                     <filter name="state_draft" string="Draft state" domain="[('mrp_state','=','draft')]"/>
-                     <filter name="state_progress" string="Progress state" domain="[('mrp_state','=','progress')]"/>
-                     <filter name="state_done" string="Done state" domain="[('mrp_state','=','done')]"/>
-
-                     <group expand="0" string="Group By...">
-                         <filter name="group_order" string="Order" context="{'group_by': 'order_id'}"/>
-                         <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
-                         <filter name="group_logistic" string="Logistic" context="{'group_by': 'logistic_state'}"/>
-                         <filter name="group_mrp" string="MRP" context="{'group_by': 'mrp_state'}"/>
                      </group>
                  </search>
              </field>
@@ -572,14 +494,6 @@
                              <newline/>
                              <field name="product_id" />
                              <field name="name" />
-                             
-                             <field name="is_kit" />
-                             <field name="kit_product_id" />
-
-                             <field name="origin_product_id" />
-                             <field name="linked_mode" />
-                             
-                             <field name="mrp_state" />
                          </group>                         
                          <notebook colspan="4">
                              <page string="Quantity">
@@ -644,48 +558,6 @@
              </field>
          </record>
          
-         <!--Lavoration action:-->
-         <record model="ir.actions.act_window" id="action_sale_order_line_logistic_mrp_all">
-             <field name="name">Sale line MRP</field>
-             <field name="res_model">sale.order.line</field>
-             <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
-             <field name="view_id" ref="view_sale_order_line_logistic_mrp_tree"/>
-             <field name="search_view_id" ref="view_sale_order_line_mrp_search"/>             
-             <field name="context">{'form_view_ref': 'logistic_management.view_sale_order_line_logistic_form'}</field>
-             <field name="domain">[('mrp_state', '!=', False)]</field>
-         </record>
-         <record model="ir.actions.act_window" id="action_sale_order_line_logistic_mrp_draft">
-             <field name="name">Sale line MRP draft</field>
-             <field name="res_model">sale.order.line</field>
-             <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
-             <field name="view_id" ref="view_sale_order_line_logistic_mrp_tree"/>
-             <field name="search_view_id" ref="view_sale_order_line_mrp_search"/>             
-             <field name="context">{'form_view_ref': 'logistic_management.view_sale_order_line_logistic_form'}</field>
-             <field name="domain">[('mrp_state', '=', 'draft')]</field>
-         </record>
-         <record model="ir.actions.act_window" id="action_sale_order_line_logistic_mrp_progress">
-             <field name="name">Sale line MRP pending</field>
-             <field name="res_model">sale.order.line</field>
-             <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
-             <field name="view_id" ref="view_sale_order_line_logistic_mrp_tree"/>
-             <field name="search_view_id" ref="view_sale_order_line_mrp_search"/>             
-             <field name="context">{'form_view_ref': 'logistic_management.view_sale_order_line_logistic_form'}</field>
-             <field name="domain">[('mrp_state', '=', 'progress')]</field>
-         </record>
-         <record model="ir.actions.act_window" id="action_sale_order_line_logistic_mrp_done">
-             <field name="name">Sale line MRP done</field>
-             <field name="res_model">sale.order.line</field>
-             <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
-             <field name="view_id" ref="view_sale_order_line_logistic_mrp_tree"/>
-             <field name="search_view_id" ref="view_sale_order_line_mrp_search"/>             
-             <field name="context">{'form_view_ref': 'logistic_management.view_sale_order_line_logistic_form'}</field>
-             <field name="domain">[('mrp_state', '=', 'done')]</field>
-         </record>
-         
          <!--Logistic sale order line-->
          <record model="ir.actions.act_window" id="action_sale_order_line_logistic">
              <field name="name">Sale line logistic</field>
@@ -694,7 +566,7 @@
              <field name="view_mode">tree,form</field>
              <field name="view_id" ref="view_sale_order_line_logistic_tree"/>
              <field name="search_view_id" ref="view_sale_order_line_search"/>
-             <field name="context">{'form_view_ref': 'logistic_management.view_sale_order_line_logistic_form'}</field>
+             <field name="context">{'form_view_ref': 'tyres_logistic_management.view_sale_order_line_logistic_form'}</field>
              <field name="domain">[]</field>
          </record>
          
@@ -850,14 +722,6 @@
              <field name="context">{}</field>
              <field name="domain">[('picking_type_code', '=', 'outgoing')]</field>
          </record>
-         <record model="ir.actions.act_window" id="action_stock_picking_fattura_pa">
-             <field name="name">Fattura PA</field>
-             <field name="res_model">stock.picking</field>
-             <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
-             <field name="context">{}</field>
-             <field name="domain">[('xml_code', '!=', False)]</field>
-         </record>
          <record model="ir.actions.act_window" id="action_stock_picking_invoice_out">
              <field name="name">Invoice all</field>
              <field name="res_model">stock.picking</field>
@@ -964,21 +828,6 @@
                      />
 
                  <menuitem
-                     id="menu_logistic_left_order_unificated" 
-                     parent="menu_logistic_left_order_root"
-                     name="Logistic: Unificated"
-                     action="logistic_order_unification.action_order_unificated_form"
-                     sequence="100"
-                     />
-                     <menuitem
-                         id="menu_logistic_left_order_unificated_destination" 
-                         parent="menu_logistic_left_order_unificated"
-                         name="Logistic: Unificated destination"
-                         action="logistic_order_unification.action_order_linked_form"
-                         sequence="10"
-                         />
-
-                 <menuitem
                      id="menu_logistic_left_order_error" 
                      parent="menu_logistic_left_order_root"
                      name="Logistic: Error"
@@ -1007,42 +856,6 @@
                      action="action_sale_order_line_logistic"
                      sequence="10" 
                      />
-
-             <menuitem
-                 id="menu_logistic_left_order_line_mrp_root" 
-                 parent="menu_logistic_header_root"
-                 name="Lavoration order"
-                 sequence="17"             
-                 />
-                 <menuitem
-                     id="menu_sale_order_line_logistic_mrp_all" 
-                     parent="menu_logistic_left_order_line_mrp_root"
-                     name="Lavoration all"
-                     action="action_sale_order_line_logistic_mrp_all"
-                     sequence="10" 
-                     />
-                 <menuitem
-                     id="menu_sale_order_line_logistic_mrp_draft" 
-                     parent="menu_logistic_left_order_line_mrp_root"
-                     name="Lavoration draft"
-                     action="action_sale_order_line_logistic_mrp_draft"
-                     sequence="20" 
-                     />
-                 <menuitem
-                     id="menu_sale_order_line_logistic_mrp_progress" 
-                     parent="menu_logistic_left_order_line_mrp_root"
-                     name="Lavoration progress"
-                     action="action_sale_order_line_logistic_mrp_progress"
-                     sequence="30" 
-                     />
-                 <menuitem
-                     id="menu_sale_order_line_logistic_mrp_done" 
-                     parent="menu_logistic_left_order_line_mrp_root"
-                     name="Lavoration done"
-                     action="action_sale_order_line_logistic_mrp_done"
-                     sequence="40" 
-                     />
-
 
              <menuitem
                  id="menu_logistic_left_purchase_root" 
@@ -1089,8 +902,7 @@
                      name="Purchase order line"
                      action="action_purchase_order_line"
                      sequence="10"
-                     />
-                 
+                     />                 
                  
              <menuitem
                  id="menu_logistic_left_pick_in_root" 
@@ -1125,13 +937,6 @@
                      name="Invoice"
                      action="action_stock_picking_invoice_out"
                      sequence="20"             
-                     />
-                 <menuitem
-                     id="menu_logistic_left_pick_out_document_fattura_pa" 
-                     parent="menu_logistic_left_pick_out_root"
-                     name="Fattura PA"
-                     action="action_stock_picking_fattura_pa"
-                     sequence="30"             
                      />
 
              <menuitem
@@ -1228,71 +1033,6 @@
                      action="action_res_company_parameter"
                      sequence="10"
                      />
-
-        <!--FATTURA PA (ACCOUNTING POSITION):-->
-        <menuitem 
-            id="menu_account_fatturapa_root" 
-            name="Fattura PA" 
-            parent="menu_logistic_left_configuration_root" 
-            sequence="10"             
-            /><!--groups="account.group_account_invoice"-->
-            <menuitem 
-                id="menu_account_fatturapa_format" 
-                action="l18n_it_fatturapa.action_fatturapa_format"
-                name="Format" 
-                parent="menu_account_fatturapa_root" 
-                sequence="10"/>
-            <menuitem 
-                id="menu_account_fatturapa_document_type" 
-                action="l18n_it_fatturapa.action_fatturapa_document_type"
-                name="Document Type" 
-                parent="menu_account_fatturapa_root" 
-                sequence="20"/>
-            <menuitem 
-                id="menu_account_fatturapa_payment_term" 
-                action="l18n_it_fatturapa.action_fatturapa_payment_term"
-                name="Payment Term" 
-                parent="menu_account_fatturapa_root" 
-                sequence="30"/>
-            <menuitem 
-                id="menu_account_fatturapa_welfare" 
-                action="l18n_it_fatturapa.action_welfare_fund_type"
-                name="Welfare" 
-                parent="menu_account_fatturapa_root" 
-                sequence="40"/>
-            <menuitem 
-                id="menu_account_fatturapa_fiscal_position" 
-                action="l18n_it_fatturapa.action_fatturapa_fiscal_position"
-                name="Fiscal position" 
-                parent="menu_account_fatturapa_root" 
-                sequence="50"/>
-
-          <!--Inventory configuration menu -->          
-          <!--Stock position:-->
-          <menuitem 
-              id="menu_stock_position_slot_root"
-              parent="menu_logistic_left_configuration_root"
-              sequence="50"
-              name="Stock location"
-              />
-              <menuitem 
-                  id="menu_stock_location_slot_form"
-                  parent="menu_stock_position_slot_root"
-                  action="logistic_stock_position.action_stock_location_slot_form"
-                  sequence="10"
-                  />
-              <menuitem 
-                  id="menu_view_stock_location_table"
-                  parent="menu_stock_position_slot_root"
-                  action="logistic_stock_position.action_view_stock_location_table"
-                  sequence="20"
-                  />
-              <menuitem 
-                  id="menu_view_res_partner_table"
-                  parent="menu_stock_position_slot_root"
-                  action="logistic_stock_position.action_view_res_partner_table"
-                  sequence="30"
-                  />
                      
     </data>
 </openerp>
