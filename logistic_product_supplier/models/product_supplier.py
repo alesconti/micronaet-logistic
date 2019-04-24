@@ -253,7 +253,7 @@ class SaleOrderLine(models.Model):
         for line in self:
             product_uom_qty = line.product_uom_qty
             covered_qty = 0.0
-            for purchase in self.purchase_split_ids:
+            for purchase in line.purchase_split_ids:
                 covered_qty += purchase.product_uom_qty
             if abs(covered_qty - product_uom_qty) < gap:
                 line.state_check = True

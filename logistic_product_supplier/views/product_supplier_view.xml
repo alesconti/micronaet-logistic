@@ -90,15 +90,13 @@
              <field name="model">sale.order.line</field>
              <field name="priority" eval="40" />
              <field name="arch" type="xml">
-                 <tree string="Sale line logistic"><!--TODO decoration-warning="supplier_id==False"-->
+                 <tree string="Sale line logistic" decoration-warning="state_check==False">
                      <field name="order_id" />
                      <field name="product_id" />
                      <field name="name" />
                      <field name="product_uom_qty" />
                      <field name="state_qty" />
                      <field name="purchase_split_ids" />
-                     <button name="dummy" string="" type="object" icon="/logistic_product_supplier/static/src/img/button_red.jpg" attrs="{'invisible': [('state_check','=',True)]}" colspan="1"/>
-                     <button name="dummy" string="" type="object" icon="/logistic_product_supplier/static/src/img/button_green.jpg" attrs="{'invisible': [('state_check','=',False)]}" colspan="1"/>
                      <field name="state_check" invisible="1"/>
                  </tree>
              </field>
