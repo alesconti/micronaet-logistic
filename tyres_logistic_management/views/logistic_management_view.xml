@@ -443,7 +443,7 @@
                  </tree>
              </field>
          </record>
-         <record model="ir.ui.view" id="view_sale_order_line_real_product_unchain_form">
+         <!--<record model="ir.ui.view" id="view_sale_order_line_real_product_unchain_form">
             <field name="name">sale.order.line.unchain.product.form</field>
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="order_line_change_product.view_sale_order_line_real_product_form"/>
@@ -453,7 +453,7 @@
                     <field name="logistic_state" invisible="1"/>
                 </field>
             </field>
-        </record>
+        </record>-->
          
          <record model="ir.ui.view" id="view_sale_order_line_search">
              <field name="name">sale.order.line.search</field>
