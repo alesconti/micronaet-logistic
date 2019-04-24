@@ -42,7 +42,7 @@ class ProductTemplateSupplierStock(models.Model):
     _order = 'quotation'
 
     @api.model
-    def get_context_sale_order_id(self):
+    def get_context_sale_order_object(self):
         ''' Return browseable sale line reference:
         '''
         line_pool = self.env['sale.order.line']
@@ -54,14 +54,14 @@ class ProductTemplateSupplierStock(models.Model):
     def assign_to_purchase_minus(self):
         ''' Assign -1 to this supplier
         '''
-        line = self.get_context_sale_order_id()
+        line = self.get_context_sale_order_object()
         return True
 
     @api.multi
     def assign_to_purchase_plus(self):
         ''' Assign +1 to this supplier
         '''
-        line = self.get_context_sale_order_id()
+        line = self.get_context_sale_order_object()
         return True
 
     @api.multi
@@ -69,111 +69,78 @@ class ProductTemplateSupplierStock(models.Model):
         ''' Assign all order to this supplier
         '''
         # Selected sale line:
-        stock = self
-        line = self.get_context_sale_order_id()
-        supplier_id = self.supplier_id.id
+        line_pool = self.env['sale.order.line']
+        purchase_pool = self.env['sale.order.line.purchase']
+        
+        line = self.get_context_sale_order_object()
+        line_pool.clean_all_purchase_selected() # Remove all
+        
+        # Collect fields:
         product_uom_qty = line.product_uom_qty
-        stock_qty = stock.stock_qty 
+        stock_qty = self.stock_qty 
         if stock_qty >= product_uom_qty:
             used_qty = product_uom_qty
         else:
             used_qty = stock_qty
-            # TODO create row with partial load:
 
-            # If previously all saved:
-            #line.clean_auto_splitted_reference()
-            #line.splitted = True
-            
-            # Create partial load
-            #self.create({
-            #    'splitted_parent_id': line.id,
-            #    'splitted': False,
-            #    'purchase_price': stock.quotation,
-            #    'supplier_id': stock.supplier_id.id,
-            #    'product_uom_qty': stock_qty
-            #    })
-            
-
-        # Remove all splitted line except this:
-        for splitted in line.splitted_child_ids:
-            if splitted != line: # Remove all splitted (without current line)
-                splitted.unlink()
-
-        # Create assigned for purchase:
-        line.splitted_parent_id = line.id
-        line.supplier_id = supplier_id
-        line.purchase_price = self.quotation
-        line.splitted = False # All line for this supplier!
-        # XXX quantity was yet correct
-
-        # TODO update line status and order status
-        return True
+        # Create load:
+        return purchase_pool.create({
+            'line_id': line.id,
+            'purchase_price': self.quotation,
+            'supplier_id': self.supplier_id.id,
+            'product_uom_qty': used_qty,
+            })
 
     @api.multi
     def assign_to_purchase_none(self):
         ''' Remove this supplier
         '''
-        stock = self # Readability:
+        line = stock.get_context_sale_order_object()
         
-        # Selected sale line:
-        line = stock.get_context_sale_order_id()
-
-        # Remove all splitted line except this:
-        for splitted in line.splitted_child_ids:
-            if stock.supplier_id == splitted.supplier_id:              
-                if splitted == line: # Clean
-                    line.clean_auto_splitted_reference()
-                else: # Remove
-                    splitted.unlink()
-
-        # TODO update line status and order status
+        for splitted in line.purchase_split_ids:
+            if splitted.supplier_id == self.supplier_id:
+                splitted.unlink()
         return True
 
     @api.multi
     def assign_to_purchase_this(self):
         ''' Assign max stock from this supplier (or remain)
         '''
-        stock = self # Readability:
+        sale_pool = self.env['sale.order.line']
+        purchase_pool = self.env['sale.order.line.purchase']
         
-        # Selected sale line:
-        line = stock.get_context_sale_order_id()
+        # Current sale line:
+        line = self.get_context_sale_order_object()
 
         product_uom_qty = line.product_uom_qty
-        stock_qty = stock.stock_qty
+        stock_qty = self.stock_qty
 
-        # Remove all splitted line except this:
-        selected_purchase = False
-        current_total = 0.0        
-        for splitted in line.splitted_child_ids:            
-            if stock.supplier_id == splitted.supplier_id:
-                selected_purchase = splitted
-            else:
-                current_total += splitted.product_uom_qty
-        uncovered_qty = product_uom_qty - current_total
-        if stock_qty >= uncovered_qty:
-            select_qty = uncovered_qty
+        current_qty = 0.0        
+        for splitted in line.purchase_split_ids:
+            current_qty += splitted.product_uom_qty
+            if splitted.supplier_id = self.supplier_id:
+                current_line = line
+        
+        # Check if stock cover remain:
+        if stock_qty >= current_qty:
+            used_qty = current_qty
         else:
-            select_qty = stock_qty
-        
-        if selected_purchase: # found
-            if splitted == line:
-                pass # TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        
-        else:    
-            # If previously all saved:
-            line.clean_auto_splitted_reference()
-            line.splitted = True
-            # Create partial load
-            self.create({
-                'splitted_parent_id': line.id,
-                'splitted': False,
-                'purchase_price': stock.quotation,
-                'supplier_id': stock.supplier_id.id,
-                'product_uom_qty': stock_qty
-                })
+            used_qty = stock_qty
 
-        # TODO update line status and order status
+        if current_line: # Update:
+            current_line.write({
+                'purchase_price': self.quotation,
+                'product_uom_qty': used_qty,
+                })
+        else:        
+            purchase_pool.create({
+                'line_id': line.id,
+                'purchase_price': self.quotation,
+                'supplier_id': self.supplier_id.id,
+                'product_uom_qty': used_qty,
+                })                        
         return True
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------    
@@ -210,46 +177,40 @@ class SaleOrderLine(models.Model):
     
     _inherit = 'sale.order.line'
     
-    @api.model
-    def clean_auto_splitted_reference(self):
-        ''' Clean reference for splitted himself
-        '''
-        self.splitted = False
-        self.supplier_id = False
-        self.purchase_price = 0.0        
-        self.splitted_parent_id = False
-    
     @api.multi
     def clean_all_purchase_selected(self):
         ''' Clean all selected elements
         '''
-        for splitted in self.splitted_child_ids:
-            if splitted != self:
-                splitted.unlink()
-        
-        # Update information:
-        self.clean_auto_splitted_reference()
-        return True
+        return self.purchase_split_ids.unlink()
+        #for splitted in self.purchase_split_ids:
+        #    splitted.unlink()
+        #return True
 
-    # -------------------------------------------------------------------------
-    #                                   COLUMNS:
-    # -------------------------------------------------------------------------
-    splitted = fields.Boolean('Splitted')
-    splitted_parent_id = fields.Many2one(
-        'sale.order.line', 'Purchase', 
-        help='Splitted reference for purchase')
+    # TODO field for state of purchase 
+    # TODO field for purchase supplier present    
 
-    # Purchase reference:
+class SaleOrderLinePurchase(models.Model):
+    """ Model name: Temp reference that will generare purchase order
+    """
+    
+    _name = 'sale.order.line.purchase'
+    _description = 'Sale purchase line'
+    _rec_name = 'product_id'
+    
+    # -------------------------------------------------------------------------
+    # COLUMNS:
+    # -------------------------------------------------------------------------
+    line_id = fields.Many2one('sale.order.line', 'Line')
     purchase_price = fields.Float(
         'Purchase Price', digits=dp.get_precision('Product Price'))
+    product_uom_qty = fields.Float(
+        'Q.ty', digits=dp.get_precision('Product Unit of Measure'))
     supplier_id = fields.Many2one(
         'res.partner', 'Partner', index=True, ondelete='cascade',
         domain="[('supplier', '=', True)]",
         )
+    # -------------------------------------------------------------------------
     
-    # TODO field for state of purchase 
-    # TODO field for purchase supplier present    
-        
 
 class SaleOrderLine(models.Model):
     """ Model name: Sale order line relations
@@ -260,14 +221,13 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    splitted_child_ids = fields.One2many(
-        'sale.order.line', 'splitted_parent_id', 'Splitted child',
-        help='List of splitted child')
     product_supplier_ids = fields.One2many(
         'product.template.supplier.stock', 
         related='product_id.supplier_stock_ids',
         )
-    
+    purchase_split_ids = fields.One2many(
+        'sale.order.line.purchase', 'line_id')
+
 
 class SaleOrder(models.Model):
     """ Model name: Sale order line relations

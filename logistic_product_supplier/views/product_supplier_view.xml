@@ -90,13 +90,12 @@
              <field name="model">sale.order.line</field>
              <field name="priority" eval="40" />
              <field name="arch" type="xml">
-                 <tree string="Sale line logistic" decoration-warning="supplier_id==False">
+                 <tree string="Sale line logistic"><!--TODO decoration-warning="supplier_id==False"-->
                      <field name="order_id" />
                      <field name="product_id" />
                      <field name="name" />
                      <field name="product_uom_qty" />
-                     <field name="supplier_id" />
-                     <field name="splitted_child_ids" />
+                     <field name="purchase_split_ids" />
                  </tree>
              </field>
          </record>
@@ -118,7 +117,6 @@
                              <field name="name" />
                              
                              <field name="product_uom_qty" />
-                             <field name="supplier_id" />
 
                              <separator string="Purchase stock" colspan="4"/>
                              <field name="product_supplier_ids" nolabel="1" editable="bottom" colspan="4" context="{'sale_order_id': parent.id}">
@@ -139,12 +137,11 @@
                              
                              <separator string="Purchase order:" colspan="3"/>
                              <button name="clean_all_purchase_selected" string="Clean selection" type="object" colspan="1" confirm="Delete all selection for purchase order?"/>
-                             <field name="splitted_child_ids" nolabel="1" colspan="4">
+                             <field name="purchase_split_ids" nolabel="1" colspan="4">
                                  <tree name="Purchase reference" editable="bottom" readonly="1">
                                      <field name="supplier_id" />
                                      <field name="product_uom_qty" />
                                      <field name="purchase_price" />
-                                     <!--<field name="list_price" />-->
                                  </tree>
                              </field>
                          </group>
