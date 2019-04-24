@@ -942,22 +942,6 @@ class AccountFiscalPosition(models.Model):
     need_invoice = fields.Boolean('Always invoice')
 
 
-# TODO Remove:
-class StockQuant(models.Model):
-    """ Model name: Stock quant
-    """
-    
-    _inherit = 'stock.quant'
-    
-    # -------------------------------------------------------------------------
-    #                                   COLUMNS:
-    # -------------------------------------------------------------------------
-    logistic_assigned_id = fields.Many2one(
-        'sale.order.line', 'Link covered to generator', 
-        help='Link to sale line the assigned qty', 
-        index=True, ondelete='cascade', # remove stock move when delete order
-        )
-    
 class SaleOrder(models.Model):
     """ Model name: Sale Order
     """
@@ -1691,13 +1675,6 @@ class SaleOrderLine(models.Model):
             company = lines[0].order_id.company_id
             
             location_id = company.logistic_location_id.id
-            sort = company.logistic_order_sort
-            mode = company.logistic_assign_mode
-            
-            _logger.info(
-                'Update order with parameter: '
-                'Location: %s, sort: %s, mode: %s' % (
-                    location_id, sort, mode))
         else:
             _logger.info('No line ready for assign stock qty')
             return True 
@@ -1705,12 +1682,7 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         # Parameter: Sort options:
         # ---------------------------------------------------------------------
-        if sort == 'create_date':
-            sorted_line = sorted(lines, key=lambda x:
-                x.order_id.create_date)
-        else: # validity_date
-            sorted_line = sorted(lines, key=lambda x:
-                x.order_id.validity_date or x.order_id.create_date)
+        sorted_line = sorted(lines, key=lambda x: x.order_id.create_date)
             
         # ---------------------------------------------------------------------
         #                  Modify sale order line status:
@@ -1719,7 +1691,7 @@ class SaleOrderLine(models.Model):
         #sale_line_ready = [] # To check if order also is ready
 
         # This fix a bug because stock status don't update immediately
-        quant_used = {} # product quant used during process
+        #quant_used = {} # product quant used during process
         
         order_touched_ids = [] # For end operation (dropship, default suppl.)
         for line in sorted_line:
@@ -1728,45 +1700,25 @@ class SaleOrderLine(models.Model):
                 order_touched_ids.append(line.order_id.id)
             
             product = line.product_id
-            # -----------------------------------------------------------------
-            # Kit line not used:
-            # -----------------------------------------------------------------
-            if not product or product.is_kit:
-                update_db[line] = {
-                    'logistic_state': 'unused',
-                    }
-                continue # Comment line
-
             order_qty = line.product_uom_qty
             
             # -----------------------------------------------------------------
             # Similar pool generate:
             # -----------------------------------------------------------------
             product_list = [product] # Start list first with this product
-            if product.similar_ids: 
-                # Search other product from template list
-                template_ids = [
-                    template.id for template in product.similar_ids]
-                similar_product = product_pool.search([
-                    ('product_tmpl_id', 'in', template_ids),
-                    ])
-                product_list.extend([item for item in similar_product])
             
             # -----------------------------------------------------------------
             # Use stock to cover order:
             # -----------------------------------------------------------------
             state = False # Used for check if used some pool product            
             for used_product in product_list: # p.p similar
-                # XXX Remove used qty during assign process:
-                # TODO problem if qty_qvailable dont update with quants created
-                stock_qty = used_product.qty_available - \
-                    quant_used.get(used_product, 0.0)
+                stock_qty = used_product.qty_available 
 
                 # -------------------------------------------------------------
                 # Manage mode of use stock: (TODO better available)
                 # -------------------------------------------------------------
                 assign_quantity = 0.0 # To check is was created
-                if mode == 'first_available' and stock_qty:
+                if stock_qty:
                     if stock_qty > order_qty:
                         assign_quantity = order_qty
                         state = 'ready'
@@ -1786,9 +1738,11 @@ class SaleOrderLine(models.Model):
                         'quantity': - assign_quantity,
 
                         # Link field:
-                        'logistic_assigned_id': line.id,
+                        #'logistic_assigned_id': line.id,
                         }            
-                    try:    
+
+                    # TODO manage qants 
+                    """try:    
                         quant_pool.create(data)
                     except:
                         _logger.error('Product is service? [%s - %s]\n%s' % (
@@ -1797,14 +1751,15 @@ class SaleOrderLine(models.Model):
                             sys.exc_info(),
                             ))
                         continue    
+                    """
                     
                     # ---------------------------------------------------------
                     # Save used stock for next elements:
                     # ---------------------------------------------------------
-                    if used_product in quant_used:
-                        quant_used[used_product] += assign_quantity
-                    else:    
-                        quant_used[used_product] = assign_quantity
+                    #if used_product in quant_used:
+                    #    quant_used[used_product] += assign_quantity
+                    #else:    
+                    #    quant_used[used_product] = assign_quantity
                     
                     # Update line if quant created                
                     update_db[line] = {
@@ -1812,17 +1767,14 @@ class SaleOrderLine(models.Model):
                         }
 
                 # -------------------------------------------------------------
-                # TODO manage alternative product here!    
-                # -------------------------------------------------------------
-                
-                # -------------------------------------------------------------
                 # Update similar product in order line (if used):
                 # -------------------------------------------------------------
+                """
                 if state and used_product != product:
                     # Update sale line with information:
                     update_db[line]['linked_mode'] = 'similar'
                     update_db[line]['origin_product_id'] = product.id
-                    update_db[line]['product_id'] = used_product.id
+                    update_db[line]['product_id'] = used_product.id"""
                     
                 if assign_quantity:
                     break # no other product was taken
@@ -1860,12 +1812,8 @@ class SaleOrderLine(models.Model):
             for line in pending_draft:    
                 product = line.product_id
 
-                # A. Kit must be unused state not draft:
-                if product.is_kit:
-                    line.logistic_state = 'unused'
-
                 # B. Service must be ready (not kit)
-                elif product.type == 'service':
+                if product.type == 'service':
                     line.logistic_state = 'ready'
                 
                 # C. Covered with stock: TODO     

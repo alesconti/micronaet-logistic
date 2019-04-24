@@ -157,7 +157,7 @@ class ProductTemplateSupplierStock(models.Model):
         
         if selected_purchase: # found
             if splitted == line:
-                
+                pass # TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
         else:    
             # If previously all saved:
