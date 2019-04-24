@@ -49,7 +49,18 @@ class ProductTemplateSupplierStock(models.Model):
         context = self.env.context
         sale_order_id = context.get('sale_order_id')
         return line_pool.browse(sale_order_id)
-            
+
+    @api.multi
+    def assign_to_purchase_none(self):
+        ''' Remove this supplier
+        '''
+        line = self.get_context_sale_order_object()
+
+        for splitted in line.purchase_split_ids:
+            if splitted.supplier_id == self.supplier_id:
+                splitted.unlink()
+        return True
+        
     @api.multi
     def assign_to_purchase_minus(self):
         ''' Assign -1 to this supplier
@@ -205,13 +216,6 @@ class SaleOrderLinePurchase(models.Model):
     _description = 'Sale purchase line'
     _rec_name = 'line_id'
     
-    @api.model
-    def clean_purchase_selected(self):
-        ''' Remove in readonly mode
-        '''
-        import pdb; pdb.set_trace()
-        return self.unlink()
-
     # -------------------------------------------------------------------------
     # COLUMNS:
     # -------------------------------------------------------------------------
@@ -241,6 +245,22 @@ class SaleOrderLine(models.Model):
             splitted.unlink()
         return True
 
+    @api.multi
+    def _get_purchase_state(self):
+        ''' Return stat of line
+        '''
+        gap = 0.00001
+        for line in self:
+            product_uom_qty = line.product_uom_qty
+            covered_qty = 0.0
+            for purchase in self.purchase_split_ids:
+                covered_qty += purchase.product_uom_qty
+            if abs(covered_qty - product_uom_qty) < gap:
+                line.state_check = True
+            else:    
+                line.state_check = False
+            line.state_qty = covered_qty
+        return
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
@@ -252,6 +272,13 @@ class SaleOrderLine(models.Model):
         )
     purchase_split_ids = fields.One2many(
         'sale.order.line.purchase', 'line_id')
+    state_qty = fields.Float(
+        'Covered q.', digits=dp.get_precision('Product Unit of Measure'),
+        compute='_get_purchase_state', multi=True,
+        ) 
+    state_check = fields.Boolean(
+        'OK', compute='_get_purchase_state', multi=True,
+        ) 
 
 
 class SaleOrder(models.Model):

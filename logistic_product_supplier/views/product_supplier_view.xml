@@ -95,7 +95,11 @@
                      <field name="product_id" />
                      <field name="name" />
                      <field name="product_uom_qty" />
+                     <field name="state_qty" />
                      <field name="purchase_split_ids" />
+                     <button name="dummy" string="" type="object" icon="/logistic_product_supplier/static/src/img/button_red.jpg" attrs="{'invisible': [('state_check','=',True)]}" colspan="1"/>
+                     <button name="dummy" string="" type="object" icon="/logistic_product_supplier/static/src/img/button_green.jpg" attrs="{'invisible': [('state_check','=',False)]}" colspan="1"/>
+                     <field name="state_check" invisible="1"/>
                  </tree>
              </field>
          </record>
@@ -106,30 +110,33 @@
              <field name="arch" type="xml">
                  <form string="Sale line logistic">
                      <header>
+                         <field name="state_check" invisible="1"/>
                      </header>
                      <sheet>
                          <group colspan="4" col="4">
                              <field name="order_id" />
-                             <!--Status line completed!-->
-                             <newline/>
+                             <button name="dummy" string="" type="object" icon="/logistic_product_supplier/static/src/img/button_red.jpg" attrs="{'invisible': [('state_check','=',True)]}" colspan="1"/>
+                             <button name="dummy" string="" type="object" icon="/logistic_product_supplier/static/src/img/button_green.jpg" attrs="{'invisible': [('state_check','=',False)]}" colspan="1"/>
                              
                              <field name="product_id" />                          
                              <field name="name" />
                              
                              <field name="product_uom_qty" />
+                             <field name="state_qty" readonly="1" />
 
                              <separator string="Purchase stock" colspan="4"/>
-                             <field name="product_supplier_ids" nolabel="1" editable="bottom" colspan="4" context="{'sale_order_id': parent.id}">
+                             <field name="product_supplier_ids" nolabel="1" editable="bottom" colspan="4" context="{'sale_order_id': parent.id}" readonly="1">
                                 <tree string="Supplier stock" editable="bottom" decoration-info="best_price==True">
                                     <field name="best_price" invisible="1"/>
                                     <field name="supplier_id" context="{'default_supplier': True}" />
                                     <field name="ipcode" />
                                     <field name="quotation" />
 
-                                    <button name="assign_to_purchase_this" string="this" type="object" context="{'sale_order_id': parent.id}" icon="fa-forward" /><!--class="oe_highlight"-->
                                     <field name="stock_qty" />
+                                    <button name="assign_to_purchase_this" string="this" type="object" context="{'sale_order_id': parent.id}" icon="fa-backward" /><!--class="oe_highlight"-->
                                     <button name="assign_to_purchase_minus" string="-" type="object" context="{'sale_order_id': parent.id}" icon="fa-minus-circle"/>
                                     <button name="assign_to_purchase_plus" string="+" type="object" context="{'sale_order_id': parent.id}" icon="fa-plus-circle"/>
+                                    <button name="assign_to_purchase_none" string="0" type="object" context="{'sale_order_id': parent.id}" icon="fa-bitbucket"/> <!--fa-dot-circle-o-->
                                     <button name="assign_to_purchase_all" string="all" type="object" context="{'sale_order_id': parent.id}" icon="fa-fast-forward"/>
                                 </tree>
                              </field>
@@ -139,9 +146,9 @@
                              <field name="purchase_split_ids" nolabel="1" colspan="4">
                                  <tree name="Purchase reference" editable="bottom">
                                      <field name="supplier_id" readonly="1"/>
-                                     <field name="product_uom_qty" />
+                                     <field name="product_uom_qty" sum="total"/>
                                      <field name="purchase_price" />
-                                     <button name="clean_purchase_selected" string="Clean selected" type="object" icon="fa-bitbucket"/>
+                                     <!--<button name="clean_purchase_selected" string="Clean selected" type="object" icon="fa-bitbucket"/>-->
                                  </tree>
                              </field>
                          </group>
