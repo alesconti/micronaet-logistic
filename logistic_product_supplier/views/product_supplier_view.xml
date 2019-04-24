@@ -143,7 +143,7 @@
                              <button name="clean_all_purchase_selected" string="Clean selection" type="object" colspan="1" confirm="Delete all selection for purchase order?"/>
                              <field name="purchase_split_ids" nolabel="1" colspan="4">
                                  <tree name="Purchase reference" editable="bottom">
-                                     <field name="supplier_id" readonly="1"/>
+                                     <field name="supplier_id" />
                                      <field name="product_uom_qty" sum="total"/>
                                      <field name="purchase_price" />
                                      <!--<button name="clean_purchase_selected" string="Clean selected" type="object" icon="fa-bitbucket"/>-->
