@@ -33,7 +33,7 @@
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_kanban_view"/>
             <field name="arch" type="xml">
-                <field name="product_variant_ids" position="after">
+                <field name="lst_price" position="after">
                     <field name="mmac_url_image"/>
                     <field name="new_image"/>
                 </field>
