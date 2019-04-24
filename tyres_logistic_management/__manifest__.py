@@ -38,12 +38,12 @@
         'purchase',
         'product_folder_image', # For image management
         'excel_export', # Export in Excel
+        'tyres_logistic_ddt',
         #'logistic_stock_position', # Stock position
         #'order_line_explode_kit', # Sale kit explode
         #'order_line_change_product', # Replaced link product
         #'product_default_supplier', # First supplier management
         #'logistic_account_report', # DDT Report
-        #'logistic_ddt', # DDT Extra data
         #'logistic_purchase_export', # Export files
         #'logistic_order_unification', # Order unification
         #'l18n_it_fatturapa', # Fattura PA Management

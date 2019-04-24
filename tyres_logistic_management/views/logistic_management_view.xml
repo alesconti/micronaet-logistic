@@ -137,8 +137,6 @@
 
                      <field name="logistic_unload_id" />
 
-                     <!--<field name="logistic_quant_id" />
-                     <field name="slot_id" />-->
                      <field name="state" invisible="1" />
                  </tree>
              </field>
@@ -307,9 +305,6 @@
                              <notebook colspan="4">
                                  <page string="Logistic">
                                      <group col="4" colspan="4">
-                                         <separator string="Logistic parameters:" colspan="4"/>
-                                         <field name="logistic_location_id" widget="selection" domain="[('usage', '!=', 'view')]"/>                                         
-                                         
                                          <separator string="Output folder:" colspan="4"/>
                                          <field name="logistic_root_folder" colspan="4"/>
                                          
@@ -518,12 +513,12 @@
                                      <field name="logistic_position" nolabel="1" colspan="4"/>
                                  </group>    
                              </page>
-                             <page string="Assigned">
+                             <!--<page string="Assigned">
                                  <group colspan="4" col="4">
                                      <separator string="Assigned from stock:" colspan="4"/>
                                      <field name="assigned_line_ids" nolabel="1" colspan="4"/>
                                  </group>    
-                             </page>
+                             </page>-->
                              <page string="Purchase order">
                                  <group colspan="4" col="4">
                                      <separator string="Supplier purchased:" colspan="4"/>
@@ -540,7 +535,6 @@
                                               <field name="origin" />
                                               <field name="product_uom_qty" />
                                               <field name="location_dest_id" />
-                                              <field name="slot_id" />
                                               <field name="state" />
                                          </tree>                                         
                                      </field>

@@ -1501,7 +1501,7 @@ class SaleOrderLine(models.Model):
                 _('Has delivered qty associated, cannot return!'))            
 
         # 1. Unlink assigned q from stock:
-        self.assigned_line_ids.unlink()
+        #self.assigned_line_ids.unlink()
 
         # 2. Unlink purchase order line:
         for line in self.purchase_line_ids:
@@ -1674,7 +1674,7 @@ class SaleOrderLine(models.Model):
             # Access company parameter from first line
             company = lines[0].order_id.company_id
             
-            location_id = company.logistic_location_id.id
+            location_id = False # TODO remove company.logistic_location_id.id
         else:
             _logger.info('No line ready for assign stock qty')
             return True 
@@ -2060,12 +2060,12 @@ class SaleOrderLine(models.Model):
                 # -------------------------------------------------------------
                 # TODO remove:
                 logistic_covered_qty = 0.0
-                for quant in line.assigned_line_ids:
-                    logistic_covered_qty -= quant.quantity
-                    logistic_position += _('[MAG] Q. %s > %s\n') % (
-                        -quant.quantity,
-                        product.default_slot_id.name or ''
-                        )
+                #for quant in line.assigned_line_ids:
+                #    logistic_covered_qty -= quant.quantity
+                #    logistic_position += _('[MAG] Q. %s > %s\n') % (
+                #        -quant.quantity,
+                #        product.default_slot_id.name or ''
+                #        )
                 line.logistic_covered_qty = logistic_covered_qty
                 
                 # State valuation:
@@ -2167,10 +2167,10 @@ class SaleOrderLine(models.Model):
 
     # A. Assigned stock:
     # TODO remove:
-    assigned_line_ids = fields.One2many(
-        'stock.quant', 'logistic_assigned_id', 'Assign from stock',
-        help='Assign all this q. to this line (usually one2one',
-        )
+    #assigned_line_ids = fields.One2many(
+    #    'stock.quant', 'logistic_assigned_id', 'Assign from stock',
+    #    help='Assign all this q. to this line (usually one2one',
+    #    )
 
     # B. Purchased:
     purchase_line_ids = fields.One2many(
