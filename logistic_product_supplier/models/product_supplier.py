@@ -113,6 +113,9 @@ class ProductTemplateSupplierStock(models.Model):
                 current_line = splitted
             current_qty += splitted.product_uom_qty
 
+        if (current_qty + 1.0) > product_uom_qty:
+            raise exceptions.Warning('All covered!')
+
         if current_line:
             used_qty = current_line.product_uom_qty + 1.0
         else:
@@ -121,9 +124,6 @@ class ProductTemplateSupplierStock(models.Model):
             raise exceptions.Warning(
                 'Stock not available to cover! [%s < %s]' % (
                     stock_qty, product_uom_qty))
-                
-        if (current_qty + 1.0) > product_uom_qty:
-            raise exceptions.Warning('All covered!')
 
         if current_line: # Update:
             current_line.write({
