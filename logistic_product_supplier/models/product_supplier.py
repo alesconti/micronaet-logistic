@@ -115,12 +115,12 @@ class ProductTemplateSupplierStock(models.Model):
 
         if current_line:
             used_qty = current_line.product_uom_qty + 1.0
-            if used_qty > stock_qty:
-                raise exceptions.Warning(
-                    'Stock not available to cover! [%s < %s]' % (
-                        stock_qty, product_uom_qty))
         else:
             used_qty = 1.0     
+        if used_qty > stock_qty:
+            raise exceptions.Warning(
+                'Stock not available to cover! [%s < %s]' % (
+                    stock_qty, product_uom_qty))
                 
         if (current_qty + 1.0) > product_uom_qty:
             raise exceptions.Warning('All covered!')
