@@ -1280,7 +1280,6 @@ class SaleOrder(models.Model):
 
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft, new order received
-        #('payment', 'Payment confirmed'), # Payment confirmed
         
         # Start automation:
         ('order', 'Order confirmed'), # Quotation transformed in order
@@ -1485,75 +1484,11 @@ class SaleOrderLine(models.Model):
             }
 
     # -------------------------------------------------------------------------
-    #                   WORKFLOW: [LAVORATION OPERATION TRIGGER]
-    # -------------------------------------------------------------------------        
-    # A. Draft > Progress
-    # TODO remove:
-    """
-    @api.multi
-    def workflow_mrp_draft_to_progress(self):
-        ''' Update mrp_state
-        '''
-        for line in self:
-            self.mrp_state = 'progress'
-        
-    # B. Progress > Done
-    def workflow_mrp_progress_to_done(self):
-        ''' Update mrp_state
-        '''
-        line_pool = self.env['sale.order.line']
-        
-        #line_ids = []
-        for line in self:
-            #line_ids.append(line.id)
-            line.mrp_state = 'done'
-            
-            # Update also logistic state to ready:
-            line.logistic_state = 'ready'
-            
-        # Check master order (reload lines for updated status):
-        #sale_lines = line_pool.browse(line_ids)
-        line_pool.logistic_check_ready_order(self)#sale_lines)
-    """
-
-    # -------------------------------------------------------------------------    
-
-    # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
     # -------------------------------------------------------------------------
-    # ---------------------------------------------------------------------
-    #                          PARTICULAR CASES:
-    # ---------------------------------------------------------------------
-    '''
-    # Note: Work only if start this procedure with data!
-    pending_draft = self.search([
-        ('order_id.logistic_state', '=', 'pending'),
-        ('logistic_state', '=', 'draft'),
-        ])
-    if pending_draft:    
-        _logger.error(
-            'Pending order with draft movements: %s' % len(pending_draft))
-        for line in pending_draft:    
-            product = line.product_id
-
-            # B. Service must be ready (not kit)
-            if product.type == 'service':
-                line.logistic_state = 'ready'
-            
-            # C. Covered with stock: TODO     
-
-            # END: Add this order to the check state order:
-            if line.order_id not in selected_order:
-                selected_order.append(line.order_id)                
-        
-        # Note: Particular cases for line with standard procedure will be 
-        #       updata also order logistic state (see after):        
-        # ---------------------------------------------------------------------
-    '''
-    
     # A. Assign available q.ty in stock assign a stock movement / quants
     @api.model
-    def workflow_uncovered_pending(self):
+    def workflow_order_pending(self):
         ''' Logistic phase 2:            
             Order remain uncovered qty to the default supplier            
             Generate purchase order to supplier linked to product
@@ -1569,16 +1504,12 @@ class SaleOrderLine(models.Model):
 
         # Note: Update only pending order with uncovered lines
         lines = self.search([
-            # Filter logistic state:
+            # Header:
             ('order_id.logistic_state', '=', 'pending'),
-            
-            # Filter line state:
-            ('logistic_state', '=', 'uncovered'),
-
-            # Not select lavoration line:
-            ##('mrp_state', '=', False),
+            # Line:
+            ('logistic_state', '=', 'draft'),
             ])
-
+            
         # ---------------------------------------------------------------------
         # Parameter from company:
         # ---------------------------------------------------------------------
@@ -1940,7 +1871,7 @@ class SaleOrderLine(models.Model):
     
     # State (sort of workflow):
     logistic_state = fields.Selection([
-        ('unused', 'Unused'), # Line not managed
+        #('unused', 'Unused'), # Line not managed
     
         ('draft', 'Custom order'), # Draft, customer order
         ('uncovered', 'Uncovered'), # Not covered with stock

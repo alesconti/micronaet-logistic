@@ -59,7 +59,7 @@ class StockChangeStandardPrice(models.TransientModel):
         ''' D. Generate purchase order for not cover qty
         '''
         line_pool = self.env['sale.order.line']       
-        return line_pool.workflow_uncovered_pending()
+        return line_pool.workflow_order_pending()
 
     @api.multi
     def confirm_generated_purchase(self):
@@ -69,6 +69,7 @@ class StockChangeStandardPrice(models.TransientModel):
         purchases = purchase_pool.search([
             ('logistic_state', '=', 'draft'),
             ])
+            
         # Lauch action button for change state and export:    
         return purchases.set_logistic_state_confirmed()
 
