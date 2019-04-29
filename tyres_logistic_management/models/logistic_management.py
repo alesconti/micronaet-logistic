@@ -1520,66 +1520,38 @@ class SaleOrderLine(models.Model):
             return True
 
         # ---------------------------------------------------------------------
-        #                 Check if order are present:
-        # ---------------------------------------------------------------------
-        purchase_pending = {}
-        for purchase in purchase_pool.search([
-                ('logistic_state', '=', 'draft'),
-                ]):
-            supplier_id = purchase.partner_id.id
-            if supplier_id not in purchase_pending:
-                purchase_pending[supplier_id] = purchase.id # link ID
-
-        # ---------------------------------------------------------------------
         #                 Collect data for purchase order:
         # ---------------------------------------------------------------------
-        order_touched_ids = [] # For ending extra operations (linked to order)
         purchase_db = {} # supplier is the key
         for line in lines:
             product = line.product_id
             supplier = product.default_supplier_id
             
-            # Collect order touched:
-            order_id = line.order_id.id
-            if order_id not in order_touched_ids:
-                order_touched_ids.append(order_id)
-             
             # Update supplier purchase:    
-            if supplier not in purchase_db:
-                purchase_db[supplier] = []
-            purchase_db[supplier].append(line)
+            key = (supplier, order)
+            if key not in purchase_db:
+                purchase_db[key] = []
+            purchase_db[key].append(line)
 
         selected_ids = [] # ID: to return view list
         
-        # 15 gen 2019: Cause a strange case there's some uncovered line
-        # but covered with stock, change here the availabilty
-        for supplier in purchase_db:
+        for key in purchase_db:
+            supplier, order = key
+            
             # -----------------------------------------------------------------
             # Create details:
             # -----------------------------------------------------------------
             purchase_id = False
             is_company_parner = supplier == company.partner_id
-            for line in purchase_db[supplier]:
+            for line in purchase_db[key]:
                 product = line.product_id
-
-                # -------------------------------------------------------------
-                # Lavoration order
-                # -------------------------------------------------------------
-                # TODO remove
-                if is_company_parner and product.type == 'service':
-                    line.mrp_state = 'draft' # put in lavoration state
-                    continue
-
-                # -------------------------------------------------------------
-                # Use stock to cover order:
-                # -------------------------------------------------------------
                 if not product:
                     continue
 
                 purchase_qty = line.logistic_uncovered_qty
                 if purchase_qty <= 0.0:
                     # ---------------------------------------------------------
-                    # Bugfix (close yet covered order:
+                    # Bugfix (close yet covered order):
                     # ---------------------------------------------------------
                     if line.logistic_covered_qty == line.product_uom_qty:
                         line.logistic_state = 'ready'
@@ -1593,17 +1565,15 @@ class SaleOrderLine(models.Model):
                 # TODO if order was deleted restore logistic_state to uncovered
                 if not purchase_id:
                     partner = supplier or company.partner_id # Use company 
-                    if partner.id in purchase_pending:
-                        purchase_id = purchase_pending[partner.id]
-                    else:
-                        purchase_id = purchase_pool.create({
-                            'partner_id': partner.id,
-                            'date_order': now,
-                            'date_planned': now,
-                            #'name': # TODO counter?
-                            #'partner_ref': '',
-                            #'logistic_state': 'draft',
-                            }).id
+                    purchase_id = purchase_pool.create({
+                        'partner_id': partner.id,
+                        'date_order': now,
+                        'date_planned': now,
+                        #'name': # TODO counter?
+                        #'partner_ref': '',
+                        #'logistic_state': 'draft',
+                        }).id
+
                     selected_ids.append(purchase_id)
 
                 purchase_line_pool.create({
@@ -1621,19 +1591,7 @@ class SaleOrderLine(models.Model):
 
                 # Update line state:    
                 line.logistic_state = 'ordered' # XXX needed?
-        
-        # Bug: Close order pending but ready (nothing passed = check all)
-        closed_order_ids = self.logistic_check_ready_order()
-        
-        # Check if some order linkable to other present with same partner:        
-        if closed_order_ids:
-            _logger.warning('Order touched: %s' % len(order_touched_ids))
-            order_touched_ids = tuple(
-                set(order_touched_ids) - set(closed_order_ids))
-            _logger.warning('Order touched real: %s' % len(order_touched_ids))
-            
-        #sale_pool.sale_order_unificate_same_partner(order_touched_ids)        
-        
+
         # Return view:
         return purchase_pool.return_purchase_order_list_view(selected_ids)
 
