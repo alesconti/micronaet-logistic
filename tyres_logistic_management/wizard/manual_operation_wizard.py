@@ -53,13 +53,6 @@ class StockChangeStandardPrice(models.TransientModel):
         order_pool = self.env['sale.order']
         return order_pool.workflow_draft_to_order()
 
-    #@api.multi
-    #def confirm_order(self):
-    #    ''' B. Confirm quotation in order (explode kit)
-    #    '''
-    #    order_pool = self.env['sale.order']
-    #    return order_pool.workflow_payment_to_order()
-
     @api.multi
     def assign_stock(self):
         ''' C. Assign stock product to open orders
