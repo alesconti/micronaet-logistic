@@ -1521,221 +1521,35 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
     # -------------------------------------------------------------------------
-    # A. Assign available q.ty in stock assign a stock movement / quants
-    # TODO change (remove quants)
-    @api.model
-    def workflow_order_to_uncovered(self):
-        ''' Logistic phase 3:
-            Assign stock q. available to order product creating a 
-            stock.move or stock.quant movement 
-            Evaluate also if we can use alternative product
-        '''
-        now = fields.Datetime.now()
-
-        product_pool = self.env['product.product']
-        quant_pool = self.env['stock.quant']
-        sale_pool = self.env['sale.order']
-        lines = self.search([
-            ('order_id.logistic_state', '=', 'order'), # Logistic state
-            ('logistic_state', '=', 'draft'),
-            ])
-
-        # ---------------------------------------------------------------------
-        # Load parameter from company setup:
-        # ---------------------------------------------------------------------
-        if lines:
-            # Access company parameter from first line
-            company = lines[0].order_id.company_id
-            
-            location_id = False # TODO remove company.logistic_location_id.id
-        else:
-            _logger.info('No line ready for assign stock qty')
-            return True 
-
-        # ---------------------------------------------------------------------
-        # Parameter: Sort options:
-        # ---------------------------------------------------------------------
-        sorted_line = sorted(lines, key=lambda x: x.order_id.create_date)
-            
-        # ---------------------------------------------------------------------
-        #                  Modify sale order line status:
-        # ---------------------------------------------------------------------
-        update_db = {} # Line to be updated
-        #sale_line_ready = [] # To check if order also is ready
-
-        # This fix a bug because stock status don't update immediately
-        #quant_used = {} # product quant used during process
-        
-        order_touched_ids = [] # For end operation (dropship, default suppl.)
-        for line in sorted_line:
-            # Update touched order list:
-            if line.order_id.id not in order_touched_ids:
-                order_touched_ids.append(line.order_id.id)
-            
+    # ---------------------------------------------------------------------
+    #                          PARTICULAR CASES:
+    # ---------------------------------------------------------------------
+    '''
+    # Note: Work only if start this procedure with data!
+    pending_draft = self.search([
+        ('order_id.logistic_state', '=', 'pending'),
+        ('logistic_state', '=', 'draft'),
+        ])
+    if pending_draft:    
+        _logger.error(
+            'Pending order with draft movements: %s' % len(pending_draft))
+        for line in pending_draft:    
             product = line.product_id
-            order_qty = line.product_uom_qty
+
+            # B. Service must be ready (not kit)
+            if product.type == 'service':
+                line.logistic_state = 'ready'
             
-            # -----------------------------------------------------------------
-            # Similar pool generate:
-            # -----------------------------------------------------------------
-            product_list = [product] # Start list first with this product
-            
-            # -----------------------------------------------------------------
-            # Use stock to cover order:
-            # -----------------------------------------------------------------
-            state = False # Used for check if used some pool product            
-            for used_product in product_list: # p.p similar
-                stock_qty = used_product.qty_available 
+            # C. Covered with stock: TODO     
 
-                # -------------------------------------------------------------
-                # Manage mode of use stock: (TODO better available)
-                # -------------------------------------------------------------
-                assign_quantity = 0.0 # To check is was created
-                if stock_qty:
-                    if stock_qty > order_qty:
-                        assign_quantity = order_qty
-                        state = 'ready'
-                        #sale_line_ready.append(line)
-                    else:    
-                        assign_quantity = stock_qty
-                        state = 'uncovered'
-
-                    company = line.order_id.company_id # XXX
-                    data = {
-                        'company_id': company.id,
-                        'in_date': now,
-                        'location_id': location_id,
-                        'product_id': used_product.id,
-                        #'product_tmpl_id': used_product.product_tmpl_id.id,
-                        #'lot_id' #'package_id'
-                        'quantity': - assign_quantity,
-
-                        # Link field:
-                        #'logistic_assigned_id': line.id,
-                        }            
-
-                    # TODO manage qants 
-                    """try:    
-                        quant_pool.create(data)
-                    except:
-                        _logger.error('Product is service? [%s - %s]\n%s' % (
-                            used_product.product_tmpl_id.default_code or '',
-                            used_product.name,
-                            sys.exc_info(),
-                            ))
-                        continue    
-                    """
-                    
-                    # ---------------------------------------------------------
-                    # Save used stock for next elements:
-                    # ---------------------------------------------------------
-                    #if used_product in quant_used:
-                    #    quant_used[used_product] += assign_quantity
-                    #else:    
-                    #    quant_used[used_product] = assign_quantity
-                    
-                    # Update line if quant created                
-                    update_db[line] = {
-                        'logistic_state': state,
-                        }
-
-                # -------------------------------------------------------------
-                # Update similar product in order line (if used):
-                # -------------------------------------------------------------
-                """
-                if state and used_product != product:
-                    # Update sale line with information:
-                    update_db[line]['linked_mode'] = 'similar'
-                    update_db[line]['origin_product_id'] = product.id
-                    update_db[line]['product_id'] = used_product.id"""
-                    
-                if assign_quantity:
-                    break # no other product was taken
-                    
-            # -----------------------------------------------------------------
-            # No stock passed in uncovered state:
-            # -----------------------------------------------------------------
-            if line not in update_db:
-                update_db[line] = {
-                    'logistic_state': 'uncovered',
-                    }
-
-        # ---------------------------------------------------------------------
-        # Update sale line state:
-        # ---------------------------------------------------------------------
-        selected_ids = [] # ID, to return view list
-        selected_order = [] # Obj, to update master order status
-        for line in update_db:
-            line.write(update_db[line])
-            selected_ids.append(line.id)
+            # END: Add this order to the check state order:
             if line.order_id not in selected_order:
                 selected_order.append(line.order_id)                
-
-        # ---------------------------------------------------------------------
-        #                          PARTICULAR CASES:
-        # ---------------------------------------------------------------------
-        # Note: Work only if start this procedure with data!
-        pending_draft = self.search([
-            ('order_id.logistic_state', '=', 'pending'),
-            ('logistic_state', '=', 'draft'),
-            ])
-        if pending_draft:    
-            _logger.error(
-                'Pending order with draft movements: %s' % len(pending_draft))
-            for line in pending_draft:    
-                product = line.product_id
-
-                # B. Service must be ready (not kit)
-                if product.type == 'service':
-                    line.logistic_state = 'ready'
-                
-                # C. Covered with stock: TODO     
-
-                # END: Add this order to the check state order:
-                if line.order_id not in selected_order:
-                    selected_order.append(line.order_id)                
         
         # Note: Particular cases for line with standard procedure will be 
         #       updata also order logistic state (see after):        
         # ---------------------------------------------------------------------
-
-
-        # ---------------------------------------------------------------------
-        # Update order to ready / pending status:
-        # ---------------------------------------------------------------------
-        # TODO line_pool.logistic_check_ready_order(sale_line_ready)     
-        all_ready = set(['ready'])
-        for order in selected_order:
-            # Generate list of line state, jump not used:                
-            line_logistic_state = [
-                line.logistic_state for line in order.order_line \
-                    if line.logistic_state != 'unused']
-                    
-            # -----------------------------------------------------------------        
-            # Update order state depend on all line:        
-            # -----------------------------------------------------------------        
-            if all_ready == set(line_logistic_state):
-                order.logistic_state = 'ready'
-            else: # All other order stay in pending state:
-                order.logistic_state = 'pending'
-            # TODO Manage Dropshipping!!    
-
-
-        # Sale order still in pending state so no update of logistic status        
-        # ---------------------------------------------------------------------
-        # Mark sale order with extra information:
-        # ---------------------------------------------------------------------        
-        # Dropshipping # TODO spostare da qui altrimenti crea l'ordine acquisto
-        #sale_order.check_dropshipping_order(order_touched_ids)    
-        # TODO Mettere prima dell'assegnamento magazzino ed eventualmente n
-        # non fare quello!!!!!!!!
-        
-        # Default supplier
-        _logger.warning('Assign default supplier for order')
-        #sale_pool.mark_default_supplier_order(order_touched_ids)        
-
-        # Return view:
-        return self.return_order_line_list_view(selected_ids)
+    '''
     
     # A. Assign available q.ty in stock assign a stock movement / quants
     @api.model

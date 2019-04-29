@@ -53,13 +53,6 @@ class StockChangeStandardPrice(models.TransientModel):
         order_pool = self.env['sale.order']
         return order_pool.workflow_draft_to_order()
 
-    @api.multi
-    def assign_stock(self):
-        ''' C. Assign stock product to open orders
-        '''
-        line_pool = self.env['sale.order.line']
-        return line_pool.workflow_order_to_uncovered()
-
     # Purchase phase:
     @api.multi
     def generate_purchase(self):
