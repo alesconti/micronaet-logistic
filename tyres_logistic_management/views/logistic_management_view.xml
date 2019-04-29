@@ -25,7 +25,7 @@
 
         <!--product.template-->
         <!--TODO raise an error:-->
-        <!--<record model="ir.ui.view" id="view_product_template_kit_page_form">
+        <record model="ir.ui.view" id="view_product_template_kit_page_form">
             <field name="name">product.template.form</field>
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_form_view"/>
@@ -37,7 +37,7 @@
                     </div>
                 </xpath>
             </field>       
-         </record>-->
+         </record>
          
          <record model="ir.actions.act_window" id="action_product_template_form">
              <field name="name">Product template</field>
@@ -337,9 +337,9 @@
              <field name="model">sale.order</field>
              <field name="inherit_id" ref="sale.view_order_form"/>
              <field name="arch" type="xml">
-                 <field name="payment_term_id" position="after">
+                 <!--<field name="payment_term_id" position="after">
                      <field name="default_supplier_id" />
-                 </field>
+                 </field>-->
                  <xpath expr="//page[1]" position="after">
                      <page string="Picking">
                          <group colspan="4" col="4">
@@ -481,7 +481,7 @@
              <field name="priority" eval="40" />
              <field name="arch" type="xml">
                  <form string="Sale line logistic">
-                     <header>                           
+                     <header> 
                              <field name="logistic_state" widget="statusbar"  />                         
                      </header>
                      <sheet>
@@ -508,12 +508,12 @@
                                      <field name="logistic_undelivered_qty" />
                                  </group>    
                              </page>                         
-                             <page string="Position">
+                             <!--<page string="Position">
                                  <group colspan="4" col="4">
                                      <separator string="Stock position:" colspan="4"/>
                                      <field name="logistic_position" nolabel="1" colspan="4"/>
                                  </group>    
-                             </page>
+                             </page>-->
                              <!--<page string="Assigned">
                                  <group colspan="4" col="4">
                                      <separator string="Assigned from stock:" colspan="4"/>

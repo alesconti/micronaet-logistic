@@ -960,6 +960,17 @@ class SaleOrder(models.Model):
         return self.env['sale.order.line'].return_order_line_list_view(
             line_ids)
 
+    @api.multi
+    def workflow_manual_order_pending(self):
+        ''' If order have all line checked make one step in pending state
+        '''
+        for line in self.order_line:
+            if not line.state_check:
+                raise exceptions.UserError(
+                _('Not all line are mapped to supplier!'))                
+        self.logistic_state = 'pending'
+        return True
+
     # -------------------------------------------------------------------------
     #                           UTILITY:
     # -------------------------------------------------------------------------
@@ -1355,6 +1366,15 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     #                           BUTTON EVENT:
     # -------------------------------------------------------------------------
+    @api.multi
+    def workflow_manual_order_line_pending(self):
+        ''' When order are in 'order' state and all supplier will be choosen
+            The operator put the order in 'pending' state to be evaluated 
+            and the next step create the order as setup in the line
+            >> after: workflow_order_pending
+        '''        
+        return self.order_id.workflow_manual_order_pending()
+    
     @api.multi
     def chain_broken_purchase_line(self):
         ''' Order undo line:

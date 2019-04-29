@@ -33,6 +33,7 @@
     'depends': [
         'stock',
         'sale',
+        'product',
         ],
     'data': [
         'security/ir.model.access.csv',

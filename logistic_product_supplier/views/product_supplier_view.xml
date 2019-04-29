@@ -80,6 +80,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//header/button[1]" position="before">
                     <button name="purchase_management_button" string="Purchase Management" type="object" />
+                    <button name="workflow_manual_order_pending" string="Go in purchase" type="object" attrs="{'invisible': [('logistic_state','!=','order')]}"/>
                 </xpath>
             </field>
         </record>    
@@ -108,6 +109,7 @@
              <field name="arch" type="xml">
                  <form string="Sale line logistic">
                      <header>
+                         <button name="workflow_manual_order_line_pending" string="Go in purchase" type="object" attrs="{'invisible': [('order_id.logistic_state','!=','order')]}"/>
                          <field name="state_check" invisible="1"/>
                      </header>
                      <sheet>
