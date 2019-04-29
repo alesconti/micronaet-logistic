@@ -90,8 +90,7 @@ class ProductTemplateSupplierStock(models.Model):
             current_line.write({
                 'purchase_price': self.quotation,
                 'product_uom_qty': new_qty,
-                })
-                
+                })                
         return True
 
     @api.multi
@@ -123,7 +122,7 @@ class ProductTemplateSupplierStock(models.Model):
         else:
             used_qty = 1.0     
                 
-        if (current_qty + 1) > product_uom_qty:
+        if (current_qty + 1.0) > product_uom_qty:
             raise exceptions.Warning('All covered!')
 
         if current_line: # Update:
