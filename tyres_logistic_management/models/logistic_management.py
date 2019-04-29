@@ -1050,7 +1050,7 @@ class SaleOrder(models.Model):
     # A. Logistic phase 1: Check secure payment:
     # -------------------------------------------------------------------------    
     @api.model
-    def workflow_draft_to_payment(self):
+    def workflow_draft_to_order(self):
         ''' Assign logistic_state to secure order
         '''
         _logger.info('New order: Start analysis')
@@ -1113,34 +1113,10 @@ class SaleOrder(models.Model):
         for order in payment_order:
             select_ids.append(order.id)
             order.payment_done = True
-            order.logistic_state = 'payment'
+            order.logistic_state = 'order'
 
         # Return view tree:
         return self.return_order_list_view(select_ids)
-
-    # -------------------------------------------------------------------------
-    # B. Logistic phase 2: payment > order
-    # -------------------------------------------------------------------------
-    @api.model
-    def workflow_payment_to_order(self):
-        ''' Confirm payment order (before expand kit)
-        '''
-        orders = self.search([
-            ('logistic_state', '=', 'payment'),
-            ])
-        selected_ids = []
-        for order in orders:    
-            selected_ids.append(order.id)
-            # A. Generate sub-elements from kit:
-            order.explode_kit_in_order_line()
-
-            # C. Became real order:
-            order.logistic_state = 'order'
-
-        # Update default supplier for exploded component:
-        
-        # Return view:
-        return self.return_order_list_view(selected_ids)
 
     # State (sort of workflow):
     # TODO
@@ -1304,7 +1280,7 @@ class SaleOrder(models.Model):
 
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft, new order received
-        ('payment', 'Payment confirmed'), # Payment confirmed
+        #('payment', 'Payment confirmed'), # Payment confirmed
         
         # Start automation:
         ('order', 'Order confirmed'), # Quotation transformed in order

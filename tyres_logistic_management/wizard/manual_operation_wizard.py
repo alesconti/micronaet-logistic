@@ -51,14 +51,14 @@ class StockChangeStandardPrice(models.TransientModel):
         ''' A. Confirm draft order if payment is secure
         '''
         order_pool = self.env['sale.order']
-        return order_pool.workflow_draft_to_payment()
+        return order_pool.workflow_draft_to_order()
 
-    @api.multi
-    def confirm_order(self):
-        ''' B. Confirm quotation in order (explode kit)
-        '''
-        order_pool = self.env['sale.order']
-        return order_pool.workflow_payment_to_order()
+    #@api.multi
+    #def confirm_order(self):
+    #    ''' B. Confirm quotation in order (explode kit)
+    #    '''
+    #    order_pool = self.env['sale.order']
+    #    return order_pool.workflow_payment_to_order()
 
     @api.multi
     def assign_stock(self):

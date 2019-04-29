@@ -14,10 +14,10 @@
                           <separator string="A. Confirm payment on new order:"/>
                           <button name="confirm_payment" string="Confirm _payment" type="object" class="btn-primary" />
                       </group>    
-                      <group colspan="4" col="2">
+                      <!--<group colspan="4" col="2">
                           <separator string="B. Confirm payed order:"/>
                           <button name="confirm_order" string="_Confirm order" type="object" class="btn-primary" />
-                      </group>    
+                      </group>-->
                       <group colspan="4" col="2">
                           <separator string="C. Assign stock to order:"/>
                           <button name="assign_stock" string="_Assign stock" type="object" class="btn-primary" />
