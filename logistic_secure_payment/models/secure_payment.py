@@ -56,8 +56,8 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------    
     @api.multi
     def payment_is_done(self):
-        ''' Update payment field done
-        '''
+        """ Update payment field done
+        """
         self.payment_done = True
         return True
         

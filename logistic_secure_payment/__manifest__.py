@@ -35,7 +35,6 @@
         'account',
         'sale',
         'sales_team',
-        #'crm',
         ],
     'data': [
         'security/ir.model.access.csv',
