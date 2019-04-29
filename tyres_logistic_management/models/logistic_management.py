@@ -1015,60 +1015,6 @@ class SaleOrder(models.Model):
             'nodestroy': False,
             }
 
-    # TODO not used:
-    """
-    @api.model
-    def check_product_first_supplier(self):
-        ''' Update product without first supplier:
-        '''
-        log_message = True # TODO change
-        line_pool = self.env['sale.order.line']
-        template_pool = self.env['product.template']
-        
-        lines = line_pool.search([
-            ('order_id.logistic_state', '=', 'draft'), # Draft order
-            ('product_id.default_supplier_id', '=', False), # No first supplier
-            ('product_id.is_kit', '=', False), # No kit line
-            ('product_id.type', '!=', 'service'), # No service product
-            ])
-        _logger.info('New order: generate first supplier [# %s]' % len(lines))
-        template_ids = []
-        update_ids = []
-        for line in lines:
-            template = line.product_id.product_tmpl_id            
-            if template.id in template_ids:
-                continue
-            template_ids.append(template.id)
-            try:
-                update_ids.append(template.id)
-                template.get_default_supplier_from_code()
-            except:
-                pass    
-            
-        # Check updated record:
-        templates = template_pool.search([
-            ('id', 'in', update_ids), # Updated lines:
-            ('default_supplier_id', '=', False), # Not updated
-            ])
-        res = ''    
-        for template in templates:
-            res += '%s<br/>' % template.default_code
-            
-        if log_message and res:
-            mail_pool = self.env['mail.thread']
-            body = _(
-                '''<div class="o_mail_notification">
-                    First supplier not found:<br/>
-                    %s
-                    </div>''') % res
-
-            mail_pool.sudo().message_post(
-                body=body, 
-                message_type='notification', 
-                subject=_('Default supplier not found'),
-                )
-        return True"""
-    
     def check_empty_orders(self):
         ''' Mark empty order as unused
         '''
@@ -1089,59 +1035,14 @@ class SaleOrder(models.Model):
         lines = line_pool.search([
             ('order_id.logistic_state', '=', 'draft'), # Draft order
             ('logistic_state', '=', 'draft'), # Draft line
-            ('product_id.type', '=', 'service'), # Direct ready
-            ('product_id.is_expence', '=', True), # Direct ready
+             # Direct ready:
+            ('product_id.type', '=', 'service'),
+            ('product_id.is_expence', '=', True),
             ])
         _logger.info('New order: Check product-service [# %s]' % len(lines))
         return lines.write({
             'logistic_state': 'ready', # immediately ready
             })
-
-    # TODO not used:
-    """
-    # Sale order mark default supplier:
-    @api.model
-    def mark_default_supplier_order(self, order_ids):
-        ''' Mark default supplier
-        '''
-        for order in self.browse(order_ids):
-            supplier_total = {}
-            for line in order.order_line:               
-                product = line.product_id
-
-                # -------------------------------------------------------------
-                # No dropship clause (check before expence):
-                # -------------------------------------------------------------
-                # Internal = Company supplier: XXX not considered
-                #if line.mrp_state:
-                
-                # -------------------------------------------------------------
-                # Jump line:
-                # -------------------------------------------------------------
-                # Expence product: (service # TODO after only is_expence)
-                if product.type == 'service' or product.is_expence:
-                    continue
-
-                # Kit line:
-                if line.logistic_state == 'unused': 
-                    continue
-
-                # -------------------------------------------------------------
-                # Supplier check:
-                # -------------------------------------------------------------
-                supplier_id = product.default_supplier_id.id
-                if supplier_id not in supplier_total:
-                    supplier_total[supplier_id] = 1
-                else:    
-                    supplier_total[supplier_id] += 1
-            
-            if supplier_total:        
-                better_supplier = sorted(
-                    supplier_total, 
-                    key=lambda x: supplier_total[x], reverse=True,
-                    )
-                order.default_supplier_id = better_supplier[0]
-        return True"""
 
     # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
@@ -1163,10 +1064,6 @@ class SaleOrder(models.Model):
         # Payment article (not kit now):
         _logger.info('Check: Mark service line to ready (not lavoration)')
         self.check_product_service() # Line with service article (not used)
-        
-        # Update supplier if present:
-        #_logger.info('Check: Generate first supplier if not present')
-        #self.check_product_first_supplier()
         
         # ---------------------------------------------------------------------
         # Start order payment check:
