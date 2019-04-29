@@ -65,32 +65,66 @@ class ProductTemplateSupplierStock(models.Model):
     def assign_to_purchase_minus(self):
         ''' Assign -1 to this supplier
         '''
+        sale_pool = self.env['sale.order.line']
+        purchase_pool = self.env['sale.order.line.purchase']
+        
+        # Current sale line:
         line = self.get_context_sale_order_object()
+
+        product_uom_qty = line.product_uom_qty
+        stock_qty = self.stock_qty
+
+        current_qty = 0.0
+        current_line = False   
+        for splitted in line.purchase_split_ids:
+            if splitted.supplier_id == self.supplier_id:
+                current_line = splitted
+            current_qty += splitted.product_uom_qty
+        if not current_line or current_qty < 1:
+            raise exceptions.Warning('Nothing to remove')
+
+        new_qty = current_line.product_uom_qty - 1.0
+        if new_qty <= 0.0:
+            current_line.unlink()
+        elif current_line: # Update:
+            current_line.write({
+                'purchase_price': self.quotation,
+                'product_uom_qty': new_qty,
+                })
+                
         return True
 
     @api.multi
     def assign_to_purchase_plus(self):
         ''' Assign +1 to this supplier
         '''
-        line = self.get_context_sale_order_object()
+        sale_pool = self.env['sale.order.line']
+        purchase_pool = self.env['sale.order.line.purchase']
         
+        # Current sale line:
+        line = self.get_context_sale_order_object()
         product_uom_qty = line.product_uom_qty
         stock_qty = self.stock_qty
 
-        current_qty = 0.0     
+        current_qty = 0.0
         current_line = False   
+
         for splitted in line.purchase_split_ids:
-            current_qty += splitted.product_uom_qty
             if splitted.supplier_id == self.supplier_id:
                 current_line = splitted
-        
-        # Check if stock cover remain:
-        if stock_qty >= current_qty:
-            used_qty = current_qty
+            current_qty += splitted.product_uom_qty
+
+        if current_line:
+            used_qty = current_line.product_uom_qty + 1.0
+            if used_qty > stock_qty:
+                raise exceptions.Warning(
+                    'Stock not available to cover! [%s < %s]' % (
+                        stock_qty, product_uom_qty))
         else:
-            used_qty = stock_qty
-        if used_qty <= 0:    
-            return True
+            used_qty = 1.0     
+                
+        if (current_qty + 1) > product_uom_qty:
+            raise exceptions.Warning('All covered!')
 
         if current_line: # Update:
             current_line.write({
