@@ -1542,6 +1542,7 @@ class SaleOrderLine(models.Model):
             # Access company parameter from first line
             company = lines[0].order_id.company_id
         else: # No lines found:
+            _logger.warning('No pending line to order!')
             return True
 
         # ---------------------------------------------------------------------
@@ -1550,16 +1551,16 @@ class SaleOrderLine(models.Model):
         purchase_db = {} # supplier is the key
         for line in lines:
             product = line.product_id
-            supplier = False# TODO product.default_supplier_id
+            for splitted in line.purchase_split_ids:
+                supplier = splitted.supplier_id
             
-            # Update supplier purchase:    
-            key = (supplier, order)
-            if key not in purchase_db:
-                purchase_db[key] = []
-            purchase_db[key].append(line)
+                # Update supplier purchase:    
+                key = (supplier, order)
+                if key not in purchase_db:
+                    purchase_db[key] = []
+                purchase_db[key].append(splitted)
 
-        selected_ids = [] # ID: to return view list
-        
+        selected_ids = [] # ID: to return view list        
         for key in purchase_db:
             supplier, order = key
             
@@ -1567,13 +1568,14 @@ class SaleOrderLine(models.Model):
             # Create details:
             # -----------------------------------------------------------------
             purchase_id = False
-            is_company_parner = supplier == company.partner_id
+            is_company_parner = (supplier == company.partner_id)
             for line in purchase_db[key]:
-                product = line.product_id
+                product = line.line_id.product_id
                 if not product:
                     continue
 
-                purchase_qty = line.logistic_uncovered_qty
+                purchase_qty = line.product_uom_qty
+                purchase_price = line.purchase_price
 
                 # -------------------------------------------------------------
                 # Create/Get header purchase.order (only if line was created):
@@ -1589,7 +1591,6 @@ class SaleOrderLine(models.Model):
                         #'partner_ref': '',
                         #'logistic_state': 'draft',
                         }).id
-
                     selected_ids.append(purchase_id)
 
                 purchase_line_pool.create({
@@ -1599,14 +1600,14 @@ class SaleOrderLine(models.Model):
                     'product_qty': purchase_qty,
                     'date_planned': now,
                     'product_uom': product.uom_id.id,
-                    'price_unit': 1.0, # TODO change product.0.0,
+                    'price_unit': purchase_price,
 
                     # Link to sale:
-                    'logistic_sale_id': line.id,
+                    'logistic_sale_id': line.id, # multi line!
                     })
 
                 # Update line state:    
-                line.logistic_state = 'ordered' # XXX needed?
+                line.logistic_state = 'ordered'
 
         # Return view:
         return purchase_pool.return_purchase_order_list_view(selected_ids)
@@ -1754,15 +1755,11 @@ class SaleOrderLine(models.Model):
     
     # State (sort of workflow):
     logistic_state = fields.Selection([
-        #('unused', 'Unused'), # Line not managed
-    
         ('draft', 'Custom order'), # Draft, customer order
         ('ordered', 'Ordered'), # Supplier order uncovered
         ('ready', 'Ready'), # Order to be picked out (all in stock)
         ('done', 'Done'), # Delivered qty (order will be closed)
         ], 'Logistic state', default='draft',
-        #readonly=True, 
         #compute='_get_logistic_status_field', multi=True,
-        #store=True, # TODO store True # for create columns
         )
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
