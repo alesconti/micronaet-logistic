@@ -149,7 +149,6 @@
                                      <field name="supplier_id" />
                                      <field name="product_uom_qty" sum="total"/>
                                      <field name="purchase_price" />
-                                     <!--<button name="clean_purchase_selected" string="Clean selected" type="object" icon="fa-bitbucket"/>-->
                                  </tree>
                              </field>
                          </group>

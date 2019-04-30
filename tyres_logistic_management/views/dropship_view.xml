@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+         <record model="ir.ui.view" id="view_sale_order_line_purchase_management_dropship_form">
+             <field name="name">sale.order.line.dropship.management.form</field>
+             <field name="model">sale.order.line</field>
+             <field name="inherit_id" ref="logistic_product_supplier.view_sale_order_line_purchase_management_form"/>
+             <field name="arch" type="xml">
+                 <field name="ipcode" position="before">
+                     <field name="partner_dropship_manage" invisible="1" />
+                     <button name="dummy" string="Dropship Manage" type="object" attrs="{'invisible': [('partner_dropship_manage','=',False)]}" icon="fa-plane"/>
+                 </field>
+
+                 <xpath expr="//field[@name='purchase_split_ids']/tree/field[@name='purchase_price']" position="after">
+                     <field name="dropship_manage" invisible="1"/>
+                     <field name="partner_dropship_manage" invisible="1"/>
+                     <button name="set_dropship_on" string="Dropship ON" type="object" attrs="{'invisible': ['|',('partner_dropship_manage','=',False),('dropship_manage','=',True)]}" icon="fa-plane"/>
+                     <button name="set_dropship_off" string="Dropship OFF" type="object" attrs="{'invisible': ['|',('partner_dropship_manage','=',False),('dropship_manage','=',False)]}" icon="fa-mail-reply" />
+                 </xpath>
+                 <tree name="Purchase reference" position="attributes">
+                      <attribute name="decoration-info">dropship_manage==True</attribute>
+                 </tree>
+             </field>
+         </record>
+         <record model="ir.ui.view" id="view_res_partner_dropship_manage_form">
+             <field name="name">res.partner.dropship.form</field>
+             <field name="model">res.partner</field>
+             <field name="inherit_id" ref="base.view_partner_form"/>
+             <field name="arch" type="xml">
+                 <field name="ref" position="after">
+                     <field name="dropship_manage" />
+                 </field>
+             </field>
+         </record>    
+    </data>
+</openerp>
+

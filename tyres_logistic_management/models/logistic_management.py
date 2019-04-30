@@ -1574,7 +1574,8 @@ class SaleOrderLine(models.Model):
             for splitted in purchase_db[key]:
                 product = splitted.line_id.product_id
                 line = splitted.line_id
-                if not product:
+                if not product or splitted.dropship_manage:
+                    _logger.warning('No product or dropship order')
                     continue
 
                 purchase_qty = splitted.product_uom_qty

@@ -31,7 +31,7 @@ from odoo.tools.translate import _
 _logger = logging.getLogger(__name__)
 
 class ResPartner(models.Model):
-    """ Model name: Partner for dropshipp
+    """ Model name: Partner for dropshipping
     """
     
     _inherit = 'res.partner'
@@ -40,6 +40,45 @@ class ResPartner(models.Model):
     # Columns:
     # -------------------------------------------------------------------------
     dropship_manage = fields.Boolean('Dropship manage')
-    
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 
+class ProductTemplateSupplierStock(models.Model):
+    """ Model name: ProductTemplateSupplierStock
+    """
+    
+    _inherit = 'product.template.supplier.stock'
+    
+    # -------------------------------------------------------------------------
+    # Columns:
+    # -------------------------------------------------------------------------
+    partner_dropship_manage = fields.Boolean(
+        'Partner dropship', related='supplier_id.dropship_manage')    
+    
+class SaleOrderLinePurchase(models.Model):
+    """ Model name: SaleOrderLinePurchase
+    """
+    
+    _inherit = 'sale.order.line.purchase'
+
+    # -------------------------------------------------------------------------
+    # Button event:
+    # -------------------------------------------------------------------------
+    @api.multi
+    def set_dropship_on(self):
+        ''' Set dropship on
+        '''
+        self.dropship_manage = True
+
+    @api.multi
+    def set_dropship_off(self):
+        ''' Set dropship off
+        '''
+        self.dropship_manage = False
+
+    # -------------------------------------------------------------------------
+    # Columns:
+    # -------------------------------------------------------------------------
+    dropship_manage = fields.Boolean('Dropship manage')
+    partner_dropship_manage = fields.Boolean(
+        'Partner dropship', related='supplier_id.dropship_manage')    
+
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

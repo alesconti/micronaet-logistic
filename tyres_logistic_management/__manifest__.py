@@ -54,6 +54,7 @@
 
         # Views:
         'views/logistic_management_view.xml',
+        'views/dropship_view.xml',
         'wizard/manual_operation_view.xml', # Test events
         'wizard/status_extract_view.xml', # Extract operation
         #'views/fatturapa_view.xml',
