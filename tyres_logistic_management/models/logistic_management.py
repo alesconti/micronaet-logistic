@@ -1138,11 +1138,6 @@ class SaleOrder(models.Model):
         # Return view tree:
         return self.return_order_list_view(select_ids)
 
-    # State (sort of workflow):
-    # TODO
-    #dropshipping = fields.Boolean('Dropshipping', 
-    #    help='All order will be managed externally')
-
     # -------------------------------------------------------------------------
     # B. Logistic delivery phase: ready > done
     # -------------------------------------------------------------------------
@@ -1762,7 +1757,6 @@ class SaleOrderLine(models.Model):
         #('unused', 'Unused'), # Line not managed
     
         ('draft', 'Custom order'), # Draft, customer order
-        ('uncovered', 'Uncovered'), # Not covered with stock
         ('ordered', 'Ordered'), # Supplier order uncovered
         ('ready', 'Ready'), # Order to be picked out (all in stock)
         ('done', 'Done'), # Delivered qty (order will be closed)
