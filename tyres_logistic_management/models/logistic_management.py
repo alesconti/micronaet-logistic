@@ -219,7 +219,7 @@ class PurchaseOrder(models.Model):
         ''' Set order as confirmed
         '''
         # Export if needed the purchase order:
-        self.export_purchase_order()
+        # TODO self.export_purchase_order()
         now = fields.Datetime.now()
         
         return self.write({
@@ -1551,6 +1551,8 @@ class SaleOrderLine(models.Model):
         purchase_db = {} # supplier is the key
         for line in lines:
             product = line.product_id
+            order = line.order_id
+
             for splitted in line.purchase_split_ids:
                 supplier = splitted.supplier_id
             
@@ -1568,14 +1570,15 @@ class SaleOrderLine(models.Model):
             # Create details:
             # -----------------------------------------------------------------
             purchase_id = False
-            is_company_parner = (supplier == company.partner_id)
-            for line in purchase_db[key]:
-                product = line.line_id.product_id
+            #is_company_partner = (supplier == company.partner_id)
+            for splitted in purchase_db[key]:
+                product = splitted.line_id.product_id
+                line = splitted.line_id
                 if not product:
                     continue
 
-                purchase_qty = line.product_uom_qty
-                purchase_price = line.purchase_price
+                purchase_qty = splitted.product_uom_qty
+                purchase_price = splitted.purchase_price
 
                 # -------------------------------------------------------------
                 # Create/Get header purchase.order (only if line was created):

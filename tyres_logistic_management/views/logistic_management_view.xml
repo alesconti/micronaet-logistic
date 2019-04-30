@@ -543,8 +543,7 @@
              <field name="search_view_id" ref="view_sale_order_line_search"/>
              <field name="context">{'form_view_ref': 'tyres_logistic_management.view_sale_order_line_logistic_form'}</field>
              <field name="domain">[]</field>
-         </record>
-         
+         </record>         
          
          <!--MASTER ACTION:-->
          <!--sale.order action:-->
