@@ -969,6 +969,10 @@ class SaleOrder(models.Model):
     def workflow_manual_order_pending(self):
         ''' If order have all line checked make one step in pending state
         '''
+        if self.logistic_state != 'order':
+            raise exceptions.UserError(
+                _('Only order in confirmed payment could go in pending!'))            
+
         for line in self.order_line:
             if not line.state_check:
                 raise exceptions.UserError(
