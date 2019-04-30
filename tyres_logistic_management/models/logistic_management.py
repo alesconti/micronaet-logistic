@@ -951,6 +951,11 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     #                           BUTTON EVENTS:
     # -------------------------------------------------------------------------
+    @api.multi
+    def dummy(self):
+        '''Do nothing'''
+        return True
+
     # Extra operation before WF
     @api.multi
     def return_order_line_list_view(self):
@@ -1284,8 +1289,6 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
-    default_supplier_id = fields.Many2one(
-        'res.partner', 'Default supplier', domain="[('supplier', '=', True)]")
     logistic_picking_ids = fields.One2many(
         'stock.picking', 'sale_order_id', 'Picking')
 
@@ -1367,6 +1370,12 @@ class SaleOrderLine(models.Model):
     #                           BUTTON EVENT:
     # -------------------------------------------------------------------------
     @api.multi
+    def dummy(self):
+        '''Do nothing
+        '''
+        return True
+
+    @api.multi
     def workflow_manual_order_line_pending(self):
         ''' When order are in 'order' state and all supplier will be choosen
             The operator put the order in 'pending' state to be evaluated 
@@ -1391,9 +1400,6 @@ class SaleOrderLine(models.Model):
         if self.load_line_ids:
             raise exceptions.UserError(
                 _('Has delivered qty associated, cannot return!'))            
-
-        # 1. Unlink assigned q from stock:
-        #self.assigned_line_ids.unlink()
 
         # 2. Unlink purchase order line:
         for line in self.purchase_line_ids:
@@ -1545,7 +1551,7 @@ class SaleOrderLine(models.Model):
         purchase_db = {} # supplier is the key
         for line in lines:
             product = line.product_id
-            supplier = product.default_supplier_id
+            supplier = False# TODO product.default_supplier_id
             
             # Update supplier purchase:    
             key = (supplier, order)
@@ -1569,15 +1575,6 @@ class SaleOrderLine(models.Model):
                     continue
 
                 purchase_qty = line.logistic_uncovered_qty
-                if purchase_qty <= 0.0:
-                    # ---------------------------------------------------------
-                    # Bugfix (close yet covered order):
-                    # ---------------------------------------------------------
-                    if line.logistic_covered_qty == line.product_uom_qty:
-                        line.logistic_state = 'ready'
-                        _logger.error(
-                            'Covered line marked as uncovered, correct!')             
-                    continue # no order negative uncoveder (XXX needed)
 
                 # -------------------------------------------------------------
                 # Create/Get header purchase.order (only if line was created):
@@ -1624,150 +1621,81 @@ class SaleOrderLine(models.Model):
         '''
         _logger.warning('Update logistic qty fields now')
         for line in self:
-            if line.product_id.is_kit:
-                # -------------------------------------------------------------
-                #                           KIT:
-                # -------------------------------------------------------------
-                # if is kit >> line not used:
-                line.logistic_covered_qty = 0.0
-                line.logistic_purchase_qty = 0.0
-                line.logistic_uncovered_qty = 0.0
-                line.logistic_received_qty = 0.0
-                line.logistic_remain_qty = 0.0
-                line.logistic_delivered_qty = 0.0
-                line.logistic_undelivered_qty = 0.0
-                #line.logistic_state = 'unused'
-                line.logistic_position = '' # TODO explode component?
-            else:
-                # -------------------------------------------------------------
-                #                       NORMAL PRODUCT:
-                # -------------------------------------------------------------
-                #state = 'draft'
-                product = line.product_id
-                logistic_position = ''
-                
-                # -------------------------------------------------------------
-                # OC: Ordered qty:
-                # -------------------------------------------------------------
-                logistic_order_qty = line.product_uom_qty
-                
-                # -------------------------------------------------------------
-                # ASS: Assigned:
-                # -------------------------------------------------------------
-                # TODO remove:
-                logistic_covered_qty = 0.0
-                #for quant in line.assigned_line_ids:
-                #    logistic_covered_qty -= quant.quantity
-                #    logistic_position += _('[MAG] Q. %s > %s\n') % (
-                #        -quant.quantity,
-                #        product.default_slot_id.name or ''
-                #        )
-                line.logistic_covered_qty = logistic_covered_qty
-                
-                # State valuation:
-                #if logistic_order_qty == logistic_covered_qty:
-                #    state = 'ready' # All in stock 
-                #else:
-                #    state = 'uncovered' # To order    
+            # -------------------------------------------------------------
+            #                       NORMAL PRODUCT:
+            # -------------------------------------------------------------
+            #state = 'draft'
+            product = line.product_id
+            
+            # -------------------------------------------------------------
+            # OC: Ordered qty:
+            # -------------------------------------------------------------
+            logistic_order_qty = line.product_uom_qty
+            
+            # -------------------------------------------------------------
+            # PUR: Purchase (order done):
+            # -------------------------------------------------------------
+            logistic_purchase_qty = 0.0
+            
+            # Purchase product:
+            for purchase in line.purchase_line_ids:
+                logistic_purchase_qty += purchase.product_qty
+            line.logistic_purchase_qty = logistic_purchase_qty
+            
+            # -------------------------------------------------------------
+            # UNC: Uncovered (to purchase) [OC - ASS - PUR]:
+            # -------------------------------------------------------------
+            logistic_uncovered_qty = \
+                logistic_order_qty - logistic_purchase_qty
+            line.logistic_uncovered_qty = logistic_uncovered_qty
 
-                # -------------------------------------------------------------
-                # PUR: Purchase (order done):
-                # -------------------------------------------------------------
-                logistic_purchase_qty = 0.0
-                
-                # TODO remove:
-                if line.mrp_state in ('draft', 'progress'):
-                    # Lavoration product (internal):
-                    logistic_purchase_qty = logistic_order_qty
-                else:
-                    # Purchase product:
-                    for purchase in line.purchase_line_ids:
-                        logistic_purchase_qty += purchase.product_qty
-                line.logistic_purchase_qty = logistic_purchase_qty
-                
-                # -------------------------------------------------------------
-                # UNC: Uncovered (to purchase) [OC - ASS - PUR]:
-                # -------------------------------------------------------------
-                logistic_uncovered_qty = \
-                    logistic_order_qty - logistic_covered_qty - \
-                    logistic_purchase_qty
-                line.logistic_uncovered_qty = logistic_uncovered_qty
+            # State valuation:
+            #if state != 'ready' and not logistic_uncovered_qty: # XXX          
+            #    state = 'ordered' # A part (or all) is order
 
-                # State valuation:
-                #if state != 'ready' and not logistic_uncovered_qty: # XXX          
-                #    state = 'ordered' # A part (or all) is order
+            # -------------------------------------------------------------
+            # BF: Received (loaded in stock):
+            # -------------------------------------------------------------
+            logistic_received_qty = 0.0
+            # Purchase product:
+            for move in line.load_line_ids:
+                logistic_received_qty += move.product_uom_qty # TODO verify
+            line.logistic_received_qty = logistic_received_qty
+            
+            # -------------------------------------------------------------
+            # REM: Remain to receive [OC - ASS - BF]:
+            # -------------------------------------------------------------
+            logistic_remain_qty = \
+                logistic_order_qty - logistic_received_qty
+            line.logistic_remain_qty = logistic_remain_qty
 
-                # -------------------------------------------------------------
-                # BF: Received (loaded in stock):
-                # -------------------------------------------------------------
-                logistic_received_qty = 0.0
-                # TODO remove:
-                if line.mrp_state == 'done':
-                    # Lavoration product (internal):
-                    logistic_received_qty = logistic_order_qty
-                    logistic_position += _('[PROD] Q. %s > %s\n') % (
-                        logistic_order_qty,
-                        '',
-                        )
-                else:
-                    # Purchase product:
-                    for move in line.load_line_ids:
-                        logistic_received_qty += move.product_uom_qty # TODO verify
-                        logistic_position += _('[TAV] Q. %s > %s\n') % (
-                            move.product_uom_qty,
-                            move.slot_id.name or ''
-                            )
-                line.logistic_received_qty = logistic_received_qty
-                
-                # -------------------------------------------------------------
-                # REM: Remain to receive [OC - ASS - BF]:
-                # -------------------------------------------------------------
-                logistic_remain_qty = \
-                    logistic_order_qty - logistic_covered_qty - \
-                    logistic_received_qty
-                line.logistic_remain_qty = logistic_remain_qty
+            # State valuation:
+            #if state != 'ready' and not logistic_remain_qty: # XXX
+            #    state = 'ready' # All present coveder or in purchase
 
-                # State valuation:
-                #if state != 'ready' and not logistic_remain_qty: # XXX
-                #    state = 'ready' # All present coveder or in purchase
+            # -------------------------------------------------------------
+            # BC: Delivered:
+            # -------------------------------------------------------------
+            logistic_delivered_qty = 0.0
+            for move in line.delivered_line_ids:
+                logistic_delivered_qty += move.product_uom_qty #TODO verify
+            line.logistic_delivered_qty = logistic_delivered_qty
+            
+            # -------------------------------------------------------------
+            # UND: Undelivered (remain to pick out) [OC - BC]
+            # -------------------------------------------------------------
+            logistic_undelivered_qty = \
+                logistic_order_qty - logistic_delivered_qty
+            line.logistic_undelivered_qty = logistic_undelivered_qty
 
-                # -------------------------------------------------------------
-                # BC: Delivered:
-                # -------------------------------------------------------------
-                logistic_delivered_qty = 0.0
-                for move in line.delivered_line_ids:
-                    logistic_delivered_qty += move.product_uom_qty #TODO verify
-                line.logistic_delivered_qty = logistic_delivered_qty
-                
-                # -------------------------------------------------------------
-                # UND: Undelivered (remain to pick out) [OC - BC]
-                # -------------------------------------------------------------
-                logistic_undelivered_qty = \
-                    logistic_order_qty - logistic_delivered_qty
-                line.logistic_undelivered_qty = logistic_undelivered_qty
-
-                # State valuation:
-                #if not logistic_undelivered_qty: # XXX
-                #    state = 'done' # All delivered to customer
-                
-                # -------------------------------------------------------------
-                # Write data:
-                # -------------------------------------------------------------
-                #line.logistic_state = state
-                line.logistic_position = logistic_position
-
+            # State valuation:
+            #if not logistic_undelivered_qty: # XXX
+            #    state = 'done' # All delivered to customer
+            
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     # RELATION MANY 2 ONE:
-
-    # A. Assigned stock:
-    # TODO remove:
-    #assigned_line_ids = fields.One2many(
-    #    'stock.quant', 'logistic_assigned_id', 'Assign from stock',
-    #    help='Assign all this q. to this line (usually one2one',
-    #    )
-
     # B. Purchased:
     purchase_line_ids = fields.One2many(
         'purchase.order.line', 'logistic_sale_id', 'Linked to purchase', 
@@ -1788,12 +1716,6 @@ class SaleOrderLine(models.Model):
     #                               FUNCTION FIELDS:
     # -------------------------------------------------------------------------
     # Computed q.ty data:
-    logistic_covered_qty = fields.Float(
-        'Covered qty', digits=dp.get_precision('Product Price'),
-        help='Qty covered with internal stock',
-        readonly=True, compute='_get_logistic_status_field', multi=True,
-        store=False,
-        )
     logistic_uncovered_qty = fields.Float(
         'Uncovered qty', digits=dp.get_precision('Product Price'),
         help='Qty not covered with internal stock (so to be purchased)',
@@ -1829,22 +1751,6 @@ class SaleOrderLine(models.Model):
         help='Qty not deliverer to final customer',
         readonly=True, compute='_get_logistic_status_field', multi=True,
         store=False,
-        )
-    
-    # Position:
-    logistic_position = fields.Text(
-        'Position', help='Stock position',
-        readonly=True, compute='_get_logistic_status_field', multi=True,
-        store=False,
-        )
-
-    # MRP state:
-    # TODO remove:
-    mrp_state = fields.Selection([
-        ('draft', 'Internal lavoration'),
-        ('progress', 'In progress'),
-        ('done', 'Done'),
-        ], 'Lavoration state',
         )
     
     # State (sort of workflow):

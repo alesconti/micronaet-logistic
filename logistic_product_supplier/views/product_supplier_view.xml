@@ -79,9 +79,9 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//header/button[1]" position="before">
-                    <button name="purchase_management_button" string="Purchase Management" type="object" />
+                    <button name="purchase_management_button" string="Purchase Management" type="object" icon="fa-list-alt"/>
                     <!--<field name="logistic_state" invisible="1" />attrs="{'invisible': [('logistic_state','!=','order')]}"-->
-                    <button name="workflow_manual_order_pending" string="Go in purchase" type="object" />
+                    <button name="workflow_manual_order_pending" string="Go in purchase" type="object" icon="fa-gear" />
                 </xpath>
             </field>
         </record>    
@@ -110,7 +110,7 @@
              <field name="arch" type="xml">
                  <form string="Sale line logistic">
                      <header>
-                         <button name="workflow_manual_order_line_pending" string="Go in purchase" type="object" attrs="{'invisible': [('order_id.logistic_state','!=','order')]}"/>
+                         <button name="workflow_manual_order_line_pending" string="Go in purchase" icon="fa-gear" type="object" /><!--attrs="{'invisible': [('order_id.logistic_state','!=','order')]}"-->
                          <field name="state_check" invisible="1"/>
                      </header>
                      <sheet>

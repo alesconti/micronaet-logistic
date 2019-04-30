@@ -337,9 +337,6 @@
              <field name="model">sale.order</field>
              <field name="inherit_id" ref="sale.view_order_form"/>
              <field name="arch" type="xml">
-                 <!--<field name="payment_term_id" position="after">
-                     <field name="default_supplier_id" />
-                 </field>-->
                  <xpath expr="//page[1]" position="after">
                      <page string="Picking">
                          <group colspan="4" col="4">
@@ -392,7 +389,6 @@
                  </field>
                     
                  <field name="state" position="after">
-                     <field name="default_supplier_id" />
                      <field name="logistic_state" />                     
                  </field>
                  <field name="invoice_status" position="attributes">
@@ -409,11 +405,9 @@
              <field name="inherit_id" ref="sale.view_sales_order_filter"/>
              <field name="arch" type="xml">
                  <field name="user_id" position="after">
-                     <!--<field name="default_supplier_id" />-->
                      <field name="logistic_state" />
                  </field>
                  <xpath expr="/search/group/filter[2]" position="after">
-                     <!--<filter string="Default supplier" domain="[]" context="{'group_by':'default_supplier_id'}"/>-->
                      <filter string="Logistic state" domain="[]" context="{'group_by':'logistic_state'}"/>
                  </xpath>
              </field>
@@ -433,7 +427,6 @@
                      <button name="chain_broken_purchase_line" attrs="{'invisible': [('logistic_state','!=','ordered')]}" string="" help="Delete purchase line and return to order phase" type="object" icon="fa-chain-broken" confirm="Reassign product if needed, program delete purchase line and return do order step, confirm?"/>
                      <field name="name" />
                      <field name="product_uom_qty" />
-                     <field name="logistic_covered_qty" />
                      <field name="logistic_uncovered_qty" />
                      <field name="logistic_purchase_qty" />
                      <field name="logistic_received_qty" />
@@ -496,7 +489,6 @@
                                  <group colspan="4" col="4">
                                      <field name="product_uom_qty" />
                                      <newline/>
-                                     <field name="logistic_covered_qty" />
                                      <field name="logistic_uncovered_qty" />
                                      
                                      <field name="logistic_purchase_qty" />
@@ -508,18 +500,6 @@
                                      <field name="logistic_undelivered_qty" />
                                  </group>    
                              </page>                         
-                             <!--<page string="Position">
-                                 <group colspan="4" col="4">
-                                     <separator string="Stock position:" colspan="4"/>
-                                     <field name="logistic_position" nolabel="1" colspan="4"/>
-                                 </group>    
-                             </page>-->
-                             <!--<page string="Assigned">
-                                 <group colspan="4" col="4">
-                                     <separator string="Assigned from stock:" colspan="4"/>
-                                     <field name="assigned_line_ids" nolabel="1" colspan="4"/>
-                                 </group>    
-                             </page>-->
                              <page string="Purchase order">
                                  <group colspan="4" col="4">
                                      <separator string="Supplier purchased:" colspan="4"/>
