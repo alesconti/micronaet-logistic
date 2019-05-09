@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-09 13:23+0000\n"
-"PO-Revision-Date: 2019-05-09 15:26+0100\n"
+"POT-Creation-Date: 2019-05-09 14:01+0000\n"
+"PO-Revision-Date: 2019-05-09 16:02+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,6 +23,7 @@ msgid "Add"
 msgstr "Aggiungi"
 
 #. module: tyres_logistic_carrier
+#: model:ir.ui.menu,name:tyres_logistic_carrier.menu_carrier_root
 #: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
 msgid "Carrier"
 msgstr "Corriere"
@@ -41,6 +42,13 @@ msgstr "Note"
 #: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
 msgid "Carrier reply:"
 msgstr "Conferma corriere:"
+
+#. module: tyres_logistic_carrier
+#: model:ir.actions.act_window,name:tyres_logistic_carrier.action_carrier_supplier_form
+#: model:ir.ui.menu,name:tyres_logistic_carrier.menu_carrier_supplier
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_carrier_supplier_tree
+msgid "Carrier supplier"
+msgstr "Vettori"
 
 #. module: tyres_logistic_carrier
 #: selection:sale.order,carrier_pay_mode:0
@@ -125,7 +133,7 @@ msgstr "Ultima modifica il"
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_length
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_length
-msgid "Lenght"
+msgid "Length"
 msgstr "Lunghezza"
 
 #. module: tyres_logistic_carrier
@@ -151,8 +159,12 @@ msgid "Parcel supplier"
 msgstr "Trasportatore"
 
 #. module: tyres_logistic_carrier
+#: model:ir.actions.act_window,name:tyres_logistic_carrier.action_carrier_parcel_template_tree
 #: model:ir.model,name:tyres_logistic_carrier.model_carrier_parcel_template
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_parcel_template_id
+#: model:ir.ui.menu,name:tyres_logistic_carrier.menu_parcel_template
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_carrier_parcel_template_form
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_carrier_parcel_template_tree
 msgid "Parcel template"
 msgstr "Modelli colli"
 
@@ -177,7 +189,7 @@ msgstr "UM"
 #. module: tyres_logistic_carrier
 #: model:ir.model,name:tyres_logistic_carrier.model_sale_order
 msgid "Quotation"
-msgstr "Offerta"
+msgstr "Preventivo"
 
 #. module: tyres_logistic_carrier
 #: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
