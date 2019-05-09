@@ -1,0 +1,217 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* tyres_logistic_carrier
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-05-09 13:23+0000\n"
+"PO-Revision-Date: 2019-05-09 15:26+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: tyres_logistic_carrier
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
+msgid "Add"
+msgstr "Aggiungi"
+
+#. module: tyres_logistic_carrier
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
+msgid "Carrier"
+msgstr "Corriere"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_description
+msgid "Carrier description"
+msgstr "Descrizione"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_note
+msgid "Carrier note"
+msgstr "Note"
+
+#. module: tyres_logistic_carrier
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
+msgid "Carrier reply:"
+msgstr "Conferma corriere:"
+
+#. module: tyres_logistic_carrier
+#: selection:sale.order,carrier_pay_mode:0
+msgid "Cash"
+msgstr "Contanti"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_cash_delivery
+msgid "Cash on delivery"
+msgstr "Contrassegno"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_cost
+msgid "Cost"
+msgstr "Costo"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_create_uid
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_create_uid
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_create_date
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_create_date
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_display_name
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_display_name
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_display_name
+msgid "Display Name"
+msgstr "Nome Completo"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_ensurance
+msgid "Ensurance"
+msgstr "Assicurazione"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_total
+msgid "Goods value"
+msgstr "Valore beni"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_height
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_height
+msgid "Height"
+msgstr "Altezza"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_id
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_id
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_id
+msgid "ID"
+msgstr "ID"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template___last_update
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier___last_update
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel___last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_write_uid
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_write_uid
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_write_date
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_write_date
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_length
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_length
+msgid "Lenght"
+msgstr "Lunghezza"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_name
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_name
+msgid "Name"
+msgstr "Nome"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_order_id
+msgid "Order"
+msgstr "Ordine"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_ids
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
+msgid "Parcel"
+msgstr "Colli"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model,name:tyres_logistic_carrier.model_carrier_supplier
+msgid "Parcel supplier"
+msgstr "Trasportatore"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model,name:tyres_logistic_carrier.model_carrier_parcel_template
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_parcel_template_id
+msgid "Parcel template"
+msgstr "Modelli colli"
+
+#. module: tyres_logistic_carrier
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
+msgid "Parcel:"
+msgstr "Colli:"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_pay_mode
+msgid "Pay mode"
+msgstr "Modalità pagamento"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_dimension_uom_id
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_weight_uom_id
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_dimension_uom_id
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_weight_uom_id
+msgid "Product UOM"
+msgstr "UM"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model,name:tyres_logistic_carrier.model_sale_order
+msgid "Quotation"
+msgstr "Offerta"
+
+#. module: tyres_logistic_carrier
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
+msgid "Request:"
+msgstr "Richiesta:"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model,name:tyres_logistic_carrier.model_sale_order_parcel
+msgid "Sale order parcel"
+msgstr "Colli ordine"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_stock_note
+msgid "Stock operator note"
+msgstr "Note magazziniere"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_supplier_id
+msgid "Supplier"
+msgstr "Fornitore"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_track_id
+msgid "Track ID"
+msgstr "ID Track"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_weight
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_weight
+msgid "Weight"
+msgstr "Peso"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_width
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_width
+msgid "Width"
+msgstr "Larghezza"

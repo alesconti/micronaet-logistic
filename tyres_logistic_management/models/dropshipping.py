@@ -47,6 +47,11 @@ class ProductTemplateSupplierStock(models.Model):
     
     _inherit = 'product.template.supplier.stock'
     
+    @api.multi
+    def dummy(self):
+        ''' Do nothing
+        '''
+        return True
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------

@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_sale_order_form">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[1]" position="after">
+                    <page string="Carrier">
+                        <group colspan="4" col="5">
+                            <field name="carrier_supplier_id" />
+                            <field name="carrier_parcel_template_id" />
+                            <button name="load_template_parcel" string="Add" type="object" attrs="{'invisible': [('carrier_parcel_template_id','=',False)]}" colspan="1" class="oe_highlight"/>
+
+                            <separator string="Parcel:" colspan="4"/>
+                            <field name="parcel_ids" colspan="4" nolabel="1">
+                                <tree string="Parcel" editable="bottom">
+                                    <field name="length" />
+                                    <field name="width" />
+                                    <field name="height" />
+                                    
+                                    <field name="weight" />                                    
+                                </tree>
+                            </field>
+
+                            <separator string="Request:" colspan="4"/>
+                            <field name="carrier_description" colspan="4" />
+                            <newline/>
+                            
+                            <field name="carrier_note" />                            
+                            <field name="carrier_stock_note" />
+                            <newline/>
+                            
+                            <field name="carrier_total" />
+                            <field name="carrier_cash_delivery" />
+                            <newline/>
+                            
+                            <field name="carrier_ensurance" />
+                            <field name="carrier_pay_mode" />
+                            <newline/>
+                            
+                            <separator string="Carrier reply:" colspan="4"/>
+                            <field name="carrier_cost" readonly="1"/>
+                            <field name="carrier_track_id" readonly="1" />
+                            <newline/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
+

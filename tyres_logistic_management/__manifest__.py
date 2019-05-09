@@ -39,6 +39,8 @@
         'product_folder_image', # For image management
         'excel_export', # Export in Excel
         'tyres_logistic_ddt',
+        'logistic_product_supplier', # Supplier purchase management
+        
         #'logistic_stock_position', # Stock position
         #'order_line_explode_kit', # Sale kit explode
         #'order_line_change_product', # Replaced link product

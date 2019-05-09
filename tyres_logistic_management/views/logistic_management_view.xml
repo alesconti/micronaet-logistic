@@ -413,6 +413,21 @@
              </field>
          </record>         
 
+        <record model="ir.ui.view" id="view_sale_order_purchase_button_override_button_form">
+            <field name="name">sale.order.purchase.button.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="logistic_product_supplier.view_sale_order_purchase_button_form"/>
+            <field name="arch" type="xml">
+                <button name="purchase_management_button" position="replace">
+                    <button name="purchase_management_button" string="Purchase Management" type="object" icon="fa-list-alt" attrs="{'invisible': [('logistic_state','!=','order')]}"/>
+                </button>
+
+                <button name="workflow_manual_order_pending" position="replace">
+                    <button name="workflow_manual_order_pending" string="Go in purchase" type="object" icon="fa-gear" attrs="{'invisible': [('logistic_state','!=','order')]}"/>
+                </button>
+            </field>
+        </record>    
+
          <!--sale.order.line-->
          <record model="ir.ui.view" id="view_sale_order_line_logistic_tree">
              <field name="name">sale.order.line.logistic.tree</field>

@@ -79,7 +79,7 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//header/button[1]" position="before">
-                    <button name="purchase_management_button" string="Purchase Management" type="object" icon="fa-list-alt"/>
+                    <button name="purchase_management_button" string="Purchase Management" type="object" icon="fa-list-alt" />
                     <!--<field name="logistic_state" invisible="1" />attrs="{'invisible': [('logistic_state','!=','order')]}"-->
                     <button name="workflow_manual_order_pending" string="Go in purchase" type="object" icon="fa-gear" />
                 </xpath>
@@ -127,7 +127,7 @@
 
                              <separator string="Purchase stock" colspan="4"/>
                              <field name="product_supplier_ids" nolabel="1" editable="bottom" colspan="4" context="{'sale_order_id': parent.id}" readonly="1">
-                                <tree string="Supplier stock" editable="bottom" decoration-info="best_price==True">
+                                <tree string="Supplier stock" editable="bottom" decoration-info="best_price==True" decoration-danger="stock_qty&lt;=0">
                                     <field name="best_price" invisible="1"/>
                                     <field name="supplier_id" context="{'default_supplier': True}" />
                                     <field name="ipcode" />
@@ -140,6 +140,8 @@
                                     <button name="assign_to_purchase_none" string="0" type="object" context="{'sale_order_id': parent.id}" icon="fa-bitbucket"/> <!--fa-dot-circle-o-->
                                     <button name="assign_to_purchase_all" string="all" type="object" context="{'sale_order_id': parent.id}" icon="fa-fast-forward"/>
                                 </tree>
+                                <form/>
+                                
                              </field>
                              
                              <separator string="Purchase order:" colspan="3"/>
