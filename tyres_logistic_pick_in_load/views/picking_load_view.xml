@@ -57,10 +57,10 @@
             <field name="model">purchase.order.line</field>
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
-                <tree string="Purchase line" default_order="create_date" editable="bottom">
+                <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-success="delivery_id!=False">
                      <field name="order_id" readonly="1"/>
                      <field name="product_id" readonly="1" />
-                     <field name="name" readonly="1" />
+                     <!--<field name="name" readonly="1" />-->
                      <field name="product_qty" readonly="1" />
                      <field name="date_planned" readonly="1" />
                      
@@ -68,11 +68,13 @@
                      <field name="logistic_delivered_qty" readonly="1" />
                      <field name="logistic_undelivered_qty" readonly="1" />
                      
-                     <button name="delivery_more_1" string="+" type="object" />
-                     <button name="delivery_less_1" string="-" type="object" />
-                     <button name="delivery_all" string="All" type="object" />
+                     <button name="delivery_0" string="0" type="object" icon="fa-bitbucket"/>
+                     <button name="delivery_less_1" string="-" type="object" icon="fa-minus-circle"/>
+                     <button name="delivery_more_1" string="+" type="object" icon="fa-plus-circle"/>
+                     <button name="delivery_all" string="Remain" type="object" icon="fa-fast-forward"/>
                      
                      <field name="logistic_delivered_manual" />
+                     <field name="delivery_id" invisible="1"/>
 
                      <!--Sale reference:
                      <field name="logistic_sale_id" />
@@ -111,6 +113,9 @@
             <field name="model">stock.picking.delivery</field>
             <field name="arch" type="xml">
                 <form string="Delivery">
+                    <header>
+                        <button name="confirm_stock_load" string="Load stock" type="object" attrs="{'invisible': [('picking_id','!=',False)]}" class="oe_highlight"/>
+                    </header>
                     <sheet>
                         <group colspan="4" col="4"> 
                             <field name="picking_id" attrs="{'invisible': [('picking_id','=',False)]}"/>
@@ -123,16 +128,38 @@
                             <field name="create_uid" />
                             
                             <notebook colspan="4">
-                                <page string="Selected purchase line:" attrs="{'invisible': [('picking_id','=',False)]}">
+                                <page string="Selected purchase line:" attrs="{'invisible': [('picking_id','!=',False)]}">
                                     <group colspan="4" col="4"> 
                                         <separator string="Selected purchase line:" colspan="4"/>
                                         <field name="purchase_line_ids" colspan="4" nolabel="1">
+                                            <tree string="Purchase line" editable="bottom" create="false" delete="false">
+                                                 <field name="order_id" readonly="1"/>
+                                                 <field name="product_id" readonly="1" />
+                                                 <!--<field name="name" readonly="1" />-->
+                                                 <field name="product_qty" readonly="1" />
+                                                 <field name="date_planned" readonly="1" />
+                                                 
+                                                 <!--Total: -->
+                                                 <field name="logistic_delivered_qty" readonly="1" />
+                                                 <field name="logistic_undelivered_qty" readonly="1" />
+                                                 
+                                                 <!--<button name="delivery_0" string="0" type="object" icon="fa-bitbucket"/>
+                                                 <button name="delivery_less_1" string="-" type="object" icon="fa-minus-circle"/>
+                                                 <button name="delivery_more_1" string="+" type="object" icon="fa-plus-circle"/>
+                                                 <button name="delivery_all" string="Remain" type="object" icon="fa-fast-forward"/>-->
+                                                 
+                                                 <field name="logistic_delivered_manual" readonly="1"/>
+
+                                                 <!--Sale reference:
+                                                 <field name="logistic_sale_id" />
+                                                 <field name="load_line_ids" />-->
+                                            </tree>
                                         </field>
                                     </group>    
                                 </page>
-                                <page string="Stock movement:" attrs="{'invisible': [('picking_id','!=',False)]}">
+                                <page string="Stock movement:" attrs="{'invisible': [('picking_id','=',False)]}">
                                     <group colspan="4" col="4"> 
-                                        <separator string="Selected purchase line:" colspan="4"/>
+                                        <separator string="Stock movement:" colspan="4"/>
                                         <field name="move_ids" colspan="4" nolabel="1">
                                         </field>
                                     </group>    

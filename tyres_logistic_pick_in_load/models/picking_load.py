@@ -31,37 +31,6 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
-class PurchaseOrderLine(models.Model):
-    """ Model name: Purchase Order Line
-    """
-    _inherit = 'purchase.order.line'
-    
-    @api.multi
-    def delivery_more_1(self)
-        ''' Add +1 to manual arrived qty
-        '''
-        
-        return True
-
-    @api.multi
-    def delivery_less_1(self)
-        ''' Add +1 to manual arrived qty
-        '''
-        
-        return True
-
-    @api.multi
-    def delivery_all(self)
-        ''' Add +1 to manual arrived qty
-        '''
-        
-        return True
-    # -------------------------------------------------------------------------
-    # Columns:
-    # -------------------------------------------------------------------------
-    delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery')
-    logistic_delivered_manual = fields.float('Manual', digits=(16, 2))
-
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document
     """
@@ -115,10 +84,93 @@ class StockPickingDelivery(models.Model):
         )
     carrier_id = fields.Many2one('carrier.supplier', 'Carrier', required=True)
     picking_id = fields.Many2one('stock.picking', 'Picking')
-    purchase_line_ids = fields.One2many(
-        'purchase.order.line', 'delivery_id', 'Purchase line')
     move_ids = fields.One2many('stock.move', related='picking_id.move_lines')
 
+class PurchaseOrderLine(models.Model):
+    """ Model name: Purchase Order Line
+    """
+    _inherit = 'purchase.order.line'
+    
+    @api.multi
+    def delivery_0(self):
+        ''' Add +1 to manual arrived qty
+        '''
+        active_id = self.env.context.get('active_id')
+        if not active_id:
+            raise exceptions.Warning('Cannot link purchase delivery!') 
+            
+        return self.write({
+            'logistic_delivered_manual': 0,
+            'delivery_id': False,
+            })        
+
+    @api.multi
+    def delivery_more_1(self):
+        ''' Add +1 to manual arrived qty
+        '''
+        active_id = self.env.context.get('active_id')
+        if not active_id:
+            raise exceptions.Warning('Cannot link purchase delivery!') 
+            
+        return self.write({
+            'logistic_delivered_manual': self.logistic_delivered_manual + 1.0,
+            'delivery_id': active_id,
+            })        
+
+    @api.multi
+    def delivery_less_1(self):
+        ''' Add +1 to manual arrived qty
+        '''
+        active_id = self.env.context.get('active_id')
+        if not active_id:
+            raise exceptions.Warning('Cannot link purchase delivery!') 
+            
+        logistic_delivered_manual = self.logistic_delivered_manual
+        if logistic_delivered_manual < 1.0:
+            raise exceptions.Warning('Nothing to remove!') 
+            
+        if logistic_delivered_manual <= 1.0:
+            active_id = False
+        return self.write({
+            'logistic_delivered_manual': logistic_delivered_manual - 1.0,
+            'delivery_id': active_id,
+            })        
+
+    @api.multi
+    def delivery_all(self):
+        ''' Add +1 to manual arrived qty
+        '''
+        active_id = self.env.context.get('active_id')
+        if not active_id:
+            raise exceptions.Warning('Cannot link purchase delivery!') 
+        
+        logistic_undelivered_qty = self.logistic_undelivered_qty
+        if logistic_undelivered_qty <= 0.0:
+            raise exceptions.Warning('No more q. to deliver!') 
+        
+        return self.write({
+            'logistic_delivered_manual': self.logistic_undelivered_qty,
+            'delivery_id': active_id,
+            })        
+
+    # -------------------------------------------------------------------------
+    # Columns:
+    # -------------------------------------------------------------------------
+    delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery')
+    logistic_delivered_manual = fields.Float('Manual', digits=(16, 2))
+
+class StockPickingDelivery(models.Model):
+    """ Model name: Stock picking import document: add relations
+    """
+    
+    # -------------------------------------------------------------------------
+    # Columns:
+    # -------------------------------------------------------------------------
+    _inherit = 'stock.picking.delivery'
+
+    purchase_line_ids = fields.One2many(
+        'purchase.order.line', 'delivery_id', 'Purchase line')
+        
 class StockPicking(models.Model):
     """ Model name: Stock picking import document
     """
@@ -401,4 +453,7 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         headers.unlink() # line deleted in cascade!        
         return True        
+
+
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
