@@ -93,7 +93,7 @@ class StockPickingDelivery(models.Model):
             'location_id': location_from,
             'location_dest_id': location_to,
             #'priority': 1,                
-            'state': 'done', # XXX done immediately
+            'state': 'done', # immediately!
             })
         self.picking_id = picking.id
 
@@ -108,8 +108,6 @@ class StockPickingDelivery(models.Model):
             logistic_sale_id = line.logistic_sale_id
             
             if product_qty >= remain_qty:
-                # TODO Create extra account load from here:                
-                product_qty = remain_qty
                 sale_line_ready.append(logistic_sale_id)
                 if product_qty > remain_qty:
                     quant_pool.create({
@@ -119,6 +117,7 @@ class StockPickingDelivery(models.Model):
                         'product_qty': product_qty - remain_qty,
                         'price': line.price_unit,                    
                         })
+                product_qty = remain_qty # For stock movement
 
             # ---------------------------------------------------------
             # Create movement (not load stock):
@@ -166,6 +165,7 @@ class StockPickingDelivery(models.Model):
         quants = quant_pool.search([('order_id', '=', self.id)])
         for quant in quants:
             # TODO Extract to account and get the resuls file:
+            
             quant.account_sync = True # XXX If corrected improted
 
         # ---------------------------------------------------------------------
@@ -185,6 +185,7 @@ class StockPickingDelivery(models.Model):
         # ---------------------------------------------------------------------
         # Check Purchase order ready
         # ---------------------------------------------------------------------
+        # TODO debug:
         _logger.info('Check purchase order closed (this):')
         return purchase_pool.check_order_confirmed_done([self.id])
 
