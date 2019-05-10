@@ -219,6 +219,7 @@ class StockPickingDelivery(models.Model):
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
+    name = fields.Char('Ref.', size=64)
     create_date = fields.Datetime(
         'Create date', required=True, default=fields.Datetime.now())
     create_uid = fields.Many2one(

@@ -136,8 +136,8 @@
                     </header>
                     <sheet>
                         <group colspan="4" col="4"> 
+                            <field name="name" />
                             <field name="picking_id" attrs="{'invisible': [('picking_id','=',False)]}"/>
-                            <newline/>
                             
 
                             <field name="supplier_id" />
