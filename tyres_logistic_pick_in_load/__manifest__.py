@@ -32,7 +32,9 @@
     'depends': [
         'base',
         'product',
+        'stock',
         'purchase',
+        'tyres_logistic_carrier',
         ],
     'data': [
         'views/picking_load_view.xml',

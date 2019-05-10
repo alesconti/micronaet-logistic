@@ -31,6 +31,36 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+class PurchaseOrderLine(models.Model):
+    """ Model name: Purchase Order Line
+    """
+    _inherit = 'purchase.order.line'
+    
+    # -------------------------------------------------------------------------
+    # Columns:
+    # -------------------------------------------------------------------------
+    delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery')
+
+class StockPickingDelivery(models.Model):
+    """ Model name: Stock picking import document
+    """
+    
+    _name = 'stock.picking.delivery'
+    _description = 'Generator of delivery'
+    _rec_name = 'create_date'
+    
+    # -------------------------------------------------------------------------
+    # Columns:
+    # -------------------------------------------------------------------------
+    create_date: fields.Datetime('Create', required=True),
+    supplier_id = fields.Many2one(
+        'res.partner', 'Supplier', required=True, 
+        domain='[("supplier", "=", True]',
+        )
+    carrier_id = fields.Many2one('carrier.supplier', 'Carrier', required=True)
+    picking_id = fields.Many2one('stock.picking', 'Picking')
+    purchase_line_ids = fields.One2many(
+        'purchase.order.line', 'delivery_id', 'Purchase line')
 
 class StockPicking(models.Model):
     """ Model name: Stock picking import document
