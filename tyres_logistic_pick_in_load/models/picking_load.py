@@ -42,8 +42,8 @@ class StockPickingDelivery(models.Model):
     # -------------------------------------------------------------------------
     #                            WORKFLOW ACTION:
     # -------------------------------------------------------------------------
-    @api.model
-    def workflow_ordered_ready(self):
+    @api.multi
+    def confirm_stock_load(self):
         ''' Create new picking unloading the selected material
         '''
         # ---------------------------------------------------------------------
@@ -66,7 +66,6 @@ class StockPickingDelivery(models.Model):
         # ---------------------------------------------------------------------
         #                          Load parameters
         # ---------------------------------------------------------------------
-        import pdb; pdb.set_trace()
         company = company_pool.search([])[0]
         logistic_pick_in_type = company.logistic_pick_in_type_id
 
@@ -81,7 +80,7 @@ class StockPickingDelivery(models.Model):
 
         partner = self.supplier_id
         scheduled_date = self.create_date
-        name = '' # TODO self.name # Order ref 
+        name = self.name or _('Not assigned')
         origin = _('%s [%s]') % (name, scheduled_date)
 
         picking = picking_pool.create({       
@@ -96,28 +95,30 @@ class StockPickingDelivery(models.Model):
             #'priority': 1,                
             'state': 'done', # XXX done immediately
             })
+        self.picking_id = picking.id
 
-        # -----------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # Append stock.move detail (or quants if in stock)
-        # -----------------------------------------------------------------            
+        # ---------------------------------------------------------------------           
         sale_line_ready = []
-        for line in self.line_ids: # purchase.order.line
+        for line in self.purchase_line_ids: # purchase.order.line
             product = line.product_id
             product_qty = line.logistic_delivered_manual
             remain_qty = line.logistic_undelivered_qty
-            logistic_sale_id = line.logistic_sale_id.id
+            logistic_sale_id = line.logistic_sale_id
             
             if product_qty >= remain_qty:
                 # TODO Create extra account load from here:                
                 product_qty = remain_qty
                 sale_line_ready.append(logistic_sale_id)
-                quant_pool.create({
-                    # date and uid are default
-                    'order_id': self.id,
-                    'product_id': product.id, 
-                    'product_qty': product_qty - remain_qty,
-                    'price': line.price_unit,                    
-                    })
+                if product_qty > remain_qty:
+                    quant_pool.create({
+                        # date and uid are default
+                        'order_id': self.id,
+                        'product_id': product.id, 
+                        'product_qty': product_qty - remain_qty,
+                        'price': line.price_unit,                    
+                        })
 
             # ---------------------------------------------------------
             # Create movement (not load stock):
@@ -132,13 +133,13 @@ class StockPickingDelivery(models.Model):
                 'date_expected': scheduled_date,
                 'location_id': location_from,
                 'location_dest_id': location_to,
-                'product_uom_qty': select_qty,
+                'product_uom_qty': product_qty,
                 'product_uom': product.uom_id.id,
                 'state': 'done',
                 'origin': origin,
                 
                 # Sale order line link:
-                'logistic_load_id': logistic_sale_id,
+                'logistic_load_id': logistic_sale_id.id,
                 
                 # Purchase order line line: 
                 'logistic_purchase_id': line.id,
@@ -152,6 +153,12 @@ class StockPickingDelivery(models.Model):
                 # procure_method,
                 #'product_qty': select_qty,
                 })
+            
+        # Reset manual selection and link to pre-picking doc:    
+        self.purchase_line_ids.write({
+            'delivery_id': False,
+            'logistic_delivered_manual': 0.0,
+            })
 
         # ---------------------------------------------------------------------
         # TODO: Load stock picking for extra
@@ -196,9 +203,14 @@ class StockPickingDelivery(models.Model):
         # Select record to show 
         # TODO filter active!
         purchase_pool = self.env['purchase.order.line']
-        purchase = purchase_pool.search([
+        purchases = purchase_pool.search([
             ('order_id.partner_id', '=', self.supplier_id.id),
+            #('logistic_undelivered_qty', '>', 0.0), # TODO change with logistic_status
             ])
+        purchase_ids = []    
+        for purchase in purchases:
+            if purchase.logistic_undelivered_qty:
+                purchase_ids.append(purchase.id)
 
         return {
             'type': 'ir.actions.act_window',
@@ -210,7 +222,7 @@ class StockPickingDelivery(models.Model):
             'view_id': tree_view_id,
             'search_view_id': search_view_id,
             'views': [(tree_view_id, 'tree')],
-            'domain': [('id', 'in', purchase.mapped('id'))],
+            'domain': [('id', 'in', purchase_ids)],
             'context': self.env.context,
             'target': 'current', # 'new'
             'nodestroy': False,
