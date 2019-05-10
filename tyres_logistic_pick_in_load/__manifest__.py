@@ -35,8 +35,11 @@
         'stock',
         'purchase',
         'tyres_logistic_carrier',
+        'tyres_logistic_management',
         ],
     'data': [
+        'security/ir.model.access.csv',
+        
         'views/picking_load_view.xml',
         ],
     'demo': [],

@@ -36,10 +36,31 @@ class PurchaseOrderLine(models.Model):
     """
     _inherit = 'purchase.order.line'
     
+    @api.multi
+    def delivery_more_1(self)
+        ''' Add +1 to manual arrived qty
+        '''
+        
+        return True
+
+    @api.multi
+    def delivery_less_1(self)
+        ''' Add +1 to manual arrived qty
+        '''
+        
+        return True
+
+    @api.multi
+    def delivery_all(self)
+        ''' Add +1 to manual arrived qty
+        '''
+        
+        return True
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
     delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery')
+    logistic_delivered_manual = fields.float('Manual', digits=(16, 2))
 
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document
@@ -49,18 +70,54 @@ class StockPickingDelivery(models.Model):
     _description = 'Generator of delivery'
     _rec_name = 'create_date'
     
+    @api.multi
+    def open_purchase_line(self):
+        ''' Open current opened line
+        '''
+        model_pool = self.env['ir.model.data']
+        tree_view_id = model_pool.get_object_reference(
+            'tyres_logistic_pick_in_load', 
+            'view_purchase_order_line_delivery_selection_tree')[1]
+
+        purchase_pool = self.env['purchase.order.line']
+        purchase = purchase_pool.search([
+            ('order_id.partner_id', '=', self.supplier_id.id),
+            ])
+
+        _logger.warning(purchase)
+        sort_purchase = purchase.sorted(key=lambda x: x.create_date)
+        _logger.warning(sort_purchase)
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Purcase line:'),
+            'view_type': 'form',
+            'view_mode': 'tree',
+            #'res_id': 1,
+            'res_model': 'purchase.order.line',
+            'view_id': tree_view_id,
+            'views': [(tree_view_id, 'tree')],
+            'domain': [('id', 'in', sort_purchase.mapped('id'))],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+    
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
-    create_date: fields.Datetime('Create', required=True),
+    create_date = fields.Datetime(
+        'Create date', required=True, default=fields.Datetime.now())
+    create_uid = fields.Many2one(
+        'res.users', 'Create user', required=True, default=lambda s: s.env.user)
     supplier_id = fields.Many2one(
         'res.partner', 'Supplier', required=True, 
-        domain='[("supplier", "=", True]',
+        domain='[("supplier", "=", True)]',
         )
     carrier_id = fields.Many2one('carrier.supplier', 'Carrier', required=True)
     picking_id = fields.Many2one('stock.picking', 'Picking')
     purchase_line_ids = fields.One2many(
         'purchase.order.line', 'delivery_id', 'Purchase line')
+    move_ids = fields.One2many('stock.move', related='picking_id.move_lines')
 
 class StockPicking(models.Model):
     """ Model name: Stock picking import document
