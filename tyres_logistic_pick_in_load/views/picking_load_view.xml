@@ -132,7 +132,7 @@
             <field name="arch" type="xml">
                 <form string="Delivery">
                     <header>
-                        <button name="confirm_stock_load" string="Load stock" type="object" attrs="{'invisible': [('picking_id','!=',False)]}" class="oe_highlight"/>
+                        <button name="confirm_stock_load" string="Load stock" type="object" attrs="{'invisible': [('picking_id','!=',False)]}" class="oe_highlight" confirm="Confirm load operation?"/>
                     </header>
                     <sheet>
                         <group colspan="4" col="4"> 
@@ -181,6 +181,19 @@
                                     <group colspan="4" col="4"> 
                                         <separator string="Stock movement:" colspan="4"/>
                                         <field name="move_ids" colspan="4" nolabel="1">
+                                        </field>
+                                    </group>    
+                                </page>
+                                <page string="Extra stock:">
+                                    <group colspan="4" col="4"> 
+                                        <separator string="Account extra stock:" colspan="4"/>
+                                        <field name="quant_ids" colspan="4" nolabel="1">
+                                            <tree string="Stock quant:" editable="bottom" decoration-success="account_sync==True">
+                                                <field name="product_id" />
+                                                <field name="product_qty" />
+                                                <field name="price" />                                                
+                                                <field name="account_sync" invisible="1"/>
+                                            </tree>
                                         </field>
                                     </group>    
                                 </page>

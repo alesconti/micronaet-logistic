@@ -52,21 +52,21 @@ class StockPickingDelivery(models.Model):
         # Stock:
         picking_pool = self.env['stock.picking']
         move_pool = self.env['stock.move']
+        quant_pool = self.env['stock.picking.delivery.quant']
 
         # Sale order detail:
         sale_line_pool = self.env['sale.order.line']
        
         # Purchase order detail:
         purchase_pool = self.env['purchase.order']
-        line_pool = self.env['purchase.order.line']
         
         # Partner:
-        partner_pool = self.env['res.partner']
         company_pool = self.env['res.company']
         
         # ---------------------------------------------------------------------
         #                          Load parameters
         # ---------------------------------------------------------------------
+        import pdb; pdb.set_trace()
         company = company_pool.search([])[0]
         logistic_pick_in_type = company.logistic_pick_in_type_id
 
@@ -111,6 +111,13 @@ class StockPickingDelivery(models.Model):
                 # TODO Create extra account load from here:                
                 product_qty = remain_qty
                 sale_line_ready.append(logistic_sale_id)
+                quant_pool.create({
+                    # date and uid are default
+                    'order_id': self.id,
+                    'product_id': product.id, 
+                    'product_qty': product_qty - remain_qty,
+                    'price': line.price_unit,                    
+                    })
 
             # ---------------------------------------------------------
             # Create movement (not load stock):
@@ -145,6 +152,14 @@ class StockPickingDelivery(models.Model):
                 # procure_method,
                 #'product_qty': select_qty,
                 })
+
+        # ---------------------------------------------------------------------
+        # TODO: Load stock picking for extra
+        # ---------------------------------------------------------------------
+        quants = quant_pool.search([('order_id', '=', self.id)])
+        for quant in quants:
+            # TODO Extract to account and get the resuls file:
+            quant.account_sync = True # XXX If corrected improted
 
         # ---------------------------------------------------------------------
         # Sale order: Update Logistic status:
@@ -215,6 +230,30 @@ class StockPickingDelivery(models.Model):
     carrier_id = fields.Many2one('carrier.supplier', 'Carrier')
     picking_id = fields.Many2one('stock.picking', 'Picking')
     move_ids = fields.One2many('stock.move', related='picking_id.move_lines')
+
+class StockPickingDeliveryQuant(models.Model):
+    """ Model name: Stock line that create real load of stock
+    """
+    
+    _name = 'stock.picking.delivery.quant'
+    _description = 'Extra purchase line'
+    _rec_name = 'product_id'
+    
+    # -------------------------------------------------------------------------
+    # Columns:
+    # -------------------------------------------------------------------------
+    order_id = fields.Many2one(
+        'stock.picking.delivery', 'Order')
+    create_date = fields.Datetime(
+        'Create date', default=fields.Datetime.now())
+    create_uid = fields.Many2one(
+        'res.users', 'Create user', default=lambda s: s.env.user)
+    product_id = fields.Many2one(
+        'product.product', 'Product', required=True)
+    product_qty = fields.Float('Q.', digits=(16, 2), required=True)
+    price = fields.Float('Price', digits=(16, 2))
+    account_sync = fields.Boolean('Account sync')
+    
 
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
@@ -300,5 +339,7 @@ class StockPickingDelivery(models.Model):
 
     purchase_line_ids = fields.One2many(
         'purchase.order.line', 'delivery_id', 'Purchase line')
+    quant_ids = fields.One2many(
+        'stock.picking.delivery.quant', 'order_id', 'Stock quant:')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
