@@ -206,8 +206,11 @@ class StockPickingDelivery(models.Model):
         purchase_pool = self.env['purchase.order.line']
         purchases = purchase_pool.search([
             ('order_id.partner_id', '=', self.supplier_id.id),
-            #('logistic_undelivered_qty', '>', 0.0), # TODO change with logistic_status
+            #('logistic_undelivered_qty', '>', 0.0), 
+            # TODO change with logistic_status:
+            # logistic_state = done!!!
             ])
+
         purchase_ids = []    
         for purchase in purchases:
             if purchase.logistic_undelivered_qty:

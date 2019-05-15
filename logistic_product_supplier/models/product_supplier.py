@@ -332,18 +332,29 @@ class SaleOrder(models.Model):
         form_view_id = model_pool.get_object_reference(
             'logistic_product_supplier', 
             'view_sale_order_line_purchase_management_form')[1]
-
+        
         line_ids = [item.id for item in self.order_line]
+        if len(line_ids) == 1:
+            view_id = form_view_id
+            views = [(form_view_id, 'form'), (tree_view_id, 'tree')]
+            view_mode = 'form,tree'
+            res_id = line_ids[0]
+        else:    
+            view_id = tree_view_id
+            views = [(tree_view_id, 'tree'), (form_view_id, 'form')]
+            view_mode = 'tree,form'
+            res_id = False
+            
         
         return {
             'type': 'ir.actions.act_window',
             'name': _('Purchase line management'),
             'view_type': 'form',
-            'view_mode': 'tree,form',
-            #'res_id': 1,
+            'view_mode': view_mode,
+            'res_id': res_id,
             'res_model': 'sale.order.line',
-            'view_id': tree_view_id,
-            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
+            'view_id': view_id,
+            'views': views,
             'domain': [('id', 'in', line_ids)],
             'context': self.env.context,
             'target': 'current', # 'new'
