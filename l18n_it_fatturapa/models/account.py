@@ -590,6 +590,14 @@ class StockPicking(models.Model):
         '''
         res = []
         return res
+
+    @api.model
+    def xml_sanitize_text(self, text):
+        ''' Clean not XML character 
+            TODO: to be completed
+        '''
+        from xml.sax.saxutils import escape
+        return escape(text)
         
     # -------------------------------------------------------------------------
     # Default path (to be overrided)
@@ -751,9 +759,10 @@ class StockPicking(models.Model):
         fiscalcode = (partner_vat or partner.fatturapa_private_fiscalcode \
             or partner.fatturapa_fiscalcode).lstrip(italy_code)
         params['partner'] = {
-            'company': '' if partner.fatturapa_name else partner.name,
-            'name': partner.fatturapa_name, 
-            'surname': partner.fatturapa_surname,
+            'company': self.xml_sanitize_text(
+                '' if partner.fatturapa_name else partner.name),
+            'name': self.xml_sanitize_text(partner.fatturapa_name), 
+            'surname': self.xml_sanitize_text(partner.fatturapa_surname),
             # Address:
             'street': partner.street,
             'number': '', # in street!
