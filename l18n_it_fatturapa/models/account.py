@@ -458,6 +458,14 @@ class StockPicking(models.Model):
             )
 
     @api.model
+    def xml_sanitize_text(self, text):
+        ''' Clean not XML character 
+            TODO: to be completed
+        '''
+        from xml.sax.saxutils import escape
+        return escape(text or '')
+
+    @api.model
     def get_tag(self, block, tag, value, cardinality='1:1', newline='\n', 
             init_space=True):
         ''' tag: element to create
@@ -466,6 +474,8 @@ class StockPicking(models.Model):
             block: XML block, es: 1.2.3.4 (used for extra init space
         ''' 
         value = (value or '').strip().upper()
+        value = self.xml_sanitize_text(value)
+        
         #    _logger.error('Extract %s, %s > %s' % (
         #        block, tag, value))
         # Readability of XML:
@@ -591,14 +601,6 @@ class StockPicking(models.Model):
         res = []
         return res
 
-    @api.model
-    def xml_sanitize_text(self, text):
-        ''' Clean not XML character 
-            TODO: to be completed
-        '''
-        from xml.sax.saxutils import escape
-        return escape(text or '')
-        
     # -------------------------------------------------------------------------
     # Default path (to be overrided)
     # -------------------------------------------------------------------------
@@ -759,10 +761,9 @@ class StockPicking(models.Model):
         fiscalcode = (partner_vat or partner.fatturapa_private_fiscalcode \
             or partner.fatturapa_fiscalcode).lstrip(italy_code)
         params['partner'] = {
-            'company': self.xml_sanitize_text(
-                '' if partner.fatturapa_name else partner.name),
-            'name': self.xml_sanitize_text(partner.fatturapa_name), 
-            'surname': self.xml_sanitize_text(partner.fatturapa_surname),
+            'company': '' if partner.fatturapa_name else partner.name,
+            'name': partner.fatturapa_name, 
+            'surname': partner.fatturapa_surname,
             # Address:
             'street': partner.street,
             'number': '', # in street!
