@@ -597,7 +597,7 @@ class StockPicking(models.Model):
             TODO: to be completed
         '''
         from xml.sax.saxutils import escape
-        return escape(text)
+        return escape(text or '')
         
     # -------------------------------------------------------------------------
     # Default path (to be overrided)
