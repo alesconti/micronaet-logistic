@@ -954,6 +954,18 @@ class SaleOrder(models.Model):
     #                           BUTTON EVENTS:
     # -------------------------------------------------------------------------
     @api.multi
+    def locked_delivery_on(self):
+        '''Update fields
+        '''
+        self.locked_delivery = True
+
+    @api.multi
+    def locked_delivery_off(self):
+        '''Update fields
+        '''
+        self.locked_delivery = False
+    
+    @api.multi
     def dummy(self):
         '''Do nothing'''
         return True
@@ -1299,6 +1311,7 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
+    locked_delivery = fields.Boolean('Locked delivery')
     partner_need_invoice = fields.Boolean(
          'Partner need invoice', related='partner_id.need_invoice',
          )

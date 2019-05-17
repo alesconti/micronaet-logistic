@@ -376,6 +376,19 @@
                  <field name="partner_id" position="after">
                      <field name="logistic_state" readonly="1"/>
                  </field>
+                 <button name="action_confirm" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                     <attribute name="attrs"/>
+                 </button>
+                 <xpath expr="//button[@name='action_confirm'][2]" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                     <attribute name="attrs"/>
+                 </xpath>
+                 <xpath expr="//header/button[1]" position="before">
+                     <field name="locked_delivery" invisible="1"/>
+                     <button name="locked_delivery_on" string="Lock delivery" type="object" attrs="{'invisible': [('locked_delivery','=',True)]}" icon="fa-lock"/><!--attrs="{'invisible': [('logistic_state','!=',('draft', 'order', 'pending'))]}"-->
+                     <button name="locked_delivery_off" string="Unlock delivery" type="object" attrs="{'invisible': [('locked_delivery','=',False)]}" icon="fa-mail-reply"/>
+                 </xpath>
              </field>
          </record>    
          <record model="ir.ui.view" id="view_sale_order_quotation_logistic_tree">
@@ -625,13 +638,21 @@
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'dropshipped')]</field>
          </record>
+         <record model="ir.actions.act_window" id="action_sale_order_locked_delivery_form">
+             <field name="name">Sale order locked</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('locked_delivery', '=', True)]</field>
+         </record>
          <record model="ir.actions.act_window" id="action_sale_order_ready_form">
              <field name="name">Sale order ready</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
              <field name="view_mode">tree,form</field>
              <field name="context">{}</field>
-             <field name="domain">[('logistic_state', '=', 'ready')]</field>
+             <field name="domain">[('logistic_state', '=', 'ready'),('locked_delivery', '=', False)]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_delivering_form">
              <field name="name">Sale order delivering</field>
@@ -785,6 +806,13 @@
                      action="action_sale_order_pending_form"
                      sequence="50"
                      />
+                 <menuitem
+                     id="menu_logistic_left_order_locked_delivery" 
+                     parent="menu_logistic_left_order_root"
+                     name="Logistic: Locked"
+                     action="action_sale_order_locked_delivery_form"
+                     sequence="55"
+                     />                     
                  <menuitem
                      id="menu_logistic_left_order_ready" 
                      parent="menu_logistic_left_order_root"
