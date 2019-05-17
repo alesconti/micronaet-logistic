@@ -330,13 +330,27 @@
              <field name="domain">[]</field>
          </record>
          
-    
+
+        <record model="ir.ui.view" id="view_view_order_secure_tree">
+            <field name="name">sale.order.sale.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="before">
+                   <field name="payment_done" />
+                </field>
+            </field>
+        </record>
          <!--sale.order-->
          <record model="ir.ui.view" id="view_sale_order_logistic_form">
              <field name="name">sale.order.logistic.form</field>
              <field name="model">sale.order</field>
              <field name="inherit_id" ref="sale.view_order_form"/>
              <field name="arch" type="xml">
+                 <field name="payment_term_id" position="before">
+                     <field name="partner_need_invoice" />
+                     <field name="need_invoice" />
+                 </field>
                  <xpath expr="//page[1]" position="after">
                      <page string="Picking">
                          <group colspan="4" col="4">

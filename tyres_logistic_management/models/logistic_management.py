@@ -633,12 +633,14 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         ddt_ids = [] # For extra operation after
         invoice_ids = [] # For extra operation after
+        # TODO check need invoce procedure and add Mago extract data!!
         for picking in self:
             partner = picking.partner_id
             
-            # Need invoice check:
-            need_invoice = partner.property_account_position_id.need_invoice or \
-                partner.need_invoice
+            # Need invoice check (fiscal position or order check):
+            need_invoice = \
+                partner.property_account_position_id.need_invoice or \
+                    picking.sale_order_id.need_invoice
                 
             # Assign always DDT number:
             #picking.assign_ddt_number() # TODO from account
@@ -1286,8 +1288,24 @@ class SaleOrder(models.Model):
         self.logistic_state = 'done'
 
     # -------------------------------------------------------------------------
+    # Onchange
+    # -------------------------------------------------------------------------
+    @api.onchange('partner_id', 'parnter_id.need_invoice')
+    def onchange_partner_need_invoice(self):
+        ''' Update order status for invoice if change partner or need_invoice
+        '''
+        self.need_invoice = self.partner_id.need_invoice
+        
+    # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
+    partner_need_invoice = fields.Boolean(
+         'Partner need invoice', related='partner_id.need_invoice',
+         )
+    need_invoice = fields.Boolean(
+        'Order need invoice invoice', 
+        default=lambda s: s.partner_id.need_invoice)
+    
     logistic_picking_ids = fields.One2many(
         'stock.picking', 'sale_order_id', 'Picking')
 

@@ -101,7 +101,11 @@ class StockPickingDelivery(models.Model):
         # Append stock.move detail (or quants if in stock)
         # ---------------------------------------------------------------------           
         sale_line_ready = []
+        purchase_ids = [] # TODO debug
         for line in self.purchase_line_ids: # purchase.order.line
+            purchase_id = line.order_id.id
+            if purchase_id not in purchase_ids:
+                purchase_ids.append(purchase_id)
             product = line.product_id
             product_qty = line.logistic_delivered_manual
             remain_qty = line.logistic_undelivered_qty
@@ -186,8 +190,9 @@ class StockPickingDelivery(models.Model):
         # Check Purchase order ready
         # ---------------------------------------------------------------------
         # TODO debug:
-        _logger.info('Check purchase order closed (this):')
-        return purchase_pool.check_order_confirmed_done([self.id])
+        if purchase_ids:
+            _logger.info('Check purchase order closed (this):')
+            return purchase_pool.check_order_confirmed_done(purchase_ids)
 
     # -------------------------------------------------------------------------
     # Button event:
@@ -239,7 +244,8 @@ class StockPickingDelivery(models.Model):
     create_date = fields.Datetime(
         'Create date', required=True, default=fields.Datetime.now())
     create_uid = fields.Many2one(
-        'res.users', 'Create user', required=True, default=lambda s: s.env.user)
+        'res.users', 'Create user', required=True, 
+        default=lambda s: s.env.user)
     supplier_id = fields.Many2one(
         'res.partner', 'Supplier', required=True, 
         domain='[("supplier", "=", True)]',
