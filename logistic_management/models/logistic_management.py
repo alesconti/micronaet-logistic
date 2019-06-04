@@ -1647,6 +1647,7 @@ class SaleOrder(models.Model):
         #invoice_list = []    
         picking_ids = [] # return value
         i = 0
+        import pdb; pdb.set_trace()
         for order in orders:
             i += 1
             _logger.warning('Generate pick out from order: %s / %s'  % (
