@@ -43,7 +43,9 @@ class AccountFiscalPosition(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    sequence_id = fields.Many2one('ir.sequence', 'Sequence', required=True)
+    sequence_id = fields.Many2one('ir.sequence', 'FT Sequence', required=True)
+    credit_sequence_id = fields.Many2one(
+        'ir.sequence', 'NC Sequence', required=True)
 
 
 class StockPickingCarriageCondition(models.Model):
@@ -143,12 +145,18 @@ class StockPicking(models.Model):
         for picking in self:
             # Load partner sequence (depend on fiscal position)
             partner = picking.partner_id
-            if not partner.property_account_position_id:
+            position = partner.property_account_position_id
+            
+            if not position:
                 _logger.error(
                     'Partner %s with no fiscal position' % partner.name)
                 return False    
 
-            sequence = partner.property_account_position_id.sequence_id
+            if picking.stock_mode == 'out':
+                sequence = position.sequence_id
+            else:    
+                sequence = position.credit_sequence_id
+
             if not sequence:
                 _logger.error(
                     'Partner %s no sequence found in fiscal position' % (
@@ -156,18 +164,10 @@ class StockPicking(models.Model):
                 return False    
 
             sequence_number = sequence.next_by_id()
-            if picking.stock_mode == 'out':
-                picking.write({
-                    'invoice_number': sequence_number,
-                    'invoice_date': fields.Datetime.now(),    
-                    })
-            else: # 'nc' >> Credit note     
-                # Note: Keep same number but different prefix:   
-                sequence_number = sequence_number.replace('FT', 'NC')
-                picking.write({
-                    'invoice_number': sequence_number,
-                    'invoice_date': fields.Datetime.now(),
-                    })
+            picking.write({
+                'invoice_number': sequence_number,
+                'invoice_date': fields.Datetime.now(),    
+                })
         return True
                 
     @api.multi

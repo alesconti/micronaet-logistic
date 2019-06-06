@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <field name="active" position="after">
                     <field name="sequence_id" domain="[('prefix', '=ilike', 'FT%%')]"/>
+                    <field name="credit_sequence_id" domain="[('prefix', '=ilike', 'NC%%')]"/>
                 </field>
             </field>
         </record>        
@@ -19,6 +20,7 @@
             <field name="arch" type="xml">
                 <field name="name" position="after">
                     <field name="sequence_id" domain="[('prefix', '=ilike', 'FT%%')]"/>
+                    <field name="credit_sequence_id" domain="[('prefix', '=ilike', 'NC%%')]"/>
                 </field>
             </field>
         </record>
