@@ -1016,12 +1016,37 @@ class StockPicking(models.Model):
         return res
 
     @api.model
+    def get_refund_product_price(self, line):
+        ''' Generate 3 use data: 
+            Tax, Unit net, Net, VAT, Total for product refund passed in line
+        '''
+        product = line.product_id
+        partner = self.partner_id
+        position = partner.property_account_position_id
+        
+        taxes = product.taxes_id[0] # product
+        for replace in position.tax_ids:
+            if replace.tax_src_id == taxes:
+                taxes = replace.tax_dest_id
+        vat_rate = taxes.amount
+        q = line.product_uom_qty
+        total = line.price_unit * q
+        if vat_rate:
+            vat = total * vat_rate / 100.0
+            net = total - vat
+        else:
+            vat = 0
+            net = total 
+        return taxes[0], total / q if q else 0.0, net, vat, total
+        
+    @api.model
     def move_lines_for_report(self):
         ''' Generate a list of record depend on OC, KIT and 2 substitution mode
             Return list of: product, line
         '''    
         self.ensure_one()
         
+        refund_line = {} # Move line with refund product
         res = []
         kit_add = [] # Kit yet addes
         last_order = False
@@ -1044,6 +1069,8 @@ class StockPicking(models.Model):
         for line in sorted_lines:
             picking = line.picking_id
             if picking.stock_mode == 'in': # Refund
+                if line.product_id.is_refund:
+                    refund_line[line] = self.get_refund_product_price(line)
                 # Kit component?
                 if line.logistic_refund_id.kit_line_id:
                     if line.logistic_refund_id.kit_line_id not in refund_kit:
@@ -1089,13 +1116,17 @@ class StockPicking(models.Model):
             # -----------------------------------------------------------------
             # Line record:    
             # -----------------------------------------------------------------
+            # Extract if present refund 3 total (used for force)
+            (refund_tax, refund_unit_net, refund_net, refund_vat, refund_total
+                ) = refund_line.get(line, (False, False, False, False, False))
+                
             res.append((
                 original_product, # 0. Product browse
                 int(sale_line.product_uom_qty), # 1. XXX Note: Not stock.move q
                 replaced_product, # 2. Replaced product
                 
                 # TODO price_subtotal (use stock.move or sale.order.line?
-                sale_line.tax_id,
+                refund_tax or sale_line.tax_id, # XXX 3. Sale tax
                 
                 # -------------------------------------------------------------
                 # Unit:
@@ -1104,23 +1135,23 @@ class StockPicking(models.Model):
                     sale_line.price_unit), # 4. Unit no discount
                 self.qweb_format_float(
                     sale_line.price_reduce), # 5. Unit discounted
-                self.qweb_format_float(
+                refund_vat or self.qweb_format_float(
                     sale_line.price_tax), # XXX 6. VAT Total
 
                 # -------------------------------------------------------------
                 # Price net price:
                 # -------------------------------------------------------------
+                refund_unit_net or self.qweb_format_float(# XXX 7. Unit no VAT
+                    sale_line.price_reduce_taxexcl, decimal=6), 
                 self.qweb_format_float(
-                    sale_line.price_reduce_taxexcl, decimal=6), # 7. Unit Without VAT
-                self.qweb_format_float(
-                    sale_line.price_reduce_taxinc, decimal=6), # 8. Unit With VAT=price_unit-red
+                    sale_line.price_reduce_taxinc, decimal=6), # 8. Unit+VAT=price_unit-red
 
                 # -------------------------------------------------------------
                 # Total:
                 # -------------------------------------------------------------
-                self.qweb_format_float(
+                refund_net or self.qweb_format_float(
                     sale_line.price_subtotal), # XXX 9. Tot without VAT
-                self.qweb_format_float(
+                refund_total or self.qweb_format_float(
                     sale_line.price_total), # XXX 10. Tot With VAT
 
                 # -------------------------------------------------------------
