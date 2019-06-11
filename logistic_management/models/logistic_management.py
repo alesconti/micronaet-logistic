@@ -1089,7 +1089,10 @@ class StockPicking(models.Model):
                 continue 
                 
             # Similar / Alternative case:
-            if sale_line.origin_product_id:
+            if line in refund_line:
+                original_product = line.product_id
+                replaced_product = False
+            elif sale_line.origin_product_id:
                 original_product = sale_line.origin_product_id
                 replaced_product = sale_line.product_id
             else:    
