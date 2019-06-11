@@ -1037,9 +1037,7 @@ class StockPicking(models.Model):
         else:
             vat = 0
             net = total 
-        res = (taxes[0], total / q if q else 0.0, net, vat, total)
-        _logger.error('Refund force import: %s' % (res, ))
-        return res
+        return (taxes[0], total / q if q else 0.0, net, vat, total)
         
     @api.model
     def move_lines_for_report(self):
@@ -1175,7 +1173,6 @@ class StockPicking(models.Model):
             ddt_reference = '' # only first line print DDT reference    
         _logger.warning('>>> Picking line: %s ' % (res, ))
         _logger.warning(res)
-        _logger.error('DATI:    %s' % (res, ))
         return res
 
     # -------------------------------------------------------------------------
