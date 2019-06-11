@@ -1089,9 +1089,11 @@ class StockPicking(models.Model):
                 continue 
                 
             # Similar / Alternative case:
+            quantity = int(sale_line.product_uom_qty)
             if line in refund_line:
                 original_product = line.product_id
                 replaced_product = False
+                quantity = int(line.product_uom_qty)
             elif sale_line.origin_product_id:
                 original_product = sale_line.origin_product_id
                 replaced_product = sale_line.product_id
@@ -1125,7 +1127,7 @@ class StockPicking(models.Model):
                 
             res.append((
                 original_product, # 0. Product browse
-                int(sale_line.product_uom_qty), # 1. XXX Note: Not stock.move q
+                quantity, # 1. XXX Note: Not stock.move q
                 replaced_product, # 2. Replaced product
                 
                 # TODO price_subtotal (use stock.move or sale.order.line?
