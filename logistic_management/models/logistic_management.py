@@ -1037,7 +1037,9 @@ class StockPicking(models.Model):
         else:
             vat = 0
             net = total 
-        return taxes[0], total / q if q else 0.0, net, vat, total
+        res = (taxes[0], total / q if q else 0.0, net, vat, total)
+        _logger.error('Refund force import: %s' % (res, ))
+        return res
         
     @api.model
     def move_lines_for_report(self):
