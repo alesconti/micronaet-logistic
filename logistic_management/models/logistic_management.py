@@ -1175,6 +1175,7 @@ class StockPicking(models.Model):
             ddt_reference = '' # only first line print DDT reference    
         _logger.warning('>>> Picking line: %s ' % (res, ))
         _logger.warning(res)
+        _logger.error('DATI:    %s' % (res, ))
         return res
 
     # -------------------------------------------------------------------------
