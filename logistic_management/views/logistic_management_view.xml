@@ -33,6 +33,8 @@
                     <div>
                         <field name="is_expence"/>
                         <label for="is_expence"/>
+                        <field name="is_refund"/>
+                        <label for="is_refund"/>
                     </div>
                 </xpath>
             </field>       

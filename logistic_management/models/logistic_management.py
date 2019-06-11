@@ -171,6 +171,8 @@ class ProductTemplate(models.Model):
     # -------------------------------------------------------------------------
     is_expence = fields.Boolean('Expense product', 
         help='Expense product is not order and produced')
+    is_refund = fields.Boolean('Refund product', 
+        help='Refund product use for mark value for total')
     
 class PurchaseOrder(models.Model):
     """ Model name: Sale Order
@@ -497,8 +499,7 @@ class StockPicking(models.Model):
     @api.model
     def excel_report_extract_accounting_fees(self, evaluation_date=False):
         ''' Extract file account fees
-        '''
-        
+        '''        
         # Pool used:
         excel_pool = self.env['excel.writer']
         company_pool = self.env['res.company']
@@ -1104,7 +1105,7 @@ class StockPicking(models.Model):
                 self.qweb_format_float(
                     sale_line.price_reduce), # 5. Unit discounted
                 self.qweb_format_float(
-                    sale_line.price_tax), # 6. VAT Total
+                    sale_line.price_tax), # XXX 6. VAT Total
 
                 # -------------------------------------------------------------
                 # Price net price:
@@ -1118,9 +1119,9 @@ class StockPicking(models.Model):
                 # Total:
                 # -------------------------------------------------------------
                 self.qweb_format_float(
-                    sale_line.price_subtotal), # 9. Tot without VAT
+                    sale_line.price_subtotal), # XXX 9. Tot without VAT
                 self.qweb_format_float(
-                    sale_line.price_total), # 10. Tot With VAT
+                    sale_line.price_total), # XXX 10. Tot With VAT
 
                 # -------------------------------------------------------------
                 # Amount invoiced:
