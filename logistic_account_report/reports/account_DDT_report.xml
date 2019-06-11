@@ -107,9 +107,8 @@
                                         <h5><span t-esc="move[0].product_tmpl_id.default_code or &quot; &quot;" /><br/>
                                         
                                         <!--original product:-->
-                                        <i><span t-if="move[2]" t-field="move[2].product_tmpl_id.default_code" /></i>
-                                        
-                                        <i><span t-if="move[0].product_tmpl_id.is_refund" t-esc="move[9]" /></i></h5>
+                                        <i><span t-if="move[2]" t-field="move[2].product_tmpl_id.default_code" /></i>                                        
+                                        <b><span t-if="move[0].product_tmpl_id.is_refund" t-esc="'%s %s' % (move[9], res_company.currency_id.symbol)" /></b></h5>
                                         
                                     </div>    
 
