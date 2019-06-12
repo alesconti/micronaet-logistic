@@ -129,6 +129,20 @@ class PurchaseOrder(models.Model):
     # -------------------------------------------------------------------------
     filename = fields.Char('Filename', size=100)
 
+    # -------------------------------------------------------------------------
+    # Override action for export:
+    # -------------------------------------------------------------------------
+    @api.model
+    def workflow_order_pending(self):
+        '''
+        '''
+        # Create order as original action
+        res = super(PurchaseOrder, self).workflow_order_pending()
+        
+        # Export if necessary:
+        self.export_purchase_order()
+        return res
+
     @api.multi    
     def export_purchase_order(self):
         ''' Export purchase order
@@ -193,7 +207,7 @@ class PurchaseOrder(models.Model):
             
         return_mode = '\n'        
         now = fields.Datetime.now()
-
+        import pdb; pdb.set_trace()
         for purchase in self:
             partner = purchase.partner_id
             if not partner.purchase_export_id or \
