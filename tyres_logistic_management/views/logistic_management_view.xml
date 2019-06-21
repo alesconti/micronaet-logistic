@@ -331,6 +331,7 @@
          </record>
          
 
+        <!--TODO raise an error:
         <record model="ir.ui.view" id="view_view_order_secure_tree">
             <field name="name">sale.order.sale.tree</field>
             <field name="model">sale.order</field>
@@ -340,7 +341,8 @@
                    <field name="payment_done" />
                 </field>
             </field>
-        </record>
+        </record>-->
+        
          <!--sale.order-->
          <record model="ir.ui.view" id="view_sale_order_logistic_form">
              <field name="name">sale.order.logistic.form</field>
