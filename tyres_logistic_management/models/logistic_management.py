@@ -931,6 +931,8 @@ class ResPartner(models.Model):
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     need_invoice = fields.Boolean('Always invoice')
+    sql_customer_code = fields.Char('SQL customer code', size=20)
+    sql_supplier_code = fields.Char('SQL supplier code', size=20)
 
 class AccountFiscalPosition(models.Model):
     """ Model name: Account Fiscal Position
