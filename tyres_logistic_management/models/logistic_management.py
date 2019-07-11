@@ -1304,7 +1304,8 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     # Onchange
     # -------------------------------------------------------------------------
-    @api.onchange('partner_id', 'parnter_id.need_invoice')
+    # TODO Raise error:
+    @api.onchange('partner_id', 'partner_id.need_invoice')
     def onchange_partner_need_invoice(self):
         ''' Update order status for invoice if change partner or need_invoice
         '''

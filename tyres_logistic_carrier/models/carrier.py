@@ -59,6 +59,7 @@ class CarrierParcelTemplate(models.Model):
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     name = fields.Char('Name')
+    carrier_supplier_id = fields.Many2one('carrier.supplier', 'Carrier')
     length = fields.Float('Length', digits=(16, 2), required=True)
     width = fields.Float('Width', digits=(16, 2), required=True)
     height = fields.Float('Height', digits=(16, 2), required=True)
@@ -114,11 +115,26 @@ class SaleOrder(models.Model):
             })
         return True
 
+    @api.multi
+    def set_carrier_ok_yes(self, ):
+        ''' Set carrier as OK
+        '''
+        self.carrier_ok = True
+        return True
+
+    @api.multi
+    def set_carrier_ok_no(self, ):
+        ''' Set carrier as UNDO
+        '''
+        self.carrier_ok = False
+        return True
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    carrier_supplier_id = fields.Many2one(
-        'carrier.supplier', 'Supplier')
+    carrier_ok = fields.Boolean('Carrier OK', 
+        help='Carriere must be confirmed when done!')
+    carrier_supplier_id = fields.Many2one('carrier.supplier', 'Carrier')
     carrier_parcel_template_id = fields.Many2one(
         'carrier.parcel.template', 'Parcel template')
     carrier_description = fields.Text('Carrier description')

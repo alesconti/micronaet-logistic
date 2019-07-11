@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+   <data>
+        <record id="group_see_my_order" model="res.groups">
+            <field name="name">My Order User</field>
+        </record>
+   </data>
+</openerp>

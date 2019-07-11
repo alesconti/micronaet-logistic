@@ -9,8 +9,12 @@
                 <xpath expr="//page[1]" position="after">
                     <page string="Carrier">
                         <group colspan="4" col="5">
+                            <button name="set_carrier_ok_yes" string="Delivery confirmed" type="object" attrs="{'invisible': [('carrier_ok', '=', True)]}"/><!--('logistic_state', 'not in', ('order', 'pending')), -->
+                            <button name="set_carrier_ok_no" string="Delivery undo" type="object" attrs="{'invisible': [('carrier_ok', '=', False)]}"/>
+                            <field name="carrier_ok" invisible="1" />
+                            
                             <field name="carrier_supplier_id" />
-                            <field name="carrier_parcel_template_id" />
+                            <field name="carrier_parcel_template_id" domain="['|',('carrier_supplier_id','=',False),('carrier_supplier_id','=',carrier_supplier_id)]"/>
                             <button name="load_template_parcel" string="Add" type="object" attrs="{'invisible': [('carrier_parcel_template_id','=',False)]}" colspan="1" class="oe_highlight"/>
 
                             <separator string="Parcel:" colspan="4"/>
@@ -75,7 +79,8 @@
             <field name="name">carrier.parcel.template.tree</field>
             <field name="model">carrier.parcel.template</field>
             <field name="arch" type="xml">
-                <tree string="Parcel template" editable="bottom">                    
+                <tree string="Parcel template" editable="bottom" decoration-primary="carrier_supplier_id==False">                    
+                    <field name="carrier_supplier_id" />
                     <field name="name" />
                     <field name="length" />
                     <field name="width" />
@@ -91,10 +96,10 @@
                 <form string="Parcel template">
                     <sheet>
                         <group colspan="4" col="6">
+                            <field name="carrier_supplier_id" />
                             <field name="name" />
                             <field name="weight" />                                    
-                            <newline/>
-
+ 
                             <field name="length" />
                             <field name="width" />
                             <field name="height" />                    

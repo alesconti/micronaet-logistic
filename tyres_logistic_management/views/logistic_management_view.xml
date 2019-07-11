@@ -418,6 +418,7 @@
                  </field>
                     
                  <field name="state" position="after">
+                     <field name="team_id" />
                      <field name="logistic_state" />                     
                  </field>
                  <field name="invoice_status" position="attributes">
