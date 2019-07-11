@@ -124,38 +124,18 @@ class ResUsers(models.Model):
             parent_menu = self.env.ref(
                 'tyres_order_team_filter.menu_logistic_my_order_root')
             my_menu_id = menu_pool.create({
-                #'parent_left'
-                #'parent_right'
                 'name': name,
                 'active': True,
                 'sequence': 10,
                 'parent_id': parent_menu.id,
-                #'web_icon': 
                 'action': 'ir.actions.act_window,%s' % my_action_id,
                 'groups_id': [(6, 0, [my_group_id])],
+                #'parent_left'
+                #'parent_right'
+                #'web_icon': 
                 }).id
             user.my_menu_id = my_menu_id
         
         return True
 
-class SaleOrder(models.Model):
-    """ Model name: Sale Order
-    """
-    
-    _inherit = 'sale.order'
-    
-    #@api.multi
-    #def _compute_my_order(self, ):
-    #    ''' Check if my user has that team ID
-    #    '''
-    #    teams = self.env['res.users'].browse(self.env.uid).team_ids
-    #    team_list = [item.team_id for item in teams]
-    #    for order in self:
-    #        order.my_order = order.team_id in team_list
-
-    # -------------------------------------------------------------------------
-    # COLUMNS:
-    # -------------------------------------------------------------------------
-    #my_order = fields.Boolean('My order', compute='_compute_my_order')
-    # -------------------------------------------------------------------------
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
