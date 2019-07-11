@@ -39,8 +39,7 @@ class ResUsers(models.Model):
     # -------------------------------------------------------------------------
     my_group_id = fields.Many2one('res.groups', 'My Menu group')
     my_action_id = fields.Many2one('ir.actions.act_window', 'My action')
-    my_menu_id = fields.Many2one('ir.ui.menu', 'My menu')
-    
+    my_menu_id = fields.Many2one('ir.ui.menu', 'My menu')    
     team_ids = fields.Many2many(
         'crm.team', relation='rel_user_team', 
         column1='user_id', column2='team_id', 
@@ -135,7 +134,6 @@ class ResUsers(models.Model):
                 #'web_icon': 
                 }).id
             user.my_menu_id = my_menu_id
-        
         return True
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
