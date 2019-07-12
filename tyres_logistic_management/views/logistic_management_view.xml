@@ -102,6 +102,7 @@
              <field name="inherit_id" ref="base.view_partner_form"/>
              <field name="arch" type="xml">
                  <field name="ref" position="after">
+                     <field name="internal_stock" />
                      <separator string="Account document" />
                      <field name="need_invoice" />
                  </field>

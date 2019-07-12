@@ -146,15 +146,22 @@ class PurchaseOrder(models.Model):
         model_pool = self.env['ir.model.data']
         tree_view_id = form_view_id = False
         
+        if len(purchase_ids) == 1:
+            res_id = purchase_ids[0]
+            views = [(form_view_id, 'form'), (tree_view_id, 'tree')]
+        else:
+            res_id = False
+            views = [(tree_view_id, 'tree'), (form_view_id, 'form')]
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Purchase order selected:'),
             'view_type': 'form',
             'view_mode': 'tree,form',
-            #'res_id': 1,
+            'res_id': res_id,
             'res_model': 'purchase.order',
             'view_id': tree_view_id,
-            'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
+            'views': views,
             'domain': [('id', 'in', purchase_ids)],
             'context': self.env.context,
             'target': 'current',
@@ -930,6 +937,8 @@ class ResPartner(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
+    internal_stock = fields.Boolean('Internal Stock', 
+        help='All order to this supplier is considered as internal')
     need_invoice = fields.Boolean('Always invoice')
     sql_customer_code = fields.Char('SQL customer code', size=20)
     sql_supplier_code = fields.Char('SQL supplier code', size=20)
@@ -1029,6 +1038,9 @@ class SaleOrder(models.Model):
             ('order_id', '=', self.id),
             ('logistic_state', '=', 'draft'),
             ])
+
+        if not lines:
+            raise exceptions.UserError(_('No order line to order!'))
 
         # Call origina action:    
         return line_pool.workflow_order_pending(lines)
