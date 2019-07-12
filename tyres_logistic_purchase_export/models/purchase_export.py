@@ -69,17 +69,23 @@ class ResSupplierPurchaseFolder(models.Model):
     # -------------------------------------------------------------------------
     #                            COMPUTE FIELDS FUNCTION:
     # -------------------------------------------------------------------------
-    @api.multi
-    @api.depends('folder', )
-    def _get_folder_path(self):
+    @api.model
+    def _get_folder_path_mode(self, mode=''):
         ''' Return folder full path and create if not exist
         '''
+        if mode:
+            mode = '_%s' % mode
+            
+        folder_field = 'folder%s' % mode
+        fullpath_field = 'fullpath%s' % mode
+
         for folder in self:
             # -----------------------------------------------------------------
             # Create path if not exist:
             # -----------------------------------------------------------------
             try:
-                fullpath = os.path.expanduser(folder.folder)
+                fullpath = os.path.expanduser(
+                    folder.__getattribute__(folder_field))
                 os.system('mkdir -p %s' % fullpath)
             except:
                 fullpath = ''    
@@ -88,18 +94,61 @@ class ResSupplierPurchaseFolder(models.Model):
             # -----------------------------------------------------------------
             # Save value:
             # -----------------------------------------------------------------
-            folder.fullpath = fullpath
+            if mode == '_esit': 
+                folder.fullpath_esit = fullpath
+            elif mode == '_history': 
+                folder.fullpath_history = fullpath
+            else: 
+                folder.fullpath = fullpath
+
+    @api.multi
+    @api.depends('folder', )
+    def _get_folder_path(self):
+        ''' Return folder full path and create if not exist
+        '''
+        self._get_folder_path_mode() # default
+        
+    @api.multi
+    @api.depends('folder_history', )
+    def _get_folder_path_history(self):
+        ''' Return folder full path and create if not exist
+        '''
+        self._get_folder_path_mode('history')
+
+    @api.multi
+    @api.depends('folder_esit', )
+    def _get_folder_path_esit(self):
+        ''' Return folder full path and create if not exist
+        '''
+        self._get_folder_path_mode('esit')
         
     # -------------------------------------------------------------------------    
     # Columns:
     # -------------------------------------------------------------------------    
     name = fields.Char('Name', size=40, required=True,
         help='Name of this folder position')
+    
+    # Export path:    
     folder = fields.Char('Folder', size=280, required=True,
         help='Folder path, ex: /home/odoo/purchase or ~/supplier')
     fullpath = fields.Char('Folder path', size=280, 
         help='Expand folder name in correct path and create if not exist',
         compute='_get_folder_path')
+        
+    # History path:
+    folder_history = fields.Char('Folder history', size=280, required=True,
+        help='Folder path, ex: /home/odoo/purchase/history or ~/supplier')
+    fullpath_history = fields.Char('Folder history path', size=280, 
+        help='Expand folder name in correct path and create if not exist',
+        compute='_get_folder_path_history')
+    
+    # Esit path:
+    folder_esit = fields.Char('Folder esit', size=280, required=True,
+        help='Folder path, ex: /home/odoo/purchase/esit or ~/supplier')
+    fullpath_esit = fields.Char('Folder esit path', size=280, 
+        help='Expand folder name in correct path and create if not exist',
+        compute='_get_folder_path_esit')
+        
     #test_mount = fields.Char('Test mount', size=280, 
     #    help='Check mount file, ex: /home/odoo/purchase/whoami.server')
         
@@ -216,7 +265,6 @@ class PurchaseOrder(models.Model):
             
         return_mode = '\n'        
         now = fields.Datetime.now()
-        import pdb; pdb.set_trace()
         for purchase in self:
             partner = purchase.partner_id
             if not partner.purchase_export_id or \

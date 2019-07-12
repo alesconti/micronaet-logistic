@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <!--<field name="partner_ref" position="after">-->
                 <field name="state" position="before">
-                    <button name="export_purchase_order" string="Export order" type="object" class="oe_highlight" />
+                    <!--<button name="export_purchase_order" string="Export order" type="object" class="oe_highlight" /> XXX Automatic when confirmed-->
                 </field>
                 <field name="date_order" position="after">
                     <field name="filename" readonly="1" />
@@ -95,8 +95,19 @@
                     <sheet>                    
                         <group col="4" colspan="4">
                             <field name="name" />
+                            <newline/>
+                            
+                            <separator string="Output folder" colspan="4"/>
                             <field name="folder" />
-                            <field name="fullpath" colspan="4" readonly="1"/>
+                            <field name="fullpath" readonly="1"/>
+
+                            <separator string="History folder" colspan="4"/>
+                            <field name="folder_history" />
+                            <field name="fullpath_history" readonly="1"/>
+
+                            <separator string="Esit folder" colspan="4"/>
+                            <field name="folder_esit" />
+                            <field name="fullpath_esit" readonly="1"/>
                         </group>    
                     </sheet>
                 </form>
