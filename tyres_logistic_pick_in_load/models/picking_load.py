@@ -311,36 +311,24 @@ class PurchaseOrderLine(models.Model):
     def delivery_0(self):
         ''' Add +1 to manual arrived qty
         '''
-        active_id = self.env.context.get('active_id')
-        if not active_id:
-            raise exceptions.Warning('Cannot link purchase delivery!') 
-            
         return self.write({
             'logistic_delivered_manual': 0,
-            'delivery_id': False,
+            'user_select_id': self.uid,
             })        
 
     @api.multi
     def delivery_more_1(self):
         ''' Add +1 to manual arrived qty
         '''
-        active_id = self.env.context.get('active_id')
-        if not active_id:
-            raise exceptions.Warning('Cannot link purchase delivery!') 
-            
         return self.write({
             'logistic_delivered_manual': self.logistic_delivered_manual + 1.0,
-            'delivery_id': active_id,
+            'user_select_id': self.uid,
             })        
 
     @api.multi
     def delivery_less_1(self):
         ''' Add +1 to manual arrived qty
         '''
-        active_id = self.env.context.get('active_id')
-        if not active_id:
-            raise exceptions.Warning('Cannot link purchase delivery!') 
-            
         logistic_delivered_manual = self.logistic_delivered_manual
         if logistic_delivered_manual < 1.0:
             raise exceptions.Warning('Nothing to remove!') 
@@ -349,16 +337,16 @@ class PurchaseOrderLine(models.Model):
             active_id = False
         return self.write({
             'logistic_delivered_manual': logistic_delivered_manual - 1.0,
-            'delivery_id': active_id,
+            'user_select_id': self.uid,
             })        
 
     @api.multi
     def delivery_all(self):
         ''' Add +1 to manual arrived qty
         '''
-        active_id = self.env.context.get('active_id')
-        if not active_id:
-            raise exceptions.Warning('Cannot link purchase delivery!') 
+        #active_id = self.env.context.get('active_id')
+        #if not active_id:
+        #    raise exceptions.Warning('Cannot link purchase delivery!') 
         
         logistic_undelivered_qty = self.logistic_undelivered_qty
         if logistic_undelivered_qty <= 0.0:
@@ -366,7 +354,7 @@ class PurchaseOrderLine(models.Model):
         
         return self.write({
             'logistic_delivered_manual': self.logistic_undelivered_qty,
-            'delivery_id': active_id,
+            'user_select_id': self.uid,
             })        
 
     # -------------------------------------------------------------------------
@@ -374,7 +362,8 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery')
     logistic_delivered_manual = fields.Float('Manual', digits=(16, 2))
-    
+    user_select_id = fields.Many2one('res.user', 'Selected user')
+
     # Related for filter
     raggio = fields.Char(
         'Ray', related='product_id.raggio', store=True)

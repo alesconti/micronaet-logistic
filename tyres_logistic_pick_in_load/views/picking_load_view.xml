@@ -95,6 +95,9 @@
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
                 <form string="Purchase line">
+                    <header>
+                    </header>
+                    
                     <sheet>
                         <group colspan="4" col="4" >
                              <field name="order_id" readonly="1"/>
@@ -146,6 +149,8 @@
                     <field name="larghezza" />
                     <field name="spalla" />
 
+                    <filter name="my_selection" string="Current selected" domain="[('delivery_id','=',False), ('user_select_id', '=', uid)]"/>
+
                     <!--<filter name="state_draft" string="Draft state" domain="[('state','=','draft')]"/>-->
                     <group expand="0" string="Group By...">
                     
@@ -168,9 +173,9 @@
             <field name="view_id" ref="view_delivery_selection_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_search"/>            
             <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
-            <field name="domain">[]</field>
+            <field name="domain">[('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed')]</field>
         </record>
-        
+
 
         <record model="ir.actions.act_window" id="action_purchase_order_line">
             <field name="name">Purchase line</field>
