@@ -68,7 +68,7 @@ class ResUsers(models.Model):
             my_group_id = user.my_group_id.id
         else:
             my_group_id = group_pool.create({
-                'name': 'My Order %s' % user.name,
+                'name': _('My Order %s') % user.name,
                 'comment': 'Group auto created from tyres_order_team_filter',
                 'users': [(6, 0, [user.id, ])],
                 }).id
@@ -85,7 +85,7 @@ class ResUsers(models.Model):
             # Default action used to copy
             origin_action = self.env.ref(
                 'tyres_logistic_management.action_sale_order_all_form')
-            name = 'My %s' % origin_action.name
+            name = _('My %s') % origin_action.name
             my_action_id = action_pool.create({
                 'name': name,
                 'type': origin_action.type,
