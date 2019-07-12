@@ -1006,6 +1006,9 @@ class SaleOrder(models.Model):
     def workflow_manual_order_pending(self):
         ''' If order have all line checked make one step in pending state
         '''
+        # ---------------------------------------------------------------------        
+        #                             Go in pending
+        # ---------------------------------------------------------------------        
         if self.logistic_state != 'order':
             raise exceptions.UserError(
                 _('Only order in confirmed payment could go in pending!'))            
@@ -1015,7 +1018,20 @@ class SaleOrder(models.Model):
                 raise exceptions.UserError(
                 _('Not all line are mapped to supplier!'))                
         self.logistic_state = 'pending'
-        return True
+
+        # ---------------------------------------------------------------------        
+        #                            Generate purchase:
+        # ---------------------------------------------------------------------        
+        # Filter only draft line for this order:
+        line_pool = self.env['sale.order.line']
+        
+        lines = line_pool.search([
+            ('order_id', '=', self.id),
+            ('logistic_state', '=', 'draft'),
+            ])
+
+        # Call origina action:    
+        return line_pool.workflow_order_pending(lines)
 
     # -------------------------------------------------------------------------
     #                           UTILITY:
@@ -1568,7 +1584,7 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     # A. Assign available q.ty in stock assign a stock movement / quants
     @api.model
-    def workflow_order_pending(self):
+    def workflow_order_pending(self, lines=None):
         ''' Logistic phase 2:            
             Order remain uncovered qty to the default supplier            
             Generate purchase order to supplier linked to product
@@ -1583,12 +1599,13 @@ class SaleOrderLine(models.Model):
         purchase_line_pool = self.env['purchase.order.line']        
 
         # Note: Update only pending order with uncovered lines
-        lines = self.search([
-            # Header:
-            ('order_id.logistic_state', '=', 'pending'),
-            # Line:
-            ('logistic_state', '=', 'draft'),
-            ])
+        if lines is None:
+            lines = self.search([
+                # Header:
+                ('order_id.logistic_state', '=', 'pending'),
+                # Line:
+                ('logistic_state', '=', 'draft'),
+                ])
             
         # ---------------------------------------------------------------------
         # Parameter from company:
