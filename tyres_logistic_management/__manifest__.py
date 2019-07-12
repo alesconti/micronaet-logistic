@@ -40,6 +40,7 @@
         'excel_export', # Export in Excel
         'tyres_logistic_ddt',
         'logistic_product_supplier', # Supplier purchase management
+        'logistic_secure_payment', # For auto go ahead when confirmed payment
         
         #'logistic_stock_position', # Stock position
         #'order_line_explode_kit', # Sale kit explode

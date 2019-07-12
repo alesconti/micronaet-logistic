@@ -982,6 +982,21 @@ class SaleOrder(models.Model):
     
     _inherit = 'sale.order'
 
+    # -------------------------------------------------------------------------    
+    #                           OVERRIDE EVENTS:
+    # -------------------------------------------------------------------------    
+    @api.multi
+    def payment_is_done(self):
+        """ Update payment field done
+        """
+        self.payment_done = True
+
+        # Lauch draft to order
+        res = self.workflow_draft_to_order()
+        _logger.warning('Order payed total: %s' % (res, ))
+        
+        return True # not returned the view!
+
     # -------------------------------------------------------------------------
     #                           BUTTON EVENTS:
     # -------------------------------------------------------------------------
@@ -1697,6 +1712,11 @@ class SaleOrderLine(models.Model):
                 # Update line state:    
                 line.logistic_state = 'ordered'
 
+        # Manage Manual internal stock order:
+        # TODO auto confirm order internal_stock
+        # TODO generate stock quants as assigned 
+        # TODO check if sale order is ready 
+        
         # Return view:
         return purchase_pool.return_purchase_order_list_view(selected_ids)
 
