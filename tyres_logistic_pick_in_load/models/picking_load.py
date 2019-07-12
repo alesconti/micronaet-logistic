@@ -287,6 +287,55 @@ class PurchaseOrderLine(models.Model):
     #                                   Button event:
     # -------------------------------------------------------------------------
     @api.multi
+    def create_delivery_orders(self):
+        ''' Create the list of all order received splitted for supplier        
+        '''
+        import pdb; pdb.set_trace()
+        lines = self.search([
+            ('delivery_id','=',False), 
+            ('user_select_id', '=', self.env.uid), 
+            ('logistic_delivered_manual', '>', 0),
+            ]
+            
+        if not lines:
+            raise exceptions.Warning('No selection for current user!') 
+        
+        supplier_line = {}
+        for line in lines:
+            supplier = line.order_id.partner_id
+            if supplier not in supplier_line:
+                supplier_line[supplier] = []
+            supplier_line[supplier].append(line)
+        
+        # Create order:
+                
+        # ---------------------------------------------------------------------
+        # Return created order:
+        # ---------------------------------------------------------------------
+        tree_view_id = form_view_id = False
+        if len(purchases) == 1:
+            res_id = purchases[0].id
+            views = [(tree_view_id, 'form'), (tree_view_id, 'tree')]
+        else:
+            res_id = False    
+            views = [(tree_view_id, 'tree'), (tree_view_id, 'form')]
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Delivery created:'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_id': res_id,
+            'res_model': 'stock.picking.delivery',
+            'view_id': tree_view_id,
+            #'search_view_id': search_view_id,
+            'views': views,
+            'domain': [('id', 'in', purchases.mapped('id'))],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+        
+    @api.multi
     def open_detail_delivery_in(self):
         ''' Return detail view for stock operator
         '''
@@ -320,7 +369,6 @@ class PurchaseOrderLine(models.Model):
     def delivery_more_1(self):
         ''' Add +1 to manual arrived qty
         '''
-        import pdb; pdb.set_trace()
         return self.write({
             'logistic_delivered_manual': self.logistic_delivered_manual + 1.0,
             'user_select_id': self.env.uid,

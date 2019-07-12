@@ -59,7 +59,7 @@
             <field name="model">purchase.order.line</field>
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
-                <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-success="logistic_delivered_manual&gt;0" decoration-warning="user_select_id!=uid and user_select_id != False">
+                <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-success="logistic_delivered_manual&gt;0" decoration-danger="user_select_id!=uid and user_select_id != False">
                      <field name="order_id" readonly="1"/>
                      <button name="open_detail_delivery_in" string="Open detail for line" type="object" icon="fa-list-alt"/>
                      <field name="product_id" readonly="1" />
@@ -86,6 +86,7 @@
                      
                      <field name="logistic_delivered_manual" />
                      <field name="delivery_id" invisible="1"/>
+                     <button name="create_delivery_orders" string="Create delivery orders" type="object" class="oe_highlight" colspan="1" icon="fa-files-o" confirm="Do you confirm the generation of all supplier delivery document (you selection)?"/>
                 </tree>
             </field>
         </record>
@@ -150,7 +151,7 @@
                     <field name="larghezza" />
                     <field name="spalla" />
 
-                    <filter name="my_selection" string="Current selected" domain="[('delivery_id','=',False), ('user_select_id', '=', uid)]"/>
+                    <filter name="my_selection" string="Current selected" domain="[('delivery_id','=',False), ('user_select_id', '=', uid), ('logistic_delivered_manual','&gt;',0)]"/>
 
                     <!--<filter name="state_draft" string="Draft state" domain="[('state','=','draft')]"/>-->
                     <group expand="0" string="Group By...">
@@ -174,7 +175,7 @@
             <field name="view_id" ref="view_delivery_selection_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_search"/>            
             <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
-            <field name="domain">[('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed')]</field>
+            <field name="domain">[('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), '|', ('user_select_id', '=', uid), ('user_select_id', '=', False)]</field>
         </record>
 
 
