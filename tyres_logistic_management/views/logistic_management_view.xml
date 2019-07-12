@@ -436,9 +436,11 @@
              <field name="arch" type="xml">
                  <field name="user_id" position="after">
                      <field name="logistic_state" />
+                     <field name="team_id" />
                  </field>
                  <xpath expr="/search/group/filter[2]" position="after">
-                     <filter string="Logistic state" domain="[]" context="{'group_by':'logistic_state'}"/>
+                     <filter string="Team ID" domain="[]" context="{'group_by': 'team_id'}"/>
+                     <filter string="Logistic state" domain="[]" context="{'group_by': 'logistic_state'}"/>
                  </xpath>
              </field>
          </record>         
