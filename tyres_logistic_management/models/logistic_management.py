@@ -153,7 +153,7 @@ class PurchaseOrder(models.Model):
                 ])
         for purchase in purchases:
             output_file = os.path.join(
-                purchase.partner_id.purchase_folder_id.fullpath_history,
+                purchase.partner_id.purchase_folder_id.fullpath,
                 purchase.filename,
                 )
             history_file = os.path.join(
@@ -174,10 +174,10 @@ class PurchaseOrder(models.Model):
                 try:
                     shutil.move(output_file, history_file)
                     _logger.warning('History operation done: %s > %s' % (
-                        output_file, history_file)
+                        output_file, history_file))
                 except:
                     _logger.error('History operation not done: %s > %s' % (
-                        output_file, history_file)
+                        output_file, history_file))
                 
                 # -------------------------------------------------------------
                 # Create stock.movement to simulate stock assign
@@ -1770,7 +1770,7 @@ class SaleOrderLine(models.Model):
         # Extra operation:
         # ---------------------------------------------------------------------
         # Check if imported this or old purchase order:
-        self.purchase_internal_confirmed()
+        purchase_pool.purchase_internal_confirmed()
 
         # Return view:
         return purchase_pool.return_purchase_order_list_view(selected_ids)

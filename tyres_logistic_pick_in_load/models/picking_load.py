@@ -282,6 +282,30 @@ class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
     """
     _inherit = 'purchase.order.line'
+
+    # -------------------------------------------------------------------------
+    #                                   Button event:
+    # -------------------------------------------------------------------------
+    @api.multi
+    def open_detail_delivery_in(self):
+        ''' Return detail view for stock operator
+        '''
+        form_view_id = self.env.ref(
+            'tyres_logistic_pick_in_load.view_delivery_selection_form').id
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Line detail'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_id': self.id,
+            'res_model': 'purchase.order.line',
+            'view_id': form_view_id,
+            'views': [(form_view_id, 'form')],
+            'domain': [],
+            'context': self.env.context,
+            'target': 'new',
+            'nodestroy': False,
+            }
     
     @api.multi
     def delivery_0(self):
@@ -350,6 +374,38 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery')
     logistic_delivered_manual = fields.Float('Manual', digits=(16, 2))
+    
+    # Related for filter
+    raggio = fields.Char(
+        'Ray', related='product_id.raggio', store=True)
+    larghezza = fields.Char(
+        'Width', related='product_id.larghezza', store=True)
+    spalla = fields.Char(
+        'Spalla', related='product_id.spalla', store=True)
+        
+    order_supplier_id = fields.Many2one(
+        'res.partner', 'Supplier', domain="[('supplier', '=', True)]",
+        related='order_id.partner_id')
+    carrier_id = fields.Many2one(
+        'carrier.supplier', 'Carrier',
+        related='logistic_sale_id.order_id.carrier_supplier_id')
+
+    #ivel = fields.Char(
+    #    'Indice di velocità', related='product_id.raggio', store=True)
+    #icarico = fields.Char(
+    #    'Indice di carico', related='product_id.raggio', store=True)
+    #runflat = fields.Boolean(
+    #    'Run flat', related='product_id.raggio', store=True)
+    #brand = fields.Many2one('mmac_brand', 'Marca')
+    #misuracompleta = fields.Char('Misura completa')
+    #stagione = fields.Char('Stagione')
+    #canale = fields.Char('Canale')
+    #offset = fields.Char('Offset')
+    #cb = fields.Char('CB')
+    #numerofori = fields.Char('Numero fori')
+    #interasse = fields.Char('Interasse')
+    #bestpricecost = fields.Float('Costo bestprice')
+    
 
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document: add relations

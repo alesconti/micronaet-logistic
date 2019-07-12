@@ -36,6 +36,7 @@
         'purchase',
         'tyres_logistic_carrier',
         'tyres_logistic_management',
+        'mmac_odoo4', # product tyres extra data 
         ],
     'data': [
         'security/ir.model.access.csv',
