@@ -132,6 +132,15 @@ class PurchaseOrder(models.Model):
     # -------------------------------------------------------------------------
     # Override action for export:
     # -------------------------------------------------------------------------
+    # Confirmed action create always export document:
+    @api.multi
+    def set_logistic_state_confirmed(self):
+        ''' Set order as confirmed
+        '''
+        # Export:
+        self.export_purchase_order() 
+        return super(PurchaseOrder, self).set_logistic_state_confirmed()
+    
     @api.model
     def workflow_order_pending(self):
         '''
