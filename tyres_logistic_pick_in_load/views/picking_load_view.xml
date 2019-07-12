@@ -330,12 +330,12 @@
                  action="action_purchase_selection_order_line"
                  sequence="5"
                  />
-             <menuitem 
+             <!--<menuitem 
                  parent="menu_logistic_delivery_management_root" 
                  id="menu_stock_picking_delivery_form" 
                  action="action_stock_picking_delivery_form"
                  sequence="10"
-                 />
+                 />-->
              <menuitem 
                  parent="menu_logistic_delivery_management_root" 
                  id="menu_my_stock_picking_delivery_tree" 

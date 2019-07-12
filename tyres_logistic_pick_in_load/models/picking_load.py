@@ -290,24 +290,49 @@ class PurchaseOrderLine(models.Model):
     def create_delivery_orders(self):
         ''' Create the list of all order received splitted for supplier        
         '''
+        delivery_pool = self.env['stock.picking.delivery']
+
+        # ---------------------------------------------------------------------
+        # Search selection line for this user:
+        # ---------------------------------------------------------------------
         import pdb; pdb.set_trace()
         lines = self.search([
             ('delivery_id','=',False), 
             ('user_select_id', '=', self.env.uid), 
             ('logistic_delivered_manual', '>', 0),
-            ]
+            ])
             
         if not lines:
             raise exceptions.Warning('No selection for current user!') 
         
-        supplier_line = {}
+        # ---------------------------------------------------------------------
+        # Extract supplier line list:
+        # ---------------------------------------------------------------------
+        suppliers = {} # TODO also with carrier?
         for line in lines:
             supplier = line.order_id.partner_id
-            if supplier not in supplier_line:
+            if supplier not in suppliers:
                 supplier_line[supplier] = []
-            supplier_line[supplier].append(line)
+            suppliers[supplier].append(line)
         
-        # Create order:
+        # ---------------------------------------------------------------------
+        # Create purchase order:
+        # ---------------------------------------------------------------------
+        delivery_ids = []
+        for supplier in suppliers:
+            # -----------------------------------------------------------------
+            # Create header:
+            # -----------------------------------------------------------------
+            delivery_id = delivery_pool.create({
+                'supplier_id': supplier.id,
+                #'carrier_id': carrier.id,
+                #'create_uid': self.env.uid,                
+                }).id
+            delivery_ids.append(delivery_id)
+            self.write(
+                suppliers[supplier].mapped('id'), {
+                    'delivery_id': delivery_id,
+                    })
                 
         # ---------------------------------------------------------------------
         # Return created order:
@@ -329,7 +354,7 @@ class PurchaseOrderLine(models.Model):
             'view_id': tree_view_id,
             #'search_view_id': search_view_id,
             'views': views,
-            'domain': [('id', 'in', purchases.mapped('id'))],
+            'domain': [('id', 'in', delivery_ids)],
             'context': self.env.context,
             'target': 'current', # 'new'
             'nodestroy': False,
