@@ -59,7 +59,7 @@
             <field name="model">purchase.order.line</field>
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
-                <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-success="delivery_id!=False">
+                <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-success="logistic_delivered_manual&gt;0" decoration-warning="user_select_id!=uid and user_select_id != False">
                      <field name="order_id" readonly="1"/>
                      <button name="open_detail_delivery_in" string="Open detail for line" type="object" icon="fa-list-alt"/>
                      <field name="product_id" readonly="1" />
@@ -69,6 +69,7 @@
                      
                      <field name="order_supplier_id" readonly="1" />
                      <field name="carrier_id" readonly="1" />
+                     <field name="user_select_id" />
 
                      <field name="raggio" readonly="1" />
                      <field name="larghezza" readonly="1" />

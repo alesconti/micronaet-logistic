@@ -313,16 +313,17 @@ class PurchaseOrderLine(models.Model):
         '''
         return self.write({
             'logistic_delivered_manual': 0,
-            'user_select_id': self.uid,
+            'user_select_id': False, # no need to save user
             })        
 
     @api.multi
     def delivery_more_1(self):
         ''' Add +1 to manual arrived qty
         '''
+        import pdb; pdb.set_trace()
         return self.write({
             'logistic_delivered_manual': self.logistic_delivered_manual + 1.0,
-            'user_select_id': self.uid,
+            'user_select_id': self.env.uid,
             })        
 
     @api.multi
@@ -337,24 +338,20 @@ class PurchaseOrderLine(models.Model):
             active_id = False
         return self.write({
             'logistic_delivered_manual': logistic_delivered_manual - 1.0,
-            'user_select_id': self.uid,
+            'user_select_id': self.env.uid,
             })        
 
     @api.multi
     def delivery_all(self):
         ''' Add +1 to manual arrived qty
         '''
-        #active_id = self.env.context.get('active_id')
-        #if not active_id:
-        #    raise exceptions.Warning('Cannot link purchase delivery!') 
-        
         logistic_undelivered_qty = self.logistic_undelivered_qty
         if logistic_undelivered_qty <= 0.0:
             raise exceptions.Warning('No more q. to deliver!') 
         
         return self.write({
             'logistic_delivered_manual': self.logistic_undelivered_qty,
-            'user_select_id': self.uid,
+            'user_select_id': self.env.uid,
             })        
 
     # -------------------------------------------------------------------------
@@ -362,7 +359,7 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery')
     logistic_delivered_manual = fields.Float('Manual', digits=(16, 2))
-    user_select_id = fields.Many2one('res.user', 'Selected user')
+    user_select_id = fields.Many2one('res.users', 'Selected user')
 
     # Related for filter
     raggio = fields.Char(
