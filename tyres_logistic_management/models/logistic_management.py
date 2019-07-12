@@ -956,6 +956,16 @@ class AccountPaymentTerm(models.Model):
     # -------------------------------------------------------------------------
     account_ref = fields.Char('Account ref.', size=20)
 
+class AccountTax(models.Model):
+    """ Model name: Account Payment term
+    """
+    
+    _inherit = 'account.tax'
+    
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
+    account_ref = fields.Char('Account ref.', size=20)
 
 class SaleOrder(models.Model):
     """ Model name: Sale Order

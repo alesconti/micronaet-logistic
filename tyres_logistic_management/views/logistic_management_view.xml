@@ -12,6 +12,16 @@
                 </field>
             </field>
         </record>
+        <record model="ir.ui.view" id="view_account_tax_form">
+            <field name="name">account.tax.form</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_form"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="account_ref" />
+                </field>
+            </field>
+        </record>
     	
         <!--account.fiscal.position-->
         <record model="ir.ui.view" id="view_account_fiscal_position_form">
