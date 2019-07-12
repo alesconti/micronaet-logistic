@@ -428,7 +428,9 @@
                      <attribute name="invisible">1</attribute>
                  </field>
              </field>
-         </record>             
+         </record>       
+         
+         
          <record model="ir.ui.view" id="view_sale_order_logistic_search">
              <field name="name">sale.order.logistic.search</field>
              <field name="model">sale.order</field>
@@ -437,7 +439,19 @@
                  <field name="user_id" position="after">
                      <field name="logistic_state" />
                      <field name="team_id" />
+                     
+                     <!--Fast filter:-->
+                     <filter name="logistic_state_draft" string="Order Draft" domain="[('logistic_state','=','draft')]"/>
+                     <filter name="logistic_state_order" string="Order Payed" domain="[('logistic_state','=','order')]"/>
+                     <filter name="logistic_state_pending" string="Order pending" domain="[('logistic_state','=','pending')]"/>
+                     <filter name="logistic_state_ready" string="Order ready" domain="[('logistic_state','=','ready')]"/>
+                     <filter name="logistic_state_delivering" string="Order delivering ste" domain="[('logistic_state','=','delivering')]"/>
+                     <filter name="logistic_state_done" string="Order done" domain="[('logistic_state','=','done')]"/>
+                     <filter name="logistic_state_dropshipped" string="Order dropshipped" domain="[('logistic_state','=','dropshipped')]"/>
+                     <filter name="logistic_state_error" string="Order error" domain="[('logistic_state','=','error')]"/>
+                     <filter name="logistic_state_cancel" string="Order cancel" domain="[('logistic_state','=','cancel')]"/>
                  </field>
+
                  <xpath expr="/search/group/filter[2]" position="after">
                      <filter string="Team ID" domain="[]" context="{'group_by': 'team_id'}"/>
                      <filter string="Logistic state" domain="[]" context="{'group_by': 'logistic_state'}"/>
