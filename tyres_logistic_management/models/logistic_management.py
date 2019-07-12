@@ -993,8 +993,6 @@ class SaleOrder(models.Model):
 
         # Lauch draft to order
         res = self.workflow_draft_to_order()
-        _logger.warning('Order payed total: %s' % (res, ))
-        
         return True # not returned the view!
 
     # -------------------------------------------------------------------------
