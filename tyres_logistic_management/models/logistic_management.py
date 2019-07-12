@@ -945,6 +945,17 @@ class AccountFiscalPosition(models.Model):
     # -------------------------------------------------------------------------
     need_invoice = fields.Boolean('Always invoice')
 
+class AccountPaymentTerm(models.Model):
+    """ Model name: Account Payment term
+    """
+    
+    _inherit = 'account.payment.term'
+    
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
+    account_ref = fields.Char('Account ref.', size=20)
+
 
 class SaleOrder(models.Model):
     """ Model name: Sale Order
