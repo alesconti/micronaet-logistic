@@ -73,6 +73,13 @@ class StockChangeStandardPrice(models.TransientModel):
         # Lauch action button for change state and export:    
         return purchases.set_logistic_state_confirmed()
 
+    @api.multi
+    def check_internal_order(self):
+        ''' Check internal order if done
+        '''
+        purchase_pool = self.env['purchase.order']       
+        purchase_pool.purchase_internal_confirmed()
+
     # BF Load phase:        
     @api.multi
     def update_ready(self):

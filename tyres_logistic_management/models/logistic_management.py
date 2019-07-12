@@ -25,6 +25,7 @@ import os
 import sys
 import logging
 import odoo
+import shutil
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
@@ -139,6 +140,61 @@ class PurchaseOrder(models.Model):
     # -------------------------------------------------------------------------
     #                           UTILITY:
     # -------------------------------------------------------------------------
+    # Auto close internal order
+    @api.model
+    def purchase_internal_confirmed(self, purchases=None):
+        ''' Check if there's some PO internat to close
+        '''
+        if purchases is None:
+            purchases = self.search([
+                ('partner_id.internal_stock', '=', True),
+                ('logistic_state', '=', 'confirmed'), 
+                ('filename', '!=', False), 
+                ])
+        for purchase in purchases:
+            output_file = os.path.join(
+                purchase.partner_id.purchase_folder_id.fullpath_history,
+                purchase.filename,
+                )
+            history_file = os.path.join(
+                purchase.partner_id.purchase_folder_id.fullpath_history,
+                purchase.filename,
+                )
+            check_file = os.path.join(
+                purchase.partner_id.purchase_folder_id.fullpath_esit,
+                purchase.filename,
+                )
+                
+            if os.path.isfile(check_file):
+                _logger.info('Find: %s' % check_file)
+                
+                # -------------------------------------------------------------
+                # Move original in history:
+                # -------------------------------------------------------------
+                try:
+                    shutil.move(output_file, history_file)
+                    _logger.warning('History operation done: %s > %s' % (
+                        output_file, history_file)
+                except:
+                    _logger.error('History operation not done: %s > %s' % (
+                        output_file, history_file)
+                
+                # -------------------------------------------------------------
+                # Create stock.movement to simulate stock assign
+                # -------------------------------------------------------------
+                # TODO
+
+                # -------------------------------------------------------------
+                # Check if order are ready:
+                # -------------------------------------------------------------
+                # TODO
+
+                purchase.logistic_state = 'done'
+                
+                # TODO the PO lines status?
+            else:    
+                _logger.warning('Not found: %s' % check_file)
+    
     @api.model
     def return_purchase_order_list_view(self, purchase_ids):
         ''' Return purchase order tree from ids
@@ -1710,11 +1766,12 @@ class SaleOrderLine(models.Model):
                 # Update line state:    
                 line.logistic_state = 'ordered'
 
-        # Manage Manual internal stock order:
-        # TODO auto confirm order internal_stock
-        # TODO generate stock quants as assigned 
-        # TODO check if sale order is ready 
-        
+        # ---------------------------------------------------------------------
+        # Extra operation:
+        # ---------------------------------------------------------------------
+        # Check if imported this or old purchase order:
+        self.purchase_internal_confirmed()
+
         # Return view:
         return purchase_pool.return_purchase_order_list_view(selected_ids)
 

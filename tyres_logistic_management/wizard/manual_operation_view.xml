@@ -18,6 +18,7 @@
                           <separator string="D. Generate supplier purchase:"/>
                           <button name="generate_purchase" string="_Generate purchase" type="object" class="btn-primary" colspan="1"/>
                           <button name="confirm_generated_purchase" string="Confirm Draft _Purchase" type="object" class="btn-primary" colspan="1"/>
+                          <button name="check_internal_order" string="Check internal Purchase" type="object" class="btn-primary" colspan="1"/>
                       </group>    
                       <group colspan="4" col="2">
                           <!--<separator string="E. Update picking in loading:"/>
