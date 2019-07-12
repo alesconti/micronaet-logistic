@@ -295,11 +295,11 @@ class PurchaseOrderLine(models.Model):
         # ---------------------------------------------------------------------
         # Search selection line for this user:
         # ---------------------------------------------------------------------
-        import pdb; pdb.set_trace()
         lines = self.search([
             ('delivery_id','=',False), 
             ('user_select_id', '=', self.env.uid), 
             ('logistic_delivered_manual', '>', 0),
+            ('order_id.partner_id.internal_stock', '=', False)
             ])
             
         if not lines:
@@ -312,7 +312,7 @@ class PurchaseOrderLine(models.Model):
         for line in lines:
             supplier = line.order_id.partner_id
             if supplier not in suppliers:
-                supplier_line[supplier] = []
+                suppliers[supplier] = []
             suppliers[supplier].append(line)
         
         # ---------------------------------------------------------------------
@@ -329,17 +329,15 @@ class PurchaseOrderLine(models.Model):
                 #'create_uid': self.env.uid,                
                 }).id
             delivery_ids.append(delivery_id)
-            self.write(
-                suppliers[supplier].mapped('id'), {
-                    'delivery_id': delivery_id,
-                    })
+            for line in suppliers[supplier]: # TODO better
+                line.delivery_id = delivery_id 
                 
         # ---------------------------------------------------------------------
         # Return created order:
         # ---------------------------------------------------------------------
         tree_view_id = form_view_id = False
-        if len(purchases) == 1:
-            res_id = purchases[0].id
+        if len(delivery_ids) == 1:
+            res_id = delivery_ids[0]
             views = [(tree_view_id, 'form'), (tree_view_id, 'tree')]
         else:
             res_id = False    
@@ -404,6 +402,7 @@ class PurchaseOrderLine(models.Model):
         ''' Add +1 to manual arrived qty
         '''
         logistic_delivered_manual = self.logistic_delivered_manual
+        # TODO check also logistic_undeliveret_qty for remain?
         if logistic_delivered_manual < 1.0:
             raise exceptions.Warning('Nothing to remove!') 
             

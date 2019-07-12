@@ -175,7 +175,7 @@
             <field name="view_id" ref="view_delivery_selection_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_search"/>            
             <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
-            <field name="domain">[('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), '|', ('user_select_id', '=', uid), ('user_select_id', '=', False)]</field>
+            <field name="domain">[('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('order_id.partner_id.internal_stock', '=', False)]</field>
         </record>
 
 
