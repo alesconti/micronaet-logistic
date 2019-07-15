@@ -804,10 +804,9 @@ class StockPicking(models.Model):
                     'EMAIL|TELEFONO|ID CLIENTE|PEC|SDI|NOME DESTINAZIONE|'
                     'TIPO|INDIRIZZO|ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
                     'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|'
-                    'SKU|DESCRIZIONE|QTA|PREZZO|IVA|\r\n'
+                    'SKU|DESCRIZIONE|QTA|PREZZO|IVA\r\n'
                     )
                 mask = '%s|' * (cols - 1) + '%s\r\n' # 25 fields
-                import pdb; pdb.set_trace()
                 for move in self.move_lines:
                     invoice_file.write(mask % (
                         partner.name,
@@ -824,21 +823,22 @@ class StockPicking(models.Model):
                         
                         'privato' if partner.fatturapa_surname else 'business',
                         get_address(address),
-                        '', # TODO
+                        address.id,
+                        '', # TODO bank!
                         order.id,
                         
                         order.name or '',
                         company_pool.formatLang(
-                            order.date_oder, date=True),
-                        partner.property_account_fiscal_position_id.name, # TODO
+                            order.date_order, date=True),
+                        partner.property_account_position_id.name, # TODO code?
                         len(order.parcel_ids), # TODO correct?
                         '', # TODO weight total
 
-                        move.product_id.default_code,
-                        move.name,
-                        move.product_uom_qty,                        
-                        0.0, # TODO move.price, >> sale order line?
-                        '', # TODO VAT code, >> sale order line?
+                        move.product_id.default_code or '',
+                        move.name or '',
+                        move.product_uom_qty,
+                        move.logistic_unload_id.price_unit, # XXX read from line
+                        move.logistic_unload_id.tax_id[0].account_ref or '', # TODO VAT code, >> sale order line?
                         ))
                 invoice_file.close()
                 self.check_import_reply() # Check previous import reply
