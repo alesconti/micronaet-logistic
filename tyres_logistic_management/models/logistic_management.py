@@ -57,6 +57,26 @@ class ResCompany(models.Model):
             # TODO label, picking out?, Invoice, DDT
             }
 
+    # -------------------------------------------------------------------------
+    # Utility:
+    # -------------------------------------------------------------------------
+    def formatLang(field, date=True, date_time=False):
+        ''' Fake function for format Format date passed
+        '''
+        # Change italian mode:
+        if not field:
+            return field
+        res = '%s/%s/%s%s' % (
+            field[8:10],
+            field[5:7],
+            field[:4],
+            field[10:],                    
+            )
+        if date_time:
+            return res
+        elif date:
+            return res[:10]    
+
     # Get path name:
     @api.model
     def _logistic_folder(self, document, mode='default', extra=False):
@@ -1131,7 +1151,7 @@ class SaleOrder(models.Model):
         for order in self:
             line_state = set(order.order_line.mapped('logistic_state'))
             line_state.discard('unused') # remove kit line (exploded)
-            line_state.discard('done') # if some line are in done (multidelivery)
+            line_state.discard('done') # if some line are in done multidelivery
             if tuple(line_state) == ('ready', ): # All ready
                 order.write({
                     'logistic_state': 'ready',
@@ -1171,7 +1191,7 @@ class SaleOrder(models.Model):
             'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
             'domain': [('id', 'in', order_ids)],
             'context': self.env.context,
-            'target': 'current', # 'new'
+            'target': 'current',
             'nodestroy': False,
             }
 

@@ -168,10 +168,10 @@ class StockPickingDelivery(models.Model):
             })
 
         # ---------------------------------------------------------------------
-        # TODO: ReLoad stock picking for extra product
+        # Manage extra delivery:
         # ---------------------------------------------------------------------
         quants = quant_pool.search([('order_id', '=', self.id)])
-        path = os.path.join(logistic_root_folder, 'Delivery')
+        path = os.path.join(logistic_root_folder, 'delivery')
         order_file = os.path.join(path, 'pick_in_%s.csv' % self.id)
 
         try:
@@ -191,7 +191,7 @@ class StockPickingDelivery(models.Model):
                 quant.price,
                 order.supplier_id.sql_supplier_code or '',
                 order.name,
-                order.date,
+                company_pool(order.date, date=True),
                 ))
         order_file.close()
 
@@ -208,7 +208,8 @@ class StockPickingDelivery(models.Model):
             line.write({
                 'logistic_state': 'ready',
                 })
-                
+        # TODO launch generate document action?        
+
         # B. Check Sale Order with all line ready:
         _logger.info('Update sale order as ready:')
         sale_line_pool.logistic_check_ready_order(sale_line_ready)
