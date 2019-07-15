@@ -453,10 +453,69 @@ class StockPicking(models.Model):
     # Extract Excel:
     # -------------------------------------------------------------------------
     @api.model
+    def csv_report_extract_accounting_fees(self, evaluation_date):
+        ''' Extract file account fees in CSV for accounting
+        '''
+
+        # Pool used:
+        company_pool = self.env['res.company']
+        
+        companys = company_pool.search([])
+        path = os.path.expanduser(
+            company.logistic_root_folder, 'corrispettivi')
+
+        try:
+            os.system('mkdir -p %s' % path)
+            os.system('mkdir -p %s' % os.path.join(path, 'reply'))
+            os.system('mkdir -p %s' % os.path.join(path, 'history'))
+        except:
+            _logger.error('Cannot create %s' % path)
+
+        # Period current date:        
+        now_dt = datetime.strptime(evaluation_date, '%Y-%m-%d')
+        _logger.warning('Account Fees evalutation: %s' % now_dt)
+    
+        # Picking not invoiced (DDT and Refund):
+        pickings = self.search([
+            # Period:
+            ('ddt_date', '=', now_dt),
+
+            # Not invoiced (only DDT):
+            ('ddt_number', '!=', False), # TODO mark filter for invoice!
+            ('invoice_number', '=', False),
+            ])
+
+        fees_f = os.path.join(path, now_dt)
+        for picking in pickings:
+            # Readability:
+            order = picking.sale_order_id 
+            partner = order.partner_id
+            stock_mode = picking.stock_mode #in: refund, out: DDT
+
+            total = move.product_uom_qty * move.logistic_unload_id.price_unit
+            if stock_mode == 'out': 
+                total = -total
+            
+            # TODO manage product type:
+            product_type = 'servizio' if \
+                product.type == 'service' else 'prodotto' 
+            for move in picking.move_lines:
+                fees_f.write('\r\n' %
+                    company_pool.formatLang(picking.ddt_date, date=True),
+                    order.payment_term_id.account_ref or '',
+                    product_type,
+                    total,
+                    ), default_format=f_text)        
+        return True
+
+    # -------------------------------------------------------------------------
+    # Extract Excel:
+    # -------------------------------------------------------------------------
+    @api.model
     def excel_report_extract_accounting_fees(self, evaluation_date=False):
         ''' Extract file account fees
         '''
-        
+
         # Pool used:
         excel_pool = self.env['excel.writer']
         company_pool = self.env['res.company']
