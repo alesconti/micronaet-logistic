@@ -813,7 +813,7 @@ class StockPicking(models.Model):
                         partner.name,
                         get_address(partner),
                         partner.vat or '',
-                        partner.fiscal_code or '',
+                        partner.fatturapa_fiscalcode or '',
                         
                         partner.email or '',
                         partner.phone or '',
