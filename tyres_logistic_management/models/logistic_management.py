@@ -151,6 +151,7 @@ class PurchaseOrder(models.Model):
                 ('logistic_state', '=', 'confirmed'), 
                 ('filename', '!=', False), 
                 ])
+        history_move = []        
         for purchase in purchases:
             output_file = os.path.join(
                 purchase.partner_id.purchase_folder_id.fullpath,
@@ -168,20 +169,13 @@ class PurchaseOrder(models.Model):
             if os.path.isfile(check_file):
                 _logger.info('Find: %s' % check_file)
                 
-                # -------------------------------------------------------------
-                # Move original in history:
-                # -------------------------------------------------------------
-                try:
-                    shutil.move(output_file, history_file)
-                    _logger.warning('History operation done: %s > %s' % (
-                        output_file, history_file))
-                except:
-                    _logger.error('History operation not done: %s > %s' % (
-                        output_file, history_file))
+                history_move.append((check_file, history_file))
                 
                 # -------------------------------------------------------------
                 # Create stock.movement to simulate stock assign
                 # -------------------------------------------------------------
+                if purchase.logistic_state == 'done': # for file move problem
+                    continue
                 # TODO
 
                 # -------------------------------------------------------------
@@ -194,7 +188,19 @@ class PurchaseOrder(models.Model):
                 # TODO the PO lines status?
             else:    
                 _logger.warning('Not found: %s' % check_file)
-    
+
+        # ---------------------------------------------------------------------
+        # Move original in history:
+        # ---------------------------------------------------------------------
+        for from_file, to_file in history_move:        
+            try:
+                shutil.move(from_file, to_file)
+                _logger.warning('History operation done: %s > %s' % (
+                    from_file, to_file))
+            except:
+                _logger.error('History operation not done: %s > %s' % (
+                    from_file, to_file))
+
     @api.model
     def return_purchase_order_list_view(self, purchase_ids):
         ''' Return purchase order tree from ids

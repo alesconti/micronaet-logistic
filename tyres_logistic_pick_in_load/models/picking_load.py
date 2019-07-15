@@ -46,6 +46,7 @@ class StockPickingDelivery(models.Model):
     def confirm_stock_load(self):
         ''' Create new picking unloading the selected material
         '''
+        import pdb; pdb.set_trace()
         # ---------------------------------------------------------------------
         # Pool used:
         # ---------------------------------------------------------------------
@@ -72,6 +73,8 @@ class StockPickingDelivery(models.Model):
         logistic_pick_in_type_id = logistic_pick_in_type.id
         location_from = logistic_pick_in_type.default_location_src_id.id
         location_to = logistic_pick_in_type.default_location_dest_id.id
+        
+        logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
 
         # ---------------------------------------------------------------------
         # Create picking:
@@ -101,7 +104,7 @@ class StockPickingDelivery(models.Model):
         # Append stock.move detail (or quants if in stock)
         # ---------------------------------------------------------------------           
         sale_line_ready = []
-        purchase_ids = [] # TODO debug
+        purchase_ids = []
         for line in self.purchase_line_ids: # purchase.order.line
             purchase_id = line.order_id.id
             if purchase_id not in purchase_ids:
@@ -159,30 +162,49 @@ class StockPickingDelivery(models.Model):
             
         # Reset manual selection and link to pre-picking doc:    
         self.purchase_line_ids.write({
+            'user_select_id': False,
             'delivery_id': False,
             'logistic_delivered_manual': 0.0,
             })
 
         # ---------------------------------------------------------------------
-        # TODO: Load stock picking for extra
+        # TODO: ReLoad stock picking for extra product
         # ---------------------------------------------------------------------
         quants = quant_pool.search([('order_id', '=', self.id)])
-        for quant in quants:
-            # TODO Extract to account and get the resuls file:
-            
-            quant.account_sync = True # XXX If corrected improted
+        path = os.path.join(logistic_root_folder, 'load')
+        order_file = os.path.join(path, 'pick_in_%s.csv' % self.id)
 
+        try:
+            os.system('mkdir -p %s' % path)
+        except:
+            _logger.error('Cannot create %s' % path)
+
+        order_file = open(order_file), 'w')
+        for quant in quants:
+            order = quant.order_id
+            order_file.write('%s|%s|%s|%s|%s|%s\r\n' % (
+                quant.product_id.default_code,
+                quant.product_qty,
+                quant.price,
+                order.supplier_id.sql_supplier_code or '',
+                order.name,
+                order.date,
+                ))
+            quant.account_sync = True # XXX If corrected imported
+        order_file.close()
+        # TODO check if loaded!
+        
         # ---------------------------------------------------------------------
         # Sale order: Update Logistic status:
         # ---------------------------------------------------------------------
-        # Mark Sale Order Line ready:
+        # A. Mark Sale Order Line ready:
         _logger.info('Update sale order line as ready:')
         for line in sale_line_ready:
             line.write({
                 'logistic_state': 'ready',
                 })
                 
-        # Check Sale Order with all line ready:
+        # B. Check Sale Order with all line ready:
         _logger.info('Update sale order as ready:')
         sale_line_pool.logistic_check_ready_order(sale_line_ready)
 
@@ -241,6 +263,8 @@ class StockPickingDelivery(models.Model):
     # Columns:
     # -------------------------------------------------------------------------
     name = fields.Char('Ref.', size=64)
+    date = fields.Date(
+        'Date', default=fields.Datetime.now())
     create_date = fields.Datetime(
         'Create date', required=True, default=fields.Datetime.now())
     create_uid = fields.Many2one(
