@@ -40,9 +40,6 @@ class StockPickingDelivery(models.Model):
     _description = 'Generator of delivery'
     _rec_name = 'create_date'
 
-    # -------------------------------------------------------------------------
-    #                            WORKFLOW ACTION:
-    # -------------------------------------------------------------------------
     @api.multi
     def check_import_reply(self):
         ''' Check import reply for get confirmation            
@@ -75,6 +72,9 @@ class StockPickingDelivery(models.Model):
             break # only first folder
         return True
 
+    # -------------------------------------------------------------------------
+    #                            WORKFLOW ACTION:
+    # -------------------------------------------------------------------------
     @api.multi
     def confirm_stock_load(self):
         ''' Create new picking unloading the selected material
@@ -227,8 +227,8 @@ class StockPickingDelivery(models.Model):
                 ))
         order_file.close()
 
-        # TODO check if loaded!
-        
+        # Check if procedure if fast to confirm reply (instead scheduled!):
+        self.check_import_reply()
         
         # ---------------------------------------------------------------------
         # Sale order: Update Logistic status:
@@ -239,6 +239,7 @@ class StockPickingDelivery(models.Model):
             line.write({
                 'logistic_state': 'ready',
                 })
+
         # TODO launch generate document action?        
 
         # B. Check Sale Order with all line ready:

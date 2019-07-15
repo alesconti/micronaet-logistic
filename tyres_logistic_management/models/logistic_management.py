@@ -710,6 +710,36 @@ class StockPicking(models.Model):
             ])
         return pickings.workflow_ready_to_done_done_picking()
 
+    @api.multi
+    def check_import_reply(self):
+        ''' Check import reply for invoice
+        '''
+        # TODO schedule action?
+        # Pool used:
+        company_pool = self.env['res.company']
+
+        # Parameter:
+        company = company_pool.search([])[0]
+        logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
+        reply_path = os.path.join(
+            logistic_root_folder, 'invoice', 'reply')
+        history_path = os.path.join(
+            logistic_root_folder, 'invoice', 'history')
+
+        for root, subfolders, files in os.walk(reply_path):
+            for f in files:
+                pick_id = int(f[:-4].split('_')[-1]) # pick_in_ID.csv                
+                # TODO Mark as sync: quants.write({'account_sync': True, })
+
+                # XXX Move when all is done after?
+                shutil.move(
+                    os.path.join(reply_path, f),
+                    os.path.join(history_path, f),
+                    )               
+                _logger.info('Pick ID: %s correct!' % f)
+            break # only first folder
+        return True
+
     # -------------------------------------------------------------------------
     #                                   BUTTON:
     # -------------------------------------------------------------------------
@@ -717,12 +747,21 @@ class StockPicking(models.Model):
     def workflow_ready_to_done_done_picking(self):
         ''' Confirm draft picking documents
         '''
+        def get_address(partner): 
+            mask = '%s ' * 6
+            return mask % (
+                partner.street or '',
+                partner.street2 or '',
+                partner.city or '',
+                partner.state_id.name or '',
+                partner.zip,
+                partner.country_id.name,
+                )
         # ---------------------------------------------------------------------
         # Confirm pickign for DDT and Invoice:
         # ---------------------------------------------------------------------
-        ddt_ids = [] # For extra operation after
         invoice_ids = [] # For extra operation after
-        # TODO check need invoce procedure and add Mago extract data!!
+        import pdb; pdb.set_trace()
         for picking in self:
             partner = picking.partner_id
             
@@ -731,279 +770,78 @@ class StockPicking(models.Model):
                 partner.property_account_position_id.need_invoice or \
                     picking.sale_order_id.need_invoice
                 
-            # Assign always DDT number:
-            #picking.assign_ddt_number() # TODO from account
-            ddt_ids.append(picking.id)
-            
             # Invoice procedure (check rules):
             if need_invoice:                
-                #picking.assign_invoice_number() # TODO from account
+                # -------------------------------------------------------------
+                # Extract invoice from account:
+                # -------------------------------------------------------------
+                path = os.path.join(logistic_root_folder, 'invoice')
+                invoice_file = os.path.join(path, 'pick_in_%s.csv' % self.id)
+
+                try:
+                    os.system('mkdir -p %s' % path)
+                    os.system('mkdir -p %s' % os.path.join(path, 'reply'))
+                    os.system('mkdir -p %s' % os.path.join(path, 'history'))
+                except:
+                    _logger.error('Cannot create %s' % path)
+
+                invoice_file = open(order_file, 'w')
+                
+                # Export syntax:
+                cols = 25
+                invoice_file.write(
+                    'RAGIONE SOCIALE|INDIRIZZO|PARTITA IVA|CODICE FISCALE|'
+                    'EMAIL|TELEFONO|ID CLIENTE|PEC|SDI|NOME DESTINAZIONE|'
+                    'TIPO|INDIRIZZO|ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
+                    'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|
+                    'SKU|DESCRIZIONE|QTA|PREZZO|IVA|\r\n'
+                    )
+                mask = '%s|' * (col - 1) + '%s\r\n' # 25 fields
+                
+                # Readability:
+                order = self.sale_order_id
+                partner = order.partner_id
+                address = order.partner_shipping_id
+                for move in self.move_lines:
+                    invoice_file.write(mask % (
+                        partner.name,
+                        get_address(partner),
+                        partner.vat or '',
+                        partner.fiscal_code or '',
+                        
+                        partner.email or '',
+                        partner.phone or '',
+                        partner.id,
+                        partner.fatturapa_pec or '',
+                        partner.fatturapa_unique_code or '',
+                        address.name,
+                        
+                        'privato' if partner.fatturapa_surname else 'business',
+                        get_address(address),
+                        '', # TODO
+                        order.id,
+                        
+                        order.name or '',
+                        company_pool.formatLang(
+                            order.date_oder, date=True),
+                        partner.property_account_fiscal_position_id.name, # TODO
+                        len(order.parcel_ids), # TODO correct?
+                        '', # TODO weight total
+
+                        move.product_id.default_code,
+                        move.name,
+                        move.product_uom_qty,                        
+                        0.0, # TODO move.price, >> sale order line?
+                        '', # TODO VAT code, >> sale order line?
+                        ))
+                invoice_file.close()
+                self.check_import_reply() # Check previous import reply
                 invoice_ids.append(picking.id)
             
             picking.write({
                 'state': 'done', # TODO needed?
                 })
     
-        
-        # TODO used?
-        # ---------------------------------------------------------------------
-        # DDT extra operations: (require reload)        
-        # ---------------------------------------------------------------------
-        """companys = self.env['res.company'].search([])
-        folder = companys[0]._logistic_folder('ddt')
-        history_folder = companys[0]._logistic_folder('ddt', 'history')
-        supplier_folder = companys[0]._logistic_folder('ddt', 'supplier')
-        daily_folder = companys[0]._logistic_folder('ddt', 'daily')
-
-        # Reload picking data:
-        for picking in self.browse(ddt_ids):
-            sale_order = picking.sale_order_id
-            # TODO Sanitize:
-            supplier_name = \
-                sale_order.default_supplier_id.name or 'NESSUNO'
-            supplier_name = supplier_name.replace(' ', '')
-
-            # -----------------------------------------------------------------
-            #                 DDT Extract:
-            # -----------------------------------------------------------------        
-            # 1. DDT Extract procedure:
-            # -----------------------------------------------------------------
-            original_fullname = picking.extract_account_ddt_report()
-            
-            # -----------------------------------------------------------------
-            # 2. DDT Symlink procedure:
-            # -----------------------------------------------------------------
-            original_base = os.path.basename(original_fullname)
-
-            # A. History folder:
-            date = picking.scheduled_date
-            month_path = os.path.join(history_folder, date[:4], date[5:7])
-            os.system('mkdir -p %s' % month_path)
-            symlink = os.system('ln -s "%s" "%s"' % (
-                original_fullname,
-                os.path.join(month_path, original_base)
-                ))
-
-            # B. Supplier folder:
-            # TODO sanitize name!
-            if supplier_name: # NC no Supplier link!
-                supplier_path = os.path.join(supplier_folder, supplier_name)
-                os.system('mkdir -p %s' % supplier_path)
-                symlink = os.system('ln -s "%s" "%s"' % (
-                    original_fullname,
-                    os.path.join(supplier_path, original_base)
-                    ))
-            else:
-                _logger.warning('No supplier link generated!')        
-            
-            # 3. DDT Print procedure:            
-            today = fields.Datetime.now()[:10].replace(
-                '/', '_').replace('-', '_')
-            daily_path = os.path.join(daily_folder, today)
-            os.system('mkdir -p %s' % daily_path)
-            symlink = os.system('ln -s "%s" "%s"' % (
-                original_fullname,
-                os.path.join(
-                    daily_path, 
-                    '%s_%s' % (
-                        supplier_name,
-                        original_base,
-                        )
-                    )
-                ))
-
-        # ---------------------------------------------------------------------
-        # Invoice extra operations: (require reload)        
-        # ---------------------------------------------------------------------
-        folder = companys[0]._logistic_folder('invoice')
-        history_folder = companys[0]._logistic_folder('invoice', 'history')
-
-        for picking in self.browse(invoice_ids):
-            # -----------------------------------------------------------------
-            #                 Invoice Extract:
-            # -----------------------------------------------------------------        
-            # 1. Invoice Extract procedure:
-            original_fullname = picking.extract_account_invoice_report()
-            
-            # 2. Invoice Symlink procedure:
-            original_base = os.path.basename(original_fullname)
-            date = picking.scheduled_date
-            month_path = os.path.join(history_folder, date[:4], date[5:7])
-            os.system('mkdir -p %s' % month_path)
-            symlink = os.system('ln -s "%s" "%s"' % (
-                original_fullname,
-                os.path.join(month_path, original_base)
-                ))
-            
-            # 3. Invoice Print procedure:
-            # TODO 
-
-            # 4. Extract electronic invoice:
-            picking.extract_account_electronic_invoice()"""
-
-    # TODO not used?
-    """
-    @api.model
-    def move_lines_for_report_total(self):
-        ''' Generate Total collect data for report purposes
-        '''    
-        self.ensure_one()
-        
-        res = {
-            'total': 0.0, # net + vat
-            'net': 0.0,
-            'vat': 0.0,
-            
-            'vat_text': '', # VAT description
-            }
-        
-        for line in self.move_lines_for_report():
-            print(line)
-            if not res['vat_text'] and line[3]:
-                res['vat_text'] = line[3].name
-                
-            net = float(line[9])
-            total = float(line[10])
-            res['total'] += total
-            res['net'] += net
-            res['vat'] += total - net
-        
-        for key in res:
-            if key != 'vat_text':
-                res[key] = self.qweb_format_float(res[key])
-        return res"""
-
-    # TODO not used:
-    """
-    @api.model
-    def move_lines_for_report(self):
-        ''' Generate a list of record depend on OC, KIT and 2 substitution mode
-            Return list of: product, line
-        '''    
-        self.ensure_one()
-        
-        res = []
-        kit_add = [] # Kit yet addes
-        last_order = False
-        sorted_lines = sorted(self.move_lines, key=lambda x: (
-            x.logistic_unload_id.unification_origin_id, 
-            x.id,
-            ))
-        if not sorted_lines:
-            return res
-
-        # DDT or RC header text:        
-        header_picking = sorted_lines[0].picking_id
-        ddt_reference = _('%s del %s') % (
-            sorted_lines[0].picking_id.ddt_number,
-            sorted_lines[0].picking_id.ddt_date,
-            )
-            
-        #total = []
-        refund_kit = [] # Kit will be printed once!
-        for line in sorted_lines:
-            picking = line.picking_id
-            if picking.stock_mode == 'in': # Refund
-                # Kit component?
-                if line.logistic_refund_id.kit_line_id:
-                    if line.logistic_refund_id.kit_line_id not in refund_kit:
-                        sale_line = line.logistic_refund_id.kit_line_id
-                        refund_kit.append(line.logistic_refund_id.kit_line_id)
-                    else:
-                        continue # Kit yet printed    
-                else: # Product line
-                    sale_line = line.logistic_refund_id
-                
-            else: # DDT:
-                sale_line = line.logistic_unload_id
-            
-            if sale_line.kit_line_id:
-                # Kit exploded line not used:
-                continue 
-                
-            # Similar / Alternative case:
-            if sale_line.origin_product_id:
-                original_product = sale_line.origin_product_id
-                replaced_product = sale_line.product_id
-            else:    
-                original_product = sale_line.product_id
-                replaced_product = False
-
-            # -----------------------------------------------------------------
-            # Order reference:
-            # -----------------------------------------------------------------
-            if not sale_line.unification_origin_id: # Merged
-                current_order = picking.sale_order_id
-            else: # Original:
-                current_order = sale_line.unification_origin_id
-            
-            if not last_order or current_order != last_order:
-                last_order = current_order
-                write_order = '%s del %s' % (
-                    current_order.name,
-                    current_order.date_order,
-                    )
-            else:    
-                write_order = ''
-
-            # -----------------------------------------------------------------
-            # Line record:    
-            # -----------------------------------------------------------------
-            res.append((
-                original_product, # 0. Product browse
-                int(sale_line.product_uom_qty), # 1. XXX Note: Not stock.move q
-                replaced_product, # 2. Replaced product
-                
-                # TODO price_subtotal (use stock.move or sale.order.line?
-                sale_line.tax_id,
-                
-                # -------------------------------------------------------------
-                # Unit:
-                # -------------------------------------------------------------
-                self.qweb_format_float(
-                    sale_line.price_unit), # 4. Unit no discount
-                self.qweb_format_float(
-                    sale_line.price_reduce), # 5. Unit discounted
-                self.qweb_format_float(
-                    sale_line.price_tax), # 6. VAT Total
-
-                # -------------------------------------------------------------
-                # Price net price:
-                # -------------------------------------------------------------
-                self.qweb_format_float(
-                    sale_line.price_reduce_taxexcl, decimal=6), # 7. Unit Without VAT
-                self.qweb_format_float(
-                    sale_line.price_reduce_taxinc, decimal=6), # 8. Unit With VAT=price_unit-red
-
-                # -------------------------------------------------------------
-                # Total:
-                # -------------------------------------------------------------
-                self.qweb_format_float(
-                    sale_line.price_subtotal), # 9. Tot without VAT
-                self.qweb_format_float(
-                    sale_line.price_total), # 10. Tot With VAT
-
-                # -------------------------------------------------------------
-                # Amount invoiced:
-                # -------------------------------------------------------------
-                self.qweb_format_float(
-                    sale_line.amt_to_invoice), # 11. Not used
-                self.qweb_format_float(
-                    sale_line.amt_invoiced), # 12. Not used
-
-                # Discount (XXX not used):                
-                self.qweb_format_float(
-                    sale_line.discount), # 13. not used for now
-                
-                write_order, # 14
-                ddt_reference, # 15
-                sale_line, # 16 For every extra reference
-                ))
-            ddt_reference = '' # only first line print DDT reference    
-        _logger.warning('>>> Picking line: %s ' % (res, ))
-        _logger.warning(res)
-        return res"""
-
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
@@ -1422,7 +1260,7 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Order status:    
         # ---------------------------------------------------------------------
-        # Change status order ready > done
+        # Change status order ready > delivering
         orders.logistic_check_and_set_delivering()
         
         # Different return value if called with limit:
@@ -1432,7 +1270,6 @@ class SaleOrder(models.Model):
                 ('logistic_state', '=', 'ready'),
                 ], limit=limit) # keep limit instead of search all
             return orders or False
-
         return picking_ids
 
     # -------------------------------------------------------------------------
@@ -1508,6 +1345,7 @@ class SaleOrderLine(models.Model):
                 order = line.order_id
                 if order in order_checked:
                     continue
+
                 # Check sale.order logistic status (once):    
                 order.logistic_check_and_set_ready()
                 order_checked.append(order) 
@@ -1524,9 +1362,11 @@ class SaleOrderLine(models.Model):
         # Gef view
         model_pool = self.env['ir.model.data']
         tree_view_id = model_pool.get_object_reference(
-            'tyres_logistic_management', 'view_sale_order_line_logistic_tree')[1]
+            'tyres_logistic_management', 
+            'view_sale_order_line_logistic_tree')[1]
         form_view_id = model_pool.get_object_reference(
-            'tyres_logistic_management', 'view_sale_order_line_logistic_form')[1]
+            'tyres_logistic_management', 
+            'view_sale_order_line_logistic_form')[1]
         
         return {
             'type': 'ir.actions.act_window',
