@@ -60,17 +60,17 @@ class ResCompany(models.Model):
     # -------------------------------------------------------------------------
     # Utility:
     # -------------------------------------------------------------------------
-    def formatLang(field, date=True, date_time=False):
+    def formatLang(self, value, date=True, date_time=False):
         ''' Fake function for format Format date passed
         '''
         # Change italian mode:
-        if not field:
-            return field
+        if not value:
+            return value
         res = '%s/%s/%s%s' % (
-            field[8:10],
-            field[5:7],
-            field[:4],
-            field[10:],                    
+            value[8:10],
+            value[5:7],
+            value[:4],
+            value[10:],                    
             )
         if date_time:
             return res

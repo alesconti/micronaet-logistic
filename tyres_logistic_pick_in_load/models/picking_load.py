@@ -46,7 +46,6 @@ class StockPickingDelivery(models.Model):
     def confirm_stock_load(self):
         ''' Create new picking unloading the selected material
         '''
-        import pdb; pdb.set_trace()
         # ---------------------------------------------------------------------
         # Pool used:
         # ---------------------------------------------------------------------
@@ -191,7 +190,7 @@ class StockPickingDelivery(models.Model):
                 quant.price,
                 order.supplier_id.sql_supplier_code or '',
                 order.name,
-                company_pool(order.date, date=True),
+                company_pool.formatLang(order.date, date=True),
                 ))
         order_file.close()
 
