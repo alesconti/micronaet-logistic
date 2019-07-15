@@ -171,15 +171,18 @@ class StockPickingDelivery(models.Model):
         # TODO: ReLoad stock picking for extra product
         # ---------------------------------------------------------------------
         quants = quant_pool.search([('order_id', '=', self.id)])
-        path = os.path.join(logistic_root_folder, 'load')
+        path = os.path.join(logistic_root_folder, 'Delivery')
         order_file = os.path.join(path, 'pick_in_%s.csv' % self.id)
 
         try:
             os.system('mkdir -p %s' % path)
+            os.system('mkdir -p %s' % os.path.join(path, 'esit'))
+            os.system('mkdir -p %s' % os.path.join(path, 'history'))
         except:
             _logger.error('Cannot create %s' % path)
 
-        order_file = open(order_file), 'w')
+        order_file = open(order_file, 'w')
+        order_file.write('SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA\r\n')
         for quant in quants:
             order = quant.order_id
             order_file.write('%s|%s|%s|%s|%s|%s\r\n' % (
@@ -190,9 +193,11 @@ class StockPickingDelivery(models.Model):
                 order.name,
                 order.date,
                 ))
-            quant.account_sync = True # XXX If corrected imported
         order_file.close()
+
         # TODO check if loaded!
+        # XXX If corrected imported    
+        # quant.account_sync = True 
         
         # ---------------------------------------------------------------------
         # Sale order: Update Logistic status:
@@ -211,7 +216,6 @@ class StockPickingDelivery(models.Model):
         # ---------------------------------------------------------------------
         # Check Purchase order ready
         # ---------------------------------------------------------------------
-        # TODO debug:
         if purchase_ids:
             _logger.info('Check purchase order closed (this):')
             return purchase_pool.check_order_confirmed_done(purchase_ids)

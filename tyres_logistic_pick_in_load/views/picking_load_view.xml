@@ -214,21 +214,21 @@
                     </header>
                     <sheet>
                         <group colspan="4" col="4"> 
-                            <field name="name" />
+                            <field name="name" required="1"/>
                             <field name="create_uid" readonly="1"/>
 
-                            <field name="supplier_id" />
+                            <field name="supplier_id" required="1"/>
                             <field name="carrier_id" />
                             
                             <field name="create_date" readonly="1"/>
-                            <field name="date" />
+                            <field name="date" required="1" />
                             <field name="picking_id" attrs="{'invisible': [('picking_id','=',False)]}" readonly="1"/>
                             
                             <notebook colspan="4">
                                 <page string="Selected purchase line:" attrs="{'invisible': [('picking_id','!=',False)]}">
                                     <group colspan="4" col="4"> 
-                                        <separator string="Selected purchase line:" colspan="3"/>
-                                        <button name="open_purchase_line" string="Open line" type="object" class="oe_highlight" colspan="1" icon="fa-align-justify"/>
+                                        <separator string="Selected purchase line:" colspan="4"/>
+                                        <!--<button name="open_purchase_line" string="Open line" type="object" class="oe_highlight" colspan="1" icon="fa-align-justify"/>-->
                                         <field name="purchase_line_ids" colspan="4" nolabel="1">
                                             <tree string="Purchase line" editable="bottom" create="false" delete="false">
                                                  <field name="order_id" readonly="1"/>
