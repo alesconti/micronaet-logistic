@@ -793,7 +793,7 @@ class StockPicking(models.Model):
                     'RAGIONE SOCIALE|INDIRIZZO|PARTITA IVA|CODICE FISCALE|'
                     'EMAIL|TELEFONO|ID CLIENTE|PEC|SDI|NOME DESTINAZIONE|'
                     'TIPO|INDIRIZZO|ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
-                    'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|
+                    'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|'
                     'SKU|DESCRIZIONE|QTA|PREZZO|IVA|\r\n'
                     )
                 mask = '%s|' * (col - 1) + '%s\r\n' # 25 fields
