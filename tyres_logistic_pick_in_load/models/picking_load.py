@@ -50,6 +50,7 @@ class StockPickingDelivery(models.Model):
         # TODO schedule action?
         # Pool used:
         quant_pool = self.env['stock.picking.delivery.quant']
+        company_pool = self.env['res.company']
 
         # Parameter:
         company = company_pool.search([])[0]
@@ -61,15 +62,16 @@ class StockPickingDelivery(models.Model):
 
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
-                pick_id = int(split(f[:-4], '_')[-1]) # pick_in_ID.csv                
+                pick_id = int(f[:-4].split('_')[-1]) # pick_in_ID.csv                
                 quants = quant_pool.search([('order_id', '=', pick_id)])
                 quants.write({'account_sync': True, })
 
-                # XXX Move when all is done?
+                # XXX Move when all is done after?
                 shutil.move(
-                    os.path.join(reply_path, f)
-                    os.path.join(history_path, f)    
+                    os.path.join(reply_path, f),
+                    os.path.join(history_path, f),
                     )               
+                _logger.info('Pick ID: %s correct!' % f)
             break # only first folder
         return True
 
