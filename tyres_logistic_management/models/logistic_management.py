@@ -757,18 +757,28 @@ class StockPicking(models.Model):
                 partner.zip,
                 partner.country_id.name,
                 )
+        
+        # Pool used:
+        company_pool = self.env['res.company']
+
+        # Parameter:
+        company = company_pool.search([])[0]
+        logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
+
         # ---------------------------------------------------------------------
         # Confirm pickign for DDT and Invoice:
         # ---------------------------------------------------------------------
         invoice_ids = [] # For extra operation after
-        import pdb; pdb.set_trace()
         for picking in self:
-            partner = picking.partner_id
+            # Readability:
+            order = picking.sale_order_id
+            partner = order.partner_id
+            address = order.partner_shipping_id
             
             # Need invoice check (fiscal position or order check):
             need_invoice = \
                 partner.property_account_position_id.need_invoice or \
-                    picking.sale_order_id.need_invoice
+                    partner.need_invoice or order.need_invoice
                 
             # Invoice procedure (check rules):
             if need_invoice:                
@@ -776,7 +786,8 @@ class StockPicking(models.Model):
                 # Extract invoice from account:
                 # -------------------------------------------------------------
                 path = os.path.join(logistic_root_folder, 'invoice')
-                invoice_file = os.path.join(path, 'pick_in_%s.csv' % self.id)
+                invoice_filename = os.path.join(
+                    path, 'pick_in_%s.csv' % self.id)
 
                 try:
                     os.system('mkdir -p %s' % path)
@@ -784,8 +795,7 @@ class StockPicking(models.Model):
                     os.system('mkdir -p %s' % os.path.join(path, 'history'))
                 except:
                     _logger.error('Cannot create %s' % path)
-
-                invoice_file = open(order_file, 'w')
+                invoice_file = open(invoice_filename, 'w')
                 
                 # Export syntax:
                 cols = 25
@@ -796,12 +806,8 @@ class StockPicking(models.Model):
                     'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|'
                     'SKU|DESCRIZIONE|QTA|PREZZO|IVA|\r\n'
                     )
-                mask = '%s|' * (col - 1) + '%s\r\n' # 25 fields
-                
-                # Readability:
-                order = self.sale_order_id
-                partner = order.partner_id
-                address = order.partner_shipping_id
+                mask = '%s|' * (cols - 1) + '%s\r\n' # 25 fields
+                import pdb; pdb.set_trace()
                 for move in self.move_lines:
                     invoice_file.write(mask % (
                         partner.name,
@@ -1176,8 +1182,6 @@ class SaleOrder(models.Model):
                 
         verbose_order = len(orders)    
             
-        #ddt_list = []
-        #invoice_list = []    
         picking_ids = [] # return value
         i = 0
         for order in orders:
@@ -1189,7 +1193,6 @@ class SaleOrder(models.Model):
             partner = order.partner_id
             name = order.name # same as order_ref
             origin = _('%s [%s]') % (order.name, order.create_date[:10])
-            
             picking = picking_pool.create({                
                 'sale_order_id': order.id, # Link to order
                 'partner_id': partner.id,
