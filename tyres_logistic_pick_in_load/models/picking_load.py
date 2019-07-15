@@ -24,6 +24,7 @@
 import os
 import sys
 import logging
+import shutil
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
@@ -42,6 +43,36 @@ class StockPickingDelivery(models.Model):
     # -------------------------------------------------------------------------
     #                            WORKFLOW ACTION:
     # -------------------------------------------------------------------------
+    @api.multi
+    def check_import_reply(self):
+        ''' Check import reply for get confirmation            
+        '''
+        # TODO schedule action?
+        # Pool used:
+        quant_pool = self.env['stock.picking.delivery.quant']
+
+        # Parameter:
+        company = company_pool.search([])[0]
+        logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
+        reply_path = os.path.join(
+            logistic_root_folder, 'delivery', 'reply')
+        history_path = os.path.join(
+            logistic_root_folder, 'delivery', 'history')
+
+        for root, subfolders, files in os.walk(reply_path):
+            for f in files:
+                pick_id = int(split(f[:-4], '_')[-1]) # pick_in_ID.csv                
+                quants = quant_pool.search([('order_id', '=', pick_id)])
+                quants.write({'account_sync': True, })
+
+                # XXX Move when all is done?
+                shutil.move(
+                    os.path.join(reply_path, f)
+                    os.path.join(history_path, f)    
+                    )               
+            break # only first folder
+        return True
+
     @api.multi
     def confirm_stock_load(self):
         ''' Create new picking unloading the selected material
@@ -175,7 +206,7 @@ class StockPickingDelivery(models.Model):
 
         try:
             os.system('mkdir -p %s' % path)
-            os.system('mkdir -p %s' % os.path.join(path, 'esit'))
+            os.system('mkdir -p %s' % os.path.join(path, 'reply'))
             os.system('mkdir -p %s' % os.path.join(path, 'history'))
         except:
             _logger.error('Cannot create %s' % path)
@@ -195,8 +226,7 @@ class StockPickingDelivery(models.Model):
         order_file.close()
 
         # TODO check if loaded!
-        # XXX If corrected imported    
-        # quant.account_sync = True 
+        
         
         # ---------------------------------------------------------------------
         # Sale order: Update Logistic status:

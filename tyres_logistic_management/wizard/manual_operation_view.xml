@@ -25,6 +25,7 @@
                           <button name="update_ready" string="_Update ready" type="object" class="btn-primary" />-->
                           <!--Not necessary (work after update_ready)
                           <button name="update_ready_purchase_check" string="Update ready purchase check" type="object" class="btn-primary" /> -->
+                          <button name="extra_bf_confirm" string="Check extra import" type="object" class="btn-primary" />
                       </group>    
                       
                       <group colspan="4" col="4">
@@ -32,6 +33,7 @@
                           <field name="limit" />
                           <field name="loop" />
                           <button name="generate_delivery" string="Generate _Delivery" type="object" class="btn-primary" />
+                          
                       </group>                          
                       <!--<group colspan="4" col="2">
                           <separator string="G. Close customer order delivered:"/>

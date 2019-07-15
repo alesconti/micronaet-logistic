@@ -115,6 +115,12 @@ class StockChangeStandardPrice(models.TransientModel):
         '''
         return True
 
+    @api.multi
+    def extra_bf_confirm(self):
+        ''' Check imported extra BF:
+        '''
+        return self.env['stock.picking.delivery'].check_import_reply()
+        
     # -------------------------------------------------------------------------
     # Report test:
     # -------------------------------------------------------------------------
