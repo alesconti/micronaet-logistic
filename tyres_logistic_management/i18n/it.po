@@ -1187,7 +1187,7 @@ msgstr "Riga ordine di vendita"
 #: model:ir.actions.act_window,name:tyres_logistic_management.action_view_sale_order_status_extract_wizard
 #: model:ir.ui.menu,name:tyres_logistic_management.menu_view_sale_order_status_extract_wizard
 msgid "Status extract wizard"
-msgstr "Wizard operazioni comuni"
+msgstr "Wizard estrazione dati"
 
 #. module: tyres_logistic_management
 #: model:ir.model,name:tyres_logistic_management.model_stock_move
