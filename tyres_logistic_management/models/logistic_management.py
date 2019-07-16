@@ -168,63 +168,132 @@ class PurchaseOrder(models.Model):
     # Auto close internal order
     @api.model
     def purchase_internal_confirmed(self, purchases=None):
-        ''' Check if there's some PO internat to close
+        ''' Check if there's some PO internal to close
         '''
-        if purchases is None:
-            purchases = self.search([
-                ('partner_id.internal_stock', '=', True),
-                ('logistic_state', '=', 'confirmed'), 
-                ('filename', '!=', False), 
-                ])
-        history_move = []        
-        for purchase in purchases:
-            output_file = os.path.join(
-                purchase.partner_id.purchase_folder_id.fullpath,
-                purchase.filename,
-                )
-            history_file = os.path.join(
-                purchase.partner_id.purchase_folder_id.fullpath_history,
-                purchase.filename,
-                )
-            check_file = os.path.join(
-                purchase.partner_id.purchase_folder_id.fullpath_esit,
-                purchase.filename,
-                )
+        import pdb; pdb.set_trace()
+        
+        # TODO schedule action?
+        # Pool used:
+        company_pool = self.env['res.company']
+        move_pool = self.env['stock.move']
+        picking_pool = self.env['stock.picking']
+        
+        # Parameter:
+        company = company_pool.search([])[0]
+        logistic_pick_in_type = company.logistic_pick_in_type_id
+        logistic_pick_in_type_id = logistic_pick_in_type.id
+        location_from = logistic_pick_in_type.default_location_src_id.id
+        location_to = logistic_pick_in_type.default_location_dest_id.id
+        logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
+
+        reply_path = os.path.join(
+            logistic_root_folder, 'purchase', 'reply')
+        history_path = os.path.join(
+            logistic_root_folder, 'purchase', 'history')
+
+        sale_line_ready = [] # ready line after assign load qty to purchase
+        move_file = []
+        for root, subfolders, files in os.walk(reply_path):
+            for f in files:
+                po_id = int(f[:-4].split('_')[-1]) # pick_in_ID.csv                
+                # TODO Mark as sync: quants.write({'account_sync': True, })
                 
-            if os.path.isfile(check_file):
-                _logger.info('Find: %s' % check_file)
-                
-                history_move.append((check_file, history_file))
-                
-                # -------------------------------------------------------------
-                # Create stock.movement to simulate stock assign
-                # -------------------------------------------------------------
-                if purchase.logistic_state == 'done': # for file move problem
+                # Read picking and create Fake BF for load stock
+                purchase = self.browse(po_id)
+                if purchase.logistic_state == 'done':
+                    _logger.error('Order yet manage: %s (remove manually)' % f)
                     continue
-                # TODO
 
                 # -------------------------------------------------------------
-                # Check if order are ready:
+                # Create picking:
                 # -------------------------------------------------------------
-                # TODO
+                # TODO check
+                order = purchase.order_line[0].sale_order_id.order_id 
+                partner = order.partner_id
+                date = purchase.date_order
+                name = purchase.name or ''
+                origin = _('%s [%s]') % (name, date)
 
-                purchase.logistic_state = 'done'
+                picking = picking_pool.create({       
+                    'partner_id': partner.id,
+                    'scheduled_date': date,
+                    'origin': origin,
+                    #'move_type': 'direct',
+                    'picking_type_id': logistic_pick_in_type_id,
+                    'group_id': False,
+                    'location_id': location_from,
+                    'location_dest_id': location_to,
+                    #'priority': 1,                
+                    'state': 'done', # immediately!
+                    })
+
+                # -----------------------------------------------------------------
+                # Append stock.move detail (or quants if in stock)
+                # -----------------------------------------------------------------
+                for line in internal_picking.order_line:
+                    product = line.product_id
+                    product_qty = line.product_uom_qty
+                    remain_qty = line.logistic_undelivered_qty
+                    logistic_sale_id = line.logistic_sale_id
+                    
+                    if product_qty >= remain_qty:
+                        sale_line_ready.append(logistic_sale_id)
+                        logistic_sale_id.logistic_state = 'ready' # XXX needed?
+
+                    # ---------------------------------------------------------
+                    # Create movement (not load stock):
+                    # ---------------------------------------------------------
+                    move_pool.create({
+                        'company_id': company.id,
+                        'partner_id': partner.id,
+                        'picking_id': picking.id,
+                        'product_id': product.id, 
+                        'name': product.name or ' ',
+                        'date': scheduled_date,
+                        'date_expected': scheduled_date,
+                        'location_id': location_from,
+                        'location_dest_id': location_to,
+                        'product_uom_qty': product_qty,
+                        'product_uom': product.uom_id.id,
+                        'state': 'done',
+                        'origin': origin,
+
+                        # Sale order line link:
+                        'logistic_load_id': logistic_sale_id.id,
+                        # Purchase order line line: 
+                        'logistic_purchase_id': line.id,
+                        })
+
+                # Save move operation:            
+                move_file.append((
+                    os.path.join(reply_path, f),
+                    os.path.join(history_path, f),
+                    ))
                 
-                # TODO the PO lines status?
-            else:    
-                _logger.warning('Not found: %s' % check_file)
-
+                # Mask as done fake purchase order:
+                purchase.logistic_state = 'done'
+                _logger.info('Purchase order: %s done!' % f)
+                
+            break # only first folder
+            
         # ---------------------------------------------------------------------
-        # Move original in history:
+        # Check Sale Order header with all line ready:
         # ---------------------------------------------------------------------
-        for from_file, to_file in history_move:        
+        _logger.info('Update sale order header as ready:')
+        sale_line_pool.logistic_check_ready_order(sale_line_ready)
+        
+        # ---------------------------------------------------------------------
+        # Move all files read:
+        # ---------------------------------------------------------------------
+        _logger.info('Move all files:')
+        for from_file, to_file in move_file:
+            # Move when all is done!
             try:
                 shutil.move(from_file, to_file)
-                _logger.warning('History operation done: %s > %s' % (
-                    from_file, to_file))
             except:
-                _logger.error('History operation not done: %s > %s' % (
+                _logger.error('Error moving operation: %s >> %s' % (
                     from_file, to_file))
+        return True
 
     @api.model
     def return_purchase_order_list_view(self, purchase_ids):
@@ -777,129 +846,30 @@ class StockPicking(models.Model):
     def check_import_reply(self):
         ''' Check import reply for invoice
         '''
-        import pdb; pdb.set_trace()
         # TODO schedule action?
         # Pool used:
         company_pool = self.env['res.company']
-        move_pool = self.env['stock.move']
-        purchase_pool = self.env['purchase.order']
 
         # Parameter:
         company = company_pool.search([])[0]
-        logistic_pick_in_type = company.logistic_pick_in_type_id
-        logistic_pick_in_type_id = logistic_pick_in_type.id
-        location_from = logistic_pick_in_type.default_location_src_id.id
-        location_to = logistic_pick_in_type.default_location_dest_id.id
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
-
         reply_path = os.path.join(
             logistic_root_folder, 'invoice', 'reply')
         history_path = os.path.join(
             logistic_root_folder, 'invoice', 'history')
 
-        sale_line_ready = [] # ready line after assign load qty to purchase
-        move_file = []
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
-                po_id = int(f[:-4].split('_')[-1]) # pick_in_ID.csv                
+                pick_id = int(f[:-4].split('_')[-1]) # pick_in_ID.csv                
                 # TODO Mark as sync: quants.write({'account_sync': True, })
-                
-                # Read picking and create Fake BF for load stock
-                purchase = purchase_pool.browse(po_id)
-                if purchase.logistic_state == 'done':
-                    _logger.error('Order yet manage: %s (remove manually)' % f)
-                    continue
 
-                # -------------------------------------------------------------
-                # Create picking:
-                # -------------------------------------------------------------
-                # TODO check
-                order = purchase.order_line[0].sale_order_id.order_id 
-                partner = order.partner_id
-                date = purchase.date_order
-                name = self.name or ''
-                origin = _('%s [%s]') % (name, date)
-
-                picking = self.create({       
-                    'partner_id': partner.id,
-                    'scheduled_date': date,
-                    'origin': origin,
-                    #'move_type': 'direct',
-                    'picking_type_id': logistic_pick_in_type_id,
-                    'group_id': False,
-                    'location_id': location_from,
-                    'location_dest_id': location_to,
-                    #'priority': 1,                
-                    'state': 'done', # immediately!
-                    })
-
-                # -----------------------------------------------------------------
-                # Append stock.move detail (or quants if in stock)
-                # -----------------------------------------------------------------
-                for line in internal_picking.order_line:
-                    product = line.product_id
-                    product_qty = line.product_uom_qty
-                    remain_qty = line.logistic_undelivered_qty
-                    logistic_sale_id = line.logistic_sale_id
-                    
-                    if product_qty >= remain_qty:
-                        sale_line_ready.append(logistic_sale_id)
-                        logistic_sale_id.logistic_state = 'ready' # XXX needed?
-
-                    # ---------------------------------------------------------
-                    # Create movement (not load stock):
-                    # ---------------------------------------------------------
-                    move_pool.create({
-                        'company_id': company.id,
-                        'partner_id': partner.id,
-                        'picking_id': picking.id,
-                        'product_id': product.id, 
-                        'name': product.name or ' ',
-                        'date': scheduled_date,
-                        'date_expected': scheduled_date,
-                        'location_id': location_from,
-                        'location_dest_id': location_to,
-                        'product_uom_qty': product_qty,
-                        'product_uom': product.uom_id.id,
-                        'state': 'done',
-                        'origin': origin,
-
-                        # Sale order line link:
-                        'logistic_load_id': logistic_sale_id.id,
-                        # Purchase order line line: 
-                        'logistic_purchase_id': line.id,
-                        })
-
-                # Save move operation:            
-                move_file.append((
+                # XXX Move when all is done after?
+                shutil.move(
                     os.path.join(reply_path, f),
                     os.path.join(history_path, f),
-                    ))
-                
-                # Mask as done fake purchase order:
-                purchase.logistic_state = 'done'
-                _logger.info('Purchase order: %s done!' % f)
-                
+                    )               
+                _logger.info('Pick ID: %s correct!' % f)
             break # only first folder
-            
-        # ---------------------------------------------------------------------
-        # Check Sale Order header with all line ready:
-        # ---------------------------------------------------------------------
-        _logger.info('Update sale order header as ready:')
-        sale_line_pool.logistic_check_ready_order(sale_line_ready)
-        
-        # ---------------------------------------------------------------------
-        # Move all files read:
-        # ---------------------------------------------------------------------
-        _logger.info('Move all files:')
-        for from_file, to_file in move_file:
-            # Move when all is done!
-            try:
-                shutil.move(from_file, to_file)
-            except:
-                _logger.error('Error moving operation: %s >> %s' % (
-                    from_file, to_file))
-
         return True
 
     # -------------------------------------------------------------------------
