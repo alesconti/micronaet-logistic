@@ -503,7 +503,7 @@ class StockPicking(models.Model):
                 total = -total
             
             for move in picking.move_lines:
-                fees_f.write('\r\n' %
+                fees_f.write('%s|%s|%s|%s\r\n' %
                     company_pool.formatLang(picking.ddt_date, date=True),
                     order.payment_term_id.account_ref or '',
                     move.product_id.account_ref or product_account_ref or '',
