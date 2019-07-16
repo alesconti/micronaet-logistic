@@ -170,12 +170,12 @@ class PurchaseOrder(models.Model):
     def purchase_internal_confirmed(self, purchases=None):
         ''' Check if there's some PO internal to close
         '''
-        import pdb; pdb.set_trace()
         
         # TODO schedule action?
         # Pool used:
         company_pool = self.env['res.company']
         move_pool = self.env['stock.move']
+        sale_line_pool = self.env['sale.order.line']
         picking_pool = self.env['stock.picking']
         
         # Parameter:
@@ -208,7 +208,7 @@ class PurchaseOrder(models.Model):
                 # Create picking:
                 # -------------------------------------------------------------
                 # TODO check
-                order = purchase.order_line[0].sale_order_id.order_id 
+                order = purchase.order_line[0].logistic_sale_id.order_id 
                 partner = order.partner_id
                 date = purchase.date_order
                 name = purchase.name or ''
@@ -230,9 +230,9 @@ class PurchaseOrder(models.Model):
                 # -----------------------------------------------------------------
                 # Append stock.move detail (or quants if in stock)
                 # -----------------------------------------------------------------
-                for line in internal_picking.order_line:
+                for line in purchase.order_line:
                     product = line.product_id
-                    product_qty = line.product_uom_qty
+                    product_qty = line.product_qty
                     remain_qty = line.logistic_undelivered_qty
                     logistic_sale_id = line.logistic_sale_id
                     
@@ -249,8 +249,8 @@ class PurchaseOrder(models.Model):
                         'picking_id': picking.id,
                         'product_id': product.id, 
                         'name': product.name or ' ',
-                        'date': scheduled_date,
-                        'date_expected': scheduled_date,
+                        'date': date,
+                        'date_expected': date,
                         'location_id': location_from,
                         'location_dest_id': location_to,
                         'product_uom_qty': product_qty,
@@ -533,10 +533,11 @@ class StockPicking(models.Model):
 
         # Pool used:
         company_pool = self.env['res.company']
-        
+        import pdb; pdb.set_trace()
         company = company_pool.search([])[0]
-        path = os.path.expanduser(
-            company.logistic_root_folder, 'corrispettivi')
+        path = os.path.expanduser(company.logistic_root_folder)
+        path = os.path.join(path, 'corrispettivi')
+
         product_account_ref = company.product_account_ref    
 
         try:
@@ -911,11 +912,11 @@ class StockPicking(models.Model):
             need_invoice = \
                 partner.property_account_position_id.need_invoice or \
                     partner.need_invoice or order.need_invoice
-            if_fees = True # default        
+            is_fees = True # default        
                 
             # Invoice procedure (check rules):
             if need_invoice:        
-                if_fees = False
+                is_fees = False
         
                 # -------------------------------------------------------------
                 # Extract invoice from account:
