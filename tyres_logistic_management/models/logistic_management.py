@@ -131,6 +131,8 @@ class ResCompany(models.Model):
         help='Master root folder for output',
         required=True,
         )
+    product_account_ref = fields.Char('Product account ref.', size=20)
+
 
 class ProductTemplate(models.Model):
     ''' Template add fields
@@ -150,6 +152,9 @@ class ProductTemplate(models.Model):
     # -------------------------------------------------------------------------
     is_expence = fields.Boolean('Expense product', 
         help='Expense product is not order and produced')
+    account_ref = fields.Char('Account ref.', size=20, 
+        help='Account code, if not present use default setup in configuration')
+        
     
 class PurchaseOrder(models.Model):
     """ Model name: Sale Order
@@ -460,9 +465,10 @@ class StockPicking(models.Model):
         # Pool used:
         company_pool = self.env['res.company']
         
-        companys = company_pool.search([])
+        company = company_pool.search([])[0]
         path = os.path.expanduser(
             company.logistic_root_folder, 'corrispettivi')
+        product_account_ref = company.product_account_ref    
 
         try:
             os.system('mkdir -p %s' % path)
@@ -477,12 +483,12 @@ class StockPicking(models.Model):
     
         # Picking not invoiced (DDT and Refund):
         pickings = self.search([
+            ('is_fees', '=', True),
+            
             # Period:
-            ('ddt_date', '=', now_dt),
-
-            # Not invoiced (only DDT):
-            ('ddt_number', '!=', False), # TODO mark filter for invoice!
-            ('invoice_number', '=', False),
+            ('scheduled_date', '>=', '%s 00:00:00' % now_dt),
+            ('scheduled_date', '<=', '%s 23:59:59' % now_dt),
+            # XXX: This? ('ddt_date', '=', now_dt),
             ])
 
         fees_f = os.path.join(path, now_dt)
@@ -496,16 +502,14 @@ class StockPicking(models.Model):
             if stock_mode == 'out': 
                 total = -total
             
-            # TODO manage product type:
-            product_type = 'servizio' if \
-                product.type == 'service' else 'prodotto' 
             for move in picking.move_lines:
                 fees_f.write('\r\n' %
                     company_pool.formatLang(picking.ddt_date, date=True),
                     order.payment_term_id.account_ref or '',
-                    product_type,
+                    move.product_id.account_ref or product_account_ref or '',
                     total,
-                    ), default_format=f_text)        
+                    ), default_format=f_text)
+                pass
         return True
 
     # -------------------------------------------------------------------------
@@ -773,30 +777,112 @@ class StockPicking(models.Model):
     def check_import_reply(self):
         ''' Check import reply for invoice
         '''
+        import pdb; pdb.set_trace()
         # TODO schedule action?
         # Pool used:
         company_pool = self.env['res.company']
+        move_pool = self.env['stock.move']
 
         # Parameter:
         company = company_pool.search([])[0]
+        logistic_pick_in_type = company.logistic_pick_in_type_id
+        logistic_pick_in_type_id = logistic_pick_in_type.id
+        location_from = logistic_pick_in_type.default_location_src_id.id
+        location_to = logistic_pick_in_type.default_location_dest_id.id
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
+
         reply_path = os.path.join(
             logistic_root_folder, 'invoice', 'reply')
         history_path = os.path.join(
             logistic_root_folder, 'invoice', 'history')
 
+        sale_line_ready = [] # ready line after assign load qty to purchase
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
                 pick_id = int(f[:-4].split('_')[-1]) # pick_in_ID.csv                
                 # TODO Mark as sync: quants.write({'account_sync': True, })
+                
+                # Read picking and create Fake BF for load stock
+                internal_picking = self.browse(pick_id)
 
+                # -------------------------------------------------------------
+                # Create picking:
+                # -------------------------------------------------------------
+                # TODO check
+                order = internal_picking.move_lines[0].sale_order_id.order_id 
+                partner = order.partner_id
+                scheduled_date = internal_picking.scheduled_date
+                name = self.name or _('Not assigned')
+                origin = _('%s [%s]') % (name, scheduled_date)
+
+                picking = self.create({       
+                    'partner_id': partner.id,
+                    'scheduled_date': scheduled_date,
+                    'origin': origin,
+                    #'move_type': 'direct',
+                    'picking_type_id': logistic_pick_in_type_id,
+                    'group_id': False,
+                    'location_id': location_from,
+                    'location_dest_id': location_to,
+                    #'priority': 1,                
+                    'state': 'done', # immediately!
+                    })
+
+                # -----------------------------------------------------------------
+                # Append stock.move detail (or quants if in stock)
+                # -----------------------------------------------------------------
+                for line in internal_picking.move_lines:
+                    product = line.product_id
+                    product_qty = line.product_uom_qty
+                    remain_qty = line.logistic_undelivered_qty
+                    logistic_sale_id = line.logistic_sale_id
+                    
+                    if product_qty >= remain_qty:
+                        sale_line_ready.append(logistic_sale_id)
+                        logistic_sale_id.logistic_state = 'ready' # XXX needed?
+
+                    # ---------------------------------------------------------
+                    # Create movement (not load stock):
+                    # ---------------------------------------------------------
+                    move_pool.create({
+                        'company_id': company.id,
+                        'partner_id': partner.id,
+                        'picking_id': picking.id,
+                        'product_id': product.id, 
+                        'name': product.name or ' ',
+                        'date': scheduled_date,
+                        'date_expected': scheduled_date,
+                        'location_id': location_from,
+                        'location_dest_id': location_to,
+                        'product_uom_qty': product_qty,
+                        'product_uom': product.uom_id.id,
+                        'state': 'done',
+                        'origin': origin,
+
+                        # Sale order line link:
+                        'logistic_load_id': logistic_sale_id.id,
+                        # Purchase order line line: 
+                        'logistic_purchase_id': line.id,
+                        })
+                
                 # XXX Move when all is done after?
                 shutil.move(
                     os.path.join(reply_path, f),
                     os.path.join(history_path, f),
                     )               
                 _logger.info('Pick ID: %s correct!' % f)
+                
+                # Mask as done fake purchase order:
+                internal_picking.logistic_state = 'done'
+                
+                # TODO check sale order touched:
+                
             break # only first folder
+            
+        # B. Check Sale Order with all line ready:
+        _logger.info('Update sale order header as ready:')
+        sale_line_pool.logistic_check_ready_order(sale_line_ready)
+            
         return True
 
     # -------------------------------------------------------------------------
@@ -838,9 +924,12 @@ class StockPicking(models.Model):
             need_invoice = \
                 partner.property_account_position_id.need_invoice or \
                     partner.need_invoice or order.need_invoice
+            if_fees = True # default        
                 
             # Invoice procedure (check rules):
-            if need_invoice:                
+            if need_invoice:        
+                if_fees = False
+        
                 # -------------------------------------------------------------
                 # Extract invoice from account:
                 # -------------------------------------------------------------
@@ -905,6 +994,7 @@ class StockPicking(models.Model):
             
             picking.write({
                 'state': 'done', # TODO needed?
+                'is_fees': is_fees,
                 })
     
     # -------------------------------------------------------------------------
@@ -912,6 +1002,7 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     sale_order_id = fields.Many2one(
         'sale.order', 'Sale order', help='Sale order generator')
+    is_fees = fields.Boolean('Is fees', help='Picking not invoiced for sale')    
     
 class ResPartner(models.Model):
     """ Model name: Res Partner

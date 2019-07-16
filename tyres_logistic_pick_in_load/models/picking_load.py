@@ -200,7 +200,7 @@ class StockPickingDelivery(models.Model):
             })
 
         # ---------------------------------------------------------------------
-        # Manage extra delivery:
+        #                         Manage extra delivery:
         # ---------------------------------------------------------------------
         quants = quant_pool.search([('order_id', '=', self.id)])
         path = os.path.join(logistic_root_folder, 'delivery')
@@ -403,6 +403,7 @@ class PurchaseOrderLine(models.Model):
         else:
             res_id = False    
             views = [(tree_view_id, 'tree'), (tree_view_id, 'form')]
+            
         return {
             'type': 'ir.actions.act_window',
             'name': _('Delivery created:'),

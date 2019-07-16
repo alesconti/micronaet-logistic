@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <openerp>
-    <data>         
-    	
+    <data>
         <record model="ir.ui.view" id="view_account_payment_term_ref_form">
             <field name="name">account.payment.term.form</field>
             <field name="model">account.payment.term</field>
@@ -56,10 +55,21 @@
                     <div>
                         <field name="is_expence"/>
                         <label for="is_expence"/>
-                    </div>
+                    </div>                    
                 </xpath>
             </field>       
          </record>
+        <record model="ir.ui.view" id="view_product_template_account_ref_form">
+            <field name="name">product.template.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <field name="categ_id" position="after">
+                    <field name="account_ref" />
+                </field>
+            </field>       
+         </record>
+         
          
          <record model="ir.actions.act_window" id="action_product_template_form">
              <field name="name">Product template</field>
@@ -335,6 +345,9 @@
                                          <separator string="Load document:" colspan="4"/>
                                          <field name="logistic_pick_in_type_id" />
                                          <field name="logistic_pick_out_type_id" />
+
+                                         <separator string="Account:" colspan="4"/>
+                                         <field name="product_account_ref" colspan="4"/>
                                      </group>
                                  </page>
                              </notebook>
