@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-09 14:01+0000\n"
-"PO-Revision-Date: 2019-05-09 16:02+0100\n"
+"POT-Creation-Date: 2019-07-16 13:54+0000\n"
+"PO-Revision-Date: 2019-07-16 15:55+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,10 +23,17 @@ msgid "Add"
 msgstr "Aggiungi"
 
 #. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_carrier_supplier_id
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_supplier_id
 #: model:ir.ui.menu,name:tyres_logistic_carrier.menu_carrier_root
 #: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
 msgid "Carrier"
 msgstr "Corriere"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_ok
+msgid "Carrier OK"
+msgstr "Corriere OK"
 
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_description
@@ -49,6 +56,11 @@ msgstr "Conferma corriere:"
 #: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_carrier_supplier_tree
 msgid "Carrier supplier"
 msgstr "Vettori"
+
+#. module: tyres_logistic_carrier
+#: model:ir.model.fields,help:tyres_logistic_carrier.field_sale_order_carrier_ok
+msgid "Carriere must be confirmed when done!"
+msgstr "Corriere deve essere confermato quando confermato!"
 
 #. module: tyres_logistic_carrier
 #: selection:sale.order,carrier_pay_mode:0
@@ -78,6 +90,16 @@ msgstr "Creato da"
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_create_date
 msgid "Created on"
 msgstr "Creato il"
+
+#. module: tyres_logistic_carrier
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
+msgid "Delivery confirmed"
+msgstr "Consegna confermata"
+
+#. module: tyres_logistic_carrier
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
+msgid "Delivery undo"
+msgstr "Annulla conferma consegna"
 
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_display_name
@@ -205,11 +227,6 @@ msgstr "Colli ordine"
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_stock_note
 msgid "Stock operator note"
 msgstr "Note magazziniere"
-
-#. module: tyres_logistic_carrier
-#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_supplier_id
-msgid "Supplier"
-msgstr "Fornitore"
 
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_track_id
