@@ -1,0 +1,107 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* tyres_order_team_filter
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-16 14:03+0000\n"
+"PO-Revision-Date: 2019-07-16 16:05+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: tyres_order_team_filter
+#: model:ir.model.fields,help:tyres_order_team_filter.field_res_users_internal_stock
+msgid "All order to this supplier is considered as internal"
+msgstr "Tutti gli ordini a questo fornitore sono considerati interni"
+
+#. module: tyres_order_team_filter
+#: model:ir.model.fields,field_description:tyres_order_team_filter.field_res_users_internal_stock
+msgid "Internal Stock"
+msgstr "Magazzino interno"
+
+#. module: tyres_order_team_filter
+#: code:addons/tyres_order_team_filter/models/team_filter.py:88
+#, python-format
+msgid "My %s"
+msgstr "I miei %s"
+
+#. module: tyres_order_team_filter
+#: model:ir.ui.view,arch_db:tyres_order_team_filter.view_res_users_form
+msgid "My Menu"
+msgstr "Mio menu"
+
+#. module: tyres_order_team_filter
+#: model:ir.model.fields,field_description:tyres_order_team_filter.field_res_users_my_group_id
+msgid "My Menu group"
+msgstr "Mio gruppo menu"
+
+#. module: tyres_order_team_filter
+#: code:addons/tyres_order_team_filter/models/team_filter.py:71
+#, python-format
+msgid "My Order %s"
+msgstr "I miei ordini %s"
+
+#. module: tyres_order_team_filter
+#: model:res.groups,name:tyres_order_team_filter.group_see_my_order
+msgid "My Order User"
+msgstr "I miei ordini utente"
+
+#. module: tyres_order_team_filter
+#: model:ir.ui.menu,name:tyres_order_team_filter.menu_logistic_my_order_root
+msgid "My Sale order"
+msgstr "I miei ordini di vendita"
+
+#. module: tyres_order_team_filter
+#: model:ir.model.fields,field_description:tyres_order_team_filter.field_res_users_my_action_id
+msgid "My action"
+msgstr "Mia azione"
+
+#. module: tyres_order_team_filter
+#: model:ir.model.fields,field_description:tyres_order_team_filter.field_res_users_my_menu_id
+msgid "My menu"
+msgstr "Mio menu"
+
+#. module: tyres_order_team_filter
+#: model:ir.model,name:tyres_order_team_filter.model_sale_order
+msgid "Quotation"
+msgstr "Preventivo"
+
+#. module: tyres_order_team_filter
+#: model:ir.model.fields,help:tyres_order_team_filter.field_res_users_team_ids
+msgid "Select team for filter orders"
+msgstr "Selezionare il team per filtrare gli ordini"
+
+#. module: tyres_order_team_filter
+#: model:ir.model.fields,field_description:tyres_order_team_filter.field_res_users_team_ids
+msgid "Teams"
+msgstr "Teams"
+
+#. module: tyres_order_team_filter
+#: model:ir.ui.view,arch_db:tyres_order_team_filter.view_res_users_form
+msgid "Update my menu"
+msgstr "Aggiorna il mio menu"
+
+#. module: tyres_order_team_filter
+#: model:ir.ui.view,arch_db:tyres_order_team_filter.view_res_users_form
+#: model:ir.ui.view,arch_db:tyres_order_team_filter.view_res_users_tree
+msgid "User for team"
+msgstr "Utenti per team"
+
+#. module: tyres_order_team_filter
+#: model:ir.actions.act_window,name:tyres_order_team_filter.action_res_user_my_menu
+#: model:ir.ui.menu,name:tyres_order_team_filter.menu_user_menu_management
+msgid "User menu management"
+msgstr "Gestione menu utente"
+
+#. module: tyres_order_team_filter
+#: model:ir.model,name:tyres_order_team_filter.model_res_users
+msgid "Users"
+msgstr "Utenti"
