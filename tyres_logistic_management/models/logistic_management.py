@@ -533,7 +533,6 @@ class StockPicking(models.Model):
 
         # Pool used:
         company_pool = self.env['res.company']
-        import pdb; pdb.set_trace()
         company = company_pool.search([])[0]
         path = os.path.expanduser(company.logistic_root_folder)
         path = os.path.join(path, 'corrispettivi')
@@ -548,37 +547,39 @@ class StockPicking(models.Model):
             _logger.error('Cannot create %s' % path)
 
         # Period current date:        
-        now_dt = datetime.strptime(evaluation_date, '%Y-%m-%d')
-        _logger.warning('Account Fees evalutation: %s' % now_dt)
+        _logger.warning('Account Fees evalutation: %s' % evaluation_date)
     
         # Picking not invoiced (DDT and Refund):
         pickings = self.search([
             ('is_fees', '=', True),
             
             # Period:
-            ('scheduled_date', '>=', '%s 00:00:00' % now_dt),
-            ('scheduled_date', '<=', '%s 23:59:59' % now_dt),
+            ('scheduled_date', '>=', '%s 00:00:00' % evaluation_date),
+            ('scheduled_date', '<=', '%s 23:59:59' % evaluation_date),
             # XXX: This? ('ddt_date', '=', now_dt),
             ])
 
-        fees_f = os.path.join(path, now_dt)
+        fees_filename = os.path.join(
+            path, evaluation_date.replace('-', '_') + '.csv')
+        fees_f = open(fees_filename, 'w')    
         for picking in pickings:
             # Readability:
             order = picking.sale_order_id 
             partner = order.partner_id
             stock_mode = picking.stock_mode #in: refund, out: DDT
 
-            total = move.product_uom_qty * move.logistic_unload_id.price_unit
-            if stock_mode == 'out': 
-                total = -total
-            
             for move in picking.move_lines:
-                fees_f.write('%s|%s|%s|%s\r\n' %
-                    company_pool.formatLang(picking.ddt_date, date=True),
+                total = move.product_uom_qty * \
+                    move.logistic_unload_id.price_unit
+                if stock_mode == 'out': 
+                    total = -total
+                fees_f.write('%s|%s|%s|%s\r\n' % (
+                    # XXX Use scheduled date or ddt_date?
+                    company_pool.formatLang(picking.scheduled_date, date=True),
                     order.payment_term_id.account_ref or '',
                     move.product_id.account_ref or product_account_ref or '',
                     total,
-                    )
+                    ))
                 pass
         return True
 
