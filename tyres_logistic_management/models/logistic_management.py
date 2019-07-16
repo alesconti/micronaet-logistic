@@ -527,6 +527,13 @@ class StockPicking(models.Model):
     # Extract Excel:
     # -------------------------------------------------------------------------
     @api.model
+    def reply_csv_accounting_fees(self):
+        ''' 
+        '''
+        # TODO
+        return True
+
+    @api.model
     def csv_report_extract_accounting_fees(self, evaluation_date):
         ''' Extract file account fees in CSV for accounting
         '''
@@ -562,6 +569,7 @@ class StockPicking(models.Model):
         fees_filename = os.path.join(
             path, evaluation_date.replace('-', '_') + '.csv')
         fees_f = open(fees_filename, 'w')    
+        fees_f.write('DATA|PAGAMENTO|PRODOTTO|TOTALE\r\n')
         for picking in pickings:
             # Readability:
             order = picking.sale_order_id 
@@ -576,7 +584,8 @@ class StockPicking(models.Model):
                 fees_f.write('%s|%s|%s|%s\r\n' % (
                     # XXX Use scheduled date or ddt_date?
                     company_pool.formatLang(picking.scheduled_date, date=True),
-                    order.payment_term_id.account_ref or '',
+                    order.payment_term_id.account_ref or \
+                        order.payment_term_id.name or '',
                     move.product_id.account_ref or product_account_ref or '',
                     total,
                     ))
@@ -846,7 +855,7 @@ class StockPicking(models.Model):
 
     @api.multi
     def check_import_reply(self):
-        ''' Check import reply for invoice
+        ''' Check import reply for INVOICE
         '''
         # TODO schedule action?
         # Pool used:
@@ -924,7 +933,7 @@ class StockPicking(models.Model):
                 # -------------------------------------------------------------
                 path = os.path.join(logistic_root_folder, 'invoice')
                 invoice_filename = os.path.join(
-                    path, 'pick_in_%s.csv' % self.id)
+                    path, 'pick_in_%s.csv' % picking.id)
 
                 try:
                     os.system('mkdir -p %s' % path)

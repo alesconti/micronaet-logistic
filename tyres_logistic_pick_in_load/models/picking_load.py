@@ -42,7 +42,7 @@ class StockPickingDelivery(models.Model):
 
     @api.multi
     def check_import_reply(self):
-        ''' Check import reply for get confirmation            
+        ''' Check import reply for get confirmation EXTRA BF
         '''
         # TODO schedule action?
         # Pool used:

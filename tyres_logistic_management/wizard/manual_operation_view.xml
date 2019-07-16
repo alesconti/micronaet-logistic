@@ -16,13 +16,13 @@
                       </group>    
                       <group colspan="4" col="2">
                           <separator string="D. Generate supplier purchase:"/>
-                          <button name="generate_purchase" string="_Generate purchase" type="object" class="btn-primary" colspan="1"/>
-                          <button name="confirm_generated_purchase" string="Confirm Draft _Purchase" type="object" class="btn-primary" colspan="1"/>
+                          <!--<button name="generate_purchase" string="_Generate purchase" type="object" class="btn-primary" colspan="1"/>-->
+                          <!--<button name="confirm_generated_purchase" string="Confirm Draft _Purchase" type="object" class="btn-primary" colspan="1"/>-->
                           <button name="check_internal_order" string="Check internal Purchase" type="object" class="btn-primary" colspan="1"/>
                       </group>    
                       <group colspan="4" col="2">
-                          <!--<separator string="E. Update picking in loading:"/>
-                          <button name="update_ready" string="_Update ready" type="object" class="btn-primary" />-->
+                          <separator string="E. Update picking in loading:"/>
+                          <!--<button name="update_ready" string="_Update ready" type="object" class="btn-primary" />-->
                           <!--Not necessary (work after update_ready)
                           <button name="update_ready_purchase_check" string="Update ready purchase check" type="object" class="btn-primary" /> -->
                           <button name="extra_bf_confirm" string="Check extra import" type="object" class="btn-primary" />
