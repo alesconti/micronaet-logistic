@@ -782,6 +782,7 @@ class StockPicking(models.Model):
         # Pool used:
         company_pool = self.env['res.company']
         move_pool = self.env['stock.move']
+        purchase_pool = self.env['purchase.order']
 
         # Parameter:
         company = company_pool.search([])[0]
@@ -797,27 +798,31 @@ class StockPicking(models.Model):
             logistic_root_folder, 'invoice', 'history')
 
         sale_line_ready = [] # ready line after assign load qty to purchase
+        move_file = []
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
-                pick_id = int(f[:-4].split('_')[-1]) # pick_in_ID.csv                
+                po_id = int(f[:-4].split('_')[-1]) # pick_in_ID.csv                
                 # TODO Mark as sync: quants.write({'account_sync': True, })
                 
                 # Read picking and create Fake BF for load stock
-                internal_picking = self.browse(pick_id)
+                purchase = purchase_pool.browse(po_id)
+                if purchase.logistic_state == 'done':
+                    _logger.error('Order yet manage: %s (remove manually)' % f)
+                    continue
 
                 # -------------------------------------------------------------
                 # Create picking:
                 # -------------------------------------------------------------
                 # TODO check
-                order = internal_picking.move_lines[0].sale_order_id.order_id 
+                order = purchase.order_line[0].sale_order_id.order_id 
                 partner = order.partner_id
-                scheduled_date = internal_picking.scheduled_date
-                name = self.name or _('Not assigned')
-                origin = _('%s [%s]') % (name, scheduled_date)
+                date = purchase.date_order
+                name = self.name or ''
+                origin = _('%s [%s]') % (name, date)
 
                 picking = self.create({       
                     'partner_id': partner.id,
-                    'scheduled_date': scheduled_date,
+                    'scheduled_date': date,
                     'origin': origin,
                     #'move_type': 'direct',
                     'picking_type_id': logistic_pick_in_type_id,
@@ -831,7 +836,7 @@ class StockPicking(models.Model):
                 # -----------------------------------------------------------------
                 # Append stock.move detail (or quants if in stock)
                 # -----------------------------------------------------------------
-                for line in internal_picking.move_lines:
+                for line in internal_picking.order_line:
                     product = line.product_id
                     product_qty = line.product_uom_qty
                     remain_qty = line.logistic_undelivered_qty
@@ -864,25 +869,37 @@ class StockPicking(models.Model):
                         # Purchase order line line: 
                         'logistic_purchase_id': line.id,
                         })
-                
-                # XXX Move when all is done after?
-                shutil.move(
+
+                # Save move operation:            
+                move_file.append((
                     os.path.join(reply_path, f),
                     os.path.join(history_path, f),
-                    )               
-                _logger.info('Pick ID: %s correct!' % f)
+                    ))
                 
                 # Mask as done fake purchase order:
-                internal_picking.logistic_state = 'done'
-                
-                # TODO check sale order touched:
+                purchase.logistic_state = 'done'
+                _logger.info('Purchase order: %s done!' % f)
                 
             break # only first folder
             
-        # B. Check Sale Order with all line ready:
+        # ---------------------------------------------------------------------
+        # Check Sale Order header with all line ready:
+        # ---------------------------------------------------------------------
         _logger.info('Update sale order header as ready:')
         sale_line_pool.logistic_check_ready_order(sale_line_ready)
-            
+        
+        # ---------------------------------------------------------------------
+        # Move all files read:
+        # ---------------------------------------------------------------------
+        _logger.info('Move all files:')
+        for from_file, to_file in move_file:
+            # Move when all is done!
+            try:
+                shutil.move(from_file, to_file)
+            except:
+                _logger.error('Error moving operation: %s >> %s' % (
+                    from_file, to_file))
+
         return True
 
     # -------------------------------------------------------------------------

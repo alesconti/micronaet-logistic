@@ -282,9 +282,10 @@ class PurchaseOrder(models.Model):
             if purchase.filename:
                 filename = purchase.filename
             else:
-                filename = clean('%s_%s.%s' % (
+                filename = clean('%s_%s_%s.%s' % (
                     partner.name,
                     purchase.name,
+                    purchase.id,
                     #purchase.date_order,
                     export.mode,
                     ))
