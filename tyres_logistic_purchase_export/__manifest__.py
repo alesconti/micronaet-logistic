@@ -22,7 +22,7 @@
 ###############################################################################
 
 {
-    'name': 'Logistic purchase export',
+    'name': 'Tyres Logistic purchase export',
     'version': '1.0',
     'category': 'Logistic',
     'sequence': 5,

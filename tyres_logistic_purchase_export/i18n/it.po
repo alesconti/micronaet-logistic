@@ -1,0 +1,249 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* tyres_logistic_purchase_export
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-16 13:57+0000\n"
+"PO-Revision-Date: 2019-07-16 16:02+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: tyres_logistic_purchase_export
+#: selection:res.partner.purchase.export,mode:0
+msgid "CSV"
+msgstr "CSV"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,help:tyres_logistic_purchase_export.field_res_partner_purchase_export_header
+msgid "Column name split with |, ex.: Name|Q|Deadline"
+msgstr "Nome colonne da dividere con: | (es.: Nome|Q|Scadenza)"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model,name:tyres_logistic_purchase_export.model_res_partner
+msgid "Contact"
+msgstr "Contatto"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_export_create_uid
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_export_create_date
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_export_display_name
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_display_name
+msgid "Display Name"
+msgstr "Nome Completo"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.ui.view,arch_db:tyres_logistic_purchase_export.view_res_partner_purchase_folder_form
+msgid "Esit folder"
+msgstr "Folder esito importazione"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,help:tyres_logistic_purchase_export.field_res_partner_purchase_folder_fullpath
+#: model:ir.model.fields,help:tyres_logistic_purchase_export.field_res_partner_purchase_folder_fullpath_esit
+#: model:ir.model.fields,help:tyres_logistic_purchase_export.field_res_partner_purchase_folder_fullpath_history
+msgid "Expand folder name in correct path and create if not exist"
+msgstr "Espande il nome cartella nel corretto percorso e lo crea se non esiste"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model,name:tyres_logistic_purchase_export.model_res_partner_purchase_folder
+msgid "Export folder"
+msgstr "Cartella di esportazione"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model,name:tyres_logistic_purchase_export.model_res_partner_purchase_export
+msgid "Export purchase"
+msgstr "Esporta acquisti"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.actions.act_window,name:tyres_logistic_purchase_export.action_res_partner_purchase_export
+#: model:ir.ui.menu,name:tyres_logistic_purchase_export.menu_res_partner_purchase_export_list
+msgid "Export purchase order"
+msgstr "Esporta ordine acquisto"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_export_field_name
+#: model:ir.ui.view,arch_db:tyres_logistic_purchase_export.view_res_partner_purchase_export_form
+msgid "Fields"
+msgstr "Campi"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_export_id_5814
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_users_purchase_export_id
+msgid "File syntax"
+msgstr "Sintassi del file"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_purchase_order_filename
+msgid "Filename"
+msgstr "Nome file"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_folder
+msgid "Folder"
+msgstr "Cartella"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_folder_esit
+msgid "Folder esit"
+msgstr "Cartella esito importazione"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_fullpath_esit
+msgid "Folder esit path"
+msgstr "Percorso cartella esito"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_folder_history
+msgid "Folder history"
+msgstr "Cartella storico"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_fullpath_history
+msgid "Folder history path"
+msgstr "Percorso cartella storico"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_fullpath
+msgid "Folder path"
+msgstr "Percorso cartella esportazione"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,help:tyres_logistic_purchase_export.field_res_partner_purchase_folder_folder
+msgid "Folder path, ex: /home/odoo/purchase or ~/supplier"
+msgstr "Percorso cartella, es: /home/odoo/purchase or ~/supplier"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,help:tyres_logistic_purchase_export.field_res_partner_purchase_folder_folder_esit
+msgid "Folder path, ex: /home/odoo/purchase/esit or ~/supplier"
+msgstr "Percorso cartella, es: /home/odoo/purchase/reply or ~/supplier"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,help:tyres_logistic_purchase_export.field_res_partner_purchase_folder_folder_history
+msgid "Folder path, ex: /home/odoo/purchase/history or ~/supplier"
+msgstr "Percorso cartella, es: /home/odoo/purchase/history or ~/supplier"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.actions.act_window,name:tyres_logistic_purchase_export.action_res_partner_purchase_folder
+#: model:ir.ui.menu,name:tyres_logistic_purchase_export.menu_res_partner_purchase_folder_list
+msgid "Folder purchase order"
+msgstr "Cartella ordini di acquisto"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_export_header
+#: model:ir.ui.view,arch_db:tyres_logistic_purchase_export.view_res_partner_purchase_export_form
+msgid "Header"
+msgstr "Intestazione"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.ui.view,arch_db:tyres_logistic_purchase_export.view_res_partner_purchase_folder_form
+msgid "History folder"
+msgstr "Cartella storico"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_export_id
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_id
+msgid "ID"
+msgstr "ID"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_export___last_update
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder___last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_export_write_uid
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_export_write_date
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,help:tyres_logistic_purchase_export.field_res_partner_purchase_export_field_name
+msgid "Line field split with |, ex.: product_id.name, product_uom_qty"
+msgstr "Dividere i campi con: | (es.: product_id.name, product_uom_qty)"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_export_mode
+msgid "Mode"
+msgstr "Modo"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_export_name
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_name
+msgid "Name"
+msgstr "Nome"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,help:tyres_logistic_purchase_export.field_res_partner_purchase_folder_name
+msgid "Name of this folder position"
+msgstr "Nome di questa posizione cartella"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,help:tyres_logistic_purchase_export.field_res_partner_purchase_export_name
+msgid "Name of this syntax of export"
+msgstr "Nome di questa sintassi di esportazione"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_folder_id_5815
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_users_purchase_folder_id
+#: model:ir.ui.view,arch_db:tyres_logistic_purchase_export.view_res_partner_purchase_folder_form
+msgid "Output folder"
+msgstr "Cartella di output"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model,name:tyres_logistic_purchase_export.model_purchase_order
+msgid "Purchase Order"
+msgstr "Ordine di Acquisto"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.ui.menu,name:tyres_logistic_purchase_export.menu_res_partner_purchase_export_root
+#: model:ir.ui.view,arch_db:tyres_logistic_purchase_export.view_res_partner_purchase_export_form
+#: model:ir.ui.view,arch_db:tyres_logistic_purchase_export.view_res_partner_purchase_export_tree
+#: model:ir.ui.view,arch_db:tyres_logistic_purchase_export.view_res_supplier_purchase_export_form
+msgid "Purchase export"
+msgstr "Esporta acquisti"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.ui.view,arch_db:tyres_logistic_purchase_export.view_res_partner_purchase_folder_form
+#: model:ir.ui.view,arch_db:tyres_logistic_purchase_export.view_res_partner_purchase_folder_tree
+msgid "Purchase folder"
+msgstr "Cartella acquisti"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,field_description:tyres_logistic_purchase_export.field_res_partner_purchase_export_separator
+msgid "Separator"
+msgstr "Separatore"
+
+#. module: tyres_logistic_purchase_export
+#: model:ir.model.fields,help:tyres_logistic_purchase_export.field_res_partner_purchase_export_separator
+msgid "Separator for fields (only CSV)"
+msgstr "Separatore per campi (solo per CSV)"
+
+#. module: tyres_logistic_purchase_export
+#: selection:res.partner.purchase.export,mode:0
+msgid "XLSX"
+msgstr "XLSX"
