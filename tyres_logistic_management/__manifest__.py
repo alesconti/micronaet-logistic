@@ -22,7 +22,7 @@
 ###############################################################################
 
 {
-    'name': 'Logistic Management',
+    'name': 'Tyres Logistic Management',
     'version': '1.0',
     'category': 'Logistic',
     'sequence': 5,
