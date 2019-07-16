@@ -508,7 +508,7 @@ class StockPicking(models.Model):
                     order.payment_term_id.account_ref or '',
                     move.product_id.account_ref or product_account_ref or '',
                     total,
-                    ), default_format=f_text)
+                    )
                 pass
         return True
 
