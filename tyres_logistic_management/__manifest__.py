@@ -53,7 +53,7 @@
         #'l18n_it_fatturapa', # Fattura PA Management
         ],
     'data': [
-        #'security/crm_security.xml',
+        'security/logistic_group.xml',
         #'security/ir.model.access.csv',
 
         # Views:
