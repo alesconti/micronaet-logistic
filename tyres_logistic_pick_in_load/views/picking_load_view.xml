@@ -66,7 +66,7 @@
                      <!--<field name="name" readonly="1" />-->
                      <field name="date_planned" readonly="1" invisible="1"/>
                      
-                     <field name="order_supplier_id" readonly="1" />
+                     <field name="order_supplier_id" readonly="1" string="Fornitore"/>
                      <field name="user_select_id" invisible="1" />
 
                      <field name="larghezza" readonly="1" string="L."/>
