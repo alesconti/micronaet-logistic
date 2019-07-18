@@ -411,6 +411,7 @@
                  <field name="state" position="after">
                      <button name="wf_set_order_as_done" string="Order done!" type="object" attrs="{'invisible': [('logistic_state','!=','delivering')]}"/>
                      <button name="return_order_line_list_view" string="Logistic detail" type="object" class="oe_highlight"/>
+                     <button name="workflow_ready_to_done_current_order" string="Go in delivering" type="object" attrs="{'invisible': [('logistic_state','!=','ready')]}" icon="fa-caret-square-o-right"/>
                  </field>
                  <field name="partner_id" position="after">
                      <field name="logistic_state" readonly="1"/>
@@ -462,6 +463,7 @@
                      <field name="logistic_state" />                     
                      <button name="set_carrier_ok_yes" string="Delivery confirmed" type="object" invisible="not context.get('view_mode_carrier', False)" attrs="{'invisible': [('carrier_ok', '=', True)]}" icon="fa-dropbox" /><!--('logistic_state', 'not in', ('order', 'pending')), -->
                      <button name="set_carrier_ok_no" string="Delivery undo" type="object" invisible="not context.get('view_mode_carrier', False)" attrs="{'invisible': [('carrier_ok', '=', False)]}" icon="fa-mail-reply"/>
+                     <button name="workflow_ready_to_done_current_order" string="Go in delivering" type="object" attrs="{'invisible': [('logistic_state','!=','ready')]}" icon="fa-caret-square-o-right"/>
                  </field>
                  <field name="invoice_status" position="attributes">
                      <attribute name="invisible">1</attribute>

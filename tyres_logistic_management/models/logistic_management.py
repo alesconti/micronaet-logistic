@@ -1302,8 +1302,15 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     # B. Logistic delivery phase: ready > done
     # -------------------------------------------------------------------------
-    # TODO change:
-    @api.model
+    # Button call for trigger:
+    @api.multi
+    def workflow_ready_to_done_current_order(self):
+        ''' Button action for call all ready to done order:
+        '''
+        return self.workflow_ready_to_done_draft_picking(current=True)
+    
+    # Real trigger call:    
+    @api.model 
     def workflow_ready_to_done_draft_picking(self, limit=False, current=False):
         ''' Confirm payment order (before expand kit)
         '''
@@ -1332,13 +1339,15 @@ class SaleOrder(models.Model):
             orders = self.search([
                 ('logistic_state', '=', 'ready'),
                 ], limit=limit)
+            _logger.info('Order ready to pending with limit: %s' % limit)
         elif current:
             orders = self
+            _logger.info('Order ready to pending with current')
         else:
             orders = self.search([
                 ('logistic_state', '=', 'ready'),
                 ])
-                
+            _logger.info('Order ready to pending all, total: %s' % len(orders))                
         verbose_order = len(orders)    
             
         picking_ids = [] # return value
