@@ -1457,6 +1457,13 @@ class SaleOrder(models.Model):
     logistic_picking_ids = fields.One2many(
         'stock.picking', 'sale_order_id', 'Picking')
 
+    logistic_source = fields.Selection([
+        ('web', 'Web order'),
+        ('resell', 'Customer resell order'),
+        ('workshop', 'Workshop order'),
+        ], 'Logistic source', default='web',
+        )
+
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft, new order received
         

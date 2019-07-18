@@ -388,6 +388,7 @@
                  <field name="payment_term_id" position="before">
                      <field name="partner_need_invoice" />
                      <field name="need_invoice" />
+                     <field name="logistic_source" />
                  </field>
                  <xpath expr="//page[1]" position="after">
                      <page string="Picking">
@@ -435,6 +436,7 @@
              <field name="inherit_id" ref="sale.view_quotation_tree"/>
              <field name="arch" type="xml">
                  <field name="state" position="after">
+                     <field name="logistic_source" />
                      <field name="logistic_state" />                     
                      <button name="return_order_line_list_view" string="Logistic detail" type="object" class="oe_highlight"/>
                  </field>
@@ -455,7 +457,11 @@
                     
                  <field name="state" position="after">
                      <field name="team_id" />
+                     <field name="carrier_ok" />
+                     <field name="logistic_source" />
                      <field name="logistic_state" />                     
+                     <button name="set_carrier_ok_yes" string="Delivery confirmed" type="object" invisible="not context.get('view_mode_carrier', False)" attrs="{'invisible': [('carrier_ok', '=', True)]}" icon="fa-dropbox" /><!--('logistic_state', 'not in', ('order', 'pending')), -->
+                     <button name="set_carrier_ok_no" string="Delivery undo" type="object" invisible="not context.get('view_mode_carrier', False)" attrs="{'invisible': [('carrier_ok', '=', False)]}" icon="fa-mail-reply"/>
                  </field>
                  <field name="invoice_status" position="attributes">
                      <attribute name="invisible">1</attribute>
@@ -475,6 +481,7 @@
                  <field name="user_id" position="after">
                      <field name="logistic_state" />
                      <field name="team_id" />
+                     <field name="logistic_source" />
                      
                      <!--Fast filter:-->
                      <filter name="logistic_state_draft" string="Order Draft" domain="[('logistic_state','=','draft')]"/>
@@ -491,6 +498,7 @@
                  <xpath expr="/search/group/filter[2]" position="after">
                      <filter string="Team ID" domain="[]" context="{'group_by': 'team_id'}"/>
                      <filter string="Logistic state" domain="[]" context="{'group_by': 'logistic_state'}"/>
+                     <filter string="Logistic source" domain="[]" context="{'group_by': 'logistic_source'}"/>
                  </xpath>
              </field>
          </record>         
@@ -644,6 +652,15 @@
          
          <!--MASTER ACTION:-->
          <!--sale.order action:-->
+         <record model="ir.actions.act_window" id="action_sale_carrier_ko_form">
+             <field name="name">Carrier not confirmed</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>            
+             <field name="context">{'view_mode_carrier': True}</field>
+             <field name="domain">[('carrier_ok', '=', False), ('logistic_state', 'in', ('order', 'pending', 'ready', 'delivering'))]</field>
+         </record>
+
          <record model="ir.actions.act_window" id="action_sale_order_all_form">
              <field name="name">Sale order all</field>
              <field name="res_model">sale.order</field>
@@ -853,6 +870,14 @@
                      name="Logistic: Order"
                      action="action_sale_order_order_form"
                      sequence="40"
+                     />
+                 
+                 <menuitem
+                     id="menu_logistic_left_order_carrier" 
+                     parent="menu_logistic_left_order_root"
+                     name="Logistic: Carrier"
+                     action="action_sale_carrier_ko_form"
+                     sequence="45"
                      />
                  <menuitem
                      id="menu_logistic_left_order_pending" 

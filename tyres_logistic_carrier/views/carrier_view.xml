@@ -1,6 +1,15 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <!--<record model="ir.ui.view" id="view_sale_order_tree">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+                <field name="state" position="before">
+                    <field name="carrier_ok" />
+                </field>
+            </field>
+        </record>-->
         <record model="ir.ui.view" id="view_sale_order_form">
             <field name="name">sale.order.form</field>
             <field name="model">sale.order</field>
@@ -9,8 +18,8 @@
                 <xpath expr="//page[1]" position="after">
                     <page string="Carrier">
                         <group colspan="4" col="5">
-                            <button name="set_carrier_ok_yes" string="Delivery confirmed" type="object" attrs="{'invisible': [('carrier_ok', '=', True)]}"/><!--('logistic_state', 'not in', ('order', 'pending')), -->
-                            <button name="set_carrier_ok_no" string="Delivery undo" type="object" attrs="{'invisible': [('carrier_ok', '=', False)]}"/>
+                            <button name="set_carrier_ok_yes" string="Delivery confirmed" type="object" attrs="{'invisible': [('carrier_ok', '=', True)]}" icon="fa-dropbox" /><!--('logistic_state', 'not in', ('order', 'pending')), -->
+                            <button name="set_carrier_ok_no" string="Delivery undo" type="object" attrs="{'invisible': [('carrier_ok', '=', False)]}" icon="fa-mail-reply"/>
                             <field name="carrier_ok" invisible="1" />
                             
                             <field name="carrier_supplier_id" />

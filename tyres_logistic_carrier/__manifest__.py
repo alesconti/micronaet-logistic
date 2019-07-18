@@ -34,6 +34,7 @@
         'stock',
         'sale',
         'product',
+        #'tyres_logistic_management',
         ],
     'data': [
         'security/ir.model.access.csv',
