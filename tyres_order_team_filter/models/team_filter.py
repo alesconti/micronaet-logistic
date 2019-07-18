@@ -28,6 +28,26 @@ from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
 
+class ResUsersMyTemplate(models.Model):
+    """ Model name: Res Users My Template
+    """
+    
+    _name = 'res.users.my.template'
+    _rec_name = 'user_id'
+    _order = 'sequence'
+
+    # -------------------------------------------------------------------------
+    # COLUMNS:
+    # -------------------------------------------------------------------------
+    user_id = fields.Many2one('res.users', 'User link')
+    my_user_id = fields.Many2one('res.users', 'User link')
+    my_menu_id = fields.Many2one('ir.ui.menu', 'My menu', 
+        #domain="[('action.res_model', '=', 'sale.order')]"
+        )
+    sequence = fields.Integer('Sequence', default=10)
+    
+    # -------------------------------------------------------------------------
+
 class ResUsers(models.Model):
     """ Model name: Res Users
     """
@@ -37,6 +57,8 @@ class ResUsers(models.Model):
     # -------------------------------------------------------------------------
     # COLUMNS:
     # -------------------------------------------------------------------------
+    my_user_template = fields.Boolean('Template', 
+        help='Used as template for extra menu list')
     my_group_id = fields.Many2one('res.groups', 'My Menu group')
     my_action_id = fields.Many2one('ir.actions.act_window', 'My action')
     my_menu_id = fields.Many2one('ir.ui.menu', 'My menu')    
@@ -44,6 +66,10 @@ class ResUsers(models.Model):
         'crm.team', relation='rel_user_team', 
         column1='user_id', column2='team_id', 
         string='Teams', help='Select team for filter orders')
+    template_ids = fields.One2many('res.users.my.template', 'user_id', 'User',
+        help='Template list for default menu')
+    my_menu_ids = fields.One2many('res.users.my.template', 'my_user_id', 
+        'User', help='Menu generated from template user')
     # -------------------------------------------------------------------------
 
     @api.multi

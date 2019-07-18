@@ -34,8 +34,10 @@
         'sale',
         'tyres_logistic_management',
         ],
-    'data': [
+    'data': [        
         'security/my_order_group.xml',
+        'security/ir.model.access.csv',
+
         'views/filter_view.xml',
         ],
     'demo': [],

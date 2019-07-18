@@ -1,0 +1,3 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+access_res_users_my_template_user,res.users.my.template,model_res_users_my_template,base.group_user,1,1,1,1
+
