@@ -381,8 +381,19 @@
             </field>
         </record>-->
         
-         <!--sale.order-->
-         <record model="ir.ui.view" id="view_sale_order_logistic_form">
+        <!--sale.order-->
+        <record model="ir.ui.view" id="view_sale_order_form">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="tyres_logistic_carrier.view_sale_order_form"/>
+            <field name="arch" type="xml">
+                <page name="carrier_page" position="attributes">
+                    <attribute name="attrs">{'invisible': [('logistic_source','!=','web')]}</attribute>                  
+                </page>
+            </field>
+        </record>          
+                             
+        <record model="ir.ui.view" id="view_sale_order_logistic_form">
              <field name="name">sale.order.logistic.form</field>
              <field name="model">sale.order</field>
              <field name="inherit_id" ref="sale.view_order_form"/>
@@ -844,7 +855,8 @@
                  id="menu_logistic_left_order_root" 
                  parent="menu_logistic_header_root"
                  name="Sale order"
-                 sequence="10"             
+                 sequence="10" 
+                 groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"            
                  />
                  <menuitem
                      id="menu_logistic_left_order_all" 
@@ -948,6 +960,7 @@
                  parent="menu_logistic_header_root"
                  name="Sale order line"
                  sequence="15"             
+                 groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"            
                  />
                  <menuitem
                      id="menu_logistic_left_order_line_all" 
@@ -962,6 +975,7 @@
                  parent="menu_logistic_header_root"
                  name="Purchase order"
                  sequence="20"
+                 groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"            
                  />
                  <menuitem
                      id="menu_logistic_left_purchase_all" 
@@ -995,6 +1009,7 @@
                  parent="menu_logistic_header_root"
                  name="Purchase order line"
                  sequence="25"
+                 groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"            
                  />
                  <menuitem
                      id="menu_logistic_left_purchase_line_detail" 
@@ -1009,6 +1024,7 @@
                  parent="menu_logistic_header_root"
                  name="BF load document"
                  sequence="30"             
+                 groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"            
                  />
                  <menuitem
                      id="menu_logistic_left_pick_in_document" 
@@ -1023,6 +1039,7 @@
                  parent="menu_logistic_header_root"
                  name="BC unload document"
                  sequence="40"             
+                 groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"            
                  />
                  <menuitem
                      id="menu_logistic_left_pick_out_document" 
@@ -1044,6 +1061,7 @@
                  parent="menu_logistic_header_root"
                  name="Stock move"
                  sequence="50"             
+                 groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"            
                  />
                  <menuitem
                      id="menu_logistic_left_stock_move_all" 
@@ -1091,6 +1109,7 @@
                  parent="menu_logistic_header_root"
                  name="Configuration"
                  sequence="99"             
+                 groups="tyres_logistic_management.group_logistic_manager"            
                  />
                  <menuitem 
                      id="menu_logistic_left_configuration_parameter"

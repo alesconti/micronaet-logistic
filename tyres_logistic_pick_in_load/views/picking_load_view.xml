@@ -68,12 +68,11 @@
                      <field name="date_planned" readonly="1" />
                      
                      <field name="order_supplier_id" readonly="1" />
-                     <field name="carrier_id" readonly="1" />
                      <field name="user_select_id" />
 
-                     <field name="raggio" readonly="1" />
                      <field name="larghezza" readonly="1" />
                      <field name="spalla" readonly="1" />
+                     <field name="raggio" readonly="1" />
 
                      <!--Total: -->
                      <field name="logistic_delivered_qty" readonly="1" />
@@ -106,7 +105,6 @@
                              <field name="logistic_sale_id" readonly="1"/>
 
                              <field name="order_supplier_id" readonly="1"/>
-                             <field name="carrier_id" readonly="1"/>                             
                              
                              <field name="product_id" readonly="1"/>
                              <field name="name" readonly="1"/>
@@ -114,10 +112,10 @@
                              <field name="product_qty" readonly="1"/>
                              <notebook colspan="4">
                                  <page string="Tyres">
-                                     <group colspan="4" col="4">
-                                         <field name="raggio" readonly="1"/>
+                                     <group colspan="4" col="6">
                                          <field name="larghezza" readonly="1"/>
                                          <field name="spalla" readonly="1"/>
+                                         <field name="raggio" readonly="1"/>
                                      </group>    
                                  </page>
                                  <page string="Delivery">
@@ -147,18 +145,18 @@
                     <field name="carrier_id" />
                     <field name="order_supplier_id" />
 
-                    <field name="raggio" />
                     <field name="larghezza" />
                     <field name="spalla" />
+                    <field name="raggio" />
 
                     <filter name="my_selection" string="Current selected" domain="[('delivery_id','=',False), ('user_select_id', '=', uid), ('logistic_delivered_manual','&gt;',0)]"/>
 
                     <!--<filter name="state_draft" string="Draft state" domain="[('state','=','draft')]"/>-->
                     <group expand="0" string="Group By...">
                     
-                        <filter name="group_raggio" string="Ray" context="{'group_by': 'raggio'}"/>
                         <filter name="group_larghezza" string="Width" context="{'group_by': 'larghezza'}"/>
                         <filter name="group_spalla" string="Shoulder" context="{'group_by': 'spalla'}"/>
+                        <filter name="group_raggio" string="Ray" context="{'group_by': 'raggio'}"/>
 
                         <filter name="group_purchase" string="Purchase order" context="{'group_by': 'order_id'}"/>
                         <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
