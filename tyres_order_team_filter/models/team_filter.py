@@ -64,13 +64,23 @@ class ResUsers(models.Model):
         # ---------------------------------------------------------------------        
         # 1. Create or get my group:
         # ---------------------------------------------------------------------        
+        # All group has this category owner:
+        category_id = self.env.ref(
+            'tyres_logistic_management.ir_module_category_logistic_my').id
         if user.my_group_id:
             my_group_id = user.my_group_id.id
+
+            # Update some fields:
+            user.my_group_id.write({
+                'users': [(6, 0, [user.id, ])],
+                'category_id': category_id,
+                })
         else:
             my_group_id = group_pool.create({
                 'name': _('My Order %s') % user.name,
                 'comment': 'Group auto created from tyres_order_team_filter',
                 'users': [(6, 0, [user.id, ])],
+                'category_id': category_id,
                 }).id
             user.my_group_id = my_group_id
 
@@ -80,7 +90,10 @@ class ResUsers(models.Model):
         name = ''
         if user.my_action_id:
             my_action_id = user.my_action_id.id            
+
+            # Update some fields:
             user.my_action_id.domain = domain # Update domain filter
+            
         else:
             # Default action used to copy
             origin_action = self.env.ref(
