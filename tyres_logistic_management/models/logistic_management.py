@@ -1063,13 +1063,6 @@ class SaleOrder(models.Model):
     
     _inherit = 'sale.order'
 
-    @api.model
-    def _needaction_count(self, domain=None):
-        """ compute the number of needaction of the current user """
-        import pdb; pdb.set_trace()
-        domain = []
-        return self.search_count(domain)
-
     # -------------------------------------------------------------------------    
     #                           OVERRIDE EVENTS:
     # -------------------------------------------------------------------------    
