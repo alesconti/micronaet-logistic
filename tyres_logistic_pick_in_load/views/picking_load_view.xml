@@ -85,7 +85,7 @@
                      
                      <field name="logistic_delivered_manual" />
                      <field name="delivery_id" invisible="1"/>
-                     <button name="create_delivery_orders" string="Create delivery orders" type="object" class="oe_highlight" colspan="1" icon="fa-files-o" confirm="Do you confirm the generation of all supplier delivery document (you selection)?"/>
+                     <button name="create_delivery_orders" string="Create delivery orders" type="object" class="oe_highlight" colspan="1" icon="fa-check-square" confirm="Do you confirm the generation of all supplier delivery document (you selection)?"/>
                 </tree>
             </field>
         </record>
