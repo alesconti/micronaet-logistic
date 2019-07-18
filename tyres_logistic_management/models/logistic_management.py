@@ -569,7 +569,7 @@ class StockPicking(models.Model):
         fees_filename = os.path.join(
             path, evaluation_date.replace('-', '_') + '.csv')
         fees_f = open(fees_filename, 'w')    
-        fees_f.write('DATA|PAGAMENTO|PRODOTTO|TOTALE\r\n')
+        fees_f.write('SKU|DATA|PAGAMENTO|PRODOTTO|TOTALE\r\n')
         for picking in pickings:
             # Readability:
             order = picking.sale_order_id 
@@ -581,12 +581,14 @@ class StockPicking(models.Model):
                     move.logistic_unload_id.price_unit
                 if stock_mode == 'out': 
                     total = -total
-                fees_f.write('%s|%s|%s|%s\r\n' % (
+                product = move.product_id  
+                fees_f.write('%s|%s|%s|%s|%s\r\n' % (
                     # XXX Use scheduled date or ddt_date?
+                    product.default_code or '',
                     company_pool.formatLang(picking.scheduled_date, date=True),
                     order.payment_term_id.account_ref or \
                         order.payment_term_id.name or '',
-                    move.product_id.account_ref or product_account_ref or '',
+                    product.account_ref or product_account_ref or '',
                     total,
                     ))
                 pass
@@ -891,16 +893,17 @@ class StockPicking(models.Model):
         ''' Confirm draft picking documents
         '''
         def get_address(partner): 
-            mask = '%s ' * 6
-            return mask % (
+            return '%s %s|%s|%s|%s|%s|%s' % (
                 partner.street or '',
                 partner.street2 or '',
+                
+                partner.zip,
                 partner.city or '',
                 partner.state_id.name or '',
-                partner.zip,
                 partner.country_id.name,
+                partner.country_id.code,
                 )
-        
+
         # Pool used:
         company_pool = self.env['res.company']
 
@@ -915,7 +918,7 @@ class StockPicking(models.Model):
         for picking in self:
             # Readability:
             order = picking.sale_order_id
-            partner = order.partner_id
+            partner = order.partner_invoice_id or order.partner_id
             address = order.partner_shipping_id
             
             # Need invoice check (fiscal position or order check):
@@ -946,12 +949,16 @@ class StockPicking(models.Model):
                 # Export syntax:
                 cols = 25
                 invoice_file.write(
-                    'RAGIONE SOCIALE|INDIRIZZO|PARTITA IVA|CODICE FISCALE|'
-                    'EMAIL|TELEFONO|ID CLIENTE|PEC|SDI|NOME DESTINAZIONE|'
-                    'TIPO|INDIRIZZO|ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
+                    'RAGIONE SOCIALE|'
+                    'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
+                    'PARTITA IVA|CODICE FISCALE|'
+                    'EMAIL|TELEFONO|ID CLIENTE|PEC|SDI|NOME DESTINAZIONE|TIPO|'
+                    'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
+                    'ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
                     'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|'
                     'SKU|DESCRIZIONE|QTA|PREZZO|IVA\r\n'
                     )
+
                 mask = '%s|' * (cols - 1) + '%s\r\n' # 25 fields
                 for move in self.move_lines:
                     invoice_file.write(mask % (
@@ -970,13 +977,13 @@ class StockPicking(models.Model):
                         'privato' if partner.fatturapa_surname else 'business',
                         get_address(address),
                         address.id,
-                        '', # TODO bank!
+                        '', # TODO bank not present for now!
                         order.id,
                         
                         order.name or '',
                         company_pool.formatLang(
                             order.date_order, date=True),
-                        partner.property_account_position_id.name, # TODO code?
+                        partner.property_account_position_id.id, # ODOO ID
                         len(order.parcel_ids), # TODO correct?
                         '', # TODO weight total
 
@@ -1357,7 +1364,9 @@ class SaleOrder(models.Model):
             _logger.warning('Generate pick out from order: %s / %s'  % (
                 i, verbose_order))
 
-            # Create picking document:
+            # -----------------------------------------------------------------
+            # Create picking out document header:
+            # -----------------------------------------------------------------
             partner = order.partner_id
             name = order.name # same as order_ref
             origin = _('%s [%s]') % (order.name, order.create_date[:10])
@@ -1451,6 +1460,18 @@ class SaleOrder(models.Model):
         ''' Set order as done (from delivering)
         '''
         self.ensure_one()
+        
+        # ---------------------------------------------------------------------
+        # TODO Get label PDF for printing
+        # ---------------------------------------------------------------------
+        
+        # ---------------------------------------------------------------------
+        # TODO Print label
+        # ---------------------------------------------------------------------
+
+        # ---------------------------------------------------------------------
+        # Update Workflow:
+        # ---------------------------------------------------------------------
         self.logistic_state = 'done'
 
     # -------------------------------------------------------------------------
