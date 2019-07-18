@@ -1109,6 +1109,15 @@ class SaleOrder(models.Model):
             raise exceptions.UserError(
                 _('Only order in confirmed payment could go in pending!'))            
 
+
+        # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        # XXX REMOVE Temp Mode:
+        self.logistic_state = 'ready'
+        return True
+        # XXX REMOVE
+        # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
         for line in self.order_line:
             if not line.state_check:
                 raise exceptions.UserError(
@@ -1129,7 +1138,7 @@ class SaleOrder(models.Model):
         if not lines:
             raise exceptions.UserError(_('No order line to order!'))
 
-        # Call origina action:    
+        # Call original action:    
         return line_pool.workflow_order_pending(lines)
 
     # -------------------------------------------------------------------------
@@ -1295,7 +1304,7 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     # TODO change:
     @api.model
-    def workflow_ready_to_done_draft_picking(self, limit=False):
+    def workflow_ready_to_done_draft_picking(self, limit=False, current=False):
         ''' Confirm payment order (before expand kit)
         '''
         now = fields.Datetime.now()
@@ -1323,7 +1332,9 @@ class SaleOrder(models.Model):
             orders = self.search([
                 ('logistic_state', '=', 'ready'),
                 ], limit=limit)
-        else:        
+        elif current:
+            orders = self
+        else:
             orders = self.search([
                 ('logistic_state', '=', 'ready'),
                 ])
@@ -1557,7 +1568,9 @@ class SaleOrderLine(models.Model):
             and the next step create the order as setup in the line
             >> after: workflow_order_pending
         '''        
-        return self.order_id.workflow_manual_order_pending()
+        # Create purchase order and confirm (purchase action not used)
+        self.order_id.workflow_manual_order_pending() 
+        return True
     
     @api.multi
     def chain_broken_purchase_line(self):
@@ -1739,7 +1752,7 @@ class SaleOrderLine(models.Model):
                     purchase_db[key] = []
                 purchase_db[key].append(splitted)
 
-        selected_ids = [] # ID: to return view list        
+        selected_purchase = [] # ID: to return view list 
         for key in purchase_db:
             supplier, order = key
             
@@ -1764,17 +1777,18 @@ class SaleOrderLine(models.Model):
                 # TODO if order was deleted restore logistic_state to uncovered
                 if not purchase_id:
                     partner = supplier or company.partner_id # Use company 
-                    purchase_id = purchase_pool.create({
+                    new_purchase = purchase_pool.create({
                         'partner_id': partner.id,
                         'date_order': now,
                         'date_planned': now,
                         #'name': # TODO counter?
                         #'partner_ref': '',
                         #'logistic_state': 'draft',
-                        }).id
-                    selected_ids.append(purchase_id)
+                        })
+                    purchase_id = new_purchase.id
+                    selected_purchase.append(new_purchase)
 
-                purchase_line_pool.create({
+                new_purchase = purchase_line_pool.create({
                     'order_id': purchase_id,
                     'product_id': product.id,
                     'name': product.name,
@@ -1787,8 +1801,14 @@ class SaleOrderLine(models.Model):
                     'logistic_sale_id': line.id, # multi line!
                     })
 
-                # Update line state:    
+                # Update line state for pending receiving:
                 line.logistic_state = 'ordered'
+
+        # ---------------------------------------------------------------------
+        # Confirm now purchase order:
+        # ---------------------------------------------------------------------
+        for purchase in selected_purchase:
+            purchase.set_logistic_state_confirmed()    
 
         # ---------------------------------------------------------------------
         # Extra operation:
@@ -1797,7 +1817,8 @@ class SaleOrderLine(models.Model):
         purchase_pool.purchase_internal_confirmed()
 
         # Return view:
-        return purchase_pool.return_purchase_order_list_view(selected_ids)
+        return purchase_pool.return_purchase_order_list_view(
+            [item.id for item in selected_purchase])
 
     # -------------------------------------------------------------------------
     #                            COMPUTE FIELDS FUNCTION:
