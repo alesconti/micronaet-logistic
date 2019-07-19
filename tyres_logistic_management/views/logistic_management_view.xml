@@ -424,6 +424,18 @@
         </record>-->
         
         <!--sale.order-->
+        <record model="ir.ui.view" id="view_sale_order_graph">
+           <field name="name">sale.order.graph</field>
+           <field name="model">sale.order</field>
+           <field name="priority" eval="1" />
+           <field name="arch" type="xml">
+                 <graph string="Sales Order Lines" type="bar">
+                      <field name="logistic_state" />
+                      <field name="team_id" />
+                      <field name="counter" type="measure" />
+                </graph>
+            </field>
+        </record>
         <record model="ir.ui.view" id="view_sale_order_form">
             <field name="name">sale.order.form</field>
             <field name="model">sale.order</field>
@@ -716,16 +728,24 @@
              <field name="name">Carrier not confirmed</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>            
+             <field name="view_mode">tree,form,graph</field>            
              <field name="context">{'view_mode_carrier': True}</field>
              <field name="domain">[('carrier_ok', '=', False), ('logistic_state', 'in', ('order', 'pending', 'ready', 'delivering'))]</field>
          </record>
 
+         <record model="ir.actions.act_window" id="action_sale_order_dashboard_form">
+             <field name="name">Order dashboard</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">graph,tree,form</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', 'not in', ('cancel', 'done'))]</field>
+         </record>
          <record model="ir.actions.act_window" id="action_sale_order_all_form">
              <field name="name">Sale order all</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
+             <field name="view_mode">tree,form,graph</field>
              <field name="context">{}</field>
              <field name="domain">[]</field>
          </record>
@@ -733,7 +753,7 @@
              <field name="name">Sale order problem</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
+             <field name="view_mode">tree,form,graph</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', 'in', ('draft', 'order', 'pending', 'ready', 'delivering')),('date_order', '&lt;', (datetime.datetime.now() - datetime.timedelta(days=3)).strftime('%Y-%m-%d 00:00:00'))]</field>
          </record>
@@ -742,7 +762,7 @@
              <field name="name">Sale order draft</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
+             <field name="view_mode">tree,form,graph</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'draft')]</field>
          </record>
@@ -750,7 +770,7 @@
              <field name="name">Sale order order</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
+             <field name="view_mode">tree,form,graph</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'order')]</field>
          </record>
@@ -758,7 +778,7 @@
              <field name="name">Sale order pending</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
+             <field name="view_mode">tree,form,graph</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'pending')]</field>
          </record>
@@ -766,7 +786,7 @@
              <field name="name">Sale order dropshipped</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
+             <field name="view_mode">tree,form,graph</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'dropshipped')]</field>
          </record>
@@ -774,7 +794,7 @@
              <field name="name">Sale order locked</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
+             <field name="view_mode">tree,form,graph</field>
              <field name="context">{}</field>
              <field name="domain">[('locked_delivery', '=', True)]</field>
          </record>
@@ -782,7 +802,7 @@
              <field name="name">Sale order ready</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
+             <field name="view_mode">tree,form,graph</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'ready'),('locked_delivery', '=', False)]</field>
          </record>
@@ -790,7 +810,7 @@
              <field name="name">Sale order delivering</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
+             <field name="view_mode">tree,form,graph</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'delivering')]</field>
          </record>
@@ -798,7 +818,7 @@
              <field name="name">Sale order done</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
+             <field name="view_mode">tree,form,graph</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'done')]</field>
          </record>
@@ -806,7 +826,7 @@
              <field name="name">Sale order cancel</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
+             <field name="view_mode">tree,form,graph</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'cancel')]</field>
          </record>
@@ -814,7 +834,7 @@
              <field name="name">Sale order error</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
+             <field name="view_mode">tree,form,graph</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'error')]</field>
          </record>
@@ -903,6 +923,14 @@
                  sequence="10" 
                  groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"            
                  />
+                 
+                 <menuitem
+                     id="menu_logistic_left_order_dashboard" 
+                     parent="menu_logistic_left_order_root"
+                     name="Dashboard"
+                     action="action_sale_order_dashboard_form"
+                     sequence="0"
+                     />
                  <menuitem
                      id="menu_logistic_left_order_all" 
                      parent="menu_logistic_left_order_root"

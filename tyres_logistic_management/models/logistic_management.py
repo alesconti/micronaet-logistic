@@ -1513,6 +1513,7 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
+    counter = fields.Integer('Counter', default=1, help='Use for graph view')
     locked_delivery = fields.Boolean('Locked delivery')
     partner_need_invoice = fields.Boolean(
          'Partner need invoice', related='partner_id.need_invoice',
