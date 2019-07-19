@@ -574,11 +574,7 @@ class StockPicking(models.Model):
             # XXX: This? ('ddt_date', '=', now_dt),
             ])
 
-        fees_filename = os.path.join(
-            path, evaluation_date.replace('-', '_') + '.csv')
-        fees_f = open(fees_filename, 'w')    
-        fees_f.write('CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE\r\n')
-
+        channel_row = {}
         for picking in pickings:
             # Readability:
             order = picking.sale_order_id 
@@ -593,11 +589,14 @@ class StockPicking(models.Model):
                     channel = move.logistic_unload_id.team_id.channel_ref 
                 except:
                     channel = ''
+
+                if channel not in channel_row:
+                    channel_row[channel] = []
     
                 if stock_mode == 'out': 
                     total = -total
                 product = move.product_id  
-                fees_f.write('%s|%s|%s|%s|%s|%s|%s\r\n' % (
+                channel_row[channel].append((
                     # XXX Use scheduled date or ddt_date?
                     channel,
                     product.default_code or '',
@@ -608,7 +607,17 @@ class StockPicking(models.Model):
                     qty,
                     total,
                     ))
-                pass
+        
+        date = evaluation_date.replace('-', '_')
+        for channel in channel_row:
+            fees_filename = os.path.join(path, '%s_%s.csv' % (channel, date))
+            fees_f = open(fees_filename, 'w')    
+
+            fees_f.write('CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE\r\n')
+            for row in channel_row[channel]:
+                fees_f.write('%s|%s|%s|%s|%s|%s|%s\r\n' % row)
+            fees_f.close()            
+                 
         return True
 
     # -------------------------------------------------------------------------
