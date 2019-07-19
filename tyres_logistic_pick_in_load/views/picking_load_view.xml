@@ -62,15 +62,20 @@
                 <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-success="logistic_delivered_manual&gt;0" decoration-danger="logistic_undelivered_qty==0"><!--user_select_id!=uid and user_select_id != False-->
                      <field name="order_id" readonly="1" string="Rif."/>
                      <button name="open_detail_delivery_in" string="Open detail for line" type="object" icon="fa-list-alt"/>
+                     <button name="fast_filter_product_id" string="Filter this product" type="object" icon="fa-search"  attrs="{'invisible': [('product_id','=',False)]}"/>
                      <field name="product_id" readonly="1" />
                      <!--<field name="name" readonly="1" />-->
                      <field name="date_planned" readonly="1" invisible="1"/>
                      
+                     <button name="fast_filter_supplier" string="Filter this supplier" type="object" icon="fa-search" attrs="{'invisible': [('order_supplier_id','=',False)]}"/>
                      <field name="order_supplier_id" readonly="1" string="Fornitore"/>
                      <field name="user_select_id" invisible="1" />
 
+                     <button name="fast_filter_larghezza" string="Filter this width" type="object" icon="fa-search"  attrs="{'invisible': [('larghezza','=',False)]}"/>
                      <field name="larghezza" readonly="1" string="L."/>
+                     <button name="fast_filter_spalla" string="Filter this shoulder" type="object" icon="fa-search"  attrs="{'invisible': [('spalla','=',False)]}"/>
                      <field name="spalla" readonly="1" string="Sp."/>
+                     <button name="fast_filter_raggio" string="Filter this ray" type="object" icon="fa-search"  attrs="{'invisible': [('raggio','=',False)]}"/>
                      <field name="raggio" readonly="1" string="r."/>
 
                      <!--Total: -->
@@ -160,6 +165,10 @@
 
                         <filter name="group_purchase" string="Purchase order" context="{'group_by': 'order_id'}"/>
                         <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
+                        <filter name="group_supplier" string="Supplier" context="{'group_by': 'order_supplier_id'}"/>
+
+                        <filter name="group_create" string="Create" context="{'group_by': 'create_date:day'}"/>
+                        
                         <!--<filter string="Status" context="{'group_by': 'state'}" />-->
                     </group>                
                 </search>

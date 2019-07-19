@@ -347,6 +347,97 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     #                                   Button event:
     # -------------------------------------------------------------------------
+    # Fast filter:
+    @api.model
+    def return_fast_filter_view(self, field_name, field_value, name):
+        ''' Return view filtered for field
+        '''
+        # Readability:
+        context = self.env.context
+        uid = self.env.uid
+
+        tree_id = self.env.ref(
+            'tyres_logistic_pick_in_load.view_delivery_selection_tree').id
+
+        if not field_value:
+            return True
+        
+        ctx = context.copy()
+        ctx['search_default_%s' % field_name] = field_value
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Filter applied: %s' % name),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            #'res_id': 1,
+            'res_model': 'purchase.order.line',
+            'view_id': tree_id, # False
+            'views': [(tree_id, 'tree'), (False, 'form')],
+            'domain': [
+                (field_name, '=', field_value),
+                ('delivery_id', '=', False), 
+                ('order_id.logistic_state', '=', 'confirmed'), 
+                '|', 
+                ('user_select_id', '=', uid), 
+                ('user_select_id', '=', False), 
+                ('order_id.partner_id.internal_stock', '=', False),
+                ],
+            'context': ctx,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+            
+    @api.multi
+    def fast_filter_product_id(self):
+        ''' Filter this product_id
+        '''
+        return self.return_fast_filter_view(
+            'product_id', 
+            self.product_id.id, 
+            self.product_id.default_code,
+            )
+
+    @api.multi
+    def fast_filter_supplier(self):
+        ''' Filter this supplier
+        '''
+        return self.return_fast_filter_view(
+            'order_supplier_id', 
+            self.order_supplier_id.id, 
+            self.order_supplier_id.name,
+            )
+
+    @api.multi
+    def fast_filter_larghezza(self):
+        ''' Filter this larghezza
+        '''
+        return self.return_fast_filter_view(
+            'larghezza', 
+            self.larghezza, 
+            self.larghezza,
+            )
+
+    @api.multi
+    def fast_filter_spalla(self):
+        ''' Filter this spalla
+        '''
+        return self.return_fast_filter_view(
+            'spalla', 
+            self.spalla, 
+            self.spalla,
+            )
+
+    @api.multi
+    def fast_filter_raggio(self):
+        ''' Filter this raggio
+        '''
+        return self.return_fast_filter_view(
+            'raggio', 
+            self.raggio, 
+            self.raggio,
+            )
+
     @api.multi
     def create_delivery_orders(self):
         ''' Create the list of all order received splitted for supplier        

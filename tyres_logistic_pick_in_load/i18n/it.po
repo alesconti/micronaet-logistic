@@ -1,0 +1,394 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* tyres_logistic_pick_in_load
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-19 15:41+0000\n"
+"PO-Revision-Date: 2019-07-19 17:46+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: tyres_logistic_pick_in_load
+#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:119
+#, python-format
+msgid "%s [%s]"
+msgstr "%s [%s]"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_form
+msgid "Account extra stock:"
+msgstr "Extra ordine per magazzino:"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_quant_account_sync
+msgid "Account sync"
+msgstr "Sincronizza con contabilità"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.actions.act_window,name:tyres_logistic_pick_in_load.action_stock_picking_delivery_tree
+#: model:ir.ui.menu,name:tyres_logistic_pick_in_load.menu_stock_picking_delivery_tree
+msgid "All delivery"
+msgstr "Tutto consegnato"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Arrivo"
+msgstr "Arrivo"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_purchase_order_line_carrier_id
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_carrier_id
+msgid "Carrier"
+msgstr "Corriere"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_form
+msgid "Confirm load operation?"
+msgstr "Confermare l'operazione di carico?"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Cons."
+msgstr "Cons."
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_search
+msgid "Create"
+msgstr "Create"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_create_date
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_quant_create_date
+msgid "Create date"
+msgstr "Data di creazione"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Create delivery orders"
+msgstr "Crea ordine di consegna"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_create_uid
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_quant_create_uid
+msgid "Create user"
+msgstr "Creato da"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_search
+msgid "Current selected"
+msgstr "Utente attuale"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_date
+msgid "Date"
+msgstr "Data"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_purchase_order_line_delivery_id
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_form
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_form
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_tree
+msgid "Delivery"
+msgstr "Consegna"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.actions.act_window,name:tyres_logistic_pick_in_load.action_purchase_selection_order_line
+#: model:ir.ui.menu,name:tyres_logistic_pick_in_load.menu_purchase_selection_order_line
+msgid "Delivery PO pending"
+msgstr "Consegne in arrivo"
+
+#. module: tyres_logistic_pick_in_load
+#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:500
+#, python-format
+msgid "Delivery created:"
+msgstr "Consegne create:"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_display_name
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_quant_display_name
+msgid "Display Name"
+msgstr "Nome Completo"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid ""
+"Do you confirm the generation of all supplier delivery document (you "
+"selection)?"
+msgstr "Confermi la generazione del carico di magazzino (selezionato da te)?"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model,name:tyres_logistic_pick_in_load.model_stock_picking_delivery_quant
+msgid "Extra purchase line"
+msgstr "Righe extra"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_form
+msgid "Extra stock:"
+msgstr "Extra ordini:"
+
+#. module: tyres_logistic_pick_in_load
+#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:370
+#, python-format
+msgid "Filter applied: %s"
+msgstr "Filtro applicato: %s"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Filter this product"
+msgstr "Filtra questo prodotto"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Filter this ray"
+msgstr "Filtra questo raggio"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Filter this shoulder"
+msgstr "Filtra questa spalla"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Filter this supplier"
+msgstr "Filtra questo fornitore"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Filter this width"
+msgstr "Filtra questa larghezza"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Fornitore"
+msgstr "Fornitore"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model,name:tyres_logistic_pick_in_load.model_stock_picking_delivery
+msgid "Generator of delivery"
+msgstr "Generatore di cosnegna"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_search
+msgid "Group By..."
+msgstr "Raggruppa per..."
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_id
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_quant_id
+msgid "ID"
+msgstr "ID"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery___last_update
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_quant___last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_quant_write_uid
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_quant_write_date
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: tyres_logistic_pick_in_load
+#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:522
+#, python-format
+msgid "Line detail"
+msgstr "Dettaglio righe"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_form
+msgid "Load stock"
+msgstr "Carica il magazzino"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.menu,name:tyres_logistic_pick_in_load.menu_logistic_delivery_management_root
+msgid "Manage supplier delivery"
+msgstr "Gestione consegne fornitore"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_purchase_order_line_logistic_delivered_manual
+msgid "Manual"
+msgstr "Manuale"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.actions.act_window,name:tyres_logistic_pick_in_load.action_my_stock_picking_delivery_tree
+#: model:ir.ui.menu,name:tyres_logistic_pick_in_load.menu_my_stock_picking_delivery_tree
+msgid "My delivery pending"
+msgstr "Mie consegne pendenti"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.actions.act_window,name:tyres_logistic_pick_in_load.action_stock_picking_delivery_form
+msgid "New Delivery"
+msgstr "Nuova consegna"
+
+#. module: tyres_logistic_pick_in_load
+#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:118
+#, python-format
+msgid "Not assigned"
+msgstr "Non assegnato"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Open detail for line"
+msgstr "Apri dettaglio riga"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Ord."
+msgstr "Ord."
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_quant_order_id
+msgid "Order"
+msgstr "Ordine"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_picking_id
+msgid "Picking"
+msgstr "Picking"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_quant_price
+msgid "Price"
+msgstr "Prezzo"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_quant_product_id
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_search
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: tyres_logistic_pick_in_load
+#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:285
+#, python-format
+msgid "Purcase line:"
+msgstr "Riga acquisto:"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model,name:tyres_logistic_pick_in_load.model_purchase_order_line
+msgid "Purchase Order Line"
+msgstr "Riga Ordine d'Acquisto"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.actions.act_window,name:tyres_logistic_pick_in_load.action_purchase_order_line
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_purchase_line_ids
+#: model:ir.ui.menu,name:tyres_logistic_pick_in_load.menu_purchase_order_line
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_form
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_search
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_purchase_order_line_form
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_purchase_order_line_tree
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_form
+msgid "Purchase line"
+msgstr "Righe ordine fornitore"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_search
+msgid "Purchase order"
+msgstr "Ordine acquisto"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_purchase_order_line_raggio
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_search
+msgid "Ray"
+msgstr "Raggio"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_name
+msgid "Ref."
+msgstr "Rif."
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Rif."
+msgstr "Rif."
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Rim."
+msgstr "Rim."
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_form
+msgid "Selected purchase line:"
+msgstr "Righe acquisto selezionate:"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_purchase_order_line_user_select_id
+msgid "Selected user"
+msgstr "Utente selezionato"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_search
+msgid "Shoulder"
+msgstr "Spalla"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Sp."
+msgstr "Sp."
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_purchase_order_line_spalla
+msgid "Spalla"
+msgstr "Spalla"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_move_ids
+msgid "Stock Moves"
+msgstr "Movimenti di Magazzino"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_purchase_order_line_form
+msgid "Stock move loads:"
+msgstr "Movimenti di carico:"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_form
+msgid "Stock movement:"
+msgstr "Movimenti di magazzino:"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_quant_ids
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_form
+msgid "Stock quant:"
+msgstr "Carichi a gestionale:"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_purchase_order_line_order_supplier_id
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_supplier_id
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_search
+msgid "Supplier"
+msgstr "Fornitore"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model,name:tyres_logistic_pick_in_load.model_stock_picking
+msgid "Transfer"
+msgstr "Trasferimento"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_form
+msgid "Tyres"
+msgstr "Gomme"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_purchase_order_line_larghezza
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_search
+msgid "Width"
+msgstr "Larghezza"
