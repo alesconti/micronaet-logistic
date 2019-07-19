@@ -46,6 +46,7 @@ class ResUsersMyTemplate(models.Model):
         #domain="[('action.res_model', '=', 'sale.order')]"
         )
     sequence = fields.Integer('Sequence', default=10)
+    force_name = fields.Char('Force name')
 
     # User part:
     my_user_id = fields.Many2one('res.users', 'User link')
@@ -88,6 +89,7 @@ class ResUsers(models.Model):
     def get_user_domain_team(self, ):
         ''' Return domain for user team selected
         '''
+        user = self[0]
         team_ids = [item.id for item in user.team_ids]
         return str([('team_id', 'in', team_ids)])
 
@@ -96,13 +98,17 @@ class ResUsers(models.Model):
         ''' Generate action from template with domain and name if passed
             Generate similar domain action for origin_action forced
             Note: Domain is not changed
-        '''        
+        '''       
         action_pool = self.env['ir.actions.act_window']
 
         # Default action used to copy:
         if origin_action:
             # Domain integrated
-            (origin_action.domain or []).extend(domain)
+            action = origin_action.domain
+            if action == '[]':
+                domain = str(domain)
+            else:
+                domain = '%s, %s'  % (action[:-1], domain[1:])
         else:
             origin_action = self.env.ref(
                 'tyres_logistic_management.action_sale_order_all_form')
@@ -174,14 +180,20 @@ class ResUsers(models.Model):
     def load_template_menu(self):
         ''' Load template menu found in template user
         '''
-        # Pool used:
         menu_pool = self.env['res.users.my.template']
 
         self.ensure_one()
-        templates = self.search([('my_user_template', '=', True)])
-        if not templates:
+        user = self[0]
+        
+        template_user = self.search([('my_user_template', '=', True)])
+        if not template_user:
             raise odoo.exceptions.Warning(
                 _('Please mark a user as template and add there menus'))
+         
+        templates = template_user[0].template_ids
+        if not templates:
+            raise odoo.exceptions.Warning(
+                _('No template present in template user'))
         
         # ---------------------------------------------------------------------        
         # Delete previous action and menu:        
@@ -197,16 +209,17 @@ class ResUsers(models.Model):
             raise odoo.exceptions.Warning(
                 _('Please generate master all menu before load other menus!'))
         
-        for template in templates[0].template_ids:
+        for template in templates:
             menu = template.template_menu_id
+            name = template.force_name or menu.name
             
             # Create actions copy template:
             my_action_id = self.create_my_action(
-                domain, menu.action, 'My action: %s' % menu.name)
+                domain, menu.action, 'My action: %s' % name)
             
             # Create menu:
             my_menu_id = self.create_my_menu(
-                my_action_id, my_group_id, name, 0)
+                my_action_id, my_group_id, name, template.sequence)
             
             # Create record:
             menu_pool.create({
