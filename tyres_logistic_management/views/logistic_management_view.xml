@@ -914,7 +914,8 @@
          <menuitem
              id="menu_logistic_header_root" 
              name="Logistic"
-             sequence="0"             
+             sequence="0" 
+             action="action_sale_order_dashboard_form"
              />
              <menuitem
                  id="menu_logistic_left_order_root" 
