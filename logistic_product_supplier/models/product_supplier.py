@@ -324,7 +324,6 @@ class SaleOrder(models.Model):
     def purchase_management_button(self):
         ''' Open view for purchase management
         '''
-        
         model_pool = self.env['ir.model.data']
         tree_view_id = model_pool.get_object_reference(
             'logistic_product_supplier', 
