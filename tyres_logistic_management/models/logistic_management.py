@@ -1502,6 +1502,7 @@ class SaleOrder(models.Model):
         ('web', 'Web order'),
         ('resell', 'Customer resell order'),
         ('workshop', 'Workshop order'),
+        ('internal', 'Internal provisioning order'),
         ], 'Logistic source', default='web',
         )
 
