@@ -89,7 +89,7 @@ class ResUsers(models.Model):
         ''' Return domain for user team selected
         '''
         team_ids = [item.id for item in user.team_ids]
-        return = str([('team_id', 'in', team_ids)])
+        return str([('team_id', 'in', team_ids)])
 
     @api.model
     def create_my_action(self, domain, origin_action=False, name=False):
@@ -196,7 +196,7 @@ class ResUsers(models.Model):
         if not my_group_id:
             raise odoo.exceptions.Warning(
                 _('Please generate master all menu before load other menus!'))
-            
+        
         for template in templates[0].template_ids:
             menu = template.template_menu_id
             
@@ -207,6 +207,15 @@ class ResUsers(models.Model):
             # Create menu:
             my_menu_id = self.create_my_menu(
                 my_action_id, my_group_id, name, 0)
+            
+            # Create record:
+            menu_pool.create({
+                'my_user_id': self.id,
+                'my_action_id': my_action_id,
+                'my_menu_id': my_menu_id,
+                'my_sequence': template.sequence,
+                })
+
         return       
             
 

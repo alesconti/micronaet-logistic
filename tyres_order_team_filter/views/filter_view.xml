@@ -17,7 +17,8 @@
             <field name="arch" type="xml">
                 <form string="User for team">
                     <header>
-                        <button name="update_my_menu" string="Update my menu" type="object" icon="fa-magic"/>
+                        <button name="update_my_menu" string="Update my menu" type="object" icon="fa-magic" confirm="This will create master section for 'my menu', confirm?"/>
+                        <button name="remove_my_menu" string="Remove my menu" type="object" confirm="This will delete all 'my menu' section, confirm?"/>
                     </header>
                     <sheet>
                         <group colspan="4" col="4">
@@ -28,7 +29,8 @@
                             <notebook colspan="4">
                                 <page string="My Menu">
                                     <group colspan="4" col="4">
-                                        <separator string="My Menu" colspan="4"/>
+                                        <separator string="My Menu" colspan="3"/>
+                                        <button name="load_template_menu" string="Load template menu" type="object" />
                                         <field name="my_group_id" readonly="1"/>
                                         <field name="my_action_id" readonly="1" />
                                         <field name="my_menu_id" readonly="1" />
