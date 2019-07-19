@@ -36,6 +36,14 @@ from dateutil.relativedelta import relativedelta
 
 _logger = logging.getLogger(__name__)
 
+class CrmTeam(models.Model):
+    """ Model name: CRM Team 
+    """
+    
+    _inherit = 'crm.team'
+    
+    channel_ref = fields.Char('Channer', size=20)
+
 class ResCompany(models.Model):
     """ Model name: Res Company
     """
@@ -569,7 +577,8 @@ class StockPicking(models.Model):
         fees_filename = os.path.join(
             path, evaluation_date.replace('-', '_') + '.csv')
         fees_f = open(fees_filename, 'w')    
-        fees_f.write('SKU|DATA|PAGAMENTO|PRODOTTO|TOTALE\r\n')
+        fees_f.write('CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE\r\n')
+
         for picking in pickings:
             # Readability:
             order = picking.sale_order_id 
@@ -577,18 +586,26 @@ class StockPicking(models.Model):
             stock_mode = picking.stock_mode #in: refund, out: DDT
 
             for move in picking.move_lines:
-                total = move.product_uom_qty * \
-                    move.logistic_unload_id.price_unit
+                qty = move.product_uom_qty
+                total = qty * move.logistic_unload_id.price_unit
+                # Get channel
+                try:
+                    channel = move.logistic_unload_id.team_id.channel_ref 
+                except:
+                    channel = ''
+    
                 if stock_mode == 'out': 
                     total = -total
                 product = move.product_id  
-                fees_f.write('%s|%s|%s|%s|%s\r\n' % (
+                fees_f.write('%s|%s|%s|%s|%s|%s|%s\r\n' % (
                     # XXX Use scheduled date or ddt_date?
+                    channel,
                     product.default_code or '',
                     company_pool.formatLang(picking.scheduled_date, date=True),
                     order.payment_term_id.account_ref or \
                         order.payment_term_id.name or '',
                     product.account_ref or product_account_ref or '',
+                    qty,
                     total,
                     ))
                 pass

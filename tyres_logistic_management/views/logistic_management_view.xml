@@ -1,6 +1,24 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <!--crm.team-->
+        <record model="ir.ui.view" id="view_crm_team_form">
+            <field name="name">crm.team.form</field>
+            <field name="model">crm.team</field>
+            <field name="inherit_id" ref="base.view_crm_form"/>
+            <field name="arch" type="xml">
+                 
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_crm_team_tree">
+            <field name="name">crm.team.tree</field>
+            <field name="model">crm.team</field>
+            <field name="inherit_id" ref="base.view_crm_tree"/>
+            <field name="arch" type="xml">
+                
+            </field>
+        </record>
+        
         <record model="ir.ui.view" id="view_account_payment_term_ref_form">
             <field name="name">account.payment.term.form</field>
             <field name="model">account.payment.term</field>
