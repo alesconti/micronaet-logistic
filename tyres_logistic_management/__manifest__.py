@@ -32,6 +32,7 @@
         'base',
         'sale',
         'sale_management',
+        'sales_team',
         'product',
         'account',
         'stock',

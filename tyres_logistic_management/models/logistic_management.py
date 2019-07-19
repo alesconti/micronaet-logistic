@@ -42,7 +42,7 @@ class CrmTeam(models.Model):
     
     _inherit = 'crm.team'
     
-    channel_ref = fields.Char('Channer', size=20)
+    channel_ref = fields.Char('Channel', size=20)
 
 class ResCompany(models.Model):
     """ Model name: Res Company
