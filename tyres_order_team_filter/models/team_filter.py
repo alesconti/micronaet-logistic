@@ -68,8 +68,6 @@ class ResUsers(models.Model):
     my_user_template = fields.Boolean('Template', 
         help='Used as template for extra menu list')
     my_group_id = fields.Many2one('res.groups', 'My Menu group')
-    #my_action_id = fields.Many2one('ir.actions.act_window', 'My action')
-    #my_menu_id = fields.Many2one('ir.ui.menu', 'My menu')    
     team_ids = fields.Many2many(
         'crm.team', relation='rel_user_team', 
         column1='user_id', column2='team_id', 
@@ -91,27 +89,18 @@ class ResUsers(models.Model):
         return str([('team_id', 'in', team_ids)])
 
     @api.model
-    def create_my_action(self, domain, origin_action=False, name=False):
-        ''' Generate action from template with domain and name if passed
-            Generate similar domain action for origin_action forced
+    def create_my_action(self, domain, origin_action, name):
+        ''' Generate similar domain action for origin_action forced
             Note: Domain is not changed
         '''       
         action_pool = self.env['ir.actions.act_window']
 
-        # Default action used to copy:
-        if origin_action:
-            # Domain integrated
-            action = origin_action.domain
-            if action == '[]':
-                domain = str(domain)
-            else:
-                domain = '%s, %s'  % (action[:-1], domain[1:])
+        # Domain integration:
+        action = origin_action.domain
+        if action == '[]':
+            domain = str(domain)
         else:
-            origin_action = self.env.ref(
-                'tyres_logistic_management.action_sale_order_all_form')
-
-        if not name:
-            name = _('My %s') % origin_action.name
+            domain = '%s, %s'  % (action[:-1], domain[1:])
 
         return action_pool.create({
             'name': name,
@@ -152,9 +141,7 @@ class ResUsers(models.Model):
             'parent_id': parent_menu.id,
             'action': 'ir.actions.act_window,%s' % my_action_id,
             'groups_id': [(6, 0, [my_group_id])],
-            #'parent_left'
-            #'parent_right'
-            #'web_icon': 
+            #'parent_left' 'parent_right' 'web_icon'
             }).id
 
     # -------------------------------------------------------------------------
@@ -166,17 +153,19 @@ class ResUsers(models.Model):
         '''
         for extra in self.my_menu_ids:
             extra.my_menu_id.unlink() # remove also action
-        self.my_menu_ids.unlink()
+        return self.my_menu_ids.unlink()
 
     @api.multi
     def load_template_menu(self):
         ''' Load template menu found in template user
         '''
+        self.ensure_one()
+        user = self[0]
+
+        # Pool used:
         menu_pool = self.env['res.users.my.template']
         group_pool = self.env['res.groups']
 
-        self.ensure_one()
-        user = self[0]
         
         template_user = self.search([('my_user_template', '=', True)])
         if not template_user:
@@ -188,19 +177,13 @@ class ResUsers(models.Model):
             raise odoo.exceptions.Warning(
                 _('No template present in template user'))
         
-        # ---------------------------------------------------------------------        
-        # Delete previous action and menu:        
-        # ---------------------------------------------------------------------
-        self.my_menu_ids.unlink()
-        
-        # ---------------------------------------------------------------------        
-        #                      Reload from template
-        # ---------------------------------------------------------------------
-        domain = self.get_user_domain_team()
 
         # ---------------------------------------------------------------------        
         # 1. Create or get my group:
         # ---------------------------------------------------------------------        
+        self.remove_my_menu() # remove previous        
+        domain = self.get_user_domain_team() # get team domain
+
         # All group has this category owner:
         category_id = self.env.ref(
             'tyres_logistic_management.ir_module_category_logistic_my').id
@@ -243,68 +226,5 @@ class ResUsers(models.Model):
                 'my_menu_id': my_menu_id,
                 'my_sequence': template.sequence,
                 })
-
         return       
-
-    # TODO remove:
-    """@api.multi
-    def update_my_menu(self, ):
-        ''' Update my menu block
-        '''        
-        r
-        self.ensure_one()
-        user = self[0]
-        
-        # Pool used:
-        group_pool = self.env['res.groups']
-
-        # ---------------------------------------------------------------------        
-        # 1. Create or get my group:
-        # ---------------------------------------------------------------------        
-        # All group has this category owner:
-        category_id = self.env.ref(
-            'tyres_logistic_management.ir_module_category_logistic_my').id
-        if user.my_group_id:
-            my_group_id = user.my_group_id.id
-
-            # Update some fields:
-            user.my_group_id.write({
-                'users': [(6, 0, [user.id, ])],
-                'category_id': category_id,
-                })
-        else:
-            my_group_id = group_pool.create({
-                'name': _('My Order %s') % user.name,
-                'comment': 'Group auto created from tyres_order_team_filter',
-                'users': [(6, 0, [user.id, ])],
-                'category_id': category_id,
-                }).id
-            user.my_group_id = my_group_id
-
-        # ---------------------------------------------------------------------        
-        # 2. Create or get my action
-        # ---------------------------------------------------------------------        
-        #name = ''
-        #domain = self.get_user_domain_team()
-        #if user.my_action_id:
-        #    my_action_id = user.my_action_id.id
-        #    # Update some fields (domain):
-        #    user.my_action_id.domain = domain            
-        #else:
-        #    my_action_id = self.create_my_action(domain)
-        #    user.my_action_id = my_action_id
-
-        # ---------------------------------------------------------------------        
-        # 3. Create or get my menuitem
-        # ---------------------------------------------------------------------        
-        #if not name:
-        #    name = self.my_action_id.name
-
-        #if user.my_menu_id:
-        #    my_menu_id = user.my_menu_id
-        #else:
-        #    user.my_menu_id = self.create_my_menu(
-        #        my_action_id, my_group_id, name, 0)
-        return True"""
-
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
