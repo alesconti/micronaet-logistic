@@ -600,6 +600,7 @@ class PurchaseOrderLine(models.Model):
     carrier_id = fields.Many2one(
         'carrier.supplier', 'Carrier',
         related='logistic_sale_id.order_id.carrier_supplier_id')
+    product_name = fields.Char('Product name', related='product_id.name')
 
     #ivel = fields.Char(
     #    'Indice di velocità', related='product_id.raggio', store=True)
