@@ -51,8 +51,8 @@ class ResUsersMyTemplate(models.Model):
     # User part:
     my_user_id = fields.Many2one('res.users', 'User link')
     my_action_id = fields.Many2one(
-        'ir.actions.act_window', 'My action', ondelete='cascade')
-    my_menu_id = fields.Many2one('ir.ui.menu', 'My menu', ondelete='cascade')
+        'ir.actions.act_window', 'My action')
+    my_menu_id = fields.Many2one('ir.ui.menu', 'My menu')
     my_sequence = fields.Integer('My Sequence', default=10)    
     # -------------------------------------------------------------------------
 
@@ -68,8 +68,8 @@ class ResUsers(models.Model):
     my_user_template = fields.Boolean('Template', 
         help='Used as template for extra menu list')
     my_group_id = fields.Many2one('res.groups', 'My Menu group')
-    my_action_id = fields.Many2one('ir.actions.act_window', 'My action')
-    my_menu_id = fields.Many2one('ir.ui.menu', 'My menu')    
+    #my_action_id = fields.Many2one('ir.actions.act_window', 'My action')
+    #my_menu_id = fields.Many2one('ir.ui.menu', 'My menu')    
     team_ids = fields.Many2many(
         'crm.team', relation='rel_user_team', 
         column1='user_id', column2='team_id', 
@@ -80,8 +80,6 @@ class ResUsers(models.Model):
         'User', help='Menu generated from template user')
     # -------------------------------------------------------------------------
 
-
-            
     # -------------------------------------------------------------------------
     # Utility:
     # -------------------------------------------------------------------------
@@ -89,8 +87,7 @@ class ResUsers(models.Model):
     def get_user_domain_team(self, ):
         ''' Return domain for user team selected
         '''
-        user = self[0]
-        team_ids = [item.id for item in user.team_ids]
+        team_ids = [item.id for item in self[0].team_ids]
         return str([('team_id', 'in', team_ids)])
 
     @api.model
@@ -167,17 +164,9 @@ class ResUsers(models.Model):
     def remove_my_menu(self):
         ''' Delete all object created for my menu, user passed
         '''
-        # Master data:
-        self.my_group_id.unlink()
-        self.my_action_id.unlink()
-        self.my_menu_id.unlink()
-        
-        # Extra menu:
         for extra in self.my_menu_ids:
-            extra.my_action_id.unlink()
-            extra.my_menu_id.unlink()
+            extra.my_menu_id.unlink() # remove also action
         self.my_menu_ids.unlink()
-        return True
 
     @api.multi
     def load_template_menu(self):

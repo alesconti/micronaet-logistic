@@ -29,11 +29,6 @@
                             <notebook colspan="4">
                                 <page string="My Menu">
                                     <group colspan="4" col="4">
-                                        <separator string="My Menu master" colspan="4"/>
-                                        <field name="my_group_id" readonly="1"/>
-                                        <!--<field name="my_action_id" readonly="1" />
-                                        <field name="my_menu_id" readonly="1" />-->
-                                        
                                         <separator string="My Menu extra" colspan="3"/>
                                         <button name="load_template_menu" string="Load template menu" type="object" />
                                         <field name="my_menu_ids" colspan="4" nolabel="1">
@@ -43,6 +38,7 @@
                                                 <field name="my_menu_id" />                                                
                                             </tree>    
                                         </field>
+                                        <field name="my_group_id" readonly="1" colspan="4"/>                                        
                                     </group>
                                 </page>
                                 <page string="Template" attrs="{'invisible': [('my_user_template','=',False)]}">
