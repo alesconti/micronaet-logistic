@@ -173,6 +173,9 @@ class ResUsers(models.Model):
         self.my_menu_id.unlink()
         
         # Extra menu:
+        for extra in self.my_menu_ids:
+            extra.my_action_id.unlink()
+            extra.my_menu_id.unlink()
         self.my_menu_ids.unlink()
         return True
 
@@ -181,6 +184,7 @@ class ResUsers(models.Model):
         ''' Load template menu found in template user
         '''
         menu_pool = self.env['res.users.my.template']
+        group_pool = self.env['res.groups']
 
         self.ensure_one()
         user = self[0]
@@ -201,14 +205,36 @@ class ResUsers(models.Model):
         self.my_menu_ids.unlink()
         
         # ---------------------------------------------------------------------        
-        # Reload from template
+        #                      Reload from template
         # ---------------------------------------------------------------------
         domain = self.get_user_domain_team()
-        my_group_id = user.my_group_id.id
-        if not my_group_id:
-            raise odoo.exceptions.Warning(
-                _('Please generate master all menu before load other menus!'))
+
+        # ---------------------------------------------------------------------        
+        # 1. Create or get my group:
+        # ---------------------------------------------------------------------        
+        # All group has this category owner:
+        category_id = self.env.ref(
+            'tyres_logistic_management.ir_module_category_logistic_my').id
+        if user.my_group_id:
+            my_group_id = user.my_group_id.id
+
+            # Update some fields:
+            user.my_group_id.write({
+                'users': [(6, 0, [user.id, ])],
+                'category_id': category_id,
+                })
+        else:
+            my_group_id = group_pool.create({
+                'name': _('My Order %s') % user.name,
+                'comment': 'Group auto created from tyres_order_team_filter',
+                'users': [(6, 0, [user.id, ])],
+                'category_id': category_id,
+                }).id
+            user.my_group_id = my_group_id
         
+        # ---------------------------------------------------------------------        
+        # 2. Add submenu as template:
+        # ---------------------------------------------------------------------        
         for template in templates:
             menu = template.template_menu_id
             name = template.force_name or menu.name
@@ -230,12 +256,13 @@ class ResUsers(models.Model):
                 })
 
         return       
-            
 
-    @api.multi
+    # TODO remove:
+    """@api.multi
     def update_my_menu(self, ):
         ''' Update my menu block
         '''        
+        r
         self.ensure_one()
         user = self[0]
         
@@ -268,27 +295,27 @@ class ResUsers(models.Model):
         # ---------------------------------------------------------------------        
         # 2. Create or get my action
         # ---------------------------------------------------------------------        
-        name = ''
-        domain = self.get_user_domain_team()
-        if user.my_action_id:
-            my_action_id = user.my_action_id.id
-            # Update some fields (domain):
-            user.my_action_id.domain = domain            
-        else:
-            my_action_id = self.create_my_action(domain)
-            user.my_action_id = my_action_id
+        #name = ''
+        #domain = self.get_user_domain_team()
+        #if user.my_action_id:
+        #    my_action_id = user.my_action_id.id
+        #    # Update some fields (domain):
+        #    user.my_action_id.domain = domain            
+        #else:
+        #    my_action_id = self.create_my_action(domain)
+        #    user.my_action_id = my_action_id
 
         # ---------------------------------------------------------------------        
         # 3. Create or get my menuitem
         # ---------------------------------------------------------------------        
-        if not name:
-            name = self.my_action_id.name
+        #if not name:
+        #    name = self.my_action_id.name
 
-        if user.my_menu_id:
-            my_menu_id = user.my_menu_id
-        else:
-            user.my_menu_id = self.create_my_menu(
-                my_action_id, my_group_id, name, 0)
-        return True
+        #if user.my_menu_id:
+        #    my_menu_id = user.my_menu_id
+        #else:
+        #    user.my_menu_id = self.create_my_menu(
+        #        my_action_id, my_group_id, name, 0)
+        return True"""
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
