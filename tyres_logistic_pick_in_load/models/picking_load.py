@@ -505,7 +505,7 @@ class PurchaseOrderLine(models.Model):
         
     order_supplier_id = fields.Many2one(
         'res.partner', 'Supplier', domain="[('supplier', '=', True)]",
-        related='order_id.partner_id')
+        related='order_id.partner_id', store=True)
     carrier_id = fields.Many2one(
         'carrier.supplier', 'Carrier',
         related='logistic_sale_id.order_id.carrier_supplier_id')
