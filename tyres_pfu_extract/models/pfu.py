@@ -29,7 +29,15 @@ from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
 
-class stockPickingPfuExtractWizard(models.TransientModel):
+class AccountFiscalPosition(models.TransientModel):
+    """ Model name: AccountFiscalPosition
+    """
+    _inherit = 'account.fiscal.position'
+    
+    is_pfu = fields.Boolean('PFU refund', 
+        help='If checked all sale with this position go in report')
+
+class StockPickingPfuExtractWizard(models.TransientModel):
     """ Model name: StockPicking
     """
     _name = 'stock.picking.pfu.extract.wizard'
@@ -72,7 +80,7 @@ class stockPickingPfuExtractWizard(models.TransientModel):
             customer = sale_line.order_id.partner_id
             fiscal_position = customer.property_account_position_id
 
-            if not fiscal_position.pfu:
+            if not fiscal_position.is_pfu:
                 continue # Jump movement not PFU report
             
             for load in sale_line.load_line_ids:
