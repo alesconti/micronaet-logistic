@@ -36,7 +36,7 @@ class StockChangeStandardPrice(models.TransientModel):
     _description = 'Logistic manual operation'
 
     # -------------------------------------------------------------------------
-    #                               BUTTON EVENT:    
+    #                               COLUMNS:    
     # -------------------------------------------------------------------------    
     limit = fields.Integer('Limit', default=10)
     loop = fields.Integer('Loop', default=5, required=True)
