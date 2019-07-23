@@ -29,7 +29,10 @@ from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
 
-class AccountFiscalPosition(models.TransientModel):
+
+_logger = logging.getLogger(__name__)
+
+class AccountFiscalPosition(models.Model):
     """ Model name: AccountFiscalPosition
     """
     _inherit = 'account.fiscal.position'
@@ -46,7 +49,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
     # -------------------------------------------------------------------------
     #                            COLUMNS:
     # -------------------------------------------------------------------------    
-    partner_id = fields.many2one('res.partner', 'Supplier')
+    partner_id = fields.Many2one('res.partner', 'Supplier')
     from_date = fields.Date('From date', required=True)
     to_date = fields.Date('To date', required=True)
     # -------------------------------------------------------------------------    
@@ -74,7 +77,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             
         supplier_moves = {}    
         for move in moves:   
-            # TODO is invoice filter???
+            # TODO is invoice filter???  is_invoiced?!?
             product_uom_qty = move.product_uom_qty
             sale_line = move.logistic_unload_id
             customer = sale_line.order_id.partner_id
@@ -94,6 +97,10 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 
                 # TODO check no extra quantity!!!
         
+        if not supplier_moves:
+            _logger.error('No moves to write file')
+            return False
+            
         # ---------------------------------------------------------------------
         #                          EXTRACT EXCEL:
         # ---------------------------------------------------------------------
@@ -110,6 +117,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         
         format_text = False # Setup first page
         for supplier in supplier_moves:
+        
             # Readability:
             supplier_name = supplier.name
 
@@ -148,13 +156,30 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             # -----------------------------------------------------------------
             # Write detail:
             # -----------------------------------------------------------------            
-            for move in sorted(supplier_moves[supplier], key=lambda m: m.date):
+            total = 0
+            subtotal = 0
+            last = False # Break level PFU code
+            for move in sorted(supplier_moves[supplier], key=lambda m: (
+                    m.product_id.mmac_pfu.name, m.date)):                    
                 row += 1
                 
                 # Readability:
                 product = move.product_id
-                pfu = move.mmac_pfu
+                pfu = product.mmac_pfu
+                qty = move.product_uom_qty
 
+                if last != pfu:
+                    if last != False:
+                        excel_pool.write_xls_line(ws_name, row, (
+                            subtotal,
+                            ), default_format=format_text['number'], col=3)                    
+                    subtotal = 0
+                    row += 1
+
+                # Total operation:
+                total += qty
+                subtotal += qty
+                
                 # -------------------------------------------------------------
                 # Write data line:
                 # -------------------------------------------------------------
@@ -162,7 +187,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     product.mmac_pfu.name,
                     product.default_code,
                     product.name,
-                    move.product_uom_qty, # TODO check if it's all!!
+                    (qty, number), # TODO check if it's all!!
                     '', # TODO supplier document number
                     move.picking_id.scheduled_date,
                     '', # Number supplier invoice
@@ -170,6 +195,22 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     '', # Date doc,
                     '', # ISO country
                     ), default_format=format_text['text'])
+
+            # -----------------------------------------------------------------
+            # Write data line:
+            # -----------------------------------------------------------------
+            if last != False:
+                # Subtotal
+                row += 1
+                excel_pool.write_xls_line(ws_name, row, (
+                    subtotal,
+                    ), default_format=format_text['number'], col=3)
+
+                # Total
+                row += 1
+                excel_pool.write_xls_line(ws_name, row, (
+                    'Totale:', total,
+                    ), default_format=format_text['number'], col=2)
                 
         # ---------------------------------------------------------------------
         # Save file:

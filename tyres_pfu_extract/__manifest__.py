@@ -30,6 +30,7 @@
     'website': 'https://micronaet.com',
     'depends': [
         'base',
+        'account',
         'tyres_logistic_management',
         'mmac_odoo4', # PFU Table
         'excel_export',
