@@ -1153,7 +1153,7 @@ class SaleOrder(models.Model):
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
         for line in self.order_line:
-            if not line.state_check:
+            if line.logistic_state != 'ready' and not line.state_check:
                 raise exceptions.UserError(
                 _('Not all line are mapped to supplier!'))                
 
