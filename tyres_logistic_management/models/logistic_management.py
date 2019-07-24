@@ -606,6 +606,7 @@ class StockPicking(models.Model):
                     product.account_ref or product_account_ref or '',
                     qty,
                     total,
+                    'S' if product.is_expence else 'M',
                     ))
         
         date = evaluation_date.replace('-', '_')
@@ -613,10 +614,11 @@ class StockPicking(models.Model):
             fees_filename = os.path.join(path, '%s_%s.csv' % (channel, date))
             fees_f = open(fees_filename, 'w')    
 
-            fees_f.write('CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE\r\n')
+            fees_f.write(
+                'CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE|TIPO\r\n')
             for row in channel_row[channel]:
-                fees_f.write('%s|%s|%s|%s|%s|%s|%s\r\n' % row)
-            fees_f.close()            
+                fees_f.write('%s|%s|%s|%s|%s|%s|%s|%s\r\n' % row)
+            fees_f.close()
                  
         return True
 
@@ -1146,16 +1148,20 @@ class SaleOrder(models.Model):
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         # XXX REMOVE Temp Mode:
         self.logistic_state = 'ready'
-        return True
+        # return True
         # XXX REMOVE
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
 
         for line in self.order_line:
             if not line.state_check:
                 raise exceptions.UserError(
                 _('Not all line are mapped to supplier!'))                
-        self.logistic_state = 'pending'
+
+        # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        # XXX REMOVE COMMENT Temp Mode:
+        # self.logistic_state = 'pending'
+        # XXX REMOVE
+        # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
         # ---------------------------------------------------------------------        
         #                            Generate purchase:
