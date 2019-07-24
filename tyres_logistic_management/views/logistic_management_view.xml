@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <field name="company_id" position="after">
                    <field name="channel_ref" />
+                   <field name="market_type" />
                 </field>
             </field>
         </record>
@@ -19,6 +20,7 @@
             <field name="arch" type="xml">
                 <field name="user_id" position="after">
                    <field name="channel_ref" />
+                   <field name="market_type" />
                 </field>
             </field>
         </record>
@@ -504,7 +506,8 @@
              <field name="inherit_id" ref="sale.view_quotation_tree"/>
              <field name="arch" type="xml">
                  <field name="state" position="after">
-                     <field name="logistic_source" />
+                     <field name="logistic_source" />                     
+                     <field name="market_type" invisible="1"/>
                      <field name="logistic_state" />                     
                      <button name="return_order_line_list_view" string="Logistic detail" type="object" class="oe_highlight"/>
                  </field>
@@ -527,6 +530,7 @@
                      <field name="team_id" />
                      <field name="carrier_ok" />
                      <field name="logistic_source" />
+                     <field name="market_type" />
                      <field name="logistic_state" />                     
 
                      <button name="set_carrier_ok_yes" string="Delivery confirmed" type="object" invisible="not context.get('view_mode_carrier', False)" attrs="{'invisible': [('carrier_ok', '=', True)]}" icon="fa-dropbox" /><!--('logistic_state', 'not in', ('order', 'pending')), -->
@@ -554,8 +558,12 @@
                      <field name="logistic_state" />
                      <field name="team_id" />
                      <field name="logistic_source" />
+                     <field name="market_type" />
                      
                      <!--Fast filter:-->
+                     <filter name="market_b2b_today" string="B2B Today" domain="[('market_type','=','b2b'), ('logistic_state', 'not in', ('cancel', 'error', 'done')), ('date_order', '&gt;=', datetime.datetime.now().strftime('%Y-%m-%d 00:00:00'))]"/>
+                     <filter name="market_b2c_today" string="B2C Today" domain="[('market_type','=','b2c'), ('logistic_state', 'not in', ('cancel', 'error', 'done')), ('date_order', '&gt;=', datetime.datetime.now().strftime('%Y-%m-%d 00:00:00'))]"/>
+
                      <filter name="logistic_state_draft" string="Order Draft" domain="[('logistic_state','=','draft')]"/>
                      <filter name="logistic_state_order" string="Order Payed" domain="[('logistic_state','=','order')]"/>
                      <filter name="logistic_state_pending" string="Order pending" domain="[('logistic_state','=','pending')]"/>
@@ -569,6 +577,7 @@
 
                  <xpath expr="/search/group/filter[2]" position="after">
                      <filter string="Team ID" domain="[]" context="{'group_by': 'team_id'}"/>
+                     <filter string="Market type" domain="[]" context="{'group_by': 'market_type'}"/>
                      <filter string="Logistic state" domain="[]" context="{'group_by': 'logistic_state'}"/>
                      <filter string="Logistic source" domain="[]" context="{'group_by': 'logistic_source'}"/>
                  </xpath>

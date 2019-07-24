@@ -43,6 +43,10 @@ class CrmTeam(models.Model):
     _inherit = 'crm.team'
     
     channel_ref = fields.Char('Channel', size=20)
+    market_type = fields.Selection((
+        ('b2b', 'B2B'),
+        ('b2c', 'B2C'),
+        ), 'Market type')
 
 class ResCompany(models.Model):
     """ Model name: Res Company
@@ -162,7 +166,6 @@ class ProductTemplate(models.Model):
         help='Expense product is not order and produced')
     account_ref = fields.Char('Account ref.', size=20, 
         help='Account code, if not present use default setup in configuration')
-        
     
 class PurchaseOrder(models.Model):
     """ Model name: Sale Order
@@ -1144,22 +1147,16 @@ class SaleOrder(models.Model):
             raise exceptions.UserError(
                 _('Only order in confirmed payment could go in pending!'))            
 
-
-        # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        # XXX REMOVE Temp Mode:
-        self.logistic_state = 'ready'
-        # XXX REMOVE
-        # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
         for line in self.order_line:
             if line.logistic_state != 'ready' and not line.state_check:
                 raise exceptions.UserError(
                 _('Not all line are mapped to supplier!'))                
 
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        # XXX REMOVE COMMENT Temp Mode:
+        # XXX DISABLE INSTRUCTION
+        self.logistic_state = 'ready'
+        # XXX ENABLE INSTRUCTION
         # self.logistic_state = 'pending'
-        # XXX REMOVE
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
         # ---------------------------------------------------------------------        
@@ -1515,10 +1512,26 @@ class SaleOrder(models.Model):
         ''' Update order status for invoice if change partner or need_invoice
         '''
         self.need_invoice = self.partner_id.need_invoice
+
+    # -------------------------------------------------------------------------
+    # Function field:
+    # -------------------------------------------------------------------------
+    @api.depends('team_id', 'team_id.market_type')
+    @api.multi
+    def _get_market_type(self):
+        ''' Update when change the team market
+        '''
+        for order in self:
+            order.market_type = order.team_id.market_type
         
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
+    market_type = fields.Selection((
+        ('b2b', 'B2B'),
+        ('b2c', 'B2C'),
+        ), 'Market type', compute='_get_market_type', store=True)
+
     counter = fields.Integer('Counter', default=1, help='Use for graph view')
     locked_delivery = fields.Boolean('Locked delivery')
     partner_need_invoice = fields.Boolean(
