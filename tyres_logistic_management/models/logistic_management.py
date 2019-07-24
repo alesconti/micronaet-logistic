@@ -1148,7 +1148,6 @@ class SaleOrder(models.Model):
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         # XXX REMOVE Temp Mode:
         self.logistic_state = 'ready'
-        # return True
         # XXX REMOVE
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
@@ -1178,7 +1177,8 @@ class SaleOrder(models.Model):
             raise exceptions.UserError(_('No order line to order!'))
 
         # Call original action:    
-        return line_pool.workflow_order_pending(lines)
+        line_pool.workflow_order_pending(lines)
+        return True # Return nothing
 
     # -------------------------------------------------------------------------
     #                           UTILITY:
@@ -1633,8 +1633,23 @@ class SaleOrderLine(models.Model):
             >> after: workflow_order_pending
         '''        
         # Create purchase order and confirm (purchase action not used)
-        self.order_id.workflow_manual_order_pending() 
-        return True
+        self.order_id.workflow_manual_order_pending()
+        
+        # Return original order go in purchase:
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Order pending'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_id': self.order_id.id,
+            'res_model': 'sale.order',
+            'view_id': False,
+            'views': [(False, 'form')],
+            'domain': [],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
     
     @api.multi
     def chain_broken_purchase_line(self):
