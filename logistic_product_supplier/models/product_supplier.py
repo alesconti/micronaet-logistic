@@ -333,7 +333,7 @@ class SaleOrder(models.Model):
             'view_sale_order_line_purchase_management_form')[1]
         
         line_ids = [item.id for item in self.order_line if \
-            not item.product_is.is_expence]
+            not item.product_id.is_expence]
         if len(line_ids) == 1:
             view_id = form_view_id
             views = [(form_view_id, 'form'), (tree_view_id, 'tree')]
