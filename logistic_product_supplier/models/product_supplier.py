@@ -332,7 +332,8 @@ class SaleOrder(models.Model):
             'logistic_product_supplier', 
             'view_sale_order_line_purchase_management_form')[1]
         
-        line_ids = [item.id for item in self.order_line]
+        line_ids = [item.id for item in self.order_line if \
+            not item.product_is.is_expence]
         if len(line_ids) == 1:
             view_id = form_view_id
             views = [(form_view_id, 'form'), (tree_view_id, 'tree')]
@@ -343,7 +344,6 @@ class SaleOrder(models.Model):
             views = [(tree_view_id, 'tree'), (form_view_id, 'form')]
             view_mode = 'tree,form'
             res_id = False
-            
         
         return {
             'type': 'ir.actions.act_window',
