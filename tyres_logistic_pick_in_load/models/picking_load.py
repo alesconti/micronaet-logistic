@@ -618,15 +618,16 @@ class PurchaseOrderLine(models.Model):
         'Width', related='product_id.larghezza', store=True)
     spalla = fields.Char(
         'Spalla', related='product_id.spalla', store=True)
+    titolocompleto = fields.Char(
+        'titolocompleto', related='product_id.titolocompleto')
         
     order_supplier_id = fields.Many2one(
         'res.partner', 'Supplier', domain="[('supplier', '=', True)]",
         related='order_id.partner_id', store=True)
         
-    #carrier_id = fields.Many2one(
-    #    'carrier.supplier', 'Carrier',
-    #    related='logistic_sale_id.order_id.carrier_supplier_id')
-
+    order_supplier_name = fields.Char(
+        'Supplier name', related='order_supplier_id.name')
+    
     product_name = fields.Char('Product name', related='product_id.name')
 
     #ivel = fields.Char(
@@ -644,6 +645,7 @@ class PurchaseOrderLine(models.Model):
     #numerofori = fields.Char('Numero fori')
     #interasse = fields.Char('Interasse')
     #bestpricecost = fields.Float('Costo bestprice')
+    #titolocompleto
     
 
 class StockPickingDelivery(models.Model):

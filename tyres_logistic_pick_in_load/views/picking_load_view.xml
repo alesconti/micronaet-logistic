@@ -65,12 +65,14 @@
                      <button name="open_detail_delivery_in" string="Open detail for line" type="object" icon="fa-list-alt"/>
                      <button name="fast_filter_product_id" string="Filter this product" type="object" icon="fa-search"  attrs="{'invisible': [('product_id','=',False)]}"/>
                      <field name="product_id" readonly="1" invisible="1"/>
-                     <field name="product_name" readonly="1"/>
+                     <field name="product_name" readonly="1" invisible="1"/>
+                     <field name="titolocompleto" readonly="1"/>
                      <!--<field name="name" readonly="1" />-->
                      <field name="date_planned" readonly="1" invisible="1"/>
                      
                      <button name="fast_filter_supplier" string="Filter this supplier" type="object" icon="fa-search" attrs="{'invisible': [('order_supplier_id','=',False)]}"/>
-                     <field name="order_supplier_id" readonly="1" string="Fornitore"/>
+                     <field name="order_supplier_id" readonly="1" string="Fornitore" invisible="1"/>
+                     <field name="order_supplier_name" readonly="1" string="Fornitore"/>
                      <field name="user_select_id" invisible="1" />
 
                      <button name="fast_filter_larghezza" string="Filter this width" type="object" icon="fa-search"  attrs="{'invisible': [('larghezza','=',False)]}"/>
