@@ -59,7 +59,7 @@
             <field name="model">purchase.order.line</field>
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
-                <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-success="logistic_delivered_manual&gt;0" decoration-danger="logistic_undelivered_qty==0"><!--user_select_id!=uid and user_select_id != False-->
+                <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-primary="check_status=='partial'" decoration-success="logistic_delivered_manual&gt;0" decoration-danger="logistic_undelivered_qty==0"><!--user_select_id!=uid and user_select_id != False-->
                      <button name="clean_fast_filter" string="Remove filters" type="object" icon="fa-home"/>
                      <field name="order_id" readonly="1" string="Rif."/>
                      <button name="open_detail_delivery_in" string="Open detail for line" type="object" icon="fa-list-alt"/>
@@ -81,6 +81,7 @@
                      <field name="spalla" readonly="1" string="Sp."/>
                      <button name="fast_filter_raggio" string="Filter this ray" type="object" icon="fa-search"  attrs="{'invisible': [('raggio','=',False)]}"/>
                      <field name="raggio" readonly="1" string="r."/>
+                     <field name="check_status" /><!--invisible="1"-->
 
                      <!--Total: -->
                      <field name="product_qty" readonly="1" string="Ord."/>
@@ -94,7 +95,7 @@
                      
                      <field name="logistic_delivered_manual" string="Arrivo"/>
                      <field name="delivery_id" invisible="1"/>
-                     <button name="create_delivery_orders" string="Create delivery orders" type="object" class="oe_highlight" colspan="1" icon="fa-check-square" confirm="Do you confirm the generation of all supplier delivery document (you selection)?"/>
+                     <button name="create_delivery_orders" string="Create delivery orders" type="object" class="oe_highlight" colspan="1" icon="fa-download" confirm="Do you confirm the generation of all supplier delivery document (you selection)?"/>
                 </tree>
             </field>
         </record>
@@ -202,7 +203,17 @@
             <field name="view_id" ref="view_delivery_selection_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_search"/>            
             <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
-            <field name="domain">[('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('order_id.partner_id.internal_stock', '=', False)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), -->
+            <field name="domain">[('check_status', '!=', 'done'), ('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('order_id.partner_id.internal_stock', '=', False)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), -->
+        </record>
+        <record model="ir.actions.act_window" id="action_purchase_selection_order_to_link_line">
+            <field name="name">Delivery lo link BF</field>
+            <field name="res_model">purchase.order.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_delivery_selection_tree"/>
+            <field name="search_view_id" ref="view_delivery_selection_search"/>            
+            <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
+            <field name="domain">[('check_status', '!=', 'none'), ('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), ('order_id.partner_id.internal_stock', '=', False)]</field>
         </record>
 
 
@@ -357,23 +368,27 @@
                  action="action_purchase_selection_order_line"
                  sequence="5"
                  />
-             <!--<menuitem 
+             
+             <menuitem 
                  parent="menu_logistic_delivery_management_root" 
-                 id="menu_stock_picking_delivery_form" 
-                 action="action_stock_picking_delivery_form"
+                 id="menu_purchase_selection_order_link_line" 
+                 action="action_purchase_selection_order_to_link_line"
                  sequence="10"
-                 />-->
+                 groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
+                 />
              <menuitem 
                  parent="menu_logistic_delivery_management_root" 
                  id="menu_my_stock_picking_delivery_tree" 
                  action="action_my_stock_picking_delivery_tree"
                  sequence="20"
+                 groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
                  />
              <menuitem 
                  parent="menu_logistic_delivery_management_root" 
                  id="menu_stock_picking_delivery_tree" 
                  action="action_stock_picking_delivery_tree"
                  sequence="30"
+                 groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
                  />
              
              

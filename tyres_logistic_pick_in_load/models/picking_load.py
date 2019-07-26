@@ -394,7 +394,7 @@ class PurchaseOrderLine(models.Model):
                 (search_id, 'search'),
                 ],
             'domain': [
-                # XXX Not needed: (field_name, '=', field_value),
+                ('check_status', '!=', 'done'), 
                 ('delivery_id', '=', False), 
                 ('order_id.logistic_state', '=', 'confirmed'), 
                 '|', 
@@ -465,6 +465,33 @@ class PurchaseOrderLine(models.Model):
 
     @api.multi
     def create_delivery_orders(self):
+        ''' Create the list of all order received splitted for supplier        
+        '''
+        delivery_pool = self.env['stock.picking.delivery']
+
+        # ---------------------------------------------------------------------
+        # Search selection line for this user:
+        # ---------------------------------------------------------------------
+        lines = self.search([
+            ('delivery_id', '=', False), # Not linked
+            ('user_select_id', '=', self.env.uid), # This user
+            ('logistic_delivered_manual', '>', 0), # With quantity insert
+            ('order_id.partner_id.internal_stock', '=', False), # No internal
+            ])
+
+        if not lines:
+            raise exceptions.Warning('No selection for current user!') 
+        
+        for line in lines:
+            if line.logistic_undelivered_qty < line.logistic_delivered_manual:
+                line.check_status = 'partial'
+            else:    
+                line.check_status = 'done'
+        return self.clean_fast_filter()
+        
+    # TODO COMPLETARE LA PROCEDURA: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    @api.multi
+    def generate_delivery_orders_from_line(self):
         ''' Create the list of all order received splitted for supplier        
         '''
         delivery_pool = self.env['stock.picking.delivery']
@@ -640,7 +667,14 @@ class PurchaseOrderLine(models.Model):
         'Supplier name', related='order_supplier_id.name')
     
     product_name = fields.Char('Product name', related='product_id.name')
+    
+    check_status = fields.Selection([
+        ('none', 'Not touched'), # Not selected
 
+        ('done', 'All delivered'), # Selected all remain to deliver
+        ('partial', 'Partially delivered'), # Select partial to deliver
+        ], 'Check status', default='none')
+        
     #ivel = fields.Char(
     #    'Indice di velocità', related='product_id.raggio', store=True)
     #icarico = fields.Char(

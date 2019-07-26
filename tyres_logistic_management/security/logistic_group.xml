@@ -22,6 +22,11 @@
                 <field name="category_id" ref="tyres_logistic_management.ir_module_category_logistic"/>
                 <field name="comment">Sale manager see all order</field>
             </record>
+            <record id="group_logistic_account_manager" model="res.groups">
+                <field name="name">Logistic Account Manager</field>
+                <field name="category_id" ref="tyres_logistic_management.ir_module_category_logistic"/>
+                <field name="comment">Manage Account data</field>
+            </record>
             <record id="group_logistic_debugger" model="res.groups">
                 <field name="name">Logistic Debug</field>
                 <field name="category_id" ref="tyres_logistic_management.ir_module_category_logistic"/>
