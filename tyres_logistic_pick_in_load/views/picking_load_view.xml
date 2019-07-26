@@ -59,43 +59,43 @@
             <field name="model">purchase.order.line</field>
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
-                <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-primary="check_status=='partial'" decoration-success="logistic_delivered_manual&gt;0" decoration-danger="logistic_undelivered_qty==0"><!--user_select_id!=uid and user_select_id != False-->
-                     <button name="clean_fast_filter" string="Remove filters" type="object" icon="fa-home"/>
+                <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-success="logistic_delivered_manual&gt;0" decoration-danger="logistic_undelivered_qty==0" decoration-warning="check_status=='partial' and logistic_delivered_manual&gt;0" ><!--user_select_id!=uid and user_select_id != False-->
+                     <button name="clean_fast_filter" string="Remove filters" type="object" icon="fa-home" invisible="context.get('open_assign_bf', False)"/>
                      <field name="order_id" readonly="1" string="Rif."/>
                      <button name="open_detail_delivery_in" string="Open detail for line" type="object" icon="fa-list-alt"/>
-                     <button name="fast_filter_product_id" string="Filter this product" type="object" icon="fa-search"  attrs="{'invisible': [('product_id','=',False)]}"/>
+                     <button name="fast_filter_product_id" string="Filter this product" type="object" icon="fa-search"  attrs="{'invisible': [('product_id','=',False)]}" invisible="context.get('open_assign_bf', False)"/>
                      <field name="product_id" readonly="1" invisible="1"/>
                      <field name="product_name" readonly="1" invisible="1"/>
                      <field name="name_extended" readonly="1"/>
                      <!--<field name="name" readonly="1" />-->
                      <field name="date_planned" readonly="1" invisible="1"/>
                      
-                     <button name="fast_filter_supplier" string="Filter this supplier" type="object" icon="fa-search" attrs="{'invisible': [('order_supplier_id','=',False)]}"/>
+                     <button name="fast_filter_supplier" string="Filter this supplier" type="object" icon="fa-search" attrs="{'invisible': [('order_supplier_id','=',False)]}" invisible="context.get('open_assign_bf', False)"/>
                      <field name="order_supplier_id" readonly="1" string="Fornitore" invisible="1"/>
                      <field name="order_supplier_name" readonly="1" string="Fornitore"/>
-                     <field name="user_select_id" invisible="1" />
-
-                     <button name="fast_filter_larghezza" string="Filter this width" type="object" icon="fa-search"  attrs="{'invisible': [('larghezza','=',False)]}"/>
-                     <field name="larghezza" readonly="1" string="L."/>
-                     <button name="fast_filter_spalla" string="Filter this shoulder" type="object" icon="fa-search"  attrs="{'invisible': [('spalla','=',False)]}"/>
-                     <field name="spalla" readonly="1" string="Sp."/>
-                     <button name="fast_filter_raggio" string="Filter this ray" type="object" icon="fa-search"  attrs="{'invisible': [('raggio','=',False)]}"/>
-                     <field name="raggio" readonly="1" string="r."/>
+                     <field name="user_select_id" /><!--invisible="1"-->
                      <field name="check_status" /><!--invisible="1"-->
+
+                     <button name="fast_filter_larghezza" string="Filter this width" type="object" icon="fa-search"  attrs="{'invisible': [('larghezza','=',False)]}" invisible="context.get('open_assign_bf', False)"/>
+                     <field name="larghezza" readonly="1" string="L."/>
+                     <button name="fast_filter_spalla" string="Filter this shoulder" type="object" icon="fa-search"  attrs="{'invisible': [('spalla','=',False)]}" invisible="context.get('open_assign_bf', False)"/>
+                     <field name="spalla" readonly="1" string="Sp."/>
+                     <button name="fast_filter_raggio" string="Filter this ray" type="object" icon="fa-search"  attrs="{'invisible': [('raggio','=',False)]}" invisible="context.get('open_assign_bf', False)"/>
+                     <field name="raggio" readonly="1" string="r."/>
 
                      <!--Total: -->
                      <field name="product_qty" readonly="1" string="Ord."/>
                      <field name="logistic_delivered_qty" readonly="1" string="Cons."/>
                      <field name="logistic_undelivered_qty" readonly="1" string="Rim."/>
                      
-                     <button name="delivery_0" string="0" type="object" icon="fa-bitbucket"/>
-                     <button name="delivery_less_1" string="-" type="object" icon="fa-minus-square"/>
-                     <button name="delivery_more_1" string="+" type="object" icon="fa-plus-square"/>
-                     <button name="delivery_all" string="Arrivo" type="object" icon="fa-fast-forward"/>
+                     <button name="delivery_0" string="0" type="object" icon="fa-bitbucket" invisible="context.get('open_assign_bf', False)"/>
+                     <button name="delivery_less_1" string="-" type="object" icon="fa-minus-square" invisible="context.get('open_assign_bf', False)"/>
+                     <button name="delivery_more_1" string="+" type="object" icon="fa-plus-square" invisible="context.get('open_assign_bf', False)"/>
+                     <button name="delivery_all" string="Arrivo" type="object" icon="fa-fast-forward" invisible="context.get('open_assign_bf', False)"/>
                      
-                     <field name="logistic_delivered_manual" string="Arrivo"/>
+                     <field name="logistic_delivered_manual" string="Arrivo" />
                      <field name="delivery_id" invisible="1"/>
-                     <button name="create_delivery_orders" string="Create delivery orders" type="object" class="oe_highlight" colspan="1" icon="fa-download" confirm="Do you confirm the generation of all supplier delivery document (you selection)?"/>
+                     <button name="create_delivery_orders" string="Create delivery orders" type="object" class="oe_highlight" colspan="1" icon="fa-download" confirm="Do you confirm the generation of all supplier delivery document (you selection)?" invisible="context.get('open_assign_bf', False)"/>
                 </tree>
             </field>
         </record>
@@ -107,8 +107,7 @@
             <field name="arch" type="xml">
                 <form string="Purchase line">
                     <header>
-                    </header>
-                    
+                    </header>                    
                     <sheet>
                         <group colspan="4" col="4" >
                              <field name="order_id" readonly="1"/>
@@ -212,6 +211,7 @@
             <field name="view_mode">tree</field>
             <field name="view_id" ref="view_delivery_selection_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_search"/>            
+            <field name="context">{'open_assign_bf': True}</field>
             <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
             <field name="domain">[('check_status', '!=', 'none'), ('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), ('order_id.partner_id.internal_stock', '=', False)]</field>
         </record>

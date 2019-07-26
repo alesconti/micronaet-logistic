@@ -472,18 +472,21 @@ class PurchaseOrderLine(models.Model):
         # ---------------------------------------------------------------------
         # Search selection line for this user:
         # ---------------------------------------------------------------------
+        import pdb; pdb.set_trace()
         lines = self.search([
             ('delivery_id', '=', False), # Not linked
             ('user_select_id', '=', self.env.uid), # This user
             ('logistic_delivered_manual', '>', 0), # With quantity insert
             ('order_id.partner_id.internal_stock', '=', False), # No internal
+            #('check_status', '!=', 'done'), # Market previously
             ])
 
         if not lines:
             raise exceptions.Warning('No selection for current user!') 
         
+        import pdb; pdb.set_trace()
         for line in lines:
-            if line.logistic_undelivered_qty < line.logistic_delivered_manual:
+            if line.logistic_delivered_manual < line.logistic_undelivered_qty:
                 line.check_status = 'partial'
             else:    
                 line.check_status = 'done'
@@ -669,11 +672,11 @@ class PurchaseOrderLine(models.Model):
     product_name = fields.Char('Product name', related='product_id.name')
     
     check_status = fields.Selection([
-        ('none', 'Not touched'), # Not selected
+        #('none', 'Not touched'), # Not selected
 
         ('done', 'All delivered'), # Selected all remain to deliver
         ('partial', 'Partially delivered'), # Select partial to deliver
-        ], 'Check status', default='none')
+        ], 'Check status', default='partial')
         
     #ivel = fields.Char(
     #    'Indice di velocità', related='product_id.raggio', store=True)
