@@ -361,19 +361,25 @@ class PurchaseOrderLine(models.Model):
         search_id = self.env.ref(
             'tyres_logistic_pick_in_load.view_delivery_selection_search').id
 
-        if not field_value:
-            return True
-        
-        ctx = {} # context.copy()
-        for key in context:           
-            # Remove all previous search default:
-            if key.startswith('search_default_'):
-                continue
-                #ctx[key] = False # XXX cannot remove!
-            ctx[key] = context[key]    
+        command_clean_before = context.get('command_clean_before', False)
+        if not field_name or command_clean_before:
+            # Clean previous context from search defaults:
+            ctx = {}
+            for key in context:           
+                # Remove all previous search default:
+                if key.startswith('search_default_'):
+                    continue # Cannot remove!
+                ctx[key] = context[key]    
+            if command_clean_before: # clean yet now!
+                ctx['command_next_clean'] = False # yet clean
+            else:    
+                ctx['command_next_clean'] = True # clean all next filter
 
-        ctx['search_default_%s' % field_name] = field_value
+        if field_name:
+            ctx = context.copy()    
+            ctx['search_default_%s' % field_name] = field_value
         _logger.info(ctx)
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Filter applied: %s' % name),
@@ -397,9 +403,15 @@ class PurchaseOrderLine(models.Model):
                 ('order_id.partner_id.internal_stock', '=', False),
                 ],
             'context': ctx,
-            'target': 'current', # 'new'
+            'target': 'main',#            'target': 'current', # 'new'
             'nodestroy': False,
             }
+
+    @api.multi
+    def clean_fast_filter(self):
+        ''' Remove fast filter:
+        '''
+        return self.return_fast_filter_view(False, False, False)
             
     @api.multi
     def fast_filter_product_id(self):
