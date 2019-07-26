@@ -609,15 +609,7 @@ class PurchaseOrderLine(models.Model):
         ''' Generate extended name
         '''
         try:
-            product = self.product_id
-            self.name_extended = ''.join(filter(None, (
-                product.name, ' ', 
-                product.larghezza, '/', 
-                product.spalla, '- ', 
-                product.icarico, 
-                product.ivel,
-                ' [', product.brand.name, ']',
-                )))
+            self.name_extended = self.product_id.description_sale
         except:
             self.name_extended = _('Error generating name')
 
@@ -662,7 +654,6 @@ class PurchaseOrderLine(models.Model):
     #numerofori = fields.Char('Numero fori')
     #interasse = fields.Char('Interasse')
     #bestpricecost = fields.Float('Costo bestprice')
-    #titolocompleto
     
 
 class StockPickingDelivery(models.Model):
