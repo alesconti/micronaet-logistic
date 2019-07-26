@@ -73,8 +73,8 @@
                      <button name="fast_filter_supplier" string="Filter this supplier" type="object" icon="fa-search" attrs="{'invisible': [('order_supplier_id','=',False)]}" invisible="context.get('open_assign_bf', False)"/>
                      <field name="order_supplier_id" readonly="1" string="Fornitore" invisible="1"/>
                      <field name="order_supplier_name" readonly="1" string="Fornitore"/>
-                     <field name="user_select_id" /><!--invisible="1"-->
-                     <field name="check_status" /><!--invisible="1"-->
+                     <field name="user_select_id" invisible="1" />
+                     <field name="check_status" invisible="1" />
 
                      <button name="fast_filter_larghezza" string="Filter this width" type="object" icon="fa-search"  attrs="{'invisible': [('larghezza','=',False)]}" invisible="context.get('open_assign_bf', False)"/>
                      <field name="larghezza" readonly="1" string="L."/>

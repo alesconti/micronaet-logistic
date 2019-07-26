@@ -472,7 +472,6 @@ class PurchaseOrderLine(models.Model):
         # ---------------------------------------------------------------------
         # Search selection line for this user:
         # ---------------------------------------------------------------------
-        import pdb; pdb.set_trace()
         lines = self.search([
             ('delivery_id', '=', False), # Not linked
             ('user_select_id', '=', self.env.uid), # This user
@@ -484,14 +483,16 @@ class PurchaseOrderLine(models.Model):
         if not lines:
             raise exceptions.Warning('No selection for current user!') 
         
-        import pdb; pdb.set_trace()
         for line in lines:
             if line.logistic_delivered_manual < line.logistic_undelivered_qty:
                 line.check_status = 'partial'
             else:    
                 line.check_status = 'done'
         return self.clean_fast_filter()
-        
+
+    # TODO AGGIUNGERE ONCHANGE PER CONTROLLARE IL CHECK_STATUS !!!!!!!!!!!!!!!!
+    #logistic_delivered_manual
+
     # TODO COMPLETARE LA PROCEDURA: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     @api.multi
     def generate_delivery_orders_from_line(self):
