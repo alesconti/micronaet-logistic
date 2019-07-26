@@ -604,9 +604,28 @@ class PurchaseOrderLine(models.Model):
             'user_select_id': self.env.uid,
             })        
 
+    @api.one
+    def _get_name_extended_full(self):
+        ''' Generate extended name
+        '''
+        try:
+            product = self.product_id
+            self.name_extended = ''.join(filter(None, (
+                product.name, ' ', 
+                product.larghezza, '/', 
+                product.spalla, '- ', 
+                product.icarico, 
+                product.ivel,
+                ' [', product.brand.name, ']',
+                )))
+        except:
+            self.name_extended = _('Error generating name')
+
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
+    name_extended = fields.Char(
+        compute='_get_name_extended_full', string='Extended name')
     delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery')
     logistic_delivered_manual = fields.Float('Manual', digits=(16, 2))
     user_select_id = fields.Many2one('res.users', 'Selected user')
@@ -618,8 +637,6 @@ class PurchaseOrderLine(models.Model):
         'Width', related='product_id.larghezza', store=True)
     spalla = fields.Char(
         'Spalla', related='product_id.spalla', store=True)
-    titolocompleto = fields.Char(
-        'titolocompleto', related='product_id.titolocompleto')
         
     order_supplier_id = fields.Many2one(
         'res.partner', 'Supplier', domain="[('supplier', '=', True)]",

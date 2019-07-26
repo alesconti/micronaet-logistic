@@ -66,7 +66,7 @@
                      <button name="fast_filter_product_id" string="Filter this product" type="object" icon="fa-search"  attrs="{'invisible': [('product_id','=',False)]}"/>
                      <field name="product_id" readonly="1" invisible="1"/>
                      <field name="product_name" readonly="1" invisible="1"/>
-                     <field name="titolocompleto" readonly="1"/>
+                     <field name="name_extended" readonly="1"/>
                      <!--<field name="name" readonly="1" />-->
                      <field name="date_planned" readonly="1" invisible="1"/>
                      
