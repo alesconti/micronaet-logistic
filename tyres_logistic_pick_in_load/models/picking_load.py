@@ -609,7 +609,9 @@ class PurchaseOrderLine(models.Model):
         ''' Generate extended name
         '''
         try:
-            self.name_extended = self.product_id.description_sale
+            product = self.product_id
+            self.name_extended = product.description_sale or \
+                product.titolocompleto or product.name or 'Non trovato' 
         except:
             self.name_extended = _('Error generating name')
 
