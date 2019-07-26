@@ -1517,7 +1517,7 @@ class SaleOrder(models.Model):
     # Function field:
     # -------------------------------------------------------------------------
     @api.depends('team_id', 'team_id.market_type')
-    @api.multi
+    @api.multi # XXX necessary?
     def _get_market_type(self):
         ''' Update when change the team market
         '''

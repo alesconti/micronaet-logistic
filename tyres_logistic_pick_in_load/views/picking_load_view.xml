@@ -138,6 +138,23 @@
                 </form>
             </field>
         </record>
+
+        <!--Add also in original serch (instead not filter!)-->
+        <record model="ir.ui.view" id="view_delivery_selection_inherited_search">
+            <field name="name">purchase.order.line.tree</field>
+            <field name="model">purchase.order.line</field>
+            <field name="inherit_id" ref="purchase.purchase_order_line_search"/>
+            <field name="arch" type="xml">
+                <field name="order_id" position="after">
+                    <field name="order_supplier_id" filter_domain="[('order_supplier_id','=',self)]"/>
+
+                    <field name="larghezza" />
+                    <field name="spalla" />
+                    <field name="raggio" />
+                </field>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="view_delivery_selection_search">
             <field name="name">purchase.order.line.search</field>
             <field name="model">purchase.order.line</field>
@@ -148,8 +165,7 @@
                     <field name="product_id" filter_domain="[('product_id','=',self)]"/>
                     <field name="order_id" filter_domain="[('order_id','=',self)]"/>
                     
-                    <field name="carrier_id" />
-                    <field name="order_supplier_id" />
+                    <field name="order_supplier_id" filter_domain="[('order_supplier_id','=',self)]"/>
 
                     <field name="larghezza" />
                     <field name="spalla" />

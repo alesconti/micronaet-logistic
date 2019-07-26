@@ -358,24 +358,37 @@ class PurchaseOrderLine(models.Model):
 
         tree_id = self.env.ref(
             'tyres_logistic_pick_in_load.view_delivery_selection_tree').id
+        search_id = self.env.ref(
+            'tyres_logistic_pick_in_load.view_delivery_selection_search').id
 
         if not field_value:
             return True
         
-        ctx = context.copy()
-        ctx['search_default_%s' % field_name] = field_value
+        ctx = {} # context.copy()
+        for key in context:           
+            # Remove all previous search default:
+            if key.startswith('search_default_'):
+                continue
+                #ctx[key] = False # XXX cannot remove!
+            ctx[key] = context[key]    
 
+        ctx['search_default_%s' % field_name] = field_value
+        _logger.info(ctx)
         return {
             'type': 'ir.actions.act_window',
             'name': _('Filter applied: %s' % name),
             'view_type': 'form',
             'view_mode': 'tree,form',
-            #'res_id': 1,
             'res_model': 'purchase.order.line',
-            'view_id': tree_id, # False
-            'views': [(tree_id, 'tree'), (False, 'form')],
+            'view_id': tree_id,
+            'search_view_id': search_id,
+            'views': [
+                (tree_id, 'tree'), 
+                (False, 'form'), 
+                (search_id, 'search'),
+                ],
             'domain': [
-                (field_name, '=', field_value),
+                # XXX Not needed: (field_name, '=', field_value),
                 ('delivery_id', '=', False), 
                 ('order_id.logistic_state', '=', 'confirmed'), 
                 '|', 
@@ -597,9 +610,11 @@ class PurchaseOrderLine(models.Model):
     order_supplier_id = fields.Many2one(
         'res.partner', 'Supplier', domain="[('supplier', '=', True)]",
         related='order_id.partner_id', store=True)
-    carrier_id = fields.Many2one(
-        'carrier.supplier', 'Carrier',
-        related='logistic_sale_id.order_id.carrier_supplier_id')
+        
+    #carrier_id = fields.Many2one(
+    #    'carrier.supplier', 'Carrier',
+    #    related='logistic_sale_id.order_id.carrier_supplier_id')
+
     product_name = fields.Char('Product name', related='product_id.name')
 
     #ivel = fields.Char(
