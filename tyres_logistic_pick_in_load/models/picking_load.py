@@ -463,6 +463,16 @@ class PurchaseOrderLine(models.Model):
             self.raggio,
             )
 
+    @api.onchange('logistic_delivered_manual')
+    def onchange_logistic_delivered_manual(self, ):
+        ''' Write check state depend on partial or done
+        '''
+        _logger.info('>>>>> changed logistic_delivered_manual') # TODO remove
+        if self.logistic_delivered_manual < self.logistic_undelivered_qty:
+            self.check_status = 'partial'
+        else:    
+            self.check_status = 'total'
+
     @api.multi
     def create_delivery_orders(self):
         ''' Create the list of all order received splitted for supplier        
@@ -483,89 +493,12 @@ class PurchaseOrderLine(models.Model):
         if not lines:
             raise exceptions.Warning('No selection for current user!') 
         
-        for line in lines:
-            if line.logistic_delivered_manual < line.logistic_undelivered_qty:
-                line.check_status = 'partial'
-            else:    
+        for line in lines:            
+            # Partial not touched!
+            if line.check_status == 'total':
                 line.check_status = 'done'
         return self.clean_fast_filter()
 
-    # TODO AGGIUNGERE ONCHANGE PER CONTROLLARE IL CHECK_STATUS !!!!!!!!!!!!!!!!
-    #logistic_delivered_manual
-
-    # TODO COMPLETARE LA PROCEDURA: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    @api.multi
-    def generate_delivery_orders_from_line(self):
-        ''' Create the list of all order received splitted for supplier        
-        '''
-        delivery_pool = self.env['stock.picking.delivery']
-
-        # ---------------------------------------------------------------------
-        # Search selection line for this user:
-        # ---------------------------------------------------------------------
-        lines = self.search([
-            ('delivery_id','=',False), 
-            ('user_select_id', '=', self.env.uid), 
-            ('logistic_delivered_manual', '>', 0),
-            ('order_id.partner_id.internal_stock', '=', False)
-            ])
-            
-        if not lines:
-            raise exceptions.Warning('No selection for current user!') 
-        
-        # ---------------------------------------------------------------------
-        # Extract supplier line list:
-        # ---------------------------------------------------------------------
-        suppliers = {} # TODO also with carrier?
-        for line in lines:
-            supplier = line.order_id.partner_id
-            if supplier not in suppliers:
-                suppliers[supplier] = []
-            suppliers[supplier].append(line)
-        
-        # ---------------------------------------------------------------------
-        # Create purchase order:
-        # ---------------------------------------------------------------------
-        delivery_ids = []
-        for supplier in suppliers:
-            # -----------------------------------------------------------------
-            # Create header:
-            # -----------------------------------------------------------------
-            delivery_id = delivery_pool.create({
-                'supplier_id': supplier.id,
-                #'carrier_id': carrier.id,
-                #'create_uid': self.env.uid,                
-                }).id
-            delivery_ids.append(delivery_id)
-            for line in suppliers[supplier]: # TODO better
-                line.delivery_id = delivery_id 
-                
-        # ---------------------------------------------------------------------
-        # Return created order:
-        # ---------------------------------------------------------------------
-        tree_view_id = form_view_id = False
-        if len(delivery_ids) == 1:
-            res_id = delivery_ids[0]
-            views = [(tree_view_id, 'form'), (tree_view_id, 'tree')]
-        else:
-            res_id = False    
-            views = [(tree_view_id, 'tree'), (tree_view_id, 'form')]
-            
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Delivery created:'),
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_id': res_id,
-            'res_model': 'stock.picking.delivery',
-            'view_id': tree_view_id,
-            #'search_view_id': search_view_id,
-            'views': views,
-            'domain': [('id', 'in', delivery_ids)],
-            'context': self.env.context,
-            'target': 'current', # 'new'
-            'nodestroy': False,
-            }
         
     @api.multi
     def open_detail_delivery_in(self):
@@ -592,19 +525,21 @@ class PurchaseOrderLine(models.Model):
     def delivery_0(self):
         ''' Add +1 to manual arrived qty
         '''
-        return self.write({
+        self.write({
             'logistic_delivered_manual': 0,
             'user_select_id': False, # no need to save user
             })        
+        return self.onchange_logistic_delivered_manual()
 
     @api.multi
     def delivery_more_1(self):
         ''' Add +1 to manual arrived qty
         '''
-        return self.write({
+        self.write({
             'logistic_delivered_manual': self.logistic_delivered_manual + 1.0,
             'user_select_id': self.env.uid,
             })        
+        return self.onchange_logistic_delivered_manual()
 
     @api.multi
     def delivery_less_1(self):
@@ -617,10 +552,11 @@ class PurchaseOrderLine(models.Model):
             
         if logistic_delivered_manual <= 1.0:
             active_id = False
-        return self.write({
+        self.write({
             'logistic_delivered_manual': logistic_delivered_manual - 1.0,
             'user_select_id': self.env.uid,
             })        
+        return self.onchange_logistic_delivered_manual()
 
     @api.multi
     def delivery_all(self):
@@ -630,10 +566,11 @@ class PurchaseOrderLine(models.Model):
         if logistic_undelivered_qty <= 0.0:
             raise exceptions.Warning('No more q. to deliver!') 
         
-        return self.write({
+        self.write({
             'logistic_delivered_manual': self.logistic_undelivered_qty,
             'user_select_id': self.env.uid,
             })        
+        return self.onchange_logistic_delivered_manual()
 
     @api.one
     def _get_name_extended_full(self):
@@ -675,8 +612,10 @@ class PurchaseOrderLine(models.Model):
     check_status = fields.Selection([
         #('none', 'Not touched'), # Not selected
 
-        ('done', 'All delivered'), # Selected all remain to deliver
-        ('partial', 'Partially delivered'), # Select partial to deliver
+        ('done', 'Load in stock'), # Selected all remain to deliver
+        
+        ('total', 'Total received'), # Selected all to deliver
+        ('partial', 'Partially received'), # Select partial to deliver
         ], 'Check status', default='partial')
         
     #ivel = fields.Char(

@@ -42,6 +42,7 @@
         'security/ir.model.access.csv',
         
         'views/picking_load_view.xml',
+        'wizard/create_load_document_view.xml',
         ],
     'demo': [],
     'css': [],

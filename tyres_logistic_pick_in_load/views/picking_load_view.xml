@@ -59,7 +59,7 @@
             <field name="model">purchase.order.line</field>
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
-                <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-success="logistic_delivered_manual&gt;0" decoration-danger="logistic_undelivered_qty==0" decoration-warning="check_status=='partial' and logistic_delivered_manual&gt;0" ><!--user_select_id!=uid and user_select_id != False-->
+                <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-success="check_status in ('total', 'done') and logistic_delivered_manual&gt;0" decoration-danger="logistic_undelivered_qty==0" decoration-warning="check_status=='partial' and logistic_delivered_manual&gt;0" ><!--user_select_id!=uid and user_select_id != False-->
                      <button name="clean_fast_filter" string="Remove filters" type="object" icon="fa-home" invisible="context.get('open_assign_bf', False)"/>
                      <field name="order_id" readonly="1" string="Rif."/>
                      <button name="open_detail_delivery_in" string="Open detail for line" type="object" icon="fa-list-alt"/>
@@ -213,7 +213,7 @@
             <field name="search_view_id" ref="view_delivery_selection_search"/>            
             <field name="context">{'open_assign_bf': True}</field>
             <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
-            <field name="domain">[('check_status', '!=', 'none'), ('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), ('order_id.partner_id.internal_stock', '=', False)]</field>
+            <field name="domain">[('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), ('order_id.partner_id.internal_stock', '=', False)]</field>
         </record>
 
 
