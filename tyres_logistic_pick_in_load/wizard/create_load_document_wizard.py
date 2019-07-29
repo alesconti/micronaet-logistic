@@ -44,16 +44,15 @@ class PickingLoadDocumentGeneratorWizard(models.TransientModel):
         ''' Create the list of all order received splitted for supplier        
         '''
 
-        import pdb; pdb.set_trace()
         line_pool = self.env['purchase.order.line']
         delivery_pool = self.env['stock.picking.delivery']
 
         # ---------------------------------------------------------------------
         # Search selection line for this user:
         # ---------------------------------------------------------------------
-        active_ids = self.env.context().get('active_ids')
+        active_ids = self.env.context.get('active_ids')
         if not active_ids:
-            raise UserError(_('Select before launche the wizard!'))
+            raise UserError(_('Select before launch the wizard!'))
         lines = line_pool.browse(active_ids)
         
         # ---------------------------------------------------------------------
@@ -81,7 +80,7 @@ class PickingLoadDocumentGeneratorWizard(models.TransientModel):
                 }).id
             delivery_ids.append(delivery_id)
             for line in suppliers[supplier]: # TODO better
-                line.delivery_id = delivery_id 
+                line.delivery_id = delivery_id # Link to delivery order!
                 
         # ---------------------------------------------------------------------
         # Return created order:

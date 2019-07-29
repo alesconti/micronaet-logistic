@@ -213,7 +213,7 @@
             <field name="search_view_id" ref="view_delivery_selection_search"/>            
             <field name="context">{'open_assign_bf': True}</field>
             <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
-            <field name="domain">[('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), ('order_id.partner_id.internal_stock', '=', False)]</field>
+            <field name="domain">[('logistic_delivered_manual', '&gt;', 0), ('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), ('order_id.partner_id.internal_stock', '=', False)]</field>
         </record>
 
 

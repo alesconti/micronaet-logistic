@@ -16,14 +16,7 @@
                 </form>
             </field>
       </record>
-      <!--<record model="ir.actions.act_window" id="action_picking_load_document_generator_wizard_view">
-          <field name="name">Document generator</field>
-          <field name="res_model">picking.load.document.generator.wizard</field>
-          <field name="view_type">form</field>
-          <field name="view_mode">form</field>
-          <field name="target">new</field>
-          <field name="view_id" ref="picking_load_document_generator_wizard_view"/>
-      </record>-->      
+ 
       <act_window
           id="act_picking_load_document_generator_wizard_view"
           name="Generate delivery doc."
