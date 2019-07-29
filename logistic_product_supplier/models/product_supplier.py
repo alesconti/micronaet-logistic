@@ -313,6 +313,17 @@ class SaleOrderLine(models.Model):
         'OK', compute='_get_purchase_state', multi=True,
         ) 
 
+class ResPartner(models.Model):
+    """ Model name: Res Partner
+    """
+    
+    _inherit = 'res.partner'
+    
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
+    hide_supplier = fields.Boolean('Hide supplier', 
+        help='Supplier hide from generate purchase order')
 
 class SaleOrder(models.Model):
     """ Model name: Sale order line relations

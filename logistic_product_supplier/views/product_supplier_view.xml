@@ -1,6 +1,18 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+         <!--res.partner-->
+         <record model="ir.ui.view" id="view_res_partner_hide_supplier_form">
+             <field name="name">res.partner.form</field>
+             <field name="model">res.partner</field>
+             <field name="inherit_id" ref="base.view_partner_form"/>
+             <field name="arch" type="xml">
+                 <field name="ref" position="after">
+                     <field name="hide_supplier" />
+                 </field>
+             </field>
+         </record>
+
         <!--product.template.supplier.stock-->
         <record model="ir.ui.view" id="view_product_template_supplier_stock_tree">
             <field name="name">product.template.supplier.stock.tree</field>
@@ -148,7 +160,7 @@
                              <button name="clean_all_purchase_selected" string="Clean selection" type="object" colspan="1" confirm="Delete all selection for purchase order?"/>
                              <field name="purchase_split_ids" nolabel="1" colspan="4">
                                  <tree name="Purchase reference" editable="bottom">
-                                     <field name="supplier_id" />
+                                     <field name="supplier_id" domain="[('hide_supplier', '=', False), ('is_supplier', '=', True)]"/>
                                      <field name="product_uom_qty" sum="total"/>
                                      <field name="purchase_price" />
                                  </tree>
