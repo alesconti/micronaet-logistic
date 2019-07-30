@@ -41,8 +41,45 @@ class SaleOrderInternal(models.Model):
     """
     
     _name = 'sale.order.internal'
-    
+    _rec_name = 'date'
+    _order = 'date desc'
+
+    # -------------------------------------------------------------------------    
     # Columns:
+    # -------------------------------------------------------------------------    
+    date = fields.Date('Date', default=fields.Date.context_today)
+    note = fields.Text('Note')
+    confirmed = fields.Boolean('Confirmed')
     
+class SaleOrderLineInternal(models.Model):
+    """ Model name: Internal sale order line
+    """
+    
+    _name = 'sale.order.line.internal'
+
+    # -------------------------------------------------------------------------    
+    # Columns:
+    # -------------------------------------------------------------------------    
+    order_id = fields.Many2one('sale.order.internal', 'Order')
+    product_id = fields.Many2one('product.product', 'Product', required=True)
+    supplier_id = fields.Many2one('res.partner', 'Supplier', required=True, 
+        domain="[('supplier', '=', True), ('hide_supplier', '=', False)]")
+    product_uom_qty = fields.Float(
+        string='Quantity', digits=dp.get_precision('Product Unit of Measure'), 
+        required=True, default=1.0)
+    price_unit = fields.Float(
+        'Unit Price', digits=dp.get_precision('Product Price'))
+
+class SaleOrderInternal(models.Model):
+    """ Model name: Internal sale order
+    """
+    
+    _inherit = 'sale.order.internal'
+
+    # -------------------------------------------------------------------------    
+    # Columns:
+    # -------------------------------------------------------------------------    
+    line_ids = fields.One2many(
+        'sale.order.line.internal', 'order_id', 'Detail')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
