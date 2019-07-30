@@ -1266,7 +1266,7 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------    
     # 0. Cancel error order
     # -------------------------------------------------------------------------    
-    @api.model
+    @api.multi
     def wk_order_cancel(self):
         ''' Cancel order (only error state)
         '''

@@ -455,7 +455,7 @@
              <field name="inherit_id" ref="sale.view_order_form"/>
              <field name="arch" type="xml">
                 <xpath expr="//button[@name='action_confirm']" position="after">
-                     <button name="wk_order_cancel" type="object" attrs="{'invisible': [('logistic_state','!=','error')]}" string="Cancel order"/>
+                     <button name="wk_order_cancel" type="object" attrs="{'invisible': [('logistic_state','!=','error')]}" string="Cancel order" confirm="Order will go in cancel order and end the process, confirm?"/>
                 </xpath>
                  <field name="payment_term_id" position="before">
                      <field name="partner_need_invoice" />
