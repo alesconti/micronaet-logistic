@@ -69,6 +69,7 @@ class SaleOrderInternal(models.Model):
             'validity_date': self.date,
             'note': _('Ordine interno'),
             'team_id': False,
+            'payment_done': True,
             
             'logistic_source': 'internal',
             'logistic_state': 'order',
