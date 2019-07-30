@@ -36,9 +36,32 @@ from dateutil.relativedelta import relativedelta
 
 _logger = logging.getLogger(__name__)
 
+class ProductProduct(models.Model):
+    ''' Override method 
+    '''
+    _inherit = 'product.product'
+
+    @api.multi
+    def name_get(self):
+        ''' Override name_get method
+        '''
+        _logger.info(self.env.context)
+        if self.env.context.get('product_diplay_mode') != 'tyres':
+            return super(ProductProduct, self).name_get()
+
+        # Tyres mode:
+        res = []
+        for product in self:
+            res.append((
+                product.id, 
+                product.description_sale or \
+                    product.titolocompleto or product.name or _('Not found'),
+                ))
+        return res
+          
 class SaleOrderInternal(models.Model):
-    """ Model name: Internal sale order
-    """
+    ''' Model name: Internal sale order
+    '''
     
     _name = 'sale.order.internal'
     _rec_name = 'date'
@@ -70,8 +93,9 @@ class SaleOrderInternal(models.Model):
             'note': _('Ordine interno'),
             'team_id': False,
             'payment_done': True,
+            'client_order_ref': self.reference,
             
-            'logistic_source': 'internal',
+            'logistic_source': self.logistic_source,
             'logistic_state': 'order',
             })
         order_id = order.id
@@ -123,9 +147,17 @@ class SaleOrderInternal(models.Model):
     # Columns:
     # -------------------------------------------------------------------------    
     date = fields.Date('Date', default=fields.Date.context_today)
+    reference = fields.Char('Reference', size=85, readonly=True)
     note = fields.Text('Note')
     confirmed = fields.Boolean('Confirmed')
-    
+    logistic_source = fields.Selection([
+        #('web', 'Web order'),
+        ('resell', 'Customer resell order'),
+        ('workshop', 'Workshop order'),
+        ('internal', 'Internal provisioning order'),
+        ], 'Logistic source', default='internal', readonly=True
+        )
+
 class SaleOrderLineInternal(models.Model):
     """ Model name: Internal sale order line
     """

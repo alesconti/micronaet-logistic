@@ -23,13 +23,16 @@
                     <sheet>
                         <group colspan="4" col="4">
                             <field name="date" />
+                            <field name="logistic_source" />
+                            
+                            <field name="reference" attrs="{'invisible': [('reference','=',False)]}"/>
                             <field name="confirmed" invisible="1" />
                             
                             <separator string="Detail:" colspan="4"/>
                             <field name="line_ids" colspan="4" nolabel="1">
                                 <tree string="Detail" editable="bottom">
                                     <field name="supplier_id" />
-                                    <field name="product_id" />                                    
+                                    <field name="product_id" context="{'product_diplay_mode': 'tyres'}"/>
                                     <field name="product_uom_qty" />
                                     <field name="price_unit" />
                                 </tree>
@@ -41,7 +44,7 @@
                 </form>
             </field>
         </record>
-        <record model="ir.actions.act_window" id="action_sale_order_internal">
+        <record model="ir.actions.act_window" id="action_sale_order_internal_wizard">
             <field name="name">Internal order</field>
             <field name="res_model">sale.order.internal</field>
             <field name="view_type">form</field>
@@ -55,7 +58,7 @@
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph</field>
-             <field name="context">{'search_default_logistic_state_pending': True}</field>
+             <field name="context">{'search_default_logistic_state_pending': True, 'search_default_logistic_state_ready': True}</field>
              <field name="domain">[('logistic_source', '=', 'internal')]</field>
          </record>
         
@@ -71,7 +74,7 @@
                  parent="menu_logistic_left_order_internal_root"
                  name="Pending order"
                  sequence="10" 
-                 action="action_sale_order_internal"
+                 action="action_sale_order_internal_wizard"
                  />
              <menuitem
                  id="menu_logistic_left_order_internal_internal_root" 

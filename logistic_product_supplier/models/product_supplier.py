@@ -262,7 +262,6 @@ class SaleOrderLinePurchase(models.Model):
         domain="[('supplier', '=', True)]",
         )
     # -------------------------------------------------------------------------
-    
 
 class SaleOrderLine(models.Model):
     """ Model name: Sale order line relations

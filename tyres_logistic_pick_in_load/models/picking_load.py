@@ -145,11 +145,14 @@ class StockPickingDelivery(models.Model):
             product_qty = line.logistic_delivered_manual
             remain_qty = line.logistic_undelivered_qty
             logistic_sale_id = line.logistic_sale_id
-            is_internal = \
-                logistic_sale_id.order_id.logistic_source == 'internal'
-            extra_qty = product_qty - remain_qty
             
-            if is_internal:
+            extra_qty = product_qty - remain_qty
+    
+            # -----------------------------------------------------------------
+            # Order that load account stock status:            
+            # -----------------------------------------------------------------
+            if logistic_sale_id.order_id.logistic_source in (
+                    'internal', 'workshop', 'resell'):
                 extra_qty = product_qty # all quant in stock!
                 remain_qty = 0 # no stock movement
 
@@ -476,7 +479,6 @@ class PurchaseOrderLine(models.Model):
     def onchange_logistic_delivered_manual(self, ):
         ''' Write check state depend on partial or done
         '''
-        _logger.info('>>>>> changed logistic_delivered_manual') # TODO remove
         if self.logistic_delivered_manual < self.logistic_undelivered_qty:
             self.check_status = 'partial'
         else:    
