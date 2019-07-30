@@ -943,7 +943,7 @@
                      name="Dashboard"
                      action="action_sale_order_dashboard_form"
                      sequence="0"
-                     />
+                     />                     
                  <menuitem
                      id="menu_logistic_left_order_all" 
                      parent="menu_logistic_left_order_root"
