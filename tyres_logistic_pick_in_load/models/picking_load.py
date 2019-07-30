@@ -145,52 +145,61 @@ class StockPickingDelivery(models.Model):
             product_qty = line.logistic_delivered_manual
             remain_qty = line.logistic_undelivered_qty
             logistic_sale_id = line.logistic_sale_id
+            is_internal = \
+                logistic_sale_id.order_id.logistic_source == 'internal'
+            extra_qty = product_qty - remain_qty
             
-            if product_qty >= remain_qty:
-                sale_line_ready.append(logistic_sale_id)
-                if product_qty > remain_qty:
+            if is_internal:
+                extra_qty = product_qty # all quant in stock!
+                remain_qty = 0 # no stock movement
+
+            if extra_qty >= 0.0:
+                sale_line_ready.append(logistic_sale_id) # line is ready!
+
+                if extra_qty > 0.0:
                     quant_pool.create({
                         # date and uid are default
                         'order_id': self.id,
                         'product_id': product.id, 
-                        'product_qty': product_qty - remain_qty,
+                        'product_qty': extra_qty,
                         'price': line.price_unit,                    
                         })
                 product_qty = remain_qty # For stock movement
 
-            # ---------------------------------------------------------
+            # -----------------------------------------------------------------
             # Create movement (not load stock):
-            # ---------------------------------------------------------
-            move_pool.create({
-                'company_id': company.id,
-                'partner_id': partner.id,
-                'picking_id': picking.id,
-                'product_id': product.id, 
-                'name': product.name or ' ',
-                'date': scheduled_date,
-                'date_expected': scheduled_date,
-                'location_id': location_from,
-                'location_dest_id': location_to,
-                'product_uom_qty': product_qty,
-                'product_uom': product.uom_id.id,
-                'state': 'done',
-                'origin': origin,
-                
-                # Sale order line link:
-                'logistic_load_id': logistic_sale_id.id,
-                
-                # Purchase order line line: 
-                'logistic_purchase_id': line.id,
-                
-                #'purchase_line_id': load_line.id, # XXX needed?
-                #'logistic_quant_id': quant.id, # XXX no quants here
+            # -----------------------------------------------------------------
+            if product_qty > 0:
+                move_pool.create({
+                    'company_id': company.id,
+                    'partner_id': partner.id,
+                    'picking_id': picking.id,
+                    'product_id': product.id, 
+                    'name': product.name or ' ',
+                    'date': scheduled_date,
+                    'date_expected': scheduled_date,
+                    'location_id': location_from,
+                    'location_dest_id': location_to,
+                    'product_uom_qty': product_qty,
+                    'product_uom': product.uom_id.id,
+                    'state': 'done',
+                    'origin': origin,
+                    
+                    # Sale order line link:
+                    'logistic_load_id': logistic_sale_id.id,
+                    
+                    # Purchase order line line: 
+                    'logistic_purchase_id': line.id,
+                    
+                    #'purchase_line_id': load_line.id, # XXX needed?
+                    #'logistic_quant_id': quant.id, # XXX no quants here
 
-                # group_id
-                # reference'
-                # sale_line_id
-                # procure_method,
-                #'product_qty': select_qty,
-                })
+                    # group_id
+                    # reference'
+                    # sale_line_id
+                    # procure_method,
+                    #'product_qty': select_qty,
+                    })
             
         # Reset manual selection and link to pre-picking doc:    
         self.purchase_line_ids.write({

@@ -49,7 +49,74 @@ class SaleOrderInternal(models.Model):
         ''' Create Sale order
             Create purchase order from sale order
         '''
-        return 
+        sale_pool = self.env['sale.order']
+        line_pool = self.env['sale.order.line']
+        purchase_pool = self.env['sale.order.line.purchase']
+        
+        # ---------------------------------------------------------------------
+        # Search company partner:
+        # ---------------------------------------------------------------------
+        partner_id = self.env.user.company_id.partner_id.id
+                
+        # ---------------------------------------------------------------------
+        # Create sale order header:
+        # ---------------------------------------------------------------------
+        order = sale_pool.create({
+            'partner_id': partner_id,
+            'partner_invoice_id': partner_id,
+            'partner_shipping_id': partner_id,
+            'date_order': self.date,
+            'validity_date': self.date,
+            'note': _('Ordine interno'),
+            'team_id': False,
+            
+            'logistic_source': 'internal',
+            'logistic_state': 'order',
+            })
+        order_id = order.id
+
+        # ---------------------------------------------------------------------
+        # Create sale order line:
+        # ---------------------------------------------------------------------
+        for line in self.line_ids:
+            # Create line:
+            line_id = line_pool.create({
+                'order_id': order_id,
+                'product_id': line.product_id.id,
+                'product_uom_qty': line.product_uom_qty,
+                'price_unit': line.price_unit,
+                }).id
+
+            # -----------------------------------------------------------------
+            # Link sale order line to supplier:
+            # -----------------------------------------------------------------
+            purchase_pool.create({
+                'line_id': line_id,
+                'supplier_id': line.supplier_id.id,
+                'product_uom_qty': line.product_uom_qty,
+                'purchase_price': line.price_unit,                
+                })
+
+        # ---------------------------------------------------------------------
+        # Create purchase order and confirm:
+        # ---------------------------------------------------------------------
+        order.workflow_manual_order_pending()        
+        self.confirmed = True
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Internal order'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_id': order_id,
+            'res_model': 'sale.order',
+            'view_id': False,#view_id, # False
+            'views': [(False, 'form'), (False, 'tree')],
+            'domain': [],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
 
     # -------------------------------------------------------------------------    
     # Columns:
@@ -64,6 +131,19 @@ class SaleOrderLineInternal(models.Model):
     
     _name = 'sale.order.line.internal'
 
+    @api.onchange('product_id', 'supplier_id')
+    def onchange_product_supplier(self, ):
+        ''' Find price
+        '''
+        product = self.product_id
+        supplier = self.supplier_id
+        
+        if product and supplier:
+            for price in product.supplier_stock_ids:
+                if price.supplier_id == supplier:
+                    self.price_unit = price.quotation
+                    return
+                    
     # -------------------------------------------------------------------------    
     # Columns:
     # -------------------------------------------------------------------------    
@@ -75,7 +155,7 @@ class SaleOrderLineInternal(models.Model):
         string='Quantity', digits=dp.get_precision('Product Unit of Measure'), 
         required=True, default=1.0)
     price_unit = fields.Float(
-        'Unit Price', digits=dp.get_precision('Product Price'))
+        'Unit Price', digits=dp.get_precision('Product Price'), required=True)
 
 class SaleOrderInternal(models.Model):
     """ Model name: Internal sale order

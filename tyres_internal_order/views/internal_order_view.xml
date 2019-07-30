@@ -18,11 +18,12 @@
             <field name="arch" type="xml">
                 <form string="Sale Order internal">  
                     <header>
-                        <button name="confirm_internal_order" string="Confirm order" type="object" confirm="Confirm internal order?" />
+                        <button name="confirm_internal_order" string="Confirm order" type="object" confirm="Confirm internal order?" attrs="{'invisible': [('confirmed', '=', True)]}"/>
                     </header>      
                     <sheet>
                         <group colspan="4" col="4">
                             <field name="date" />
+                            <field name="confirmed" invisible="1" />
                             
                             <separator string="Detail:" colspan="4"/>
                             <field name="line_ids" colspan="4" nolabel="1">
@@ -33,7 +34,8 @@
                                     <field name="price_unit" />
                                 </tree>
                             </field>                            
-                            <field name="note" />
+                            <separator string="Note:" colspan="4"/>
+                            <field name="note" colspan="4" nolabel="1"/>
                         </group>    
                     </sheet>
                 </form>
@@ -46,7 +48,7 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_sale_order_internal_tree"/>
             <field name="context">{}</field>
-            <field name="domain">[]</field>
+            <field name="domain">[('confirmed', '=', False)]</field>
         </record>
          <record model="ir.actions.act_window" id="action_sale_order_internal_form">
              <field name="name">Sale order internal</field>
