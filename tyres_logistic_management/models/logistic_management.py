@@ -1190,10 +1190,12 @@ class SaleOrder(models.Model):
             line_state.discard('unused') # remove kit line (exploded)
             line_state.discard('done') # if some line are in done multidelivery
             if tuple(line_state) == ('ready', ): # All ready
-                order.write({
-                    'logistic_state': 'ready',
-                    })
+                if order.logistic_source == 'internal':
+                    order.logistic_state = 'done'
+                else:    
+                    order.logistic_state = 'ready'
                 order_ids.append(order.id)
+
         _logger.warning('Closed because ready # %s order' % len(order_ids))
         return order_ids
 
