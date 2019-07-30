@@ -1017,18 +1017,18 @@
                      />
 
                  <menuitem
-                     id="menu_logistic_left_order_problem" 
-                     parent="menu_logistic_left_order_root"
-                     name="Logistic: Problem"
-                     action="action_sale_order_problem_form"
-                     sequence="110"
-                     />
-
-                 <menuitem
                      id="menu_logistic_left_order_dropshipped" 
                      parent="menu_logistic_left_order_root"
                      name="Logistic: Dropshipped"
                      action="action_sale_order_dropshipped_form"
+                     sequence="110"
+                     />
+
+                 <menuitem
+                     id="menu_logistic_left_order_problem" 
+                     parent="menu_logistic_left_order_root"
+                     name="Logistic: Problem"
+                     action="action_sale_order_problem_form"
                      sequence="120"
                      />
 
