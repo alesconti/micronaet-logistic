@@ -1264,6 +1264,14 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
     # -------------------------------------------------------------------------    
+    # 0. Cancel error order
+    # -------------------------------------------------------------------------    
+    @api.model
+    def wk_order_cancel(self):
+        ''' Cancel order (only error state)
+        '''
+        self.logistic_state = 'cancel'
+
     # A. Logistic phase 1: Check secure payment:
     # -------------------------------------------------------------------------    
     @api.model

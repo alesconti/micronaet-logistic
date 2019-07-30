@@ -448,12 +448,15 @@
                 </page>
             </field>
         </record>          
-                             
+
         <record model="ir.ui.view" id="view_sale_order_logistic_form">
              <field name="name">sale.order.logistic.form</field>
              <field name="model">sale.order</field>
              <field name="inherit_id" ref="sale.view_order_form"/>
              <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_confirm']" position="after">
+                     <button name="wk_order_cancel" type="object" attrs="{'invisible': [('logistic_state','!=','error')]}" string="Cancel order"/>
+                </xpath>
                  <field name="payment_term_id" position="before">
                      <field name="partner_need_invoice" />
                      <field name="need_invoice" />
@@ -499,7 +502,7 @@
                      <button name="locked_delivery_off" string="Unlock delivery" type="object" attrs="{'invisible': [('locked_delivery','=',False)]}" icon="fa-mail-reply"/>
                  </xpath>
              </field>
-         </record>    
+         </record>             
          <record model="ir.ui.view" id="view_sale_order_quotation_logistic_tree">
              <field name="name">sale.order.logistic.tree</field>
              <field name="model">sale.order</field>
