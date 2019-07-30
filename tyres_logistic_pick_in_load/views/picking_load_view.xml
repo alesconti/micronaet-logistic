@@ -90,7 +90,7 @@
                      
                      <button name="delivery_0" string="0" type="object" icon="fa-bitbucket" invisible="context.get('open_assign_bf', False)"/>
                      <button name="delivery_less_1" string="-" type="object" icon="fa-minus-square" invisible="context.get('open_assign_bf', False)"/>
-                     <button name="delivery_more_1" string="+" type="object" icon="fa-plus-square" invisible="context.get('open_assign_bf', False)"/>
+                     <button name="delivery_more_1" string="+" type="object" invisible="context.get('open_assign_bf', False)" icon="fa-plus-square" /><!--icon="/web/static/src/img/icons/plus.png"/> icon="fa-plus-square"-->
                      <button name="delivery_all" string="Arrivo" type="object" icon="fa-fast-forward" invisible="context.get('open_assign_bf', False)"/>
                      
                      <field name="logistic_delivered_manual" string="Arrivo" />
