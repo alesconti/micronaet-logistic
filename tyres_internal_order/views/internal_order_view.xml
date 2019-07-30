@@ -50,12 +50,12 @@
             <field name="context">{}</field>
             <field name="domain">[('confirmed', '=', False)]</field>
         </record>
-         <record model="ir.actions.act_window" id="action_sale_order_internal_form">
+         <record model="ir.actions.act_window" id="action_sale_order_internal_pending_form">
              <field name="name">Sale order internal</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph</field>
-             <field name="context">{}</field>
+             <field name="context">{'search_default_logistic_state_pending': True}</field>
              <field name="domain">[('logistic_source', '=', 'internal')]</field>
          </record>
         
@@ -78,7 +78,7 @@
                  parent="menu_logistic_left_order_internal_root"
                  name="Internal order"
                  sequence="20" 
-                 action="action_sale_order_internal_form"
+                 action="action_sale_order_internal_pending_form"
                  />
     </data>
 </openerp>

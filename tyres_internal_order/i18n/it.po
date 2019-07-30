@@ -1,0 +1,167 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* tyres_internal_order
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-30 12:50+0000\n"
+"PO-Revision-Date: 2019-07-30 14:51+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: tyres_internal_order
+#: model:ir.ui.view,arch_db:tyres_internal_order.view_sale_order_internal_form
+msgid "Confirm internal order?"
+msgstr "Confermi l'ordine di magazzino?"
+
+#. module: tyres_internal_order
+#: model:ir.ui.view,arch_db:tyres_internal_order.view_sale_order_internal_form
+msgid "Confirm order"
+msgstr "Conferma ordine"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_internal_confirmed
+msgid "Confirmed"
+msgstr "Confermato"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_internal_create_uid
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_line_internal_create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_internal_create_date
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_line_internal_create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_internal_date
+msgid "Date"
+msgstr "Data"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_internal_line_ids
+#: model:ir.ui.view,arch_db:tyres_internal_order.view_sale_order_internal_form
+msgid "Detail"
+msgstr "Dettaglio"
+
+#. module: tyres_internal_order
+#: model:ir.ui.view,arch_db:tyres_internal_order.view_sale_order_internal_form
+msgid "Detail:"
+msgstr "Dettagli:"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_internal_display_name
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_line_internal_display_name
+msgid "Display Name"
+msgstr "Nome Completo"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_internal_id
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_line_internal_id
+msgid "ID"
+msgstr "ID"
+
+#. module: tyres_internal_order
+#: code:addons/tyres_internal_order/models/internal_order.py:109
+#: model:ir.actions.act_window,name:tyres_internal_order.action_sale_order_internal
+#: model:ir.ui.menu,name:tyres_internal_order.menu_logistic_left_order_internal_internal_root
+#: model:ir.ui.menu,name:tyres_internal_order.menu_logistic_left_order_internal_root
+#, python-format
+msgid "Internal order"
+msgstr "Ordine interno"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_internal___last_update
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_line_internal___last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_internal_write_uid
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_line_internal_write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_internal_write_date
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_line_internal_write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_internal_note
+msgid "Note"
+msgstr "Nota"
+
+#. module: tyres_internal_order
+#: model:ir.ui.view,arch_db:tyres_internal_order.view_sale_order_internal_form
+msgid "Note:"
+msgstr "Note:"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_line_internal_order_id
+msgid "Order"
+msgstr "Ordine"
+
+#. module: tyres_internal_order
+#: code:addons/tyres_internal_order/models/internal_order.py:70
+#, python-format
+msgid "Ordine interno"
+msgstr "Ordine interno"
+
+#. module: tyres_internal_order
+#: model:ir.ui.menu,name:tyres_internal_order.menu_logistic_left_order_internal_pending_root
+msgid "Pending order"
+msgstr "Ordine pendente"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_line_internal_product_id
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_line_internal_product_uom_qty
+msgid "Quantity"
+msgstr "Quantità"
+
+#. module: tyres_internal_order
+#: model:ir.ui.view,arch_db:tyres_internal_order.view_sale_order_internal_form
+#: model:ir.ui.view,arch_db:tyres_internal_order.view_sale_order_internal_tree
+msgid "Sale Order internal"
+msgstr "Ordine interno"
+
+#. module: tyres_internal_order
+#: model:ir.actions.act_window,name:tyres_internal_order.action_sale_order_internal_pending_form
+msgid "Sale order internal"
+msgstr "Ordine interno"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_line_internal_supplier_id
+msgid "Supplier"
+msgstr "Fornitore"
+
+#. module: tyres_internal_order
+#: model:ir.model.fields,field_description:tyres_internal_order.field_sale_order_line_internal_price_unit
+msgid "Unit Price"
+msgstr "Prezzo unitario"
+
+#. module: tyres_internal_order
+#: model:ir.model,name:tyres_internal_order.model_sale_order_internal
+msgid "sale.order.internal"
+msgstr "sale.order.internal"
+
+#. module: tyres_internal_order
+#: model:ir.model,name:tyres_internal_order.model_sale_order_line_internal
+msgid "sale.order.line.internal"
+msgstr "sale.order.line.internal"
