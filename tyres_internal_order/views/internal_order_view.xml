@@ -18,7 +18,7 @@
             <field name="arch" type="xml">
                 <form string="Sale Order internal">  
                     <header>
-                        <button name="confirm_internal_order" string="Confirm orer" type="object" confirm="Confirm internal order?" />
+                        <button name="confirm_internal_order" string="Confirm order" type="object" confirm="Confirm internal order?" />
                     </header>      
                     <sheet>
                         <group colspan="4" col="4">
@@ -74,7 +74,7 @@
              <menuitem
                  id="menu_logistic_left_order_internal_internal_root" 
                  parent="menu_logistic_left_order_internal_root"
-                 name="Pending order"
+                 name="Internal order"
                  sequence="20" 
                  action="action_sale_order_internal_form"
                  />

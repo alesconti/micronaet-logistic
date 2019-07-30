@@ -44,6 +44,13 @@ class SaleOrderInternal(models.Model):
     _rec_name = 'date'
     _order = 'date desc'
 
+    @api.multi
+    def confirm_internal_order(self):
+        ''' Create Sale order
+            Create purchase order from sale order
+        '''
+        return 
+
     # -------------------------------------------------------------------------    
     # Columns:
     # -------------------------------------------------------------------------    
