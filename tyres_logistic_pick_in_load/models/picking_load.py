@@ -359,6 +359,12 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     #                                   Button event:
     # -------------------------------------------------------------------------
+    @api.multi
+    def dummy(self):
+        ''' Dummy button (do nothing)
+        '''
+        return True
+
     # Fast filter:
     @api.model
     def return_fast_filter_view(self, field_name, field_value, name):

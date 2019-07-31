@@ -62,7 +62,6 @@
             <field name="arch" type="xml">
                 <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-success="check_status in ('total', 'done') and logistic_delivered_manual&gt;0" decoration-danger="logistic_undelivered_qty==0" decoration-warning="check_status=='partial' and logistic_delivered_manual&gt;0" ><!--user_select_id!=uid and user_select_id != False-->
                      <button name="clean_fast_filter" string="Remove filters" type="object" icon="fa-home fa-2x" invisible="context.get('open_assign_bf', False)"/>
-                     <button name="dummy" string="Order not web (internal or workshop)" type="object" icon="fa-bell"  attrs="{'invisible': [('logistic_source','in',(False, 'web'))]}" /><!--addons/tyres_logistic_pick_in_load/static/src/img/icons/-->
                      <field name="logistic_source" invisible="1"/>
                      <field name="order_id" readonly="1" string="Rif." invisible="1"/>
                      <button name="open_detail_delivery_in" string="Open detail for line" type="object" icon="fa-list-alt fa-2x"/>
@@ -99,6 +98,7 @@
                      <field name="logistic_delivered_manual" string="Arrivo" />
                      <field name="delivery_id" invisible="1"/>
                      <button name="create_delivery_orders" string="Create delivery orders" type="object" class="oe_highlight" colspan="1" icon="fa-download fa-2x" confirm="Do you confirm the generation of all supplier delivery document (you selection)?" invisible="context.get('open_assign_bf', False)"/>
+                     <button name="dummy" string="Order not web (internal or workshop)" type="object" icon="fa-bell"  attrs="{'invisible': [('logistic_source','in',(False, 'web'))]}" /><!--addons/tyres_logistic_pick_in_load/static/src/img/icons/-->
                 </tree>
             </field>
         </record>
