@@ -158,6 +158,24 @@ class SaleOrderInternal(models.Model):
         ], 'Logistic source', default='internal', readonly=True
         )
 
+class SaleOrderLine(models.Model):
+    """ Model name: Sale order line
+    """
+    
+    _name = 'sale.order.line'
+
+    # -------------------------------------------------------------------------    
+    # Columns:
+    # -------------------------------------------------------------------------    
+    logistic_source = fields.Selection([
+        ('web', 'Web order'),
+        ('resell', 'Customer resell order'),
+        ('workshop', 'Workshop order'),
+        ('internal', 'Internal provisioning order'),
+        ], 'Logistic source', 
+            related='order_id.logistic_source',
+        )
+
 class SaleOrderLineInternal(models.Model):
     """ Model name: Internal sale order line
     """
