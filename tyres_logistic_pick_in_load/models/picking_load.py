@@ -629,13 +629,9 @@ class PurchaseOrderLine(models.Model):
         ('partial', 'Partially received'), # Select partial to deliver
         ], 'Check status', default='partial')
 
-    logistic_source = fields.Selection([
-        ('web', 'Web order'),
-        ('resell', 'Customer resell order'),
-        ('workshop', 'Workshop order'),
-        ('internal', 'Internal provisioning order'),
-        ], 'Logistic source', 
-            related='logistic_sale_id.order_id.logistic_source',
+    logistic_source = fields.Selection(
+        'Logistic source', readonly=True,
+        related='logistic_sale_id.order_id.logistic_source',
         )
         
     #ivel = fields.Char(
