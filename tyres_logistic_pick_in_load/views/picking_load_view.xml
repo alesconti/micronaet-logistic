@@ -1,6 +1,18 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <record model="ir.actions.server" id="server_acton_picking_load_document_generator">
+            <field name="name">Document generator</field>
+            <field name="model_id" ref="purchase.model_purchase_order_line"/>
+            <field name="sequence">1</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                for line in records:
+                    action = line.generate_delivery_orders_from_line()
+            </field>
+       </record>    
+    
         <record model="ir.ui.view" id="view_purchase_order_line_tree">
             <field name="name">purchase.order.line.tree</field>
             <field name="model">purchase.order.line</field>
