@@ -481,14 +481,14 @@ class PurchaseOrderLine(models.Model):
             self.raggio,
             )
 
-    #@api.onchange('logistic_delivered_manual')
-    #def onchange_logistic_delivered_manual(self, ):
-    #    ''' Write check state depend on partial or done
-    #    '''
-    #    if self.logistic_delivered_manual < self.logistic_undelivered_qty:
-    #        self.check_status = 'partial'
-    #    else:    
-    #        self.check_status = 'total'
+    @api.onchange('logistic_delivered_manual')
+    def onchange_logistic_delivered_manual(self, ):
+        ''' Write check state depend on partial or done
+        '''
+        if self.logistic_delivered_manual < self.logistic_undelivered_qty:
+            self.check_status = 'partial'
+        else:    
+            self.check_status = 'total'
 
     @api.multi
     def create_delivery_orders(self):
@@ -546,7 +546,7 @@ class PurchaseOrderLine(models.Model):
             'logistic_delivered_manual': 0,
             'user_select_id': False, # no need to save user
             })        
-        #return self.onchange_logistic_delivered_manual()
+        return self.onchange_logistic_delivered_manual()
 
     @api.multi
     def delivery_more_1(self):
@@ -556,7 +556,7 @@ class PurchaseOrderLine(models.Model):
             'logistic_delivered_manual': self.logistic_delivered_manual + 1.0,
             'user_select_id': self.env.uid,
             })        
-        #return self.onchange_logistic_delivered_manual()
+        return self.onchange_logistic_delivered_manual()
 
     @api.multi
     def delivery_less_1(self):
@@ -573,7 +573,7 @@ class PurchaseOrderLine(models.Model):
             'logistic_delivered_manual': logistic_delivered_manual - 1.0,
             'user_select_id': self.env.uid,
             })        
-        #return self.onchange_logistic_delivered_manual()
+        return self.onchange_logistic_delivered_manual()
 
     @api.multi
     def delivery_all(self):
@@ -587,7 +587,7 @@ class PurchaseOrderLine(models.Model):
             'logistic_delivered_manual': self.logistic_undelivered_qty,
             'user_select_id': self.env.uid,
             })        
-        #return self.onchange_logistic_delivered_manual()
+        return self.onchange_logistic_delivered_manual()
 
     @api.one
     def _get_name_extended_full(self):
