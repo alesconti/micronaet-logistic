@@ -872,9 +872,12 @@ class StockPicking(models.Model):
         invoice_ids = [] # For extra operation after
         for picking in self:
             partner = picking.partner_id
+            order = picking.sale_order_id
+            if not order:
+                _logger.error('Picking without order linked')
             
             # Need invoice check:
-            need_invoice = partner.property_account_position_id.need_invoice or \
+            need_invoice = order.fiscal_position_id.need_invoice or \
                 partner.need_invoice
                 
             # Assign always DDT number:
