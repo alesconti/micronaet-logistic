@@ -8,8 +8,7 @@
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
             <field name="code">
-                for line in records:
-                    action = line.generate_delivery_orders_from_line()
+                action = records.generate_delivery_orders_from_line()
             </field>
        </record>    
     
