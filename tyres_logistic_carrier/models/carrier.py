@@ -159,9 +159,9 @@ class SaleOrder(models.Model):
             '''
             return '%s %s%s - %s %s [%s %s] %s' % (
                 partner.name or '',
-                street or _(
+                partner.street or _(
                     '<font color="red">Address</font>'),
-                street2 or '',
+                partner.street2 or '',
                 partner.zip or _(
                     '<font color="red">ZIP</font>'),
                 partner.city or _(
@@ -174,11 +174,12 @@ class SaleOrder(models.Model):
                     '<font color="red">Phone</font>'),
                 )
         
-        self.carrier_check = _('ORD.: %s\nINV.: %s\nDELIV.: %s') % (
-            get_partner_data(self.partner_id),
-            get_partner_data(self.partner_invoice_id),
-            get_partner_data(self.partner_shipping_id),
-            )
+        self.carrier_check = _(
+            '<b>ORD.:</b> %s\n<b>INV.:</b> %s\n<b>DELIV.:</b> %s') % (
+                get_partner_data(self.partner_id),
+                get_partner_data(self.partner_invoice_id),
+                get_partner_data(self.partner_shipping_id),
+                )
         
     
     # -------------------------------------------------------------------------

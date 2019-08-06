@@ -38,7 +38,7 @@
                             </field>
 
                             <separator string="Partner check:" colspan="4"/>
-                            <field name="carrier_check" colspan="4" readonly="1"/>
+                            <field name="carrier_check" colspan="4" readonly="1" nolabel="1" widget="html"/>
                             <newline/>
 
                             <separator string="Request:" colspan="3"/>
