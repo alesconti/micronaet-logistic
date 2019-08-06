@@ -978,7 +978,7 @@ class StockPicking(models.Model):
                 invoice_file = open(invoice_filename, 'w')
                 
                 # Export syntax:
-                cols = 25
+                cols = 26
                 invoice_file.write(
                     'RAGIONE SOCIALE|'
                     'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
@@ -987,11 +987,12 @@ class StockPicking(models.Model):
                     'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
                     'ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
                     'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|'
-                    'SKU|DESCRIZIONE|QTA|PREZZO|IVA\r\n'
+                    'SKU|DESCRIZIONE|QTA|PREZZO|IVA|CANALE\r\n'
                     )
 
                 mask = '%s|' * (cols - 1) + '%s\r\n' # 25 fields
                 for move in self.move_lines:
+                    line = move.logistic_unload_id
                     invoice_file.write(mask % (
                         partner.name,
                         get_address(partner),
@@ -1021,8 +1022,9 @@ class StockPicking(models.Model):
                         move.product_id.default_code or '',
                         move.name or '',
                         move.product_uom_qty,
-                        move.logistic_unload_id.price_unit, # XXX read from line
-                        move.logistic_unload_id.tax_id[0].account_ref or '', # TODO VAT code, >> sale order line?
+                        line.price_unit, # XXX read from line
+                        line.tax_id[0].account_ref or '', # TODO VAT code, >> sale order line?
+                        line.order_id.team_id.channel_ref, # Channel agent code
                         ))
                 invoice_file.close()
                 self.check_import_reply() # Check previous import reply
