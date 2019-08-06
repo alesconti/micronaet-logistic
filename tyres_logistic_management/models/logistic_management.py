@@ -43,6 +43,7 @@ class CrmTeam(models.Model):
     _inherit = 'crm.team'
     
     channel_ref = fields.Char('Channel', size=20)
+    team_code_ref = fields.Char('Team code reg', size=20)
     market_type = fields.Selection((
         ('b2b', 'B2B'),
         ('b2c', 'B2C'),

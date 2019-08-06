@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <field name="company_id" position="after">
                    <field name="channel_ref" />
+                   <field name="team_code_ref" />
                    <field name="market_type" />
                 </field>
             </field>
@@ -20,6 +21,7 @@
             <field name="arch" type="xml">
                 <field name="user_id" position="after">
                    <field name="channel_ref" />
+                   <field name="team_code_ref" />
                    <field name="market_type" />
                 </field>
             </field>
