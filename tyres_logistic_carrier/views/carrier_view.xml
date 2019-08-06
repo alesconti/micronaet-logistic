@@ -37,6 +37,10 @@
                                 </tree>
                             </field>
 
+                            <separator string="Partner check:" colspan="4"/>
+                            <field name="carrier_check" colspan="4" readonly="1"/>
+                            <newline/>
+
                             <separator string="Request:" colspan="3"/>
                             <button name="set_default_carrier_description" string="Force description" type="object" icon="fa-hand-o-down"/>
                             <field name="carrier_description" colspan="4" />

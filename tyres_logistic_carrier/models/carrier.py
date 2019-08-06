@@ -108,7 +108,7 @@ class SaleOrder(models.Model):
             product = line.product_id
             if product.type == 'service' or product.is_expence:
                 continue
-            carrier_description += '%s (X %s)\n'% (
+            carrier_description += '%s (X %s) '% (
                 product.description_sale or product.titolocompleto or \
                     product.name or _('Not found'),
                 int(line.product_uom_qty),
@@ -147,6 +147,40 @@ class SaleOrder(models.Model):
         self.carrier_ok = False
         return True
 
+    @api.multi
+    def _get_carrier_check_address(self):
+        ''' Check address for delivery
+        '''
+        self.ensure_one()
+
+        # Function:
+        def get_partner_data(partner):
+            ''' Embedded function to check partner data
+            '''
+            return '%s %s%s - %s %s [%s %s] %s' % (
+                partner.name or '',
+                street or _(
+                    '<font color="red">Address</font>'),
+                street2 or '',
+                partner.zip or _(
+                    '<font color="red">ZIP</font>'),
+                partner.city or _(
+                    '<font color="red">City</font>'),
+                partner.state_id.name or _(
+                    '<font color="red">State</font>'),
+                partner.country_id.name or _(
+                    '<font color="red">Country</font>'),
+                partner.phone or _(
+                    '<font color="red">Phone</font>'),
+                )
+        
+        self.carrier_check = _('ORD.: %s\nINV.: %s\nDELIV.: %s') % (
+            get_partner_data(self.partner_id),
+            get_partner_data(self.partner_invoice_id),
+            get_partner_data(self.partner_shipping_id),
+            )
+        
+    
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
@@ -155,6 +189,8 @@ class SaleOrder(models.Model):
     carrier_supplier_id = fields.Many2one('carrier.supplier', 'Carrier')
     carrier_parcel_template_id = fields.Many2one(
         'carrier.parcel.template', 'Parcel template')
+    carrier_check = fields.Text('Carrier check', help='Check carrier address',
+        compute='_get_carrier_check_address', widget='html')
     carrier_description = fields.Text('Carrier description')
     carrier_note = fields.Text('Carrier note')
     carrier_stock_note = fields.Text('Stock operator note')
