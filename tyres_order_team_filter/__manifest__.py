@@ -33,6 +33,7 @@
         'base',
         'sale',
         'tyres_logistic_management',
+        'sales_team', # default function
         ],
     'data': [        
         'security/my_order_group.xml',

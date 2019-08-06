@@ -29,6 +29,24 @@ from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
 
+class CrmTeam(models.Model):
+    """ Team setup (force default function)
+    """
+    _inherit = 'crm.team'
+
+    # -------------------------------------------------------------------------
+    # Override original function:
+    # -------------------------------------------------------------------------
+    @api.model
+    @api.returns('self', lambda value: value.id if value else False)       
+    def _get_default_team_id(self, user_id=None):
+        ''' Get default from user setup
+        '''
+        if not user_id:
+            user_id = self.env.uid
+        user = self.env['res.users'].browse(user_id)
+        return user.my_default_team_id
+
 class ResUsersMyTemplate(models.Model):
     """ Model name: Res Users My Template
     """
@@ -76,6 +94,8 @@ class ResUsers(models.Model):
         help='Template list for default menu')
     my_menu_ids = fields.One2many('res.users.my.template', 'my_user_id', 
         'User', help='Menu generated from template user')
+    my_default_team_id = fields.Many2one(
+        'crm.team', string='Default Team', help='Default for this user')
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
