@@ -177,7 +177,6 @@ class SaleOrder(models.Model):
                 get_partner_data(self.partner_invoice_id),
                 get_partner_data(self.partner_shipping_id),
                 )
-        
     
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
