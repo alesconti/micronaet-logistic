@@ -157,25 +157,22 @@ class SaleOrder(models.Model):
         def get_partner_data(partner):
             ''' Embedded function to check partner data
             '''
-            return '%s %s%s - %s %s [%s %s] %s' % (
+            def format_error(field):
+                return '<font color="red"><b> [%s] </b></font>' % field
+                
+            return '%s %s %s - %s %s [%s %s] %s<br/>' % (
                 partner.name or '',
-                partner.street or _(
-                    '<font color="red">Address</font>'),
+                partner.street or format_error(_('Address')),
                 partner.street2 or '',
-                partner.zip or _(
-                    '<font color="red">ZIP</font>'),
-                partner.city or _(
-                    '<font color="red">City</font>'),
-                partner.state_id.name or _(
-                    '<font color="red">State</font>'),
-                partner.country_id.name or _(
-                    '<font color="red">Country</font>'),
-                partner.phone or _(
-                    '<font color="red">Phone</font>'),
+                partner.zip or format_error(_('ZIP')),
+                partner.city or  format_error(_('City')),
+                partner.state_id.name or  format_error(_('State')),
+                partner.country_id.name or  format_error(_('Country')),
+                partner.phone or  format_error(_('Phone')),
                 )
         
-        self.carrier_check = _(
-            '<b>ORD.:</b> %s\n<b>INV.:</b> %s\n<b>DELIV.:</b> %s') % (
+        mask = _('<b>ORD.:</b> %s\n<b>INV.:</b> %s\n<b>DELIV.:</b> %s')
+        self.carrier_check = mask % (
                 get_partner_data(self.partner_id),
                 get_partner_data(self.partner_invoice_id),
                 get_partner_data(self.partner_shipping_id),
