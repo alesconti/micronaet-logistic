@@ -91,13 +91,31 @@ class SaleOrderParcel(models.Model):
     # Weight:
     weight = fields.Float('Weight', digits=(16, 2), required=True)
     weight_uom_id = fields.Many2one('product.uom', 'Product UOM')
-    
+
+
 class SaleOrder(models.Model):
     """ Model name: Sale order carrier data
     """
     
     _inherit = 'sale.order'
     
+    @api.multi
+    def set_default_carrier_description(self):
+        ''' Update description from sale order line
+        '''
+        carrier_description = ''
+        for line in self.order_line:
+            product = line.product_id
+            if product.type == 'service' or product.is_expence:
+                continue
+            carrier_description += '%s (X %s)\n'% (
+                product.description_sale or product.titolocompleto or \
+                    product.name or _('Not found'),
+                int(line.product_uom_qty),
+                )
+            
+        self.carrier_description = carrier_description.strip()
+
     @api.multi
     def load_template_parcel(self, ):
         ''' Load this template

@@ -37,7 +37,8 @@
                                 </tree>
                             </field>
 
-                            <separator string="Request:" colspan="4"/>
+                            <separator string="Request:" colspan="3"/>
+                            <button name="set_default_carrier_description" string="Force description" type="object" icon="fa-hand-o-down"/>
                             <field name="carrier_description" colspan="4" />
                             <newline/>
                             
