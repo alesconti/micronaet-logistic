@@ -8,6 +8,7 @@
                 <tree string="User for team">
                     <field name="name" />                    
                     <field name="team_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
+                    <field name="my_default_team_id" />
                 </tree>
             </field>
         </record>
