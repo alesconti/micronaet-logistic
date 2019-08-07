@@ -588,11 +588,18 @@ class StockPicking(models.Model):
             for move in picking.move_lines:
                 qty = move.product_uom_qty
                 total = qty * move.logistic_unload_id.price_unit
+
                 # Get channel
                 try:
                     channel = move.logistic_unload_id.team_id.channel_ref 
                 except:
                     channel = ''
+                    
+                # Get partner code    
+                try:
+                    code_ref = move.logistic_unload_id.team_id.team_code_ref
+                except:
+                    code_ref = ''
 
                 if channel not in channel_row:
                     channel_row[channel] = []
@@ -611,6 +618,7 @@ class StockPicking(models.Model):
                     qty,
                     total,
                     'S' if product.is_expence else 'M',
+                    code_ref,
                     ))
         
         date = evaluation_date.replace('-', '_')
@@ -619,9 +627,9 @@ class StockPicking(models.Model):
             fees_f = open(fees_filename, 'w')    
 
             fees_f.write(
-                'CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE|TIPO\r\n')
+                'CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE|TIPO|CLIENTE\r\n')
             for row in channel_row[channel]:
-                fees_f.write('%s|%s|%s|%s|%s|%s|%s|%s\r\n' % row)
+                fees_f.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\r\n' % row)
             fees_f.close()
                  
         return True
