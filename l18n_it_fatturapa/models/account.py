@@ -745,7 +745,7 @@ class StockPicking(models.Model):
             'number': '%s/FE' % int(invoice_number),
             
             'date': picking.invoice_date, # TODO prepare
-            'type': 'TD04' if invoice.stock_mode == 'in' else 'TD01',
+            'type': 'TD04' if picking.stock_mode == 'in' else 'TD01',
             'currency': 'EUR',
             'causal': 'VENDITA',
         
