@@ -931,7 +931,7 @@
              <field name="model_id" ref="model_sale_order" />
              <field name="binding_model_id" ref="model_sale_order" />
              <field name="state">code</field>
-             <field name="code">records.order_ready_excel_report()</field>
+             <field name="code">env['sale.order'].order_ready_excel_report()</field>
          </record>
         
          <!--MASTER MENU:-->
@@ -1123,7 +1123,7 @@
                  sequence="30"
                  />
                  <menuitem
-                     id="menu_logistic_left_purchase_line_detail" 
+                     id="menu_ir_delivery_report_xlsx_server_action" 
                      parent="menu_logistic_customer_management_root"
                      name="Ready report"
                      action="ir_delivery_report_xlsx_server_action"

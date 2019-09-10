@@ -1112,8 +1112,73 @@ class SaleOrder(models.Model):
     def order_ready_excel_report(self):
         ''' Generate ready report
         '''
+        # Pool used:
+        excel_pool = self.env['excel.writer']
+        mode_pool = self.env['stock.move']
+                
+        now = fields.Datetime.now()
         import pdb; pdb.set_trace()
-        return True
+
+        _logger.warning('Ready delivery ref.: %s' % now)
+    
+        # Stock moves to delivery:
+        moves = move_pool.search([
+            # TODO
+            ('picking_id.stock_mode', '=', 'out'),
+            ])
+
+        ws_name = _('Consegne pronte')
+        excel_pool.create_worksheet(ws_name)
+
+        # ---------------------------------------------------------------------
+        # Format:
+        # ---------------------------------------------------------------------
+        excel_pool.set_format()
+        format_type = {
+            'title' = excel_pool.get_format('title'),
+            'header' = excel_pool.get_format('header'),
+            'text': {
+                'black': excel_pool.get_format('text'),
+                'red': excel_pool.get_format('text_red'),
+                },
+            'number': {    
+                'black': excel_pool.get_format('number'),
+                'red': excel_pool.get_format('number_red'),
+                },
+            }
+        
+        # ---------------------------------------------------------------------
+        # Setup page: Corrispettivo
+        # ---------------------------------------------------------------------
+        excel_pool.column_width(ws_name, [
+            # TODO
+            15,
+            ])
+
+        row = 0
+        excel_pool.write_xls_line(ws_name, row, [
+             'Consegne pronte in data: %s' % now
+             ], default_format=f_title)
+
+        row += 1
+        excel_pool.write_xls_line(ws_name, row, [
+             'Codice',
+             ], default_format=format_type['title'])
+
+        for move in moves:
+            # Readability:
+            picking = move.picking_id
+            order = picking.sale_order_id 
+            #partner = order.partner_id
+            
+            excel_pool.write_xls_line(ws_invoice, row_invoice, (
+                picking.ddt_date,
+                ), default_format=format_type['text']['black'])
+        
+        # ---------------------------------------------------------------------                 
+        # Return file:
+        # ---------------------------------------------------------------------                 
+        return excel_pool.return_attachment('Consegne del %s' % now)
     
     # -------------------------------------------------------------------------    
     #                           OVERRIDE EVENTS:
