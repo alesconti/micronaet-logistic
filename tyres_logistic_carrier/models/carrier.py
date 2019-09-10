@@ -200,7 +200,7 @@ class SaleOrder(models.Model):
     #carrier_incoterm = fields.selection([
     #    ('dap', 'DAP'),
     #    ], 'Pay mode', default='dap')
-    parcel_ids = fields.One2many('sale.order.parcel', 'order_id', '')
+    parcel_ids = fields.One2many('sale.order.parcel', 'order_id', 'Parcels')
 
     # From Carrier:
     carrier_cost = fields.Float('Cost', digits=(16, 2))

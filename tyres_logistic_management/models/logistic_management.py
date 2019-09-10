@@ -1106,6 +1106,16 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     # -------------------------------------------------------------------------    
+    #                           SERVER ACTION:
+    # -------------------------------------------------------------------------    
+    @api.model
+    def order_ready_excel_report(self):
+        ''' Generate ready report
+        '''
+        import pdb; pdb.set_trace()
+        return True
+    
+    # -------------------------------------------------------------------------    
     #                           OVERRIDE EVENTS:
     # -------------------------------------------------------------------------    
     @api.multi

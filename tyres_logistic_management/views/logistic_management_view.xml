@@ -924,6 +924,16 @@
              <field name="domain">[]</field>
          </record>
 
+         <!-- Server Action:-->
+         <record id="ir_delivery_report_xlsx_server_action" model="ir.actions.server">
+             <field name="name">Order ready report</field>
+             <field name="type">ir.actions.server</field>
+             <field name="model_id" ref="model_sale_order" />
+             <field name="binding_model_id" ref="model_sale_order" />
+             <field name="state">code</field>
+             <field name="code">records.order_ready_excel_report()</field>
+         </record>
+        
          <!--MASTER MENU:-->
          <menuitem
              id="menu_logistic_header_root" 
@@ -1105,12 +1115,27 @@
                      action="action_purchase_order_line"
                      sequence="10"
                      />                 
-                 
+
+            <menuitem
+                 id="menu_logistic_customer_management_root" 
+                 parent="menu_logistic_header_root"
+                 name="Manage customer delivery"
+                 sequence="30"
+                 />
+                 <menuitem
+                     id="menu_logistic_left_purchase_line_detail" 
+                     parent="menu_logistic_customer_management_root"
+                     name="Ready report"
+                     action="ir_delivery_report_xlsx_server_action"
+                     sequence="10"
+                     />
+                     
+
              <menuitem
                  id="menu_logistic_left_pick_in_root" 
                  parent="menu_logistic_header_root"
                  name="BF load document"
-                 sequence="30"             
+                 sequence="40"             
                  groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"            
                  />
                  <menuitem
@@ -1125,7 +1150,7 @@
                  id="menu_logistic_left_pick_out_root" 
                  parent="menu_logistic_header_root"
                  name="BC unload document"
-                 sequence="40"             
+                 sequence="50"             
                  groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"            
                  />
                  <menuitem
@@ -1147,7 +1172,7 @@
                  id="menu_logistic_left_stock_move_root" 
                  parent="menu_logistic_header_root"
                  name="Stock move"
-                 sequence="50"             
+                 sequence="60"             
                  groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"            
                  />
                  <menuitem
