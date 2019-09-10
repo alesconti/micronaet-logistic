@@ -1135,8 +1135,8 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         excel_pool.set_format()
         format_type = {
-            'title' = excel_pool.get_format('title'),
-            'header' = excel_pool.get_format('header'),
+            'title': excel_pool.get_format('title'),
+            'header': excel_pool.get_format('header'),
             'text': {
                 'black': excel_pool.get_format('text'),
                 'red': excel_pool.get_format('text_red'),
