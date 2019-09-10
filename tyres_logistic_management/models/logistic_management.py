@@ -1114,17 +1114,16 @@ class SaleOrder(models.Model):
         '''
         # Pool used:
         excel_pool = self.env['excel.writer']
-        mode_pool = self.env['stock.move']
+        line_pool = self.env['sale.order.line']
                 
         now = fields.Datetime.now()
-        import pdb; pdb.set_trace()
 
         _logger.warning('Ready delivery ref.: %s' % now)
     
-        # Stock moves to delivery:
-        moves = move_pool.search([
-            # TODO
-            ('picking_id.stock_mode', '=', 'out'),
+        # Line to delivery:
+        lines = line_pool.search([
+            ('order_id.logistic_state', '=', 'done'),
+            # No service
             ])
 
         ws_name = _('Consegne pronte')
@@ -1151,30 +1150,49 @@ class SaleOrder(models.Model):
         # Setup page: Corrispettivo
         # ---------------------------------------------------------------------
         excel_pool.column_width(ws_name, [
-            # TODO
-            15,
+            15, 50,
+            25, 8, 5,
             ])
 
         row = 0
         excel_pool.write_xls_line(ws_name, row, [
              'Consegne pronte in data: %s' % now
-             ], default_format=f_title)
+             ], default_format=format_type['title'])
 
         row += 1
         excel_pool.write_xls_line(ws_name, row, [
-             'Codice',
-             ], default_format=format_type['title'])
+             'Articolo',
+             'Descrizione',
+             
+             'Ordine',
+             'Data',
+             'Q.',
+             ], default_format=format_type['header'])
 
-        for move in moves:
+        for line in sorted(lines, key=lambda x: (
+                x.order_id.date_order, x.order_id.name)):
             # Readability:
-            picking = move.picking_id
-            order = picking.sale_order_id 
-            #partner = order.partner_id
+            order = line.order_id
+            partner = order.partner_id
+            product = line.product_id
+
+            # Jump expence:
+            if product.type == 'service' or product.is_expence:
+                continue
             
-            excel_pool.write_xls_line(ws_invoice, row_invoice, (
-                picking.ddt_date,
+            row += 1
+            excel_pool.write_xls_line(ws_name, row, (
+                product.default_code,
+                product.description_sale or \
+                    product.titolocompleto or product.name or 'Non trovato',
+                      
+                order.name,      
+                order.date_order[:10],
+                line.product_uom_qty,
+                #(line.product_uom_qty, format_type['number']['black']), 
+                #logistic_undelivered_qty
                 ), default_format=format_type['text']['black'])
-        
+
         # ---------------------------------------------------------------------                 
         # Return file:
         # ---------------------------------------------------------------------                 
