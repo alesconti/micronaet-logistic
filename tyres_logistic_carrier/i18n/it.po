@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-16 13:54+0000\n"
-"PO-Revision-Date: 2019-07-16 15:55+0100\n"
+"POT-Creation-Date: 2019-09-12 10:00+0000\n"
+"PO-Revision-Date: 2019-09-12 12:02+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,12 +18,31 @@ msgstr ""
 "X-Generator: Poedit 1.6.10\n"
 
 #. module: tyres_logistic_carrier
+#: code:addons/tyres_logistic_carrier/models/carrier.py:188
+#, python-format
+msgid ""
+"<b>ORD.:</b> %s\n"
+"<b>INV.:</b> %s\n"
+"<b>DELIV.:</b> %s"
+msgstr ""
+"<b>ORD.:</b> %s\n"
+"<b>INV.:</b> %s\n"
+"<b>DELIV.:</b> %s"
+
+#. module: tyres_logistic_carrier
 #: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
 msgid "Add"
 msgstr "Aggiungi"
 
 #. module: tyres_logistic_carrier
+#: code:addons/tyres_logistic_carrier/models/carrier.py:179
+#, python-format
+msgid "Address"
+msgstr "Indirizzo"
+
+#. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_carrier_supplier_id
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_mode_supplier_id
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_supplier_id
 #: model:ir.ui.menu,name:tyres_logistic_carrier.menu_carrier_root
 #: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
@@ -36,9 +55,21 @@ msgid "Carrier OK"
 msgstr "Corriere OK"
 
 #. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_check
+msgid "Carrier check"
+msgstr "Controllo corriere"
+
+#. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_description
 msgid "Carrier description"
 msgstr "Descrizione"
+
+#. module: tyres_logistic_carrier
+#: model:ir.actions.act_window,name:tyres_logistic_carrier.action_carrier_supplier_mode
+#: model:ir.model,name:tyres_logistic_carrier.model_carrier_supplier_mode
+#: model:ir.ui.menu,name:tyres_logistic_carrier.menu_carrier_supplier_mode
+msgid "Carrier mode"
+msgstr "Modalità"
 
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_note
@@ -58,6 +89,11 @@ msgid "Carrier supplier"
 msgstr "Vettori"
 
 #. module: tyres_logistic_carrier
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_carrier_supplier_mode_tree
+msgid "Carrier supplier mode"
+msgstr "Modalità"
+
+#. module: tyres_logistic_carrier
 #: model:ir.model.fields,help:tyres_logistic_carrier.field_sale_order_carrier_ok
 msgid "Carriere must be confirmed when done!"
 msgstr "Corriere deve essere confermato quando confermato!"
@@ -73,13 +109,31 @@ msgid "Cash on delivery"
 msgstr "Contrassegno"
 
 #. module: tyres_logistic_carrier
+#: model:ir.model.fields,help:tyres_logistic_carrier.field_sale_order_carrier_check
+msgid "Check carrier address"
+msgstr "Controlla indirizzo corriere"
+
+#. module: tyres_logistic_carrier
+#: code:addons/tyres_logistic_carrier/models/carrier.py:182
+#, python-format
+msgid "City"
+msgstr "Città"
+
+#. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_cost
 msgid "Cost"
 msgstr "Costo"
 
 #. module: tyres_logistic_carrier
+#: code:addons/tyres_logistic_carrier/models/carrier.py:184
+#, python-format
+msgid "Country"
+msgstr "Nazione"
+
+#. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_create_uid
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_create_uid
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_mode_create_uid
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_create_uid
 msgid "Created by"
 msgstr "Creato da"
@@ -87,6 +141,7 @@ msgstr "Creato da"
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_create_date
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_create_date
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_mode_create_date
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_create_date
 msgid "Created on"
 msgstr "Creato il"
@@ -104,6 +159,7 @@ msgstr "Annulla conferma consegna"
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_display_name
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_display_name
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_mode_display_name
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_display_name
 msgid "Display Name"
 msgstr "Nome Completo"
@@ -112,6 +168,11 @@ msgstr "Nome Completo"
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_ensurance
 msgid "Ensurance"
 msgstr "Assicurazione"
+
+#. module: tyres_logistic_carrier
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
+msgid "Force description"
+msgstr "Forza descrizione"
 
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_total
@@ -127,6 +188,7 @@ msgstr "Altezza"
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_id
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_id
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_mode_id
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_id
 msgid "ID"
 msgstr "ID"
@@ -134,12 +196,14 @@ msgstr "ID"
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template___last_update
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier___last_update
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_mode___last_update
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel___last_update
 msgid "Last Modified on"
 msgstr "Data di ultima modifica"
 
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_write_uid
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_mode_write_uid
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_write_uid
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_write_uid
 msgid "Last Updated by"
@@ -147,6 +211,7 @@ msgstr "Ultima modifica di"
 
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_write_date
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_mode_write_date
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_write_date
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_write_date
 msgid "Last Updated on"
@@ -159,10 +224,22 @@ msgid "Length"
 msgstr "Lunghezza"
 
 #. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_mode_id
+msgid "Mode"
+msgstr "Modo"
+
+#. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_name
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_mode_name
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_supplier_name
 msgid "Name"
 msgstr "Nome"
+
+#. module: tyres_logistic_carrier
+#: code:addons/tyres_logistic_carrier/models/carrier.py:127
+#, python-format
+msgid "Not found"
+msgstr "Non trovato"
 
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_order_id
@@ -170,7 +247,6 @@ msgid "Order"
 msgstr "Ordine"
 
 #. module: tyres_logistic_carrier
-#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_ids
 #: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
 msgid "Parcel"
 msgstr "Colli"
@@ -196,9 +272,25 @@ msgid "Parcel:"
 msgstr "Colli:"
 
 #. module: tyres_logistic_carrier
+#: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_ids
+msgid "Parcels"
+msgstr "Colli"
+
+#. module: tyres_logistic_carrier
+#: model:ir.ui.view,arch_db:tyres_logistic_carrier.view_sale_order_form
+msgid "Partner check:"
+msgstr "Controllo partner:"
+
+#. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_pay_mode
 msgid "Pay mode"
 msgstr "Modalità pagamento"
+
+#. module: tyres_logistic_carrier
+#: code:addons/tyres_logistic_carrier/models/carrier.py:185
+#, python-format
+msgid "Phone"
+msgstr "Telefono"
 
 #. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_carrier_parcel_template_dimension_uom_id
@@ -224,6 +316,17 @@ msgid "Sale order parcel"
 msgstr "Colli ordine"
 
 #. module: tyres_logistic_carrier
+#: model:ir.model,name:tyres_logistic_carrier.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Riga ordine di vendita"
+
+#. module: tyres_logistic_carrier
+#: code:addons/tyres_logistic_carrier/models/carrier.py:183
+#, python-format
+msgid "State"
+msgstr "State"
+
+#. module: tyres_logistic_carrier
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_carrier_stock_note
 msgid "Stock operator note"
 msgstr "Note magazziniere"
@@ -244,3 +347,9 @@ msgstr "Peso"
 #: model:ir.model.fields,field_description:tyres_logistic_carrier.field_sale_order_parcel_width
 msgid "Width"
 msgstr "Larghezza"
+
+#. module: tyres_logistic_carrier
+#: code:addons/tyres_logistic_carrier/models/carrier.py:181
+#, python-format
+msgid "ZIP"
+msgstr "ZIP"

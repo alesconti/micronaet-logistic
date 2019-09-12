@@ -47,6 +47,20 @@ class CarrierSupplier(models.Model):
     # -------------------------------------------------------------------------
     name = fields.Char('Name')
 
+class CarrierSupplierMode(models.Model):
+    """ Model name: Parcels supplier mode of delivery
+    """
+    
+    _name = 'carrier.supplier.mode'
+    _description = 'Carrier mode'
+    _rec_name = 'name'
+    
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
+    name = fields.Char('Name', required=True)
+    supplier_id = fields.Many2one('carrier.supplier', 'Carrier', required=True)
+
 class CarrierParcelTemplate(models.Model):
     """ Model name: Parcels template
     """
@@ -184,6 +198,7 @@ class SaleOrder(models.Model):
     carrier_ok = fields.Boolean('Carrier OK', 
         help='Carriere must be confirmed when done!')
     carrier_supplier_id = fields.Many2one('carrier.supplier', 'Carrier')
+    carrier_mode_id = fields.Many2one('carrier.supplier.mode', 'Mode')
     carrier_parcel_template_id = fields.Many2one(
         'carrier.parcel.template', 'Parcel template')
     carrier_check = fields.Text('Carrier check', help='Check carrier address',

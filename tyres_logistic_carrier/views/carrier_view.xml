@@ -23,6 +23,7 @@
                             <field name="carrier_ok" invisible="1" />
                             
                             <field name="carrier_supplier_id" />
+                            <field name="carrier_mode_id" domain="[('supplier_id', '=', carrier_supplier_id)]"/>
                             <field name="carrier_parcel_template_id" domain="['|',('carrier_supplier_id','=',False),('carrier_supplier_id','=',carrier_supplier_id)]"/>
                             <button name="load_template_parcel" string="Add" type="object" attrs="{'invisible': [('carrier_parcel_template_id','=',False)]}" colspan="1" class="oe_highlight"/>
 
@@ -84,6 +85,27 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree</field>
             <field name="view_id" ref="view_carrier_supplier_tree"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <!--carrier.supplier.mode-->
+        <record model="ir.ui.view" id="view_carrier_supplier_mode_tree">
+            <field name="name">carrier.supplier.mode.tree</field>
+            <field name="model">carrier.supplier.mode</field>
+            <field name="arch" type="xml">
+                <tree string="Carrier supplier mode" editable="bottom">
+                    <field name="supplier_id" />
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_carrier_supplier_mode">
+            <field name="name">Carrier mode</field>
+            <field name="res_model">carrier.supplier.mode</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_carrier_supplier_mode_tree"/>
             <field name="context">{}</field>
             <field name="domain">[]</field>
         </record>
@@ -150,6 +172,12 @@
                 id="menu_carrier_supplier" 
                 action="action_carrier_supplier_form"
                 sequence="20"
+                />
+            <menuitem 
+                parent="menu_carrier_root" 
+                id="menu_carrier_supplier_mode" 
+                action="action_carrier_supplier_mode"
+                sequence="30"
                 />
        
     </data>
