@@ -1651,6 +1651,7 @@ class SaleOrder(models.Model):
     def undo_go_in_draft(self):
         ''' Return to draft
         '''
+        import pdb; pdb.set_trace()
         self.ensure_one()
         if self.logistic_state not in (
                 'order', 'ready', 'pending', 'delivering'):
@@ -1662,8 +1663,9 @@ class SaleOrder(models.Model):
         # Set line for unlinked state:
         # ---------------------------------------------------------------------
         for line in self.order_line:
-            if line.load_line_ids:
-                continue # Cannot unlink partially delivered line
+            if line.delivered_line_ids:
+                raise exceptions.UserError(
+                    _('Cannot UNDO partial delivery present!'))            
             if line.purchase_line_ids or line.load_line_ids:
                 line.undo_returned = True
 
@@ -1732,7 +1734,7 @@ class SaleOrder(models.Model):
                     'Need to move some product from this order to internal '
                     'stock!<br/>'
                     )
-            elif line.load_line_ids and not state['bc']:
+            elif line.delivered_line_ids and not state['bc']:
                 state['bc'] = True
                 comment += _(
                     '<b>Delivered to customer line present, nothing to do!'
@@ -1854,7 +1856,26 @@ class SaleOrderLine(models.Model):
     def unlink_for_undo(self):
         ''' Undo will unlink all document linked to this line
         '''
-        # TODO:
+        # TODO: XXXXXXXXX        
+        # Note: Order has no pending delivery when unlink call!
+        # Check BC:
+        #if self.load_line_ids:
+        #    return
+
+        # Check BF
+        import pdb; pdb.set_trace()
+        if line.load_line_ids:
+            line.load_line_ids.unlink()
+            
+
+        # Check Purchase order:
+        if line.purchase_line_ids:
+            line.purchase_line_ids.unlink()
+    
+        
+        
+        
+        self.undo_returned = False
         return 
         
     # -------------------------------------------------------------------------

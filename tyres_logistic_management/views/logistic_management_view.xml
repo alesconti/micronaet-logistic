@@ -481,13 +481,15 @@
                              </field>
                          </group>    
                      </page>
-                     
+
                      <page string="Undo" groups="tyres_logistic_management.group_undo_operator">
                          <group colspan="4" col="4">
+                             <separator string="Undo detail:" colspan="3"/>
                              <button name="undo_go_in_draft" string="Return in draft mode" 
                                  icon="fa-mail-reply" type="object" 
-                                 attrs="{'invisible': [('logistic_state','not in', ('order', 'pending', 'done', 'delivering'))]}"/>
-                             <separator string="Undo detail:" colspan="4"/>
+                                 attrs="{'invisible': [('logistic_state', 'not in', ('order', 'pending', 'ready', 'delivering'))]}"
+                                 colspan="1"/>
+
                              <field name="undo_comment" nolabel="1" colspan="4" widget="html" readonly="1"/>
                          </group>
                      </page>
