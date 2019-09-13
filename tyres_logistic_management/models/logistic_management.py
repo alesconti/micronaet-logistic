@@ -1891,7 +1891,10 @@ class SaleOrderLine(models.Model):
         for line in self.purchase_line_ids:
             if line.order_id.partner_id.internal_stock:
                 # Reload internal stock:                
-                pass # TODO
+                # TODO Check if load was confirmed from account!
+                # TODO Export load file to account (command)
+                # TODO Check if reimported?
+                pass
         # Remove al lines:
         self.purchase_line_ids.unlink()
         
