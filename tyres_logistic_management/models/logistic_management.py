@@ -1727,27 +1727,57 @@ class SaleOrder(models.Model):
         elif self.logistic_state == 'delivering':
             comment = 'Order in <b>delivering</b> status:<br/>'
                         
-        state = {'purchase': False, 'bf': False, 'bc': False}
-        for line in self.order_line:
-            if line.purchase_line_ids and not state['purchase']:
-                state['purchase'] = True
-                comment += _(
-                    'Need to remove some purchase order line!<br/>'
+        comment_part = {'purchase': '', 'bf': '', 'bc': ''}
+        for sol in self.order_line:
+            product = sol.product_id
+
+            # -----------------------------------------------------------------
+            # Purchase line present:
+            # -----------------------------------------------------------------
+            for line in sol.purchase_line_ids:
+                if line.order_id.partner_id.internal_stock:
+                    note = 'Need to be uloaded from stock!'
+                else:
+                    note = ''    
+                if not comment_part['purchase']:
+                    comment_part['purchase'] += _(
+                        'Need to remove some purchase order line!<br/>'
+                        )
+                        
+                comment_part['purchase'] += _('%s x [%s] %s<br/>') % (
+                    line.product_qty,                    
+                    product.default_code or '',
+                    note,
                     )
-            elif line.load_line_ids and not state['bf']:
-                # TODO Check internal movement 
-                state['bf'] = True
-                comment += _(
-                    'Need to move some product from this order to internal '
-                    'stock!<br/>'
+                    
+            # -----------------------------------------------------------------
+            # BF line present:
+            # -----------------------------------------------------------------
+            for line in sol.load_line_ids:
+                if not comment_part['bf']:
+                    comment_part['bf'] += _(
+                        'Need to move some received product to internal stock'
+                        ' stock!<br/>'
+                        )
+                comment_part['bf'] += _('%s x [%s]<br/>') % (
+                    line.product_uom_qty,                    
+                    product.default_code or '',
                     )
-            elif line.delivered_line_ids and not state['bc']:
-                state['bc'] = True
-                comment += _(
-                    '<b>Delivered to customer line present, nothing to do!'
-                    '</b><br/>'
+
+            # -----------------------------------------------------------------
+            # Partial of full BC delivery:
+            # -----------------------------------------------------------------
+            for line in sol.delivered_line_ids:
+                if not comment_part['bc']:
+                    comment_part['bc'] += _(
+                        '<b>Delivered to customer line present, nothing to do!'
+                        '</b><br/>'
+                        )
+                comment_part['bc'] += _('%s x [%s]<br/>') % (
+                    line.product_uom_qty,                    
+                    product.default_code or '',
                     )
-        self.undo_comment = comment
+        self.undo_comment = comment + ''.join(comment_part.values())
 
     # -------------------------------------------------------------------------
     # Columns:
@@ -1879,6 +1909,12 @@ class SaleOrderLine(models.Model):
         # Check BF
         # ---------------------------------------------------------------------
         if self.load_line_ids:
+            for line in self.load_line_ids:
+                # Load stock with received load in:
+                # TODO Same as internal order!
+                pass
+
+            # Remove all lines:
             self.load_line_ids.write({
                 'state': 'draft',
                 })
@@ -1887,16 +1923,18 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         # Check Purchase order:
         # ---------------------------------------------------------------------
-        # Restore internal order (if present):
-        for line in self.purchase_line_ids:
-            if line.order_id.partner_id.internal_stock:
-                # Reload internal stock:                
-                # TODO Check if load was confirmed from account!
-                # TODO Export load file to account (command)
-                # TODO Check if reimported?
-                pass
-        # Remove al lines:
-        self.purchase_line_ids.unlink()
+        if self.purchase_line_ids:
+            # Restore internal order (if present):
+            for line in self.purchase_line_ids:
+                if line.order_id.partner_id.internal_stock:
+                    # Reload internal stock:                
+                    # TODO Check if load was confirmed from account!
+                    # TODO Export load file to account (command)
+                    # TODO Check if reimported?
+                    pass
+
+            # Remove al lines:        
+            self.purchase_line_ids.unlink()
         
         return self.write({
             'undo_returned': False,
