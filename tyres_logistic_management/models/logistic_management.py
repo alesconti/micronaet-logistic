@@ -1849,7 +1849,7 @@ class SaleOrderLine(models.Model):
     #                           UNDO Procedure:
     # -------------------------------------------------------------------------
     @api.multi
-    del unlink_for_undo(self):
+    def unlink_for_undo(self):
         ''' Undo will unlink all document linked to this line
         '''
         # TODO:
