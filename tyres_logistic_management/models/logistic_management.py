@@ -1637,10 +1637,94 @@ class SaleOrder(models.Model):
         '''
         for order in self:
             order.market_type = order.team_id.market_type
-        
+    
+    # =========================================================================    
+    #                               UNDO SECTION:
+    # =========================================================================    
+    @api.multi
+    def undo_go_in_draft(self):
+        ''' Return to draft
+        '''
+        self.ensure_one()
+        if self.logistic_state != 'order':
+            raise Warning(
+                _('Only confirmed order can return in draft mode!'))
+            
+        self.logistic_state == 'draft'
+    
+    # -------------------------------------------------------------------------
+    # Function field:
+    # -------------------------------------------------------------------------
+    @api.multi
+    def _get_undo_comment(self, ):
+        ''' Generate undo comment for user
+        '''
+        self.ensure_one()
+        if self.logistic_state == 'draft':
+            self.undo_comment = _(
+                'Order in <b>draft</b> mode: Do all the change nothing is '
+                'needed')
+            return
+        elif self.logistic_state == 'order':
+            self.undo_comment = _(
+                'Order <b>confirmed</b>: Need to return in draft mode for '
+                'changing if there\'s some difference in payment need also '
+                'extra manual operation for correct for ex. paypal amount '
+                'received.'
+                )
+            return                     
+        elif self.logistic_state == 'done':
+            self.undo_comment = _(
+                'Order <b>done</b> state: No more modify, correct in account '
+                'program!'
+                )
+            return    
+        elif self.logistic_state == 'cancel':
+            self.undo_comment = _(
+                'Order <b>cancel</b> state: '
+                )
+            return    
+        elif self.logistic_state == 'error':
+            self.undo_comment = _(
+                'Order <b>error</b> state: '
+                )
+            return    
+        # Check what is done:
+        # self.logistic_state in ('pending', 'ready'):
+        if self.logistic_state == 'pending':
+            comment = 'Order in <b>pending</b> status:<br/>'
+        elif self.logistic_state == 'ready':
+            comment = 'Order in <b>ready</b> status:<br/>'
+        elif self.logistic_state == 'delivering':
+            comment = 'Order in <b>delivering</b> status:<br/>'
+                        
+        state = {'purchase': False, 'bf': False, 'bc': False}
+        for line in order_line:
+            if line.purchase_line_ids and not state['purchase']:
+                state['purchase'] = True
+                comment += _(
+                    'Need to remove some purchase order line!<br/>'
+                    )
+            elif line.load_line_ids and not state['bf']:
+                # TODO Check internal movement 
+                state['bf'] = True
+                comment += _(
+                    'Need to move some product from this order to internal '
+                    'stock!<br/>'
+                    )
+            elif line.load_line_ids and not state['bc']:
+                state['bc'] = True
+                comment += _(
+                    '<b>Delivered to customer line present, nothing to do!'
+                    '</b><br/>'
+                    )
+        self.undo_comment = comment
+
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
+    undo_comment = fields.Text('Undo comment', compute=_get_undo_comment)
+    
     market_type = fields.Selection((
         ('b2b', 'B2B'),
         ('b2c', 'B2C'),
