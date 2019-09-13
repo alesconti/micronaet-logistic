@@ -1661,8 +1661,8 @@ class SaleOrder(models.Model):
         if self.logistic_state not in (
                 'order', 'ready', 'pending', 'delivering'):
             raise exceptions.UserError(
-                _('Only order in confirmed, pending, ready, delivering '
-                    'can undo!'))            
+                _('Only order in confirmed, pending, ready, delivering'
+                  ' can undo!'))            
 
         # ---------------------------------------------------------------------
         # Set line for unlinked state:
@@ -1735,12 +1735,14 @@ class SaleOrder(models.Model):
             # Purchase line present:
             # -----------------------------------------------------------------
             for line in sol.purchase_line_ids:
-                if line.order_id.partner_id.internal_stock:
-                    note = 'Need to be uloaded from stock!'
+                partner = line.order_id.partner_id
+                if partner.internal_stock:
+                    note = _('<b>Need to be uloaded in internal stock!</b>')
                 else:
-                    note = ''    
+                    note = _('<b>Call %s to remove order!</b>') % partner.name
                 if not comment_part['purchase']:
                     comment_part['purchase'] += _(
+                        '<br><b>Purchase:</b><br/>'
                         'Need to remove some purchase order line!<br/>'
                         )
                         
@@ -1756,13 +1758,15 @@ class SaleOrder(models.Model):
             for line in sol.load_line_ids:
                 if not comment_part['bf']:
                     comment_part['bf'] += _(
+                        '<br><b>Pick in (from supplier):</b><br/>'
                         'Need to move some received product to internal stock'
                         ' stock!<br/>'
                         )
-                comment_part['bf'] += _('%s x [%s]<br/>') % (
-                    line.product_uom_qty,                    
-                    product.default_code or '',
-                    )
+                comment_part['bf'] += _(
+                    '%s x [%s]<b> Go to internal stock</b><br/>') % (
+                        line.product_uom_qty,                    
+                        product.default_code or '',
+                        )
 
             # -----------------------------------------------------------------
             # Partial of full BC delivery:
@@ -1770,6 +1774,7 @@ class SaleOrder(models.Model):
             for line in sol.delivered_line_ids:
                 if not comment_part['bc']:
                     comment_part['bc'] += _(
+                        '<br><b>Pick out (to customer):</b><br/>'
                         '<b>Delivered to customer line present, nothing to do!'
                         '</b><br/>'
                         )
