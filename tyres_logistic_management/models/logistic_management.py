@@ -1264,9 +1264,9 @@ class SaleOrder(models.Model):
 
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         # XXX DISABLE INSTRUCTION
-        self.logistic_state = 'ready'
+        #self.logistic_state = 'ready'
         # XXX ENABLE INSTRUCTION
-        #self.logistic_state = 'pending'
+        self.logistic_state = 'pending'
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
         # ---------------------------------------------------------------------        
@@ -1280,7 +1280,13 @@ class SaleOrder(models.Model):
             ('logistic_state', '=', 'draft'),
             ])
 
-        if not lines:
+        # In undo operation could be returned so check also:    
+        lines_not_draft = line_pool.search([
+            ('order_id', '=', self.id),
+            ('logistic_state', '!=', 'draft'),
+            ])
+
+        if not lines and not lines_not_draft:
             raise exceptions.UserError(_('No order line to order!'))
 
         # Call original action:    
@@ -1858,21 +1864,28 @@ class SaleOrderLine(models.Model):
         # TODO: XXXXXXXXX        
         # Note: Order has no pending delivery when unlink call!
         # Check BC:
+        # Check purchase assign:
         #if self.load_line_ids:
         #    return
 
-        # Check BF
+        # ---------------------------------------------------------------------
+        # Check purchase assignement:
+        # ---------------------------------------------------------------------
         import pdb; pdb.set_trace()
+        if line.purchase_split_ids:            
+            line.purchase_split_ids.unlink()
+        
+        # ---------------------------------------------------------------------
+        # Check BF
+        # ---------------------------------------------------------------------
         if line.load_line_ids:
             line.load_line_ids.unlink()
-            
 
+        # ---------------------------------------------------------------------
         # Check Purchase order:
+        # ---------------------------------------------------------------------
         if line.purchase_line_ids:
             line.purchase_line_ids.unlink()
-    
-        
-        
         
         self.undo_returned = False
         return 
@@ -2072,7 +2085,9 @@ class SaleOrderLine(models.Model):
             # Access company parameter from first line
             company = lines[0].order_id.company_id
         else: # No lines found:
-            _logger.warning('No pending line to order!')
+            _logger.warning(
+                'No pending line to order (could happen in undo)!')
+            # TODO problem if order was yet ready, need to be chacked here!    
             return True
 
         # ---------------------------------------------------------------------
