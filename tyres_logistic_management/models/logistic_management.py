@@ -1207,6 +1207,12 @@ class SaleOrder(models.Model):
         """
         self.payment_done = True
 
+        # ---------------------------------------------------------------------
+        # Undo extra setup:
+        # ---------------------------------------------------------------------
+        for line in self.order_line:
+            line.undo_returned = False
+
         # Lauch draft to order
         res = self.workflow_draft_to_order()
         return True # not returned the view!
@@ -1649,9 +1655,20 @@ class SaleOrder(models.Model):
         if self.logistic_state != 'order':
             raise Warning(
                 _('Only confirmed order can return in draft mode!'))
-            
-        self.logistic_state == 'draft'
-        self.payment_ok = False # Remove OK for payment
+
+        # ---------------------------------------------------------------------
+        # Set line for unlinked state:
+        # ---------------------------------------------------------------------
+        for line in self.order_line:
+            if line.load_line_ids:
+                continue # Cannot unlink partially delivered line
+            if line.purchase_line_ids or line.load_line_ids:
+                line.undo_returned = True
+
+        return self.write({
+            'logistic_state': 'draft',
+            'payment_done': False # Remove OK for payment
+            })
 
     # -------------------------------------------------------------------------
     # Function field:
@@ -1828,6 +1845,16 @@ class SaleOrderLine(models.Model):
             'nodestroy': False,
             }
 
+    # -------------------------------------------------------------------------
+    #                           UNDO Procedure:
+    # -------------------------------------------------------------------------
+    @api.multi
+    del unlink_for_undo(self):
+        ''' Undo will unlink all document linked to this line
+        '''
+        # TODO:
+        return 
+        
     # -------------------------------------------------------------------------
     #                           BUTTON EVENT:
     # -------------------------------------------------------------------------
@@ -2194,6 +2221,9 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
+    undo_returned = fields.Boolean('Undo returned', 
+        help='Can unlink some operation that are present')
+
     # RELATION MANY 2 ONE:
     # B. Purchased:
     purchase_line_ids = fields.One2many(

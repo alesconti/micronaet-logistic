@@ -484,28 +484,21 @@
                      
                      <page string="Undo" groups="tyres_logistic_management.group_undo_operator">
                          <group colspan="4" col="4" attrs="{'invisible': [('logistic_state','not in',['draft', 'order'])]}">
-                             <separator string="Phase 1 (draft, order):" colspan="4"/>                             
-                             <button name="undo_go_in_draft" string=">> Return draft mode" type="object" attrs="{'invisible': [('logistic_state','!=','order')]}"/>
-                             
-                         </group>    
-                         <group colspan="4" col="4" attrs="{'invisible': [('logistic_state','not in',['pending', 'ready'])]}">
-                             <separator string="Phase 2 (pending, ready):" colspan="4"/>
-                         </group>    
-                         <group colspan="4" col="4" attrs="{'invisible': [('logistic_state','not in',['delivering', 'done'])]}">
-                             <separator string="Phase 3 (delivering, done):" colspan="4"/>
-                             
-                         </group>    
-                         <group colspan="4" col="4" attrs="{'invisible': [('logistic_state','not in',['cancel'])]}">
-                             <separator string="Phase 4 (cancel):" colspan="4"/>
-                             
-                         </group>    
-
-                         <group colspan="4" col="4">
+                             <button name="undo_go_in_draft" string="Return in draft mode" icon="fa-mail-reply" type="object" attrs="{'invisible': [('logistic_state','not in', ('order', 'pendind', 'done', 'delivering'))]}"/>
                              <separator string="Undo detail:" colspan="4"/>
                              <field name="undo_comment" nolabel="1" colspan="4" widget="html"/>
                          </group>
                      </page>
                  </xpath>
+
+                 <!--UNLINK LINE FOR UNDO:-->
+                 <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="after">
+                     <button name="unlink_for_undo" string="" type="object" class="oe_link" icon="fa-chain-broken" 
+                         groups="tyres_logistic_management.group_undo_operator" attrs="{'invisible': [('undo_returned','=',False)]}"
+                         confirm="Unlink operation will delete linked document line (ex. purchase line, pick in line)">
+                     <field name="undo_returned" invisible="1"/>
+                 </xpath>
+
                  <field name="state" position="after">
                      <button name="wf_set_order_as_done" string="Order done!" type="object" attrs="{'invisible': [('logistic_state','!=','delivering')]}"/>
                      <button name="return_order_line_list_view" string="Logistic detail" type="object" class="oe_highlight"/>
