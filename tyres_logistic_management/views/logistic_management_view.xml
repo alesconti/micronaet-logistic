@@ -488,7 +488,9 @@
                              <button name="undo_go_in_draft" string="Return in draft mode" 
                                  icon="fa-mail-reply" type="object" 
                                  attrs="{'invisible': [('logistic_state', 'not in', ('order', 'pending', 'ready', 'delivering'))]}"
-                                 colspan="1"/>
+                                 colspan="1"
+                                 confirm="Do you want move logistic status in draft, use only for update order! Confirm?"
+                                 />
 
                              <field name="undo_comment" nolabel="1" colspan="4" widget="html" readonly="1"/>
                          </group>

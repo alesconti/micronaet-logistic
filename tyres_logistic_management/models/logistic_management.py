@@ -1671,6 +1671,8 @@ class SaleOrder(models.Model):
             if line.delivered_line_ids:
                 raise exceptions.UserError(
                     _('Cannot UNDO partial delivery present!'))            
+                    
+            # TODO load stock with received stock
             if line.purchase_line_ids or line.load_line_ids:            
                 line.undo_returned = True
 
@@ -1869,26 +1871,34 @@ class SaleOrderLine(models.Model):
         #    return
 
         # ---------------------------------------------------------------------
-        # Check purchase assignement:
+        # Purchase pre-selection:
         # ---------------------------------------------------------------------
-        import pdb; pdb.set_trace()
-        if line.purchase_split_ids:            
-            line.purchase_split_ids.unlink()
-        
+        self.purchase_split_ids.unlink()
+
         # ---------------------------------------------------------------------
         # Check BF
         # ---------------------------------------------------------------------
-        if line.load_line_ids:
-            line.load_line_ids.unlink()
+        if self.load_line_ids:
+            self.load_line_ids.write({
+                'state': 'draft',
+                })
+            self.load_line_ids.unlink()
 
         # ---------------------------------------------------------------------
         # Check Purchase order:
         # ---------------------------------------------------------------------
-        if line.purchase_line_ids:
-            line.purchase_line_ids.unlink()
+        # Restore internal order (if present):
+        for line in self.purchase_line_ids:
+            if line.order_id.partner_id.internal_stock:
+                # Reload internal stock:                
+                pass # TODO
+        # Remove al lines:
+        self.purchase_line_ids.unlink()
         
-        self.undo_returned = False
-        return 
+        return self.write({
+            'undo_returned': False,
+            'logistic_state': 'draft',
+            })
         
     # -------------------------------------------------------------------------
     #                           BUTTON EVENT:
