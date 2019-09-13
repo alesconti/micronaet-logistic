@@ -483,10 +483,12 @@
                      </page>
                      
                      <page string="Undo" groups="tyres_logistic_management.group_undo_operator">
-                         <group colspan="4" col="4" attrs="{'invisible': [('logistic_state','not in',['draft', 'order'])]}">
-                             <button name="undo_go_in_draft" string="Return in draft mode" icon="fa-mail-reply" type="object" attrs="{'invisible': [('logistic_state','not in', ('order', 'pendind', 'done', 'delivering'))]}"/>
+                         <group colspan="4" col="4">
+                             <button name="undo_go_in_draft" string="Return in draft mode" 
+                                 icon="fa-mail-reply" type="object" 
+                                 attrs="{'invisible': [('logistic_state','not in', ('order', 'pending', 'done', 'delivering'))]}"/>
                              <separator string="Undo detail:" colspan="4"/>
-                             <field name="undo_comment" nolabel="1" colspan="4" widget="html"/>
+                             <field name="undo_comment" nolabel="1" colspan="4" widget="html" readonly="1"/>
                          </group>
                      </page>
                  </xpath>
@@ -496,7 +498,7 @@
                      <button name="unlink_for_undo" string="" type="object" class="oe_link" icon="fa-chain-broken" 
                          groups="tyres_logistic_management.group_undo_operator" attrs="{'invisible': [('undo_returned','=',False)]}"
                          confirm="Unlink operation will delete linked document line (ex. purchase line, pick in line)"/>
-                     <field name="undo_returned" /><!--invisible="1"-->
+                     <field name="undo_returned" invisible="1" />
                  </xpath>
 
                  <field name="state" position="after">

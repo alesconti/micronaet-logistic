@@ -1652,9 +1652,11 @@ class SaleOrder(models.Model):
         ''' Return to draft
         '''
         self.ensure_one()
-        if self.logistic_state != 'order':
-            raise Warning(
-                _('Only confirmed order can return in draft mode!'))
+        if self.logistic_state not in (
+                'order', 'ready', 'pending', 'delivering'):
+            raise exceptions.UserError(
+                _('Only order in confirmed, pending, ready, delivering '
+                    'can undo!'))            
 
         # ---------------------------------------------------------------------
         # Set line for unlinked state:
@@ -1717,7 +1719,7 @@ class SaleOrder(models.Model):
             comment = 'Order in <b>delivering</b> status:<br/>'
                         
         state = {'purchase': False, 'bf': False, 'bc': False}
-        for line in order_line:
+        for line in self.order_line:
             if line.purchase_line_ids and not state['purchase']:
                 state['purchase'] = True
                 comment += _(
