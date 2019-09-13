@@ -1651,7 +1651,8 @@ class SaleOrder(models.Model):
                 _('Only confirmed order can return in draft mode!'))
             
         self.logistic_state == 'draft'
-    
+        self.payment_ok = False # Remove OK for payment
+
     # -------------------------------------------------------------------------
     # Function field:
     # -------------------------------------------------------------------------
@@ -1670,7 +1671,7 @@ class SaleOrder(models.Model):
                 'Order <b>confirmed</b>: Need to return in draft mode for '
                 'changing if there\'s some difference in payment need also '
                 'extra manual operation for correct for ex. paypal amount '
-                'received.'
+                'received (payment will be confirmed after finish).'
                 )
             return                     
         elif self.logistic_state == 'done':

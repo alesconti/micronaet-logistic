@@ -485,11 +485,11 @@
                      <page string="Undo" groups="tyres_logistic_management.group_undo_operator">
                          <group colspan="4" col="4" attrs="{'invisible': [('logistic_state','not in',['draft', 'order'])]}">
                              <separator string="Phase 1 (draft, order):" colspan="4"/>                             
+                             <button name="undo_go_in_draft" string=">> Return draft mode" type="object" attrs="{'invisible': [('logistic_state','!=','order')]}"/>
                              
                          </group>    
                          <group colspan="4" col="4" attrs="{'invisible': [('logistic_state','not in',['pending', 'ready'])]}">
                              <separator string="Phase 2 (pending, ready):" colspan="4"/>
-                             <button name="undo_go_in_draft" string=">> Return draft mode" type="object" />
                          </group>    
                          <group colspan="4" col="4" attrs="{'invisible': [('logistic_state','not in',['delivering', 'done'])]}">
                              <separator string="Phase 3 (delivering, done):" colspan="4"/>
