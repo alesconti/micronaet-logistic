@@ -1651,7 +1651,6 @@ class SaleOrder(models.Model):
     def undo_go_in_draft(self):
         ''' Return to draft
         '''
-        import pdb; pdb.set_trace()
         self.ensure_one()
         if self.logistic_state not in (
                 'order', 'ready', 'pending', 'delivering'):
@@ -1666,7 +1665,7 @@ class SaleOrder(models.Model):
             if line.delivered_line_ids:
                 raise exceptions.UserError(
                     _('Cannot UNDO partial delivery present!'))            
-            if line.purchase_line_ids or line.load_line_ids:
+            if line.purchase_line_ids or line.load_line_ids:            
                 line.undo_returned = True
 
         return self.write({
