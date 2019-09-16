@@ -219,12 +219,10 @@ class PurchaseOrder(models.Model):
                 # -------------------------------------------------------------
                 # Create picking:
                 # -------------------------------------------------------------
-                # TODO check
-                import pdb; pdb.set_trace()
                 try:
                     order = purchase.order_line[0].logistic_sale_id.order_id 
                 except:
-                    # Empty order
+                    # Empty order: (cancel before load in account)
                     purchase.logistic_state = 'done'
                     
                     # Save move operation:            
