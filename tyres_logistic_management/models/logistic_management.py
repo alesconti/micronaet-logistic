@@ -220,7 +220,20 @@ class PurchaseOrder(models.Model):
                 # Create picking:
                 # -------------------------------------------------------------
                 # TODO check
-                order = purchase.order_line[0].logistic_sale_id.order_id 
+                import pdb; pdb.set_trace()
+                try:
+                    order = purchase.order_line[0].logistic_sale_id.order_id 
+                except:
+                    # Empty order
+                    purchase.logistic_state = 'done'
+                    
+                    # Save move operation:            
+                    move_file.append((
+                        os.path.join(reply_path, f),
+                        os.path.join(history_path, f),
+                        ))
+                    continue     
+                        
                 partner = order.partner_id
                 date = purchase.date_order
                 name = purchase.name or ''
@@ -1905,9 +1918,9 @@ class SaleOrderLine(models.Model):
             # -----------------------------------------------------------------
             for line in self.load_line_ids: # BF or Internal
                 picking_id = line.picking_id.id or ''
-                if picking not in pickings:
-                    pickigs[picking_id] = []
-                pickigs[picking_id].append(line)
+                if picking_id not in pickings:
+                    pickings[picking_id] = []
+                pickings[picking_id].append(line)
 
             # -----------------------------------------------------------------
             # Write file with picking:
@@ -1915,16 +1928,20 @@ class SaleOrderLine(models.Model):
             for picking_id in pickings:                
                 order_file = os.path.join(
                     path, 'pick_undo_%s.csv' % picking_id) # XXX Name with undo
-                order_file = open(order_file, 'w')
-                order_file.write(header)
+                if os.path.isfile(order_file): # File yet present
+                    order_file = open(order_file, 'a')
+                else: # New file:
+                    order_file = open(order_file, 'w')
+                    order_file.write(header)
+
                 for line in pickings[picking_id]:
-                    order = quant.order_id
                     order_file.write(row_mask % (
                         line.product_id.default_code,
                         line.product_qty,
-                        line.price, # TODO Check!!!
-                        '', # order.supplier_id.sql_supplier_code or '',
-                        '', order.name,
+                        line.price_unit, # TODO Check!!!
+                        # order.supplier_id.sql_supplier_code or '',
+                        line.product_id.default_code,
+                        '', #order.name,
                         company_pool.formatLang(now, date=True),
                         ))
                 order_file.close()

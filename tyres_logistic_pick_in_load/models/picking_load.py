@@ -61,7 +61,7 @@ class StockPickingDelivery(models.Model):
             for f in files:
                 f_split = f[:-4].split('_')
                 pick_id = int(f_split[-1]) # pick_in_ID.csv                
-                if f_split[1] = 'in': 
+                if f_split[1] == 'in': 
                     quants = quant_pool.search([('order_id', '=', pick_id)])
                     quants.write({'account_sync': True, })
                 # else: # 'undo' # not checked!    
