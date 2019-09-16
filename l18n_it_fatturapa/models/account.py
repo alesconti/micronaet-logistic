@@ -742,7 +742,10 @@ class StockPicking(models.Model):
         invoice_number = (picking.invoice_number or '').split('/')[-1]
         params['invoice'] = {                
             # Format used for invoice:
-            'number': '%s/FE' % int(invoice_number),
+            'number': '%s/%s' % (
+                int(invoice_number),
+                'NC' if picking.stock_mode == 'in' else 'FE',
+                ),
             
             'date': picking.invoice_date, # TODO prepare
             'type': 'TD04' if picking.stock_mode == 'in' else 'TD01',
