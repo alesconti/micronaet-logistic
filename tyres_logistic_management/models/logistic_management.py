@@ -1319,6 +1319,7 @@ class SaleOrder(models.Model):
     def logistic_check_and_set_done(self):
         ''' Check if all line are in done state (excluding unused)
         '''
+        order = self
         line_state = set(order.order_line.mapped('logistic_state'))
         line_state.discard('unused') # remove kit line (exploded)
         if tuple(line_state) == ('done', ): # All done
@@ -1878,6 +1879,19 @@ class SaleOrderLine(models.Model):
         # Check purchase assign:
         #if self.load_line_ids:
         #    return
+        company_pool = self.env['res.company']
+        header = 'SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA\r\n'
+        row_mask = '%s|%s|%s|%s|%s|%s\r\n'
+        now = fields.Datetime.now()
+
+        # Parameter:
+        company = company_pool.search([])[0]
+        logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
+        path = os.path.join(logistic_root_folder, 'delivery')
+        try:
+            os.system('mkdir -p %s' % path)
+        except:
+            _logger.error('Cannot create %s' % path)
 
         # ---------------------------------------------------------------------
         # Purchase pre-selection:
@@ -1888,10 +1902,41 @@ class SaleOrderLine(models.Model):
         # Check BF
         # ---------------------------------------------------------------------
         if self.load_line_ids:
-            for line in self.load_line_ids:
-                # Load stock with received load in:
-                # TODO Same as internal order!
-                pass
+            pickings = {}
+            
+            # -----------------------------------------------------------------
+            # Collect data for picking:            
+            # -----------------------------------------------------------------
+            for line in self.load_line_ids: # BF or Internal
+                picking_id = line.picking_id.id or ''
+                if picking not in pickings:
+                    pickigs[picking_id] = []
+                pickigs[picking_id].append(line)
+
+            # -----------------------------------------------------------------
+            # Write file with picking:
+            # -----------------------------------------------------------------
+            for picking_id in pickings:                
+                order_file = os.path.join(
+                    path, 'pick_undo_%s.csv' % picking_id) # XXX Name with undo
+                order_file = open(order_file, 'w')
+                order_file.write(header)
+                for line in pickings[picking_id]:
+                    order = quant.order_id
+                    order_file.write(row_mask % (
+                        line.product_id.default_code,
+                        line.product_qty,
+                        line.price, # TODO Check!!!
+                        '', # order.supplier_id.sql_supplier_code or '',
+                        '', order.name,
+                        company_pool.formatLang(now, date=True),
+                        ))
+                order_file.close()
+
+            # Check if procedure if fast to confirm reply (instead scheduled!):
+            #self.check_import_reply() # Needed?
+
+
 
             # Remove all lines:
             self.load_line_ids.write({
@@ -1902,18 +1947,7 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         # Check Purchase order:
         # ---------------------------------------------------------------------
-        if self.purchase_line_ids:
-            # Restore internal order (if present):
-            for line in self.purchase_line_ids:
-                if line.order_id.partner_id.internal_stock:
-                    # Reload internal stock:                
-                    # TODO Check if load was confirmed from account!
-                    # TODO Export load file to account (command)
-                    # TODO Check if reimported?
-                    pass
-
-            # Remove al lines:        
-            self.purchase_line_ids.unlink()
+        self.purchase_line_ids.unlink()
         
         return self.write({
             'undo_returned': False,

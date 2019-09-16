@@ -59,9 +59,12 @@ class StockPickingDelivery(models.Model):
 
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
-                pick_id = int(f[:-4].split('_')[-1]) # pick_in_ID.csv                
-                quants = quant_pool.search([('order_id', '=', pick_id)])
-                quants.write({'account_sync': True, })
+                f_split = f[:-4].split('_')
+                pick_id = int(f_split[-1]) # pick_in_ID.csv                
+                if f_split[1] = 'in': 
+                    quants = quant_pool.search([('order_id', '=', pick_id)])
+                    quants.write({'account_sync': True, })
+                # else: # 'undo' # not checked!    
 
                 # XXX Move when all is done after?
                 shutil.move(
