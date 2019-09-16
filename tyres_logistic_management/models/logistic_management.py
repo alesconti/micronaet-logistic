@@ -1316,16 +1316,15 @@ class SaleOrder(models.Model):
         return order_ids
 
     @api.multi
-    def logistic_check_and_set_delivering(self):
+    def logistic_check_and_set_done(self):
         ''' Check if all line are in done state (excluding unused)
         '''
-        for order in self:
-            line_state = set(order.order_line.mapped('logistic_state'))
-            line_state.discard('unused') # remove kit line (exploded)
-            if tuple(line_state) == ('done', ): # All done
-                order.write({
-                    'logistic_state': 'delivering', # XXX ex done
-                    })
+        line_state = set(order.order_line.mapped('logistic_state'))
+        line_state.discard('unused') # remove kit line (exploded)
+        if tuple(line_state) == ('done', ): # All done
+            order.write({
+                'logistic_state': 'done',
+                })
         return True
 
     # Extra operation before WF
@@ -1469,12 +1468,35 @@ class SaleOrder(models.Model):
     def workflow_ready_to_done_current_order(self):
         ''' Button action for call all ready to done order:
         '''
-        return self.workflow_ready_to_done_draft_picking(current=True)
+        return self.workflow_ready_to_done_draft_picking()
     
     # Real trigger call:    
     @api.model 
-    def workflow_ready_to_done_draft_picking(self, limit=False, current=False):
+    def workflow_ready_to_done_draft_picking(self, ):
         ''' Confirm payment order (before expand kit)
+            NOTE: limit, current no more used!
+        '''
+        self.ensure_one()
+        
+        # ---------------------------------------------------------------------
+        # TODO Get label PDF for printing
+        # ---------------------------------------------------------------------
+        
+        # ---------------------------------------------------------------------
+        # TODO Print label
+        # ---------------------------------------------------------------------
+
+        # ---------------------------------------------------------------------
+        # Update Workflow:
+        # ---------------------------------------------------------------------
+        self.logistic_state = 'delivering'
+
+    # -------------------------------------------------------------------------
+    # C. delivering > done
+    # -------------------------------------------------------------------------
+    @api.multi
+    def wf_set_order_as_done(self):
+        ''' Set order as done (from delivering)
         '''
         now = fields.Datetime.now()
         
@@ -1496,138 +1518,90 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Select order to prepare:
         # ---------------------------------------------------------------------
-        if limit:
-            _logger.warning('Limited export: %s' % limit)            
-            orders = self.search([
-                ('logistic_state', '=', 'ready'),
-                ], limit=limit)
-            _logger.info('Order ready to pending with limit: %s' % limit)
-        elif current:
-            orders = self
-            _logger.info('Order ready to pending with current')
-        else:
-            orders = self.search([
-                ('logistic_state', '=', 'ready'),
-                ])
-            _logger.info('Order ready to pending all, total: %s' % len(orders))                
-        verbose_order = len(orders)    
-            
         picking_ids = [] # return value
-        i = 0
-        for order in orders:
-            i += 1
-            _logger.warning('Generate pick out from order: %s / %s'  % (
-                i, verbose_order))
+        order = self # readability
+        _logger.warning('Generate pick out from order')
+
+        # -----------------------------------------------------------------
+        # Create picking out document header:
+        # -----------------------------------------------------------------
+        partner = order.partner_id
+        name = order.name # same as order_ref
+        origin = _('%s [%s]') % (order.name, order.create_date[:10])
+        picking = picking_pool.create({                
+            'sale_order_id': order.id, # Link to order
+            'partner_id': partner.id,
+            'scheduled_date': now,
+            'origin': origin,
+            #'move_type': 'direct',
+            'picking_type_id': logistic_pick_out_type_id,
+            'group_id': False,
+            'location_id': location_from,
+            'location_dest_id': location_to,
+            #'priority': 1,                
+            'state': 'draft', # XXX To do manage done phase (for invoice)!!
+            })
+        picking_ids.append(picking.id)    
+            
+        for line in order.order_line:
+            product = line.product_id
+            
+            # =================================================================
+            # Speed up (check if yet delivered):
+            # -----------------------------------------------------------------
+            # TODO check if there's another cases: service, kit, etc. 
+            if line.delivered_line_ids:
+                product_qty = line.logistic_undelivered_qty
+            else:
+                product_qty = line.product_uom_qty
+            
+            # Update line status:
+            line.write({'logistic_state': 'done', })
+            # =================================================================
 
             # -----------------------------------------------------------------
-            # Create picking out document header:
+            # Create movement (not load stock):
             # -----------------------------------------------------------------
-            partner = order.partner_id
-            name = order.name # same as order_ref
-            origin = _('%s [%s]') % (order.name, order.create_date[:10])
-            picking = picking_pool.create({                
-                'sale_order_id': order.id, # Link to order
+            # TODO Check kit!!
+            move_pool.create({
+                'company_id': company.id,
                 'partner_id': partner.id,
-                'scheduled_date': now,
-                'origin': origin,
-                #'move_type': 'direct',
-                'picking_type_id': logistic_pick_out_type_id,
-                'group_id': False,
+                'picking_id': picking.id,
+                'product_id': product.id, 
+                'name': product.name or ' ',
+                'date': now,
+                'date_expected': now,
                 'location_id': location_from,
                 'location_dest_id': location_to,
-                #'priority': 1,                
-                'state': 'draft', # XXX To do manage done phase (for invoice)!!
+                'product_uom_qty': product_qty,
+                'product_uom': product.uom_id.id,
+                'state': 'done',
+                'origin': origin,
+                'price_unit': product.standard_price,
+                
+                # Sale order line link:
+                'logistic_unload_id': line.id,
+
+                # group_id
+                # reference'
+                # sale_line_id
+                # procure_method,
+                #'product_qty': select_qty,
                 })
-            picking_ids.append(picking.id)    
-                
-            for line in order.order_line:
-                product = line.product_id
-                
-                # =============================================================
-                # Speed up (check if yet delivered):
-                # -------------------------------------------------------------
-                # TODO check if there's another cases: service, kit, etc. 
-                if line.delivered_line_ids:
-                    product_qty = line.logistic_undelivered_qty
-                else:
-                    product_qty = line.product_uom_qty
-                
-                # Update line status:
-                line.write({'logistic_state': 'done', })
-                # =============================================================
-
-                # -------------------------------------------------------------
-                # Create movement (not load stock):
-                # -------------------------------------------------------------
-                # TODO Check kit!!
-                move_pool.create({
-                    'company_id': company.id,
-                    'partner_id': partner.id,
-                    'picking_id': picking.id,
-                    'product_id': product.id, 
-                    'name': product.name or ' ',
-                    'date': now,
-                    'date_expected': now,
-                    'location_id': location_from,
-                    'location_dest_id': location_to,
-                    'product_uom_qty': product_qty,
-                    'product_uom': product.uom_id.id,
-                    'state': 'done',
-                    'origin': origin,
-                    'price_unit': product.standard_price,
-                    
-                    # Sale order line link:
-                    'logistic_unload_id': line.id,
-
-                    # group_id
-                    # reference'
-                    # sale_line_id
-                    # procure_method,
-                    #'product_qty': select_qty,
-                    })
-            # TODO check if DDT / INVOICE document:
+        # TODO check if DDT / INVOICE document:
 
         # ---------------------------------------------------------------------
         # Confirm picking (DDT and INVOICE)
         # ---------------------------------------------------------------------
+        # Do all export procedure here:
         picking_pool.browse(picking_ids).workflow_ready_to_done_done_picking()
 
         # ---------------------------------------------------------------------
         # Order status:    
         # ---------------------------------------------------------------------
-        # Change status order ready > delivering
-        orders.logistic_check_and_set_delivering()
-        
-        # Different return value if called with limit:
-        if limit:
-            _logger.warning('Check other order remain: %s' % limit)            
-            orders = self.search([
-                ('logistic_state', '=', 'ready'),
-                ], limit=limit) # keep limit instead of search all
-            return orders or False
+        # Change status order delivering > done
+        order.logistic_check_and_set_done()
         return picking_ids
-
-    # -------------------------------------------------------------------------
-    # C. delivering > done
-    # -------------------------------------------------------------------------
-    @api.multi
-    def wf_set_order_as_done(self):
-        ''' Set order as done (from delivering)
-        '''
-        self.ensure_one()
-        
-        # ---------------------------------------------------------------------
-        # TODO Get label PDF for printing
-        # ---------------------------------------------------------------------
-        
-        # ---------------------------------------------------------------------
-        # TODO Print label
-        # ---------------------------------------------------------------------
-
-        # ---------------------------------------------------------------------
-        # Update Workflow:
-        # ---------------------------------------------------------------------
-        self.logistic_state = 'done'
 
     # -------------------------------------------------------------------------
     # Onchange
