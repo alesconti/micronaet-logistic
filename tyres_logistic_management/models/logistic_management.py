@@ -1750,8 +1750,9 @@ class SaleOrder(models.Model):
                 if not comment_part['bc']:
                     comment_part['bc'] += _(
                         '<br><b>Pick out (to customer):</b><br/>'
-                        '<b>Delivered to customer line present, nothing to do!'
-                        '</b><br/>'
+                        '<b><font color="red">'
+                        'Delivered to customer line present, nothing to do!'
+                        '</font></b><br/>'
                         )
                 comment_part['bc'] += _('%s x [%s]<br/>') % (
                     line.product_uom_qty,                    
@@ -1873,12 +1874,7 @@ class SaleOrderLine(models.Model):
     def unlink_for_undo(self):
         ''' Undo will unlink all document linked to this line
         '''
-        # TODO: XXXXXXXXX        
-        # Note: Order has no pending delivery when unlink call!
-        # Check BC:
-        # Check purchase assign:
-        #if self.load_line_ids:
-        #    return
+        # TODO: Order has no pending delivery when unlink call!
         company_pool = self.env['res.company']
         header = 'SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA\r\n'
         row_mask = '%s|%s|%s|%s|%s|%s\r\n'
