@@ -64,7 +64,7 @@ class StockPickingDelivery(models.Model):
                 if f_split[1] == 'in': 
                     quants = quant_pool.search([('order_id', '=', pick_id)])
                     quants.write({'account_sync': True, })
-                # else: # 'undo' # not checked!    
+                # else: # 'undo' # not checked!
 
                 # XXX Move when all is done after?
                 shutil.move(
