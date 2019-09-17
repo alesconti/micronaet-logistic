@@ -21,15 +21,20 @@
                           <button name="check_internal_order" string="Check internal Purchase" type="object" class="btn-primary" colspan="1"/>
                       </group>    
                       <group colspan="4" col="2">
-                          <separator string="E. Update picking in loading:"/>
+                          <separator string="D. Check invoice imported Account:"/>
+                          <button name="import_invoice_confirm" string="Check invoice imported" type="object" class="btn-primary" colspan="1"/>
+                      </group>    
+                      <group colspan="4" col="2">
+                          <separator string="F. Update picking in loading:"/>
                           <!--<button name="update_ready" string="_Update ready" type="object" class="btn-primary" />-->
                           <!--Not necessary (work after update_ready)
                           <button name="update_ready_purchase_check" string="Update ready purchase check" type="object" class="btn-primary" /> -->
                           <button name="extra_bf_confirm" string="Check extra import" type="object" class="btn-primary" />
                       </group>    
                       
+                      
                       <group colspan="4" col="4">
-                          <separator string="F. Generate picking out document (and confirm):" colspan="4"/>
+                          <separator string="G. Generate picking out document (and confirm):" colspan="4"/>
                           <field name="limit" />
                           <field name="loop" />
                           <button name="generate_delivery" string="Generate _Delivery" type="object" class="btn-primary" />

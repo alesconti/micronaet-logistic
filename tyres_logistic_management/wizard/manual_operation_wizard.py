@@ -121,6 +121,12 @@ class StockChangeStandardPrice(models.TransientModel):
         '''
         return self.env['stock.picking.delivery'].check_import_reply()
         
+    @api.multi
+    def import_invoice_confirm(self):
+        ''' Check imported invoice:
+        '''
+        return self.env['stock.picking'].check_import_reply()
+        
     # -------------------------------------------------------------------------
     # Report test:
     # -------------------------------------------------------------------------
