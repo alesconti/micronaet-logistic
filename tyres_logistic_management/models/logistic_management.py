@@ -1044,12 +1044,12 @@ class StockPicking(models.Model):
                 mask = '%s|' * (cols - 1) + '%s\r\n' # 25 fields
 
                 # Parse extra data:
-                if carrier_shippy:
+                if order.carrier_shippy:
                     weight = sum([item.weight for item in order.parcel_ids])
                     parcel = len(order.parcel_ids)
                 else:
-                    weight = picking.carrier_manual_weight 
-                    parcel = picking.carrier_manual_parcel
+                    weight = order.carrier_manual_weight 
+                    parcel = order.carrier_manual_parcel
                     
                 for move in self.move_lines:
                     line = move.logistic_unload_id
