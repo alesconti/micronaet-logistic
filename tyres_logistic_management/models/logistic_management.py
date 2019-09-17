@@ -623,13 +623,12 @@ class StockPicking(models.Model):
                     channel,
                     product.default_code or '',
                     company_pool.formatLang(picking.scheduled_date, date=True),
-                    order.payment_term_id.account_ref or \
-                        order.payment_term_id.name or '',
+                    order.payment_term_id.account_ref or '',
                     product.account_ref or product_account_ref or '',
                     qty,
                     total,
                     'S' if product.is_expence else 'M',
-                    code_ref,
+                    code_ref, # Agent code
                     ))
         
         date = evaluation_date.replace('-', '_')
@@ -638,7 +637,7 @@ class StockPicking(models.Model):
             fees_f = open(fees_filename, 'w')    
 
             fees_f.write(
-                'CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE|TIPO|CLIENTE\r\n')
+                'CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE|TIPO|AGENTE\r\n')
             for row in channel_row[channel]:
                 fees_f.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\r\n' % row)
             fees_f.close()
@@ -1007,7 +1006,7 @@ class StockPicking(models.Model):
                     'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
                     'ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
                     'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|'
-                    'SKU|DESCRIZIONE|QTA|PREZZO|IVA|CANALE\r\n'
+                    'SKU|DESCRIZIONE|QTA|PREZZO|IVA|AGENTE MAGO\r\n'
                     )
 
                 mask = '%s|' * (cols - 1) + '%s\r\n' # 25 fields
@@ -1029,15 +1028,16 @@ class StockPicking(models.Model):
                         'privato' if partner.fatturapa_surname else 'business',
                         get_address(address),
                         address.id,
-                        '', # TODO bank not present for now!
+                        '', # TODO Account ID of Bank
                         order.id,
                         
                         order.name or '',
                         company_pool.formatLang(
                             order.date_order, date=True),
                         partner.property_account_position_id.id, # ODOO ID
-                        len(order.parcel_ids), # TODO correct?
-                        '', # TODO weight total
+                        # TODO calculate from shyppy and other supplier
+                        len(order.parcel_ids), # TODO correct if not shippy
+                        '0', # TODO weight total (from shippy and no shippy)
 
                         move.product_id.default_code or '',
                         move.name or '',
