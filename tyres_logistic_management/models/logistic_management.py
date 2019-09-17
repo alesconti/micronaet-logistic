@@ -1923,7 +1923,6 @@ class SaleOrderLine(models.Model):
             # -----------------------------------------------------------------
             # Write file with picking:
             # -----------------------------------------------------------------
-            import pdb; pdb.set_trace()
             for picking_id in pickings:                
                 order_file = os.path.join(
                     path, 'pick_undo_%s.csv' % picking_id) # XXX Name with undo
@@ -1938,9 +1937,8 @@ class SaleOrderLine(models.Model):
                         line.product_id.default_code,
                         line.product_qty,
                         line.price_unit, # TODO Check!!!
-                        # order.supplier_id.sql_supplier_code or '',
-                        line.product_id.default_code,
-                        '', #order.name,
+                        '', # No product code=undo
+                        'undo order', # Order ref.
                         company_pool.formatLang(now, date=True),
                         ))
                 order_file.close()
