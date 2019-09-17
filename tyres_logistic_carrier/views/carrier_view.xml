@@ -25,7 +25,7 @@
                         </group>
 
                         <!--MANUAL:-->
-                        <group colspan="4" col="5">
+                        <group colspan="4" col="5" attrs="{'invisible': [('carrier_shippy','=',True)]}">
                              <field name="carrier_manual_weight" attrs="{'required': [('carrier_shippy','=',False)]}"/>
                              <field name="carrier_manual_parcel" attrs="{'required': [('carrier_shippy','=',False)]}"/>
                              <!--Double fields: mandatory insert the name of carrier for stock people-->
@@ -33,7 +33,7 @@
                         </group>
                                                     
                         <!--SHIPPY:-->
-                        <group colspan="4" col="5">
+                        <group colspan="4" col="5" attrs="{'invisible': [('carrier_shippy','=',False)]}">
                             <field name="carrier_supplier_id" />
                             <field name="carrier_mode_id" domain="[('supplier_id', '=', carrier_supplier_id)]"/>
                             <field name="carrier_parcel_template_id" domain="['|',('carrier_supplier_id','=',False),('carrier_supplier_id','=',carrier_supplier_id)]"/>
