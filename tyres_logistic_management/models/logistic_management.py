@@ -1950,7 +1950,6 @@ class SaleOrderLine(models.Model):
         '''
         # TODO: Order has no pending delivery when unlink call!
         company_pool = self.env['res.company']
-        order_pool = self.env['sale.order']
         header = 'SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA\r\n'
         row_mask = '%s|%s|%s|%s|%s|%s\r\n'
         now = fields.Datetime.now()
@@ -1964,24 +1963,26 @@ class SaleOrderLine(models.Model):
         except:
             _logger.error('Cannot create %s' % path)
 
-        comment = _('Unlink order line: %s x %s\n') % (
+        order = self.order_id
+        comment = _('Unlink order line: %s x %s<br/>') % (
             self.product_id.default_code,
-            self.product_qty,
+            self.product_uom_qty,
             )
 
         # ---------------------------------------------------------------------
         # Purchase pre-selection:
         # ---------------------------------------------------------------------
         self.purchase_split_ids.unlink()
-        comment = _('Unlink pre-assigned purchase line [#%s]\n') % len(
+        comment += _('Unlink pre-assigned purchase line [#%s]<br/>') % len(
             self.purchase_split_ids)
 
         # ---------------------------------------------------------------------
         # Check BF
         # ---------------------------------------------------------------------
         if self.load_line_ids:
-            comment = _('Load internal stock with internal/delivered q [#%s]\n'
-                ) % len(self.load_line_ids)
+            comment += _(
+                'Load internal stock with internal/delivered q [#%s]<br/>'
+                    ) % len(self.load_line_ids)
                 
             pickings = {}
             
@@ -2025,20 +2026,20 @@ class SaleOrderLine(models.Model):
                 'state': 'draft',
                 })
             self.load_line_ids.unlink()
-            comment = _('Remove delivery/internal line in Pick IN doc.\n')
+            comment += _('Remove delivery/internal line in Pick IN doc.<br/>')
 
         else:
-            comment = _('Not pick IN doc.\n')
+            comment += _('Not pick IN doc.<br/>')
 
         # ---------------------------------------------------------------------
         # Check Purchase order:
         # ---------------------------------------------------------------------
-        comment = _('Remove purchase line [#%s].') % len(
+        comment += _('Remove purchase line [#%s].') % len(
             self.purchase_line_ids)
         self.purchase_line_ids.unlink()
         
         # Log operation:
-        order_pool.write_log_chatter_message(comment)
+        order.write_log_chatter_message(comment)
 
         return self.write({
             'undo_returned': False,
