@@ -197,6 +197,14 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     carrier_ok = fields.Boolean('Carrier OK', 
         help='Carriere must be confirmed when done!')
+    carrier_shippy = fields.Boolean('Carrier Shippy', default=True,
+        help='Carriere is managed by shippy pro (instead manual)!')
+        
+    # Manual:    
+    carrier_manual_weight = fields.Float('Manual weight', digits=(16, 2))
+    carrier_manual_parcel = fields.Integer('Manual parcels')
+
+    # Shippy:
     carrier_supplier_id = fields.Many2one('carrier.supplier', 'Carrier')
     carrier_mode_id = fields.Many2one('carrier.supplier.mode', 'Mode')
     carrier_parcel_template_id = fields.Many2one(
