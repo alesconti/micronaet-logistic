@@ -922,6 +922,7 @@ class StockPicking(models.Model):
             logistic_root_folder, 'invoice', 'history')
 
         move_list = []
+        import pdb; pdb.set_trace()
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
                 f_split = f.split('.')
@@ -934,17 +935,17 @@ class StockPicking(models.Model):
                 pick_id = int(f_split[0].split('_')[-1]) # pick_in_ID.csv
                 
                 invoice_number = f_split[1]
-                invoice_date = f_split[2]
+                invoice_date = f_split[2]                
 
                 # Update invoice information on picking:
                 try:
-                    self.write(pick_id, {
-                        'invoice_number' invoice_number, 
+                    self.browse(pick_id).write({
+                        'invoice_number': invoice_number, 
                         'invoice_date': '%s-%s-%s' % ( 
-                            invoice_date[8:10],
-                            invoice_date[5:7],
+                            invoice_date[6:8],
+                            invoice_date[4:6],
                             invoice_date[:4],
-                            )
+                            ),
                         })
                 except:
                     _logger.error('Error update pick as invoice: %s' % (
