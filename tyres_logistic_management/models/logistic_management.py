@@ -1248,7 +1248,22 @@ class SaleOrder(models.Model):
         # Return file:
         # ---------------------------------------------------------------------                 
         return excel_pool.return_attachment('Consegne del %s' % now)
-    
+
+    @api.model
+    def write_log_chatter_message(self, message):
+        ''' Write message for log operation in order chatter
+        '''
+        user = self.env['res.users'].browse(self.env.uid)
+        body = _('%s [User: %s]') % (
+            message,
+            user.name,
+            )
+        self.message_post(
+            body=body, 
+            #subtype='mt_comment', 
+            #partner_ids=followers
+            )
+        
     # -------------------------------------------------------------------------    
     #                           OVERRIDE EVENTS:
     # -------------------------------------------------------------------------    
@@ -1266,6 +1281,8 @@ class SaleOrder(models.Model):
 
         # Lauch draft to order
         res = self.workflow_draft_to_order()
+
+        self.write_log_chatter_message(_('Order marked as payed'))
         return True # not returned the view!
 
     # -------------------------------------------------------------------------
@@ -1702,6 +1719,12 @@ class SaleOrder(models.Model):
             if line.purchase_line_ids or line.load_line_ids:            
                 line.undo_returned = True
 
+        # Log operation:
+        self.write_log_chatter_message(
+            _('Order moved in draft from: %s state') % (
+                self.logistic_state,
+                ))
+
         return self.write({
             'logistic_state': 'draft',
             'payment_done': False # Remove OK for payment
@@ -1927,6 +1950,7 @@ class SaleOrderLine(models.Model):
         '''
         # TODO: Order has no pending delivery when unlink call!
         company_pool = self.env['res.company']
+        order_pool = self.env['sale.order']
         header = 'SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA\r\n'
         row_mask = '%s|%s|%s|%s|%s|%s\r\n'
         now = fields.Datetime.now()
@@ -1940,15 +1964,25 @@ class SaleOrderLine(models.Model):
         except:
             _logger.error('Cannot create %s' % path)
 
+        comment = _('Unlink order line: %s x %s\n') % (
+            self.product_id.default_code,
+            self.product_qty,
+            )
+
         # ---------------------------------------------------------------------
         # Purchase pre-selection:
         # ---------------------------------------------------------------------
         self.purchase_split_ids.unlink()
+        comment = _('Unlink pre-assigned purchase line [#%s]\n') % len(
+            self.purchase_split_ids)
 
         # ---------------------------------------------------------------------
         # Check BF
         # ---------------------------------------------------------------------
         if self.load_line_ids:
+            comment = _('Load internal stock with internal/delivered q [#%s]\n'
+                ) % len(self.load_line_ids)
+                
             pickings = {}
             
             # -----------------------------------------------------------------
@@ -1986,19 +2020,26 @@ class SaleOrderLine(models.Model):
             # Check if procedure if fast to confirm reply (instead scheduled!):
             #self.check_import_reply() # Needed?
 
-
-
             # Remove all lines:
             self.load_line_ids.write({
                 'state': 'draft',
                 })
             self.load_line_ids.unlink()
+            comment = _('Remove delivery/internal line in Pick IN doc.\n')
+
+        else:
+            comment = _('Not pick IN doc.\n')
 
         # ---------------------------------------------------------------------
         # Check Purchase order:
         # ---------------------------------------------------------------------
+        comment = _('Remove purchase line [#%s].') % len(
+            self.purchase_line_ids)
         self.purchase_line_ids.unlink()
         
+        # Log operation:
+        order_pool.write_log_chatter_message(comment)
+
         return self.write({
             'undo_returned': False,
             'logistic_state': 'draft',
