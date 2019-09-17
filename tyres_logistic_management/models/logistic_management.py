@@ -922,7 +922,6 @@ class StockPicking(models.Model):
             logistic_root_folder, 'invoice', 'history')
 
         move_list = []
-        import pdb; pdb.set_trace()
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
                 f_split = f.split('.')
