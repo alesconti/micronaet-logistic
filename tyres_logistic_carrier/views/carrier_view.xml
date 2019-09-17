@@ -20,24 +20,31 @@
                         <group colspan="4" col="5">
                             <button name="set_carrier_ok_yes" string="Delivery confirmed" type="object" attrs="{'invisible': [('carrier_ok', '=', True)]}" icon="fa-dropbox" /><!--('logistic_state', 'not in', ('order', 'pending')), -->
                             <button name="set_carrier_ok_no" string="Delivery undo" type="object" attrs="{'invisible': [('carrier_ok', '=', False)]}" icon="fa-mail-reply"/>
-                            <field name="carrier_ok" invisible="1" />
+                            <newline/>
                             <field name="carrier_shippy" />
+                            <field name="carrier_ok" invisible="1" />
+                            <newline/>
                         </group>
 
                         <!--MANUAL:-->
                         <group colspan="4" col="5" attrs="{'invisible': [('carrier_shippy','=',True)]}">
                              <field name="carrier_manual_weight" attrs="{'required': [('carrier_shippy','=',False)]}"/>
                              <field name="carrier_manual_parcel" attrs="{'required': [('carrier_shippy','=',False)]}"/>
+                             <newline/>
                              <!--Double fields: mandatory insert the name of carrier for stock people-->
-                             <field name="carrier_stock_note" attrs="{'required': [('carrier_shippy','=',False)]}"/>
+                             <field name="carrier_stock_note" attrs="{'required': [('carrier_shippy','=',False)]}" colspan="4"/>
+                             <newline/>
                         </group>
                                                     
                         <!--SHIPPY:-->
                         <group colspan="4" col="5" attrs="{'invisible': [('carrier_shippy','=',False)]}">
                             <field name="carrier_supplier_id" />
                             <field name="carrier_mode_id" domain="[('supplier_id', '=', carrier_supplier_id)]"/>
+                            <newline/>
+
                             <field name="carrier_parcel_template_id" domain="['|',('carrier_supplier_id','=',False),('carrier_supplier_id','=',carrier_supplier_id)]"/>
                             <button name="load_template_parcel" string="Add" type="object" attrs="{'invisible': [('carrier_parcel_template_id','=',False)]}" colspan="1" class="oe_highlight"/>
+                            <newline/>
 
                             <separator string="Parcel:" colspan="4"/>
                             <field name="parcel_ids" colspan="4" nolabel="1">
@@ -49,6 +56,7 @@
                                     <field name="weight" required="1"/>                                    
                                 </tree>
                             </field>
+                            <newline/>
 
                             <separator string="Partner check:" colspan="4"/>
                             <field name="carrier_check" colspan="4" readonly="1" nolabel="1" widget="html"/>
