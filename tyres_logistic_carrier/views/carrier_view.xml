@@ -28,6 +28,8 @@
                         <group colspan="4" col="5">
                              <field name="carrier_manual_weight" attrs="{'required': [('carrier_shippy','=',False)]}"/>
                              <field name="carrier_manual_parcel" attrs="{'required': [('carrier_shippy','=',False)]}"/>
+                             <!--Double fields: mandatory insert the name of carrier for stock people-->
+                             <field name="carrier_stock_note" attrs="{'required': [('carrier_shippy','=',False)]}"/>
                         </group>
                                                     
                         <!--SHIPPY:-->
