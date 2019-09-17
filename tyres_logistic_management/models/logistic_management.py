@@ -921,18 +921,50 @@ class StockPicking(models.Model):
         history_path = os.path.join(
             logistic_root_folder, 'invoice', 'history')
 
+        move_list = []
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
-                pick_id = int(f[:-4].split('_')[-1]) # pick_in_ID.csv                
+                f_split = f.split('.')
+                if len(f_split) != 4:
+                    _logger.error('File not with correct syntax: '
+                        'pick_in_ID.00001-CEE.20191231.csv')
+                    continue    
+                    
                 # TODO Mark as sync: quants.write({'account_sync': True, })
+                pick_id = int(f_split[0].split('_')[-1]) # pick_in_ID.csv
+                
+                invoice_number = f_split[1]
+                invoice_date = f_split[2]
 
-                # XXX Move when all is done after?
-                shutil.move(
+                # Update invoice information on picking:
+                try:
+                    self.write(pick_id, {
+                        'invoice_number' invoice_number, 
+                        'invoice_date': '%s-%s-%s' % ( 
+                            invoice_date[8:10],
+                            invoice_date[5:7],
+                            invoice_date[:4],
+                            )
+                        })
+                except:
+                    _logger.error('Error update pick as invoice: %s' % (
+                        sys.exc_info(),
+                        ))
+                    continue
+
+                # Move operation:
+                move_list.append((
                     os.path.join(reply_path, f),
                     os.path.join(history_path, f),
-                    )               
+                    ))
                 _logger.info('Pick ID: %s correct!' % f)
-            break # only first folder
+            break # Only first folder
+        
+        # ---------------------------------------------------------------------    
+        # Move files after database operation:
+        # ---------------------------------------------------------------------    
+        for from_file, to_file in move_list:
+            shutil.move(from_file, to_file)
         return True
 
     # -------------------------------------------------------------------------
