@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -37,11 +37,11 @@ from dateutil.relativedelta import relativedelta
 _logger = logging.getLogger(__name__)
 
 class CrmTeam(models.Model):
-    """ Model name: CRM Team 
+    """ Model name: CRM Team
     """
-    
+
     _inherit = 'crm.team'
-    
+
     channel_ref = fields.Char('Channel', size=20)
     team_code_ref = fields.Char('Team code ref.', size=20)
     market_type = fields.Selection((
@@ -52,7 +52,7 @@ class CrmTeam(models.Model):
 class ResCompany(models.Model):
     """ Model name: Res Company
     """
-    
+
     _inherit = 'res.company'
 
     # -------------------------------------------------------------------------
@@ -66,7 +66,7 @@ class ResCompany(models.Model):
             'corrispettivi': {
                 'default': 'Corrispettivi',
                 }
-                
+
             # TODO label, picking out?, Invoice, DDT
             }
 
@@ -83,12 +83,12 @@ class ResCompany(models.Model):
             value[8:10],
             value[5:7],
             value[:4],
-            value[10:],                    
+            value[10:],
             )
         if date_time:
             return res
         elif date:
-            return res[:10]    
+            return res[:10]
 
     # Get path name:
     @api.model
@@ -97,7 +97,7 @@ class ResCompany(models.Model):
         '''
         # Get master path:
         folder_block = self._logistic_folder_db[document][mode]
-        
+
         # Manage extra path:
         if extra:
             if type(extra) == str:
@@ -114,7 +114,7 @@ class ResCompany(models.Model):
         '''
         try:
             if type(name) == str:
-                name = (name, )                
+                name = (name, )
             folder = os.path.expanduser(
                 os.path.join(self.logistic_root_folder, *name))
 
@@ -124,23 +124,23 @@ class ResCompany(models.Model):
             raise odoo.exceptions.Warning(
                 _('Error creating output folder (check param)'))
         return folder
-        
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     # Pick type for load / unload:
     logistic_pick_in_type_id = fields.Many2one(
-        'stock.picking.type', 'Pick in type', 
+        'stock.picking.type', 'Pick in type',
         help='Picking in type for load documents',
         required=True,
         )
     logistic_pick_out_type_id = fields.Many2one(
-        'stock.picking.type', 'Pick out type', 
+        'stock.picking.type', 'Pick out type',
         help='Picking in type for unload documents',
         required=True,
         )
     logistic_root_folder = fields.Text(
-        'Output root folder', 
+        'Output root folder',
         help='Master root folder for output',
         required=True,
         )
@@ -163,15 +163,15 @@ class ProductTemplate(models.Model):
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
-    is_expence = fields.Boolean('Expense product', 
+    is_expence = fields.Boolean('Expense product',
         help='Expense product is not order and produced')
-    account_ref = fields.Char('Account ref.', size=20, 
+    account_ref = fields.Char('Account ref.', size=20,
         help='Account code, if not present use default setup in configuration')
-    
+
 class PurchaseOrder(models.Model):
     """ Model name: Sale Order
     """
-    
+
     _inherit = 'purchase.order'
 
     # -------------------------------------------------------------------------
@@ -182,14 +182,14 @@ class PurchaseOrder(models.Model):
     def purchase_internal_confirmed(self, purchases=None):
         ''' Check if there's some PO internal to close
         '''
-        
+
         # TODO schedule action?
         # Pool used:
         company_pool = self.env['res.company']
         move_pool = self.env['stock.move']
         sale_line_pool = self.env['sale.order.line']
         picking_pool = self.env['stock.picking']
-        
+
         # Parameter:
         company = company_pool.search([])[0]
         logistic_pick_in_type = company.logistic_pick_in_type_id
@@ -207,9 +207,9 @@ class PurchaseOrder(models.Model):
         move_file = []
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
-                po_id = int(f[:-4].split('_')[-1]) # pick_in_ID.csv                
+                po_id = int(f[:-4].split('_')[-1]) # pick_in_ID.csv
                 # TODO Mark as sync: quants.write({'account_sync': True, })
-                
+
                 # Read picking and create Fake BF for load stock
                 purchase = self.browse(po_id)
                 if purchase.logistic_state == 'done':
@@ -220,24 +220,24 @@ class PurchaseOrder(models.Model):
                 # Create picking:
                 # -------------------------------------------------------------
                 try:
-                    order = purchase.order_line[0].logistic_sale_id.order_id 
+                    order = purchase.order_line[0].logistic_sale_id.order_id
                 except:
                     # Empty order: (cancel before load in account)
                     purchase.logistic_state = 'done'
-                    
-                    # Save move operation:            
+
+                    # Save move operation:
                     move_file.append((
                         os.path.join(reply_path, f),
                         os.path.join(history_path, f),
                         ))
-                    continue     
-                        
+                    continue
+
                 partner = order.partner_id
                 date = purchase.date_order
                 name = purchase.name or ''
                 origin = _('%s [%s]') % (name, date)
 
-                picking = picking_pool.create({       
+                picking = picking_pool.create({
                     'partner_id': partner.id,
                     'scheduled_date': date,
                     'origin': origin,
@@ -246,7 +246,7 @@ class PurchaseOrder(models.Model):
                     'group_id': False,
                     'location_id': location_from,
                     'location_dest_id': location_to,
-                    #'priority': 1,                
+                    #'priority': 1,
                     'state': 'done', # immediately!
                     })
 
@@ -258,7 +258,7 @@ class PurchaseOrder(models.Model):
                     product_qty = line.product_qty
                     remain_qty = line.logistic_undelivered_qty
                     logistic_sale_id = line.logistic_sale_id
-                    
+
                     if product_qty >= remain_qty:
                         sale_line_ready.append(logistic_sale_id)
                         logistic_sale_id.logistic_state = 'ready' # XXX needed?
@@ -270,7 +270,7 @@ class PurchaseOrder(models.Model):
                         'company_id': company.id,
                         'partner_id': partner.id,
                         'picking_id': picking.id,
-                        'product_id': product.id, 
+                        'product_id': product.id,
                         'name': product.name or ' ',
                         'date': date,
                         'date_expected': date,
@@ -283,28 +283,28 @@ class PurchaseOrder(models.Model):
 
                         # Sale order line link:
                         'logistic_load_id': logistic_sale_id.id,
-                        # Purchase order line line: 
+                        # Purchase order line line:
                         'logistic_purchase_id': line.id,
                         })
 
-                # Save move operation:            
+                # Save move operation:
                 move_file.append((
                     os.path.join(reply_path, f),
                     os.path.join(history_path, f),
                     ))
-                
+
                 # Mask as done fake purchase order:
                 purchase.logistic_state = 'done'
                 _logger.info('Purchase order: %s done!' % f)
-                
+
             break # only first folder
-            
+
         # ---------------------------------------------------------------------
         # Check Sale Order header with all line ready:
         # ---------------------------------------------------------------------
         _logger.info('Update sale order header as ready:')
         sale_line_pool.logistic_check_ready_order(sale_line_ready)
-        
+
         # ---------------------------------------------------------------------
         # Move all files read:
         # ---------------------------------------------------------------------
@@ -324,7 +324,7 @@ class PurchaseOrder(models.Model):
         '''
         model_pool = self.env['ir.model.data']
         tree_view_id = form_view_id = False
-        
+
         if len(purchase_ids) == 1:
             res_id = purchase_ids[0]
             views = [(form_view_id, 'form'), (tree_view_id, 'tree')]
@@ -352,23 +352,23 @@ class PurchaseOrder(models.Model):
         ''' Check passed purchase IDs passed or all confirmed order
             if not present
         '''
-        if purchase_ids: 
+        if purchase_ids:
             purchases = self.browse(purchase_ids)
         else:
             purchases = self.search([('logistic_state', '=', 'confirmed')])
-        
+
         for purchase in purchases:
             done = True
-            
+
             for line in purchase.order_line:
                 if line.logistic_undelivered_qty > 0:
                     done = False
                     break
-            # Update if all line hasn't undelivered qty        
+            # Update if all line hasn't undelivered qty
             if done:
                 purchase.logistic_state = 'done'
-        return True        
-                
+        return True
+
     # -------------------------------------------------------------------------
     #                            BUTTON:
     # -------------------------------------------------------------------------
@@ -383,7 +383,7 @@ class PurchaseOrder(models.Model):
             'tyres_logistic_management', 'view_purchase_order_line_form')[1]
 
         line_ids = [item.id for item in self.order_line]
-        
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Purchase line'),
@@ -398,7 +398,7 @@ class PurchaseOrder(models.Model):
             'target': 'current', # 'new'
             'nodestroy': False,
             }
-        
+
     # Workflow button:
     @api.multi
     def set_logistic_state_confirmed(self):
@@ -407,14 +407,14 @@ class PurchaseOrder(models.Model):
         # Export if needed the purchase order:
         # TODO self.export_purchase_order()
         now = fields.Datetime.now()
-        
+
         return self.write({
             'logistic_state': 'confirmed',
             'date_planned': now,
             })
 
     # -------------------------------------------------------------------------
-    #                                COLUMNS: 
+    #                                COLUMNS:
     # -------------------------------------------------------------------------
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft purchase
@@ -426,15 +426,15 @@ class PurchaseOrder(models.Model):
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
     """
-    
+
     _inherit = 'purchase.order.line'
-    
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     # RELATIONAL FIELDS:
     logistic_sale_id = fields.Many2one(
-        'sale.order.line', 'Link to generator', 
+        'sale.order.line', 'Link to generator',
         help='Link generator sale order line: one customer line=one purchase',
         index=True, ondelete='set null',
         )
@@ -442,29 +442,29 @@ class PurchaseOrderLine(models.Model):
 class StockMoveIn(models.Model):
     """ Model name: Stock Move
     """
-    
+
     _inherit = 'stock.move'
-    
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    # Direct link to sale order line (generated from purchase order):    
+    # Direct link to sale order line (generated from purchase order):
     logistic_refund_id = fields.Many2one(
-        'sale.order.line', 'Link refund to sale', 
+        'sale.order.line', 'Link refund to sale',
         help='Link pick refund line to original sale line',
         index=True, ondelete='set null',
         )
 
-    # Direct link to sale order line (generated from purchase order):    
+    # Direct link to sale order line (generated from purchase order):
     logistic_load_id = fields.Many2one(
-        'sale.order.line', 'Link load to sale', 
+        'sale.order.line', 'Link load to sale',
         help='Link pick in line to original sale line (bypass purchase)',
         index=True, ondelete='set null',
         )
-    
+
     # DELIVER: Pick out
     logistic_unload_id = fields.Many2one(
-        'sale.order.line', 'Link unload to sale', 
+        'sale.order.line', 'Link unload to sale',
         help='Link pick out line to sale order',
         index=True, ondelete='set null',
         )
@@ -479,15 +479,15 @@ class StockMoveIn(models.Model):
     # LOAD WITHOUT SUPPLIER: Load management:
     # XXX Remove:
     logistic_quant_id = fields.Many2one(
-        'stock.quant', 'Stock quant', 
-        help='Link to stock quant generated (load / unoad data).', 
+        'stock.quant', 'Stock quant',
+        help='Link to stock quant generated (load / unoad data).',
         index=True, ondelete='cascade',
         )
 
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
     """
-    
+
     _inherit = 'purchase.order.line'
 
     # -------------------------------------------------------------------------
@@ -528,14 +528,14 @@ class PurchaseOrderLine(models.Model):
     # TODO logistic state?
     # RELATIONAL:
     load_line_ids = fields.One2many(
-        'stock.move', 'logistic_purchase_id', 'Linked load to purchase', 
+        'stock.move', 'logistic_purchase_id', 'Linked load to purchase',
         help='Load linked to this purchase line',
         )
 
 class StockPicking(models.Model):
     """ Model name: Stock picking
     """
-    
+
     _inherit = 'stock.picking'
 
     @api.multi
@@ -551,7 +551,7 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def reply_csv_accounting_fees(self):
-        ''' 
+        '''
         '''
         # TODO
         return True
@@ -567,7 +567,7 @@ class StockPicking(models.Model):
         path = os.path.expanduser(company.logistic_root_folder)
         path = os.path.join(path, 'corrispettivi')
 
-        product_account_ref = company.product_account_ref    
+        product_account_ref = company.product_account_ref
 
         try:
             os.system('mkdir -p %s' % path)
@@ -576,13 +576,13 @@ class StockPicking(models.Model):
         except:
             _logger.error('Cannot create %s' % path)
 
-        # Period current date:        
+        # Period current date:
         _logger.warning('Account Fees evalutation: %s' % evaluation_date)
-    
+
         # Picking not invoiced (DDT and Refund):
         pickings = self.search([
             ('is_fees', '=', True),
-            
+
             # Period:
             ('scheduled_date', '>=', '%s 00:00:00' % evaluation_date),
             ('scheduled_date', '<=', '%s 23:59:59' % evaluation_date),
@@ -592,7 +592,7 @@ class StockPicking(models.Model):
         channel_row = {}
         for picking in pickings:
             # Readability:
-            order = picking.sale_order_id 
+            order = picking.sale_order_id
             partner = order.partner_id
             stock_mode = picking.stock_mode #in: refund, out: DDT
 
@@ -602,11 +602,11 @@ class StockPicking(models.Model):
 
                 # Get channel
                 try:
-                    channel = move.logistic_unload_id.team_id.channel_ref 
+                    channel = move.logistic_unload_id.team_id.channel_ref
                 except:
                     channel = ''
-                    
-                # Get partner code    
+
+                # Get partner code
                 try:
                     code_ref = move.logistic_unload_id.team_id.team_code_ref
                 except:
@@ -614,10 +614,10 @@ class StockPicking(models.Model):
 
                 if channel not in channel_row:
                     channel_row[channel] = []
-    
-                if stock_mode == 'out': 
+
+                if stock_mode == 'out':
                     total = -total
-                product = move.product_id  
+                product = move.product_id
                 channel_row[channel].append((
                     # XXX Use scheduled date or ddt_date?
                     channel,
@@ -630,18 +630,18 @@ class StockPicking(models.Model):
                     'S' if product.is_expence else 'M',
                     code_ref, # Agent code
                     ))
-        
+
         date = evaluation_date.replace('-', '_')
         for channel in channel_row:
             fees_filename = os.path.join(path, '%s_%s.csv' % (channel, date))
-            fees_f = open(fees_filename, 'w')    
+            fees_f = open(fees_filename, 'w')
 
             fees_f.write(
                 'CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE|TIPO|AGENTE\r\n')
             for row in channel_row[channel]:
                 fees_f.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\r\n' % row)
             fees_f.close()
-                 
+
         return True
 
     # -------------------------------------------------------------------------
@@ -655,20 +655,20 @@ class StockPicking(models.Model):
         # Pool used:
         excel_pool = self.env['excel.writer']
         company_pool = self.env['res.company']
-        
+
         companys = company_pool.search([])
         fees_path = companys[0]._logistic_folder('corrispettivi')
 
-        # Period current date:        
+        # Period current date:
         if evaluation_date: # use evaluation
             now_dt = datetime.strptime(evaluation_date, '%Y-%m-%d')
         else: # use now
             now_dt = datetime.now()
         _logger.warning('Account Fees evalutation: %s' % now_dt)
-    
+
         from_date = now_dt.strftime('%Y-%m-01')
         now_dt += relativedelta(months=1)
-        to_date = now_dt.strftime('%Y-%m-01')        
+        to_date = now_dt.strftime('%Y-%m-01')
 
         # Picking not invoiced (DDT and Refund):
         pickings = self.search([
@@ -686,7 +686,7 @@ class StockPicking(models.Model):
 
         ws_invoice = 'Fatturato'
         excel_pool.create_worksheet(ws_invoice)
-        
+
         # ---------------------------------------------------------------------
         # Format:
         # ---------------------------------------------------------------------
@@ -701,12 +701,12 @@ class StockPicking(models.Model):
         #f_yellow_text = excel_pool.get_format('bg_yellow')
         #f_green_number = excel_pool.get_format('bg_green_number')
         #f_yellow_number = excel_pool.get_format('bg_yellow_number')
-        
+
         # ---------------------------------------------------------------------
         # Setup page: Corrispettivo
         # ---------------------------------------------------------------------
         excel_pool.column_width(ws_name, [
-            15, 15, 25, 15, 15, 30, 25, 
+            15, 15, 25, 15, 15, 30, 25,
             10, 10, 10,
             ])
 
@@ -717,8 +717,8 @@ class StockPicking(models.Model):
 
         row += 1
         excel_pool.write_xls_line(ws_name, row, [
-             'Data', 'Data X', 'Ordine', 'Picking', 'Stato', 
-             'Cliente', 'Posizione fiscale', 
+             'Data', 'Data X', 'Ordine', 'Picking', 'Stato',
+             'Cliente', 'Posizione fiscale',
              'Imponibile', 'IVA', 'Totale',
              ], default_format=f_header)
 
@@ -726,8 +726,8 @@ class StockPicking(models.Model):
         # Setup page: Fatturato
         # ---------------------------------------------------------------------
         excel_pool.column_width(ws_invoice, [
-            15, 15, 25, 15, 15, 
-            20, 30, 25, 
+            15, 15, 25, 15, 15,
+            20, 30, 25,
             10, 10, 10,
             ])
 
@@ -738,11 +738,11 @@ class StockPicking(models.Model):
 
         row_invoice += 1
         excel_pool.write_xls_line(ws_invoice, row_invoice, [
-             'Data', 'Data X', 'Ordine', 'Picking', 'Stato', 
-             'Fattura', 'Cliente', 'Posizione fiscale', 
+             'Data', 'Data X', 'Ordine', 'Picking', 'Stato',
+             'Fattura', 'Cliente', 'Posizione fiscale',
              'Imponibile', 'IVA', 'Totale',
              ], default_format=f_header)
-        
+
         total = {
             'amount': 0.0,
             'vat': 0.0,
@@ -756,7 +756,7 @@ class StockPicking(models.Model):
             }
         for picking in pickings:
             # Readability:
-            order = picking.sale_order_id 
+            order = picking.sale_order_id
             partner = order.partner_id
             stock_mode = picking.stock_mode #in: refund, out: DDT
 
@@ -768,7 +768,7 @@ class StockPicking(models.Model):
                 f_number = f_number_black
                 f_text = f_text_black
                 sign = +1.0
-                
+
             subtotal = { # common subtotal
                 'amount': 0.0,
                 'vat': 0.0,
@@ -778,15 +778,15 @@ class StockPicking(models.Model):
             if picking.invoice_number:
                 row_invoice +=1
                 for move in picking.move_lines_for_report():
-                    subtotal['amount'] += sign * float(move[9]) # Total without VAT 
+                    subtotal['amount'] += sign * float(move[9]) # Total without VAT
                     subtotal['vat'] += sign * float(move[6]) # VAT Total
                     subtotal['total'] += sign * float(move[10]) # Total with VAT
-                    
-                # Update total:    
+
+                # Update total:
                 total_invoice['amount'] += subtotal['amount']
                 total_invoice['vat'] += subtotal['vat']
                 total_invoice['total'] += subtotal['total']
-                
+
                 excel_pool.write_xls_line(ws_invoice, row_invoice, (
                     picking.ddt_date,
                     order.x_ddt_date,
@@ -800,19 +800,19 @@ class StockPicking(models.Model):
                     (subtotal['vat'], f_number),
                     (subtotal['total'], f_number),
                     ), default_format=f_text)
-                
+
             else: # No invoice:
                 row +=1
                 for move in picking.move_lines_for_report():
-                    subtotal['amount'] += sign * float(move[9]) # Total without VAT 
+                    subtotal['amount'] += sign * float(move[9]) # Total without VAT
                     subtotal['vat'] += sign * float(move[6]) # VAT Total
                     subtotal['total'] += sign * float(move[10]) # Total with VAT
-                    
-                # Update total:    
+
+                # Update total:
                 total['amount'] += subtotal['amount']
                 total['vat'] += subtotal['vat']
                 total['total'] += subtotal['total']
-                
+
                 excel_pool.write_xls_line(ws_name, row, (
                     picking.ddt_date,
                     order.x_ddt_date,
@@ -825,12 +825,12 @@ class StockPicking(models.Model):
                     (subtotal['vat'], f_number),
                     (subtotal['total'], f_number),
                     ), default_format=f_text)
-        
+
         # ---------------------------------------------------------------------
         # Totals:
         # ---------------------------------------------------------------------
         # 1. Corrispettivi:
-        row += 1        
+        row += 1
         excel_pool.write_xls_line(ws_name, row, (
             'Totali:',
             (total['amount'], f_number_black),
@@ -839,22 +839,22 @@ class StockPicking(models.Model):
             ), default_format=f_header, col=6)
 
         # 2. Invoice:
-        row_invoice += 1        
+        row_invoice += 1
         excel_pool.write_xls_line(ws_invoice, row_invoice, (
             'Totali:',
             (total_invoice['amount'], f_number_black),
             (total_invoice['vat'], f_number_black),
             (total_invoice['total'], f_number_black),
             ), default_format=f_header, col=7)
-        
-        # ---------------------------------------------------------------------                 
+
+        # ---------------------------------------------------------------------
         # Define filename and save:
-        # ---------------------------------------------------------------------                 
+        # ---------------------------------------------------------------------
         filename = os.path.join(fees_path, '%s_%s_corrispettivi.xlsx' % (
             from_date[:4], from_date[5:7]))
         excel_pool.save_file_as(filename)
         return True
-    
+
     # -------------------------------------------------------------------------
     # Override path function:
     # -------------------------------------------------------------------------
@@ -862,14 +862,14 @@ class StockPicking(models.Model):
     @api.multi
     def get_default_folder_path(self):
         ''' Override default extract DDT function:
-        '''        
+        '''
         companys = self.env['res.company'].search([])
         return companys[0]._logistic_folder('ddt')
 
     @api.multi
     def get_default_folder_invoice_path(self):
         ''' Override default extract Invoice function:
-        '''        
+        '''
         companys = self.env['res.company'].search([])
         return companys[0]._logistic_folder('invoice')
 
@@ -880,7 +880,7 @@ class StockPicking(models.Model):
         '''
         companys = self.env['res.company'].search([])
         return companys[0]._logistic_folder('invoice', 'xml')
-    
+
     # -------------------------------------------------------------------------
     #                                   UTILITY:
     # -------------------------------------------------------------------------
@@ -890,7 +890,7 @@ class StockPicking(models.Model):
         '''
         if type(value) != float:
             return value
-            
+
         format_mask = '%%%s.%sf' % (length, decimal)
         return (format_mask % value).strip()
 
@@ -928,19 +928,19 @@ class StockPicking(models.Model):
                 if len(f_split) != 4:
                     _logger.error('File not with correct syntax: '
                         'pick_in_ID.00001-CEE.20191231.csv')
-                    continue    
-                    
+                    continue
+
                 # TODO Mark as sync: quants.write({'account_sync': True, })
                 pick_id = int(f_split[0].split('_')[-1]) # pick_in_ID.csv
-                
+
                 invoice_number = f_split[1]
-                invoice_date = f_split[2]                
+                invoice_date = f_split[2]
 
                 # Update invoice information on picking:
                 try:
                     self.browse(pick_id).write({
-                        'invoice_number': invoice_number, 
-                        'invoice_date': '%s-%s-%s' % ( 
+                        'invoice_number': invoice_number,
+                        'invoice_date': '%s-%s-%s' % (
                             invoice_date[6:8],
                             invoice_date[4:6],
                             invoice_date[:4],
@@ -959,10 +959,10 @@ class StockPicking(models.Model):
                     ))
                 _logger.info('Pick ID: %s correct!' % f)
             break # Only first folder
-        
-        # ---------------------------------------------------------------------    
+
+        # ---------------------------------------------------------------------
         # Move files after database operation:
-        # ---------------------------------------------------------------------    
+        # ---------------------------------------------------------------------
         for from_file, to_file in move_list:
             shutil.move(from_file, to_file)
         return True
@@ -974,11 +974,11 @@ class StockPicking(models.Model):
     def workflow_ready_to_done_done_picking(self):
         ''' Confirm draft picking documents
         '''
-        def get_address(partner): 
+        def get_address(partner):
             return '%s %s|%s|%s|%s|%s|%s' % (
                 partner.street or '',
                 partner.street2 or '',
-                
+
                 partner.zip,
                 partner.city or '',
                 partner.state_id.name or '',
@@ -1002,17 +1002,17 @@ class StockPicking(models.Model):
             order = picking.sale_order_id
             partner = order.partner_invoice_id or order.partner_id
             address = order.partner_shipping_id
-            
+
             # Need invoice check (fiscal position or order check):
             need_invoice = \
                 partner.property_account_position_id.need_invoice or \
                     partner.need_invoice or order.need_invoice
-            is_fees = True # default        
-                
+            is_fees = True # default
+
             # Invoice procedure (check rules):
-            if need_invoice:        
+            if need_invoice:
                 is_fees = False
-        
+
                 # -------------------------------------------------------------
                 # Extract invoice from account:
                 # -------------------------------------------------------------
@@ -1027,7 +1027,7 @@ class StockPicking(models.Model):
                 except:
                     _logger.error('Cannot create %s' % path)
                 invoice_file = open(invoice_filename, 'w')
-                
+
                 # Export syntax:
                 cols = 26
                 invoice_file.write(
@@ -1048,9 +1048,9 @@ class StockPicking(models.Model):
                     weight = sum([item.weight for item in order.parcel_ids])
                     parcel = len(order.parcel_ids)
                 else:
-                    weight = order.carrier_manual_weight 
+                    weight = order.carrier_manual_weight
                     parcel = order.carrier_manual_parcel
-                    
+
                 for move in self.move_lines:
                     line = move.logistic_unload_id
                     invoice_file.write(mask % (
@@ -1058,20 +1058,20 @@ class StockPicking(models.Model):
                         get_address(partner),
                         partner.vat or '',
                         partner.fatturapa_fiscalcode or '',
-                        
+
                         partner.email or '',
                         partner.phone or '',
                         partner.id,
                         partner.fatturapa_pec or '',
                         partner.fatturapa_unique_code or '',
                         address.name,
-                        
+
                         'privato' if partner.fatturapa_surname else 'business',
                         get_address(address),
                         address.id,
                         '', # TODO Account ID of Bank
                         order.id,
-                        
+
                         order.name or '',
                         company_pool.formatLang(
                             order.date_order, date=True),
@@ -1089,29 +1089,29 @@ class StockPicking(models.Model):
                 invoice_file.close()
                 self.check_import_reply() # Check previous import reply
                 invoice_ids.append(picking.id)
-            
+
             picking.write({
                 'state': 'done', # TODO needed?
                 'is_fees': is_fees,
                 })
-    
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     sale_order_id = fields.Many2one(
         'sale.order', 'Sale order', help='Sale order generator')
-    is_fees = fields.Boolean('Is fees', help='Picking not invoiced for sale')    
-    
+    is_fees = fields.Boolean('Is fees', help='Picking not invoiced for sale')
+
 class ResPartner(models.Model):
     """ Model name: Res Partner
     """
-    
+
     _inherit = 'res.partner'
-    
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    internal_stock = fields.Boolean('Internal Stock', 
+    internal_stock = fields.Boolean('Internal Stock',
         help='All order to this supplier is considered as internal')
     need_invoice = fields.Boolean('Always invoice')
     sql_customer_code = fields.Char('SQL customer code', size=20)
@@ -1120,9 +1120,9 @@ class ResPartner(models.Model):
 class AccountFiscalPosition(models.Model):
     """ Model name: Account Fiscal Position
     """
-    
+
     _inherit = 'account.fiscal.position'
-    
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
@@ -1131,9 +1131,9 @@ class AccountFiscalPosition(models.Model):
 class AccountPaymentTerm(models.Model):
     """ Model name: Account Payment term
     """
-    
+
     _inherit = 'account.payment.term'
-    
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
@@ -1142,9 +1142,9 @@ class AccountPaymentTerm(models.Model):
 class AccountTax(models.Model):
     """ Model name: Account Payment term
     """
-    
+
     _inherit = 'account.tax'
-    
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
@@ -1153,12 +1153,12 @@ class AccountTax(models.Model):
 class SaleOrder(models.Model):
     """ Model name: Sale Order
     """
-    
+
     _inherit = 'sale.order'
 
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     #                           SERVER ACTION:
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     @api.model
     def order_ready_excel_report(self):
         ''' Generate ready report
@@ -1166,11 +1166,11 @@ class SaleOrder(models.Model):
         # Pool used:
         excel_pool = self.env['excel.writer']
         line_pool = self.env['sale.order.line']
-                
+
         now = fields.Datetime.now()
 
         _logger.warning('Ready delivery ref.: %s' % now)
-    
+
         # Line to delivery:
         lines = line_pool.search([
             ('order_id.logistic_state', '=', 'done'),
@@ -1191,12 +1191,12 @@ class SaleOrder(models.Model):
                 'black': excel_pool.get_format('text'),
                 'red': excel_pool.get_format('text_red'),
                 },
-            'number': {    
+            'number': {
                 'black': excel_pool.get_format('number'),
                 'red': excel_pool.get_format('number_red'),
                 },
             }
-        
+
         # ---------------------------------------------------------------------
         # Setup page: Corrispettivo
         # ---------------------------------------------------------------------
@@ -1214,7 +1214,7 @@ class SaleOrder(models.Model):
         excel_pool.write_xls_line(ws_name, row, [
              'Articolo',
              'Descrizione',
-             
+
              'Ordine',
              'Data',
              'Q.',
@@ -1230,23 +1230,23 @@ class SaleOrder(models.Model):
             # Jump expence:
             if product.type == 'service' or product.is_expence:
                 continue
-            
+
             row += 1
             excel_pool.write_xls_line(ws_name, row, (
                 product.default_code,
                 product.description_sale or \
                     product.titolocompleto or product.name or 'Non trovato',
-                      
-                order.name,      
+
+                order.name,
                 order.date_order[:10],
                 line.product_uom_qty,
-                #(line.product_uom_qty, format_type['number']['black']), 
+                #(line.product_uom_qty, format_type['number']['black']),
                 #logistic_undelivered_qty
                 ), default_format=format_type['text']['black'])
 
-        # ---------------------------------------------------------------------                 
+        # ---------------------------------------------------------------------
         # Return file:
-        # ---------------------------------------------------------------------                 
+        # ---------------------------------------------------------------------
         return excel_pool.return_attachment('Consegne del %s' % now)
 
     @api.model
@@ -1259,14 +1259,14 @@ class SaleOrder(models.Model):
             user.name,
             )
         self.message_post(
-            body=body, 
-            #subtype='mt_comment', 
+            body=body,
+            #subtype='mt_comment',
             #partner_ids=followers
             )
-        
-    # -------------------------------------------------------------------------    
+
+    # -------------------------------------------------------------------------
     #                           OVERRIDE EVENTS:
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     @api.multi
     def payment_is_done(self):
         """ Update payment field done
@@ -1299,7 +1299,7 @@ class SaleOrder(models.Model):
         '''Update fields
         '''
         self.locked_delivery = False
-    
+
     @api.multi
     def dummy(self):
         '''Do nothing'''
@@ -1318,17 +1318,17 @@ class SaleOrder(models.Model):
     def workflow_manual_order_pending(self):
         ''' If order have all line checked make one step in pending state
         '''
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         #                             Go in pending
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         if self.logistic_state != 'order':
             raise exceptions.UserError(
-                _('Only order in confirmed payment could go in pending!'))            
+                _('Only order in confirmed payment could go in pending!'))
 
         for line in self.order_line:
             if line.logistic_state != 'ready' and not line.state_check:
                 raise exceptions.UserError(
-                _('Not all line are mapped to supplier!'))                
+                _('Not all line are mapped to supplier!'))
 
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         # XXX DISABLE INSTRUCTION
@@ -1337,18 +1337,18 @@ class SaleOrder(models.Model):
         self.logistic_state = 'pending'
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         #                            Generate purchase:
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         # Filter only draft line for this order:
         line_pool = self.env['sale.order.line']
-        
+
         lines = line_pool.search([
             ('order_id', '=', self.id),
             ('logistic_state', '=', 'draft'),
             ])
 
-        # In undo operation could be returned so check also:    
+        # In undo operation could be returned so check also:
         lines_not_draft = line_pool.search([
             ('order_id', '=', self.id),
             ('logistic_state', '!=', 'draft'),
@@ -1357,7 +1357,7 @@ class SaleOrder(models.Model):
         if not lines and not lines_not_draft:
             raise exceptions.UserError(_('No order line to order!'))
 
-        # Call original action:    
+        # Call original action:
         line_pool.workflow_order_pending(lines)
         return True # Return nothing
 
@@ -1376,7 +1376,7 @@ class SaleOrder(models.Model):
             if tuple(line_state) == ('ready', ): # All ready
                 if order.logistic_source in ('internal', 'workshop', 'resell'):
                     order.logistic_state = 'done'
-                else:    
+                else:
                     order.logistic_state = 'ready'
                 order_ids.append(order.id)
 
@@ -1429,8 +1429,8 @@ class SaleOrder(models.Model):
 
         return orders.write({
             'logistic_state': 'error',
-            })    
-    
+            })
+
     def check_product_service(self):
         ''' Update line with service to ready state
         '''
@@ -1449,9 +1449,9 @@ class SaleOrder(models.Model):
 
     # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     # 0. Cancel error order
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     @api.multi
     def wk_order_cancel(self):
         ''' Cancel order (only error state)
@@ -1459,7 +1459,7 @@ class SaleOrder(models.Model):
         self.logistic_state = 'cancel'
 
     # A. Logistic phase 1: Check secure payment:
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     @api.model
     def workflow_draft_to_order(self):
         ''' Assign logistic_state to secure order
@@ -1471,11 +1471,11 @@ class SaleOrder(models.Model):
         # Empty orders:
         _logger.info('Check: Mark error state for empty orders')
         self.check_empty_orders() # Order without line
-        
+
         # Payment article (not kit now):
         _logger.info('Check: Mark service line to ready (not lavoration)')
         self.check_product_service() # Line with service article (not used)
-        
+
         # ---------------------------------------------------------------------
         # Start order payment check:
         # ---------------------------------------------------------------------
@@ -1495,17 +1495,17 @@ class SaleOrder(models.Model):
                 continue
 
             # -----------------------------------------------------------------
-            # 2. Secure market (sale team):    
+            # 2. Secure market (sale team):
             # -----------------------------------------------------------------
             try: # error if not present
                 if order.team_id.secure_payment:
                     payment_order.append(order)
                     continue
-            except:   
+            except:
                 pass
 
             # -----------------------------------------------------------------
-            # 3. Secure payment in fiscal position     
+            # 3. Secure payment in fiscal position
             # -----------------------------------------------------------------
             try: # problem in not present
                 position = order.partner_id.property_account_position_id
@@ -1514,9 +1514,9 @@ class SaleOrder(models.Model):
                         secure.payment_id for secure in position.secure_ids]:
                     payment_order.append(order)
                     continue
-            except:   
+            except:
                 pass
-        
+
         # ---------------------------------------------------------------------
         # Update state: order >> payment
         # ---------------------------------------------------------------------
@@ -1538,19 +1538,19 @@ class SaleOrder(models.Model):
         ''' Button action for call all ready to done order:
         '''
         return self.workflow_ready_to_done_draft_picking()
-    
-    # Real trigger call:    
-    @api.model 
+
+    # Real trigger call:
+    @api.model
     def workflow_ready_to_done_draft_picking(self, ):
         ''' Confirm payment order (before expand kit)
             NOTE: limit, current no more used!
         '''
         self.ensure_one()
-        
+
         # ---------------------------------------------------------------------
         # TODO Get label PDF for printing
         # ---------------------------------------------------------------------
-        
+
         # ---------------------------------------------------------------------
         # TODO Print label
         # ---------------------------------------------------------------------
@@ -1568,7 +1568,7 @@ class SaleOrder(models.Model):
         ''' Set order as done (from delivering)
         '''
         now = fields.Datetime.now()
-        
+
         # Pool used:
         picking_pool = self.env['stock.picking']
         move_pool = self.env['stock.move']
@@ -1597,7 +1597,7 @@ class SaleOrder(models.Model):
         partner = order.partner_id
         name = order.name # same as order_ref
         origin = _('%s [%s]') % (order.name, order.create_date[:10])
-        picking = picking_pool.create({                
+        picking = picking_pool.create({
             'sale_order_id': order.id, # Link to order
             'partner_id': partner.id,
             'scheduled_date': now,
@@ -1607,23 +1607,23 @@ class SaleOrder(models.Model):
             'group_id': False,
             'location_id': location_from,
             'location_dest_id': location_to,
-            #'priority': 1,                
+            #'priority': 1,
             'state': 'draft', # XXX To do manage done phase (for invoice)!!
             })
-        picking_ids.append(picking.id)    
-            
+        picking_ids.append(picking.id)
+
         for line in order.order_line:
             product = line.product_id
-            
+
             # =================================================================
             # Speed up (check if yet delivered):
             # -----------------------------------------------------------------
-            # TODO check if there's another cases: service, kit, etc. 
+            # TODO check if there's another cases: service, kit, etc.
             if line.delivered_line_ids:
                 product_qty = line.logistic_undelivered_qty
             else:
                 product_qty = line.product_uom_qty
-            
+
             # Update line status:
             line.write({'logistic_state': 'done', })
             # =================================================================
@@ -1636,7 +1636,7 @@ class SaleOrder(models.Model):
                 'company_id': company.id,
                 'partner_id': partner.id,
                 'picking_id': picking.id,
-                'product_id': product.id, 
+                'product_id': product.id,
                 'name': product.name or ' ',
                 'date': now,
                 'date_expected': now,
@@ -1647,7 +1647,7 @@ class SaleOrder(models.Model):
                 'state': 'done',
                 'origin': origin,
                 'price_unit': product.standard_price,
-                
+
                 # Sale order line link:
                 'logistic_unload_id': line.id,
 
@@ -1666,7 +1666,7 @@ class SaleOrder(models.Model):
         picking_pool.browse(picking_ids).workflow_ready_to_done_done_picking()
 
         # ---------------------------------------------------------------------
-        # Order status:    
+        # Order status:
         # ---------------------------------------------------------------------
         # Change status order delivering > done
         order.logistic_check_and_set_done()
@@ -1692,10 +1692,10 @@ class SaleOrder(models.Model):
         '''
         for order in self:
             order.market_type = order.team_id.market_type
-    
-    # =========================================================================    
+
+    # =========================================================================
     #                               UNDO SECTION:
-    # =========================================================================    
+    # =========================================================================
     @api.multi
     def undo_go_in_draft(self):
         ''' Return to draft
@@ -1705,7 +1705,7 @@ class SaleOrder(models.Model):
                 'order', 'ready', 'pending', 'delivering'):
             raise exceptions.UserError(
                 _('Only order in confirmed, pending, ready, delivering'
-                  ' can undo!'))            
+                  ' can undo!'))
 
         # ---------------------------------------------------------------------
         # Set line for unlinked state:
@@ -1713,10 +1713,10 @@ class SaleOrder(models.Model):
         for line in self.order_line:
             if line.delivered_line_ids:
                 raise exceptions.UserError(
-                    _('Cannot UNDO partial delivery present!'))            
-                    
+                    _('Cannot UNDO partial delivery present!'))
+
             # TODO load stock with received stock
-            if line.purchase_line_ids or line.load_line_ids:            
+            if line.purchase_line_ids or line.load_line_ids:
                 line.undo_returned = True
 
         # Log operation:
@@ -1750,23 +1750,23 @@ class SaleOrder(models.Model):
                 'extra manual operation for correct for ex. paypal amount '
                 'received (payment will be confirmed after finish).'
                 )
-            return                     
+            return
         elif self.logistic_state == 'done':
             self.undo_comment = _(
                 'Order <b>done</b> state: No more modify, correct in account '
                 'program!'
                 )
-            return    
+            return
         elif self.logistic_state == 'cancel':
             self.undo_comment = _(
                 'Order <b>cancel</b> state: '
                 )
-            return    
+            return
         elif self.logistic_state == 'error':
             self.undo_comment = _(
                 'Order <b>error</b> state: '
                 )
-            return    
+            return
         # Check what is done:
         # self.logistic_state in ('pending', 'ready'):
         if self.logistic_state == 'pending':
@@ -1775,7 +1775,7 @@ class SaleOrder(models.Model):
             comment = 'Order in <b>ready</b> status:<br/>'
         elif self.logistic_state == 'delivering':
             comment = 'Order in <b>delivering</b> status:<br/>'
-                        
+
         comment_part = {'purchase': '', 'bf': '', 'bc': ''}
         for sol in self.order_line:
             product = sol.product_id
@@ -1794,13 +1794,13 @@ class SaleOrder(models.Model):
                         '<br><b>Purchase:</b><br/>'
                         'Need to remove some purchase order line!<br/>'
                         )
-                        
+
                 comment_part['purchase'] += _('%s x [%s] %s<br/>') % (
-                    line.product_qty,                    
+                    line.product_qty,
                     product.default_code or '',
                     note,
                     )
-                    
+
             # -----------------------------------------------------------------
             # BF line present:
             # -----------------------------------------------------------------
@@ -1813,7 +1813,7 @@ class SaleOrder(models.Model):
                         )
                 comment_part['bf'] += _(
                     '%s x [%s]<b> Go to internal stock</b><br/>') % (
-                        line.product_uom_qty,                    
+                        line.product_uom_qty,
                         product.default_code or '',
                         )
 
@@ -1829,7 +1829,7 @@ class SaleOrder(models.Model):
                         '</font></b><br/>'
                         )
                 comment_part['bc'] += _('%s x [%s]<br/>') % (
-                    line.product_uom_qty,                    
+                    line.product_uom_qty,
                     product.default_code or '',
                     )
         self.undo_comment = comment + ''.join(comment_part.values())
@@ -1838,7 +1838,7 @@ class SaleOrder(models.Model):
     # Columns:
     # -------------------------------------------------------------------------
     undo_comment = fields.Text('Undo comment', compute=_get_undo_comment)
-    
+
     market_type = fields.Selection((
         ('b2b', 'B2B'),
         ('b2c', 'B2C'),
@@ -1850,9 +1850,9 @@ class SaleOrder(models.Model):
          'Partner need invoice', related='partner_id.need_invoice',
          )
     need_invoice = fields.Boolean(
-        'Order need invoice invoice', 
+        'Order need invoice invoice',
         default=lambda s: s.partner_id.need_invoice)
-    
+
     logistic_picking_ids = fields.One2many(
         'stock.picking', 'sale_order_id', 'Picking')
 
@@ -1866,7 +1866,7 @@ class SaleOrder(models.Model):
 
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft, new order received
-        
+
         # Start automation:
         ('order', 'Order confirmed'), # Quotation transformed in order
         ('pending', 'Pending delivery'), # Waiting for delivery
@@ -1884,7 +1884,7 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     """ Model name: Sale Order Line
     """
-    
+
     _inherit = 'sale.order.line'
 
     # -------------------------------------------------------------------------
@@ -1894,7 +1894,7 @@ class SaleOrderLine(models.Model):
     def logistic_check_ready_order(self, sale_lines=None):
         ''' Mask as done sale order with all ready lines
             if not present find all order in pending state
-        '''        
+        '''
         order_pool = self.env['sale.order']
         if sale_lines:
             # Start from sale order line:
@@ -1904,15 +1904,15 @@ class SaleOrderLine(models.Model):
                 if order in order_checked:
                     continue
 
-                # Check sale.order logistic status (once):    
+                # Check sale.order logistic status (once):
                 order.logistic_check_and_set_ready()
-                order_checked.append(order) 
+                order_checked.append(order)
         else:
             # Check pending order:
-            orders = order_pool.search([('logistic_state', '=', 'pending')])            
+            orders = order_pool.search([('logistic_state', '=', 'pending')])
             return orders.logistic_check_and_set_ready() # IDs order updated
         return True
-            
+
     @api.model
     def return_order_line_list_view(self, line_ids):
         ''' Return order line tree view (selected)
@@ -1920,12 +1920,12 @@ class SaleOrderLine(models.Model):
         # Gef view
         model_pool = self.env['ir.model.data']
         tree_view_id = model_pool.get_object_reference(
-            'tyres_logistic_management', 
+            'tyres_logistic_management',
             'view_sale_order_line_logistic_tree')[1]
         form_view_id = model_pool.get_object_reference(
-            'tyres_logistic_management', 
+            'tyres_logistic_management',
             'view_sale_order_line_logistic_form')[1]
-        
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Updated lines'),
@@ -1983,11 +1983,11 @@ class SaleOrderLine(models.Model):
             comment += _(
                 'Load internal stock with internal/delivered q [#%s]<br/>'
                     ) % len(self.load_line_ids)
-                
+
             pickings = {}
-            
+
             # -----------------------------------------------------------------
-            # Collect data for picking:            
+            # Collect data for picking:
             # -----------------------------------------------------------------
             for line in self.load_line_ids: # BF or Internal
                 picking_id = line.picking_id.id or ''
@@ -1998,7 +1998,7 @@ class SaleOrderLine(models.Model):
             # -----------------------------------------------------------------
             # Write file with picking:
             # -----------------------------------------------------------------
-            for picking_id in pickings:                
+            for picking_id in pickings:
                 order_file = os.path.join(
                     path, 'pick_undo_%s.csv' % picking_id) # XXX Name with undo
                 if os.path.isfile(order_file): # File yet present
@@ -2037,7 +2037,7 @@ class SaleOrderLine(models.Model):
         comment += _('Remove purchase line [#%s].') % len(
             self.purchase_line_ids)
         self.purchase_line_ids.unlink()
-        
+
         # Log operation:
         order.write_log_chatter_message(comment)
 
@@ -2045,7 +2045,7 @@ class SaleOrderLine(models.Model):
             'undo_returned': False,
             'logistic_state': 'draft',
             })
-        
+
     # -------------------------------------------------------------------------
     #                           BUTTON EVENT:
     # -------------------------------------------------------------------------
@@ -2058,13 +2058,13 @@ class SaleOrderLine(models.Model):
     @api.multi
     def workflow_manual_order_line_pending(self):
         ''' When order are in 'order' state and all supplier will be choosen
-            The operator put the order in 'pending' state to be evaluated 
+            The operator put the order in 'pending' state to be evaluated
             and the next step create the order as setup in the line
             >> after: workflow_order_pending
-        '''        
+        '''
         # Create purchase order and confirm (purchase action not used)
         self.order_id.workflow_manual_order_pending()
-        
+
         # Return original order go in purchase:
         return {
             'type': 'ir.actions.act_window',
@@ -2080,7 +2080,7 @@ class SaleOrderLine(models.Model):
             'target': 'current', # 'new'
             'nodestroy': False,
             }
-    
+
     @api.multi
     def chain_broken_purchase_line(self):
         ''' Order undo line:
@@ -2090,13 +2090,13 @@ class SaleOrderLine(models.Model):
             3. Order will be recheck when triggered
         '''
         self.ensure_one()
-        
-        # Note: now it's not possibile, evaluate if necessary to reload 
+
+        # Note: now it's not possibile, evaluate if necessary to reload
         # Stock with that qty:
         # 0. Has delivered Qty
         if self.load_line_ids:
             raise exceptions.UserError(
-                _('Has delivered qty associated, cannot return!'))            
+                _('Has delivered qty associated, cannot return!'))
 
         # 2. Unlink purchase order line:
         for line in self.purchase_line_ids:
@@ -2115,13 +2115,13 @@ class SaleOrderLine(models.Model):
             line.order_id.message_post(
                 body=message, subtype='mt_comment')
         self.purchase_line_ids.unlink()
-        
+
         # 3. Change line state and header:
         # Order will be remanaged when retrigger procedure!
         self.logistic_state = 'draft'
         self.order_id.logistic_state = 'order'
         return True
-        
+
     @api.multi
     def open_view_sale_order(self):
         ''' Open order view
@@ -2142,13 +2142,13 @@ class SaleOrderLine(models.Model):
             'target': 'current', # 'new'
             'nodestroy': False,
             }
-    
+
     @api.multi
     def open_view_sale_order_product(self):
         ''' Open subsituted product
         '''
         view_id = False
-        
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Product detail'),
@@ -2163,13 +2163,13 @@ class SaleOrderLine(models.Model):
             'target': 'current', # 'new'
             'nodestroy': False,
             }
-    
+
     @api.multi
     def open_view_sale_order_original_product(self):
         ''' Open original product
         '''
         view_id = False
-        
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Product detail'),
@@ -2190,7 +2190,7 @@ class SaleOrderLine(models.Model):
         ''' Open original product
         '''
         view_id = False
-        
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Product detail'),
@@ -2212,18 +2212,18 @@ class SaleOrderLine(models.Model):
     # A. Assign available q.ty in stock assign a stock movement / quants
     @api.model
     def workflow_order_pending(self, lines=None):
-        ''' Logistic phase 2:            
-            Order remain uncovered qty to the default supplier            
+        ''' Logistic phase 2:
+            Order remain uncovered qty to the default supplier
             Generate purchase order to supplier linked to product
         '''
         now = fields.Datetime.now()
-        
+
         # ---------------------------------------------------------------------
         # Pool used:
         # ---------------------------------------------------------------------
         sale_pool = self.env['sale.order']
         purchase_pool = self.env['purchase.order']
-        purchase_line_pool = self.env['purchase.order.line']        
+        purchase_line_pool = self.env['purchase.order.line']
 
         # Note: Update only pending order with uncovered lines
         if lines is None:
@@ -2233,7 +2233,7 @@ class SaleOrderLine(models.Model):
                 # Line:
                 ('logistic_state', '=', 'draft'),
                 ])
-            
+
         # ---------------------------------------------------------------------
         # Parameter from company:
         # ---------------------------------------------------------------------
@@ -2243,7 +2243,7 @@ class SaleOrderLine(models.Model):
         else: # No lines found:
             _logger.warning(
                 'No pending line to order (could happen in undo)!')
-            # TODO problem if order was yet ready, need to be chacked here!    
+            # TODO problem if order was yet ready, need to be chacked here!
             return True
 
         # ---------------------------------------------------------------------
@@ -2256,17 +2256,17 @@ class SaleOrderLine(models.Model):
 
             for splitted in line.purchase_split_ids:
                 supplier = splitted.supplier_id
-            
-                # Update supplier purchase:    
+
+                # Update supplier purchase:
                 key = (supplier, order)
                 if key not in purchase_db:
                     purchase_db[key] = []
                 purchase_db[key].append(splitted)
 
-        selected_purchase = [] # ID: to return view list 
+        selected_purchase = [] # ID: to return view list
         for key in purchase_db:
             supplier, order = key
-            
+
             # -----------------------------------------------------------------
             # Create details:
             # -----------------------------------------------------------------
@@ -2287,7 +2287,7 @@ class SaleOrderLine(models.Model):
                 # -------------------------------------------------------------
                 # TODO if order was deleted restore logistic_state to uncovered
                 if not purchase_id:
-                    partner = supplier or company.partner_id # Use company 
+                    partner = supplier or company.partner_id # Use company
                     new_purchase = purchase_pool.create({
                         'partner_id': partner.id,
                         'date_order': now,
@@ -2319,7 +2319,7 @@ class SaleOrderLine(models.Model):
         # Confirm now purchase order:
         # ---------------------------------------------------------------------
         for purchase in selected_purchase:
-            purchase.set_logistic_state_confirmed()    
+            purchase.set_logistic_state_confirmed()
 
         # ---------------------------------------------------------------------
         # Extra operation:
@@ -2345,22 +2345,22 @@ class SaleOrderLine(models.Model):
             # -------------------------------------------------------------
             #state = 'draft'
             product = line.product_id
-            
+
             # -------------------------------------------------------------
             # OC: Ordered qty:
             # -------------------------------------------------------------
             logistic_order_qty = line.product_uom_qty
-            
+
             # -------------------------------------------------------------
             # PUR: Purchase (order done):
             # -------------------------------------------------------------
             logistic_purchase_qty = 0.0
-            
+
             # Purchase product:
             for purchase in line.purchase_line_ids:
                 logistic_purchase_qty += purchase.product_qty
             line.logistic_purchase_qty = logistic_purchase_qty
-            
+
             # -------------------------------------------------------------
             # UNC: Uncovered (to purchase) [OC - ASS - PUR]:
             # -------------------------------------------------------------
@@ -2369,7 +2369,7 @@ class SaleOrderLine(models.Model):
             line.logistic_uncovered_qty = logistic_uncovered_qty
 
             # State valuation:
-            #if state != 'ready' and not logistic_uncovered_qty: # XXX          
+            #if state != 'ready' and not logistic_uncovered_qty: # XXX
             #    state = 'ordered' # A part (or all) is order
 
             # -------------------------------------------------------------
@@ -2380,7 +2380,7 @@ class SaleOrderLine(models.Model):
             for move in line.load_line_ids:
                 logistic_received_qty += move.product_uom_qty # TODO verify
             line.logistic_received_qty = logistic_received_qty
-            
+
             # -------------------------------------------------------------
             # REM: Remain to receive [OC - ASS - BF]:
             # -------------------------------------------------------------
@@ -2399,7 +2399,7 @@ class SaleOrderLine(models.Model):
             for move in line.delivered_line_ids:
                 logistic_delivered_qty += move.product_uom_qty #TODO verify
             line.logistic_delivered_qty = logistic_delivered_qty
-            
+
             # -------------------------------------------------------------
             # UND: Undelivered (remain to pick out) [OC - BC]
             # -------------------------------------------------------------
@@ -2410,30 +2410,30 @@ class SaleOrderLine(models.Model):
             # State valuation:
             #if not logistic_undelivered_qty: # XXX
             #    state = 'done' # All delivered to customer
-            
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    undo_returned = fields.Boolean('Undo returned', 
+    undo_returned = fields.Boolean('Undo returned',
         help='Can unlink some operation that are present')
 
     # RELATION MANY 2 ONE:
     # B. Purchased:
     purchase_line_ids = fields.One2many(
-        'purchase.order.line', 'logistic_sale_id', 'Linked to purchase', 
+        'purchase.order.line', 'logistic_sale_id', 'Linked to purchase',
         help='Supplier ordered line linked to customer\'s one',
         )
     load_line_ids = fields.One2many(
-        'stock.move', 'logistic_load_id', 'Linked load to sale', 
+        'stock.move', 'logistic_load_id', 'Linked load to sale',
         help='Loaded movement in picking in documents',
         )
 
     # C. Deliver:
     delivered_line_ids = fields.One2many(
-        'stock.move', 'logistic_unload_id', 'Linked to deliveder', 
+        'stock.move', 'logistic_unload_id', 'Linked to deliveder',
         help='Deliver movement in pick out documents',
         )
-    
+
     # -------------------------------------------------------------------------
     #                               FUNCTION FIELDS:
     # -------------------------------------------------------------------------
@@ -2474,7 +2474,7 @@ class SaleOrderLine(models.Model):
         readonly=True, compute='_get_logistic_status_field', multi=True,
         store=False,
         )
-    
+
     # State (sort of workflow):
     logistic_state = fields.Selection([
         ('draft', 'Custom order'), # Draft, customer order
