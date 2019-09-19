@@ -1796,11 +1796,14 @@ class SaleOrder(models.Model):
                         'Need to remove some purchase order line!<br/>'
                         )
 
-                comment_part['purchase'] += _('%s x [%s] %s<br/>') % (
-                    line.product_qty,
-                    product.default_code or '',
-                    note,
-                    )
+                purchase_order = line.purchase_id
+                comment_part['purchase'] += _(
+                    '%s x [%s] (Doc. %s) %s<br/>') % (
+                        line.product_qty,
+                        product.default_code or '',
+                        purchase_order.name,
+                        note,
+                        )
 
             # -----------------------------------------------------------------
             # BF line present:
@@ -1813,8 +1816,9 @@ class SaleOrder(models.Model):
                         ' stock!<br/>'
                         )
                 comment_part['bf'] += _(
-                    '%s x [%s]<b> Go to internal stock</b><br/>') % (
+                    '%s x [%s] (Doc. %s)<b> Go to internal stock</b><br/>') % (
                         line.product_uom_qty,
+                        line.picking_id.name, # TODO BF ref.  if present!
                         product.default_code or '',
                         )
 
