@@ -280,6 +280,7 @@ class PurchaseOrder(models.Model):
                         'product_uom': product.uom_id.id,
                         'state': 'done',
                         'origin': origin,
+                        'price_unit': line.price_unit, # Save purchase price
 
                         # Sale order line link:
                         'logistic_load_id': logistic_sale_id.id,
