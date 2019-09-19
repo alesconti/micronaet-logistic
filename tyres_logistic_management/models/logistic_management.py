@@ -1795,13 +1795,12 @@ class SaleOrder(models.Model):
                         '<br><b>Purchase:</b><br/>'
                         'Need to remove some purchase order line!<br/>'
                         )
-
-                purchase_order = line.purchase_id
+                
                 comment_part['purchase'] += _(
                     '%s x [%s] (Doc. %s) %s<br/>') % (
                         line.product_qty,
                         product.default_code or '',
-                        purchase_order.name,
+                        line.order_id.name,
                         note,
                         )
 
