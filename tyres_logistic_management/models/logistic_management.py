@@ -1332,9 +1332,9 @@ class SaleOrder(models.Model):
 
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         # XXX DISABLE INSTRUCTION
-        #self.logistic_state = 'ready'
+        self.logistic_state = 'ready'
         # XXX ENABLE INSTRUCTION
-        self.logistic_state = 'pending'
+        #self.logistic_state = 'pending'
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
         # ---------------------------------------------------------------------
