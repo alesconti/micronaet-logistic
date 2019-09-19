@@ -1817,8 +1817,8 @@ class SaleOrder(models.Model):
                 comment_part['bf'] += _(
                     '%s x [%s] (Doc. %s)<b> Go to internal stock</b><br/>') % (
                         line.product_uom_qty,
-                        line.picking_id.name, # TODO BF ref.  if present!
                         product.default_code or '',
+                        line.picking_id.name, # TODO BF ref.  if present!
                         )
 
             # -----------------------------------------------------------------
