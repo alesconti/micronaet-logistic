@@ -217,7 +217,7 @@ class PurchaseOrder(models.Model):
 
         sale_line_ready = [] # ready line after assign load qty to purchase
         move_file = []
-        for root, subfolders, files in os.walk(path_folder['reply'):
+        for root, subfolders, files in os.walk(path_folder['reply']):
             for f in files:
                 _logger.warning('Check internal purchase: %s' % f)
                 po_id = int(f[:-4].split('_')[-1]) # SUPPLIER_NAME_ID.csv
