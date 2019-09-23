@@ -609,7 +609,6 @@ class StockPicking(models.Model):
             ])
 
         channel_row = {}
-        import pdb; pdb.set_trace()
         for picking in pickings:
             # Readability:
             order = picking.sale_order_id
@@ -622,13 +621,14 @@ class StockPicking(models.Model):
 
                 # Get channel
                 try:
-                    channel = move.logistic_unload_id.team_id.channel_ref
+                    order = move.logistic_unload_id.order_id
+                    channel = order.team_id.channel_ref
                 except:
                     channel = ''
 
                 # Get partner code
                 try:
-                    code_ref = move.logistic_unload_id.team_id.team_code_ref
+                    code_ref = order.team_id.team_code_ref
                 except:
                     code_ref = ''
 
@@ -651,7 +651,6 @@ class StockPicking(models.Model):
                     code_ref, # Agent code
                     ))
 
-        import pdb; pdb.set_trace()
         date = evaluation_date.replace('-', '_')
         for channel in channel_row:
             fees_filename = os.path.join(path, '%s_%s.csv' % (channel, date))
