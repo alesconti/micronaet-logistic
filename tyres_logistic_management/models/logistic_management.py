@@ -202,6 +202,9 @@ class PurchaseOrder(models.Model):
             logistic_root_folder, 'purchase', 'reply')
         history_path = os.path.join(
             logistic_root_folder, 'purchase', 'history')
+        unused_path = os.path.join(
+            logistic_root_folder, 'purchase', 'unused')
+        os.system('mkdir -p %s' % unused_path) # TODO move in another place!    
         
         # Open order (for check):
         open_po_ids = (self.search([
@@ -214,7 +217,11 @@ class PurchaseOrder(models.Model):
                 po_id = int(f[:-4].split('_')[-1]) # SUPPLIER_NAME_ID.csv
                 if po_id not in open_po_ids:
                     _logger.error('Order yet manage: %s (remove manually)' % f)
-                    # TODO move in other foder?
+                    # Move in unused files folder:
+                    move_file.append((
+                        os.path.join(reply_path, f),
+                        os.path.join(unused_path, f),
+                        ))
                     continue
                     
                 # TODO Mark as sync: quants.write({'account_sync': True, })
