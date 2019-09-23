@@ -205,7 +205,7 @@ class PurchaseOrder(models.Model):
         
         # Open order (for check):
         open_po_ids = (self.search([
-            ('logistic_state', '!=', 'done')])).mapped['id']
+            ('logistic_state', '!=', 'done')])).mapped('id')
 
         sale_line_ready = [] # ready line after assign load qty to purchase
         move_file = []
@@ -258,9 +258,9 @@ class PurchaseOrder(models.Model):
                     'state': 'done', # immediately!
                     })
 
-                # -----------------------------------------------------------------
+                # -------------------------------------------------------------
                 # Append stock.move detail (or quants if in stock)
-                # -----------------------------------------------------------------
+                # -------------------------------------------------------------
                 for line in purchase.order_line:
                     product = line.product_id
                     product_qty = line.product_qty
