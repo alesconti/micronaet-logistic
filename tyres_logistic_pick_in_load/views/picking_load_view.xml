@@ -109,7 +109,7 @@
                      <field name="logistic_delivered_manual" string="Arrivo" />
                      <field name="delivery_id" invisible="1"/>
                      <button name="create_delivery_orders" string="Create delivery orders" type="object" class="oe_highlight" colspan="1" icon="fa-download fa-2x" confirm="Do you confirm the generation of all supplier delivery document (you selection)?" invisible="context.get('open_assign_bf', False)"/>
-                     <button name="dummy" string="Order not web (internal or workshop)" type="object" icon="fa-bell"  attrs="{'invisible': [('logistic_source','in',(False, 'web'))]}" /><!--addons/tyres_logistic_pick_in_load/static/src/img/icons/-->
+                     <button name="dummy" string="Order not web (internal or workshop)" type="object" icon="fa-bell"  attrs="{'invisible': [('logistic_source','in',(False, 'web'))]}" />
                 </tree>
             </field>
         </record>
@@ -217,8 +217,10 @@
             <field name="view_id" ref="view_delivery_selection_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_search"/>            
             <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
-            <field name="domain">[('check_status', '!=', 'done'), ('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('order_id.partner_id.internal_stock', '=', False)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), -->
+            <field name="domain">[('check_status', '!=', 'done'), ('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), 
+                '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('order_id.partner_id.internal_stock', '=', False)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), -->
         </record>
+
         <record model="ir.actions.act_window" id="action_purchase_selection_order_to_link_line">
             <field name="name">Delivery lo link BF</field>
             <field name="res_model">purchase.order.line</field>

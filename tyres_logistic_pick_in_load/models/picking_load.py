@@ -574,7 +574,11 @@ class PurchaseOrderLine(models.Model):
         if not lines:
             raise exceptions.Warning('No selection for current user!') 
         
-        for line in lines:            
+        for line in lines:
+            # Create stock movement without picking:
+            
+            # Reset partial q.
+            
             # Partial not touched!
             if line.check_status == 'total':
                 line.check_status = 'done'
@@ -617,12 +621,14 @@ class PurchaseOrderLine(models.Model):
         ''' Add +1 to manual arrived qty
         '''
         logistic_undelivered_qty = self.logistic_undelivered_qty
-        if self.logistic_delivered_manual >= logistic_undelivered_qty:
+        logistic_delivered_manual = self.logistic_delivered_manual
+        
+        if logistic_delivered_manual >= logistic_undelivered_qty:
             raise exceptions.Warning(
                 _('All received: %s!') % logistic_undelivered_qty)
         
         self.write({
-            'logistic_delivered_manual': self.logistic_delivered_manual + 1.0,
+            'logistic_delivered_manual': logistic_delivered_manual + 1.0,
             'user_select_id': self.env.uid,
             })        
         return self.onchange_logistic_delivered_manual()
@@ -632,12 +638,13 @@ class PurchaseOrderLine(models.Model):
         ''' Add +1 to manual arrived qty
         '''
         logistic_delivered_manual = self.logistic_delivered_manual
+
         # TODO check also logistic_undeliveret_qty for remain?
         if logistic_delivered_manual < 1.0:
             raise exceptions.Warning('Nothing to remove!') 
             
         if logistic_delivered_manual <= 1.0:
-            active_id = False
+            active_id = False # XXX need?
         self.write({
             'logistic_delivered_manual': logistic_delivered_manual - 1.0,
             'user_select_id': self.env.uid,
@@ -649,11 +656,12 @@ class PurchaseOrderLine(models.Model):
         ''' Add +1 to manual arrived qty
         '''
         logistic_undelivered_qty = self.logistic_undelivered_qty
+
         if logistic_undelivered_qty <= 0.0:
             raise exceptions.Warning('No more q. to deliver!') 
         
         self.write({
-            'logistic_delivered_manual': self.logistic_undelivered_qty,
+            'logistic_delivered_manual': logistic_undelivered_qty,
             'user_select_id': self.env.uid,
             })        
         return self.onchange_logistic_delivered_manual()
