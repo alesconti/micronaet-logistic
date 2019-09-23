@@ -198,22 +198,26 @@ class PurchaseOrder(models.Model):
         location_to = logistic_pick_in_type.default_location_dest_id.id
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
 
-        reply_path = os.path.join(
-            logistic_root_folder, 'purchase', 'reply')
-        history_path = os.path.join(
-            logistic_root_folder, 'purchase', 'history')
-        unused_path = os.path.join(
-            logistic_root_folder, 'purchase', 'unused')
-        os.system('mkdir -p %s' % unused_path) # TODO move in another place!    
-        _logger.error('Checking interna order in folder: %s' % reply_path)
-        
+        path_folder = {
+            'reply': os.path.join(
+                logistic_root_folder, 'purchase', 'reply'),
+            'history': os.path.join(
+                logistic_root_folder, 'purchase', 'history')
+            'unused': os.path.join(
+                logistic_root_folder, 'purchase', 'unused')
+            }
+        _logger.warning(
+            'Checking internal order in folder: %s' % path_folder['reply'])
+        for path in path_folder: # Create if not present
+            os.system('mkdir -p %s' % path)
+
         # Open order (for check):
         open_po_ids = (self.search([
             ('logistic_state', '!=', 'done')])).mapped('id')
 
         sale_line_ready = [] # ready line after assign load qty to purchase
         move_file = []
-        for root, subfolders, files in os.walk(reply_path):
+        for root, subfolders, files in os.walk(path_folder['reply'):
             for f in files:
                 _logger.warning('Check internal purchase: %s' % f)
                 po_id = int(f[:-4].split('_')[-1]) # SUPPLIER_NAME_ID.csv
@@ -221,17 +225,14 @@ class PurchaseOrder(models.Model):
                     _logger.error('Order yet manage: %s (remove manually)' % f)
                     # Move in unused files folder:
                     move_file.append((
-                        os.path.join(reply_path, f),
-                        os.path.join(unused_path, f),
+                        os.path.join(path_folder['reply'], f),
+                        os.path.join(path_folder['unused'], f),
                         ))
                     continue
                     
                 # TODO Mark as sync: quants.write({'account_sync': True, })
                 # Read picking and create Fake BF for load stock
                 purchase = self.browse(po_id)
-                #if purchase.logistic_state == 'done':
-                #   _logger.error('Order yet manage: %s (remove manually)' % f)
-                #   continue
 
                 # -------------------------------------------------------------
                 # Create picking:
@@ -244,8 +245,8 @@ class PurchaseOrder(models.Model):
 
                     # Save move operation:
                     move_file.append((
-                        os.path.join(reply_path, f),
-                        os.path.join(history_path, f),
+                        os.path.join(path_folder['reply'], f),
+                        os.path.join(path_folder['unused'], f),
                         ))
                     continue
 
@@ -307,8 +308,8 @@ class PurchaseOrder(models.Model):
 
                 # Save move operation:
                 move_file.append((
-                    os.path.join(reply_path, f),
-                    os.path.join(history_path, f),
+                    os.path.join(path_folder['reply'], f),
+                    os.path.join(path_folder['history'], f),
                     ))
 
                 # Mask as done fake purchase order:
