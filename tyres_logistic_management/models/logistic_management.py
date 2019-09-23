@@ -202,19 +202,27 @@ class PurchaseOrder(models.Model):
             logistic_root_folder, 'purchase', 'reply')
         history_path = os.path.join(
             logistic_root_folder, 'purchase', 'history')
+        
+        # Open order (for check):
+        open_po_ids = (self.search([
+            ('logistic_state', '!=', 'done')])).mapped['id']
 
         sale_line_ready = [] # ready line after assign load qty to purchase
         move_file = []
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
-                po_id = int(f[:-4].split('_')[-1]) # pick_in_ID.csv
+                po_id = int(f[:-4].split('_')[-1]) # SUPPLIER_NAME_ID.csv
+                if po_id not in open_po_ids:
+                    _logger.error('Order yet manage: %s (remove manually)' % f)
+                    # TODO move in other foder?
+                    continue
+                    
                 # TODO Mark as sync: quants.write({'account_sync': True, })
-
                 # Read picking and create Fake BF for load stock
                 purchase = self.browse(po_id)
-                if purchase.logistic_state == 'done':
-                    _logger.error('Order yet manage: %s (remove manually)' % f)
-                    continue
+                #if purchase.logistic_state == 'done':
+                #   _logger.error('Order yet manage: %s (remove manually)' % f)
+                #   continue
 
                 # -------------------------------------------------------------
                 # Create picking:
