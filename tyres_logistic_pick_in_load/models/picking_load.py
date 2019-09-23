@@ -616,6 +616,11 @@ class PurchaseOrderLine(models.Model):
     def delivery_more_1(self):
         ''' Add +1 to manual arrived qty
         '''
+        logistic_undelivered_qty = self.logistic_undelivered_qty
+        if logistic_delivered_manual >= logistic_undelivered_qty:
+            raise exceptions.Warning(
+                _('All received: %s!') % logistic_undelivered_qty)
+        
         self.write({
             'logistic_delivered_manual': self.logistic_delivered_manual + 1.0,
             'user_select_id': self.env.uid,
