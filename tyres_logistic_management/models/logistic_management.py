@@ -209,7 +209,7 @@ class PurchaseOrder(models.Model):
         _logger.warning(
             'Checking internal order in folder: %s' % path_folder['reply'])
         for path in path_folder: # Create if not present
-            os.system('mkdir -p %s' % path)
+            os.system('mkdir -p %s' % path_folder[path])
 
         # Open order (for check):
         open_po_ids = (self.search([
