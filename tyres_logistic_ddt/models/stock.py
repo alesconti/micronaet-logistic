@@ -163,12 +163,13 @@ class StockPicking(models.Model):
         ''' Assign DDt number depend on fiscal position and parameter in
             partner configuration
         '''
-        # TODO Manage sequence from fiscal position
         for picking in self: # Use DDT counter:
             if picking.stock_mode == 'out':
-                counter = False #TODO
+                counter = self.env['ir.sequence'].next_by_code(
+                'stock.picking.ddt.sequence')
             else: # in >> Refund value:
-                counter = False # TODO
+                counter = self.env['ir.sequence'].next_by_code(
+                    'stock.picking.refund.sequence')
 
             # Update Document data (DDT or FC)
             picking.write({

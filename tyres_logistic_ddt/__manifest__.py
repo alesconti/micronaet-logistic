@@ -41,6 +41,8 @@
         #'data/sequence_data.xml',
         'views/stock_view.xml',
         #'wizard/refund_wizard_view.xml',
+        
+        'data/sequence_data.xml',
     ],
     'test': [],
     'installable': True,
