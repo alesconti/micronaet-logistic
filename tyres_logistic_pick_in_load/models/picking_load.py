@@ -628,7 +628,7 @@ class PurchaseOrderLine(models.Model):
                 'product_uom_qty': product_qty,
                 'product_uom': product.uom_id.id,
                 'state': 'done',
-                'origin': origin,
+                'origin': _('Temporary load'), # TODO replace
                 'price_unit': line.price_unit, # Save purchase price
                 
                 # Sale order line link:
