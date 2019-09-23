@@ -485,7 +485,7 @@ class PurchaseOrderLine(models.Model):
                 ('order_id.partner_id.internal_stock', '=', False),
                 ],
             'context': ctx,
-            'target': 'main',#            'target': 'current', # 'new'
+            'target': 'main',# 'target': 'current', # 'new'
             'nodestroy': False,
             }
 
@@ -573,15 +573,88 @@ class PurchaseOrderLine(models.Model):
 
         if not lines:
             raise exceptions.Warning('No selection for current user!') 
+
+
+
+
+
+
+        # ---------------------------------------------------------------------
+        # Pool used:
+        # ---------------------------------------------------------------------
+        # Stock:
+        move_pool = self.env['stock.move']
+        company_pool = self.env['res.company']
         
+        # ---------------------------------------------------------------------
+        #                          Load parameters
+        # ---------------------------------------------------------------------
+        company = company_pool.search([])[0]
+        logistic_pick_in_type = company.logistic_pick_in_type_id
+        location_from = logistic_pick_in_type.default_location_src_id.id
+        location_to = logistic_pick_in_type.default_location_dest_id.id
+        
+        # ---------------------------------------------------------------------
+        # Create picking:
+        # ---------------------------------------------------------------------
+        now = fields.Datetime.now()
         for line in lines:
+            purchase = line.order_id            
+            partner = purchase.partner_id
+            product = line.product_id
+
+            product_qty = line.logistic_delivered_manual
+            remain_qty = line.logistic_undelivered_qty
+            logistic_sale_id = line.logistic_sale_id
+            if product_qty > remain_qty:
+                raise exceptions.Warning(_(
+                    'Too much unload %s, max is %s (product %s)!') % (
+                        product_qty,
+                        remain_qty,
+                        product.default_code,
+                        ))
+            
             # Create stock movement without picking:
+            move_pool.create({
+                'company_id': company.id,
+                'partner_id': partner.id,
+                'picking_id': False, # TODO join after
+                'product_id': product.id, 
+                'name': product.name or ' ',
+                'date': now,
+                'date_expected': now,
+                'location_id': location_from,
+                'location_dest_id': location_to,
+                'product_uom_qty': product_qty,
+                'product_uom': product.uom_id.id,
+                'state': 'done',
+                'origin': origin,
+                'price_unit': line.price_unit, # Save purchase price
+                
+                # Sale order line link:
+                'logistic_load_id': logistic_sale_id.id,
+                
+                # Purchase order line line: 
+                'logistic_purchase_id': line.id,
+                
+                #'purchase_line_id': load_line.id, # XXX needed?
+                #'logistic_quant_id': quant.id, # XXX no quants here
+
+                # group_id
+                # reference'
+                # sale_line_id
+                # procure_method,
+                #'product_qty': select_qty,
+                })
             
             # Reset partial q.
+            line.logistic_delivered_manual = 0.0
             
             # Partial not touched!
+            # TODO correct?
             if line.check_status == 'total':
                 line.check_status = 'done'
+
         return self.clean_fast_filter()
 
         
