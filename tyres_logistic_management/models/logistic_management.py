@@ -205,6 +205,7 @@ class PurchaseOrder(models.Model):
         unused_path = os.path.join(
             logistic_root_folder, 'purchase', 'unused')
         os.system('mkdir -p %s' % unused_path) # TODO move in another place!    
+        _logger.error('Checking interna order in folder: %s' % reply_path)
         
         # Open order (for check):
         open_po_ids = (self.search([
