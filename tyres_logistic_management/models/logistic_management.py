@@ -214,6 +214,7 @@ class PurchaseOrder(models.Model):
         move_file = []
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
+                _logger.warning('Check internal purchase: %s' % f)
                 po_id = int(f[:-4].split('_')[-1]) # SUPPLIER_NAME_ID.csv
                 if po_id not in open_po_ids:
                     _logger.error('Order yet manage: %s (remove manually)' % f)
