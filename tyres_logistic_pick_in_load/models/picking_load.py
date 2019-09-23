@@ -617,7 +617,7 @@ class PurchaseOrderLine(models.Model):
         ''' Add +1 to manual arrived qty
         '''
         logistic_undelivered_qty = self.logistic_undelivered_qty
-        if logistic_delivered_manual >= logistic_undelivered_qty:
+        if self.logistic_delivered_manual >= logistic_undelivered_qty:
             raise exceptions.Warning(
                 _('All received: %s!') % logistic_undelivered_qty)
         
