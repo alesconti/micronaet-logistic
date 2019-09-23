@@ -609,6 +609,7 @@ class StockPicking(models.Model):
             ])
 
         channel_row = {}
+        import pdb; pdb.set_trace()
         for picking in pickings:
             # Readability:
             order = picking.sale_order_id
@@ -650,6 +651,7 @@ class StockPicking(models.Model):
                     code_ref, # Agent code
                     ))
 
+        import pdb; pdb.set_trace()
         date = evaluation_date.replace('-', '_')
         for channel in channel_row:
             fees_filename = os.path.join(path, '%s_%s.csv' % (channel, date))
@@ -1676,6 +1678,7 @@ class SaleOrder(models.Model):
                 # procure_method,
                 #'product_qty': select_qty,
                 })
+                
         # TODO check if DDT / INVOICE document:
 
         # ---------------------------------------------------------------------

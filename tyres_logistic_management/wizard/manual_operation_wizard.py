@@ -158,8 +158,6 @@ class StockChangeStandardPrice(models.TransientModel):
         """ Account fees report
         """
         stock_pool = self.env['stock.picking']        
-        #stock_pool.excel_report_extract_accounting_fees(
-        #    self.evaluation_date)
         stock_pool.csv_report_extract_accounting_fees(
             self.evaluation_date)
 
