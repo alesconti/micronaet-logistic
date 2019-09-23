@@ -202,9 +202,9 @@ class PurchaseOrder(models.Model):
             'reply': os.path.join(
                 logistic_root_folder, 'purchase', 'reply'),
             'history': os.path.join(
-                logistic_root_folder, 'purchase', 'history')
+                logistic_root_folder, 'purchase', 'history'),
             'unused': os.path.join(
-                logistic_root_folder, 'purchase', 'unused')
+                logistic_root_folder, 'purchase', 'unused'),
             }
         _logger.warning(
             'Checking internal order in folder: %s' % path_folder['reply'])
