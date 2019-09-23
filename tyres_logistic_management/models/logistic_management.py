@@ -198,14 +198,13 @@ class PurchaseOrder(models.Model):
         location_to = logistic_pick_in_type.default_location_dest_id.id
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
 
-        import pdb; pdb.set_trace()
         path_folder = {
             'reply': os.path.join(
-                logistic_root_folder, 'purchase', 'reply'),
+                logistic_root_folder, 'order', 'internal', 'reply'),
             'history': os.path.join(
-                logistic_root_folder, 'purchase', 'history'),
+                logistic_root_folder, 'order', 'internal', 'history'),
             'unused': os.path.join(
-                logistic_root_folder, 'purchase', 'unused'),
+                logistic_root_folder, 'order', 'internal', 'unused'),
             }
         _logger.warning(
             'Checking internal order in folder: %s' % path_folder['reply'])
