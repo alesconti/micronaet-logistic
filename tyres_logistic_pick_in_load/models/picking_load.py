@@ -114,11 +114,9 @@ class StockPickingDelivery(models.Model):
         # ---------------------------------------------------------------------
         # Create picking:
         # ---------------------------------------------------------------------
-        sale_line_ready = [] # ready line after assign load qty to purchase
-
         partner = self.supplier_id
         scheduled_date = self.create_date
-        name = self.name or _('Not assigned')
+        name = self.name # mandatory Doc ID
         origin = _('%s [%s]') % (name, scheduled_date)
 
         picking = picking_pool.create({       
@@ -138,83 +136,44 @@ class StockPickingDelivery(models.Model):
         # ---------------------------------------------------------------------
         # Append stock.move detail (or quants if in stock)
         # ---------------------------------------------------------------------           
-        sale_line_ready = []
-        purchase_ids = []
-        for line in self.purchase_line_ids: # purchase.order.line
-            purchase_id = line.order_id.id
+        sale_line_ready = [] # ready line after assign load qty to purchase
+        purchase_ids = [] # purchase order to chech state
+        for line in self.move_line_ids: # Stock move to assign to picking                    
+            # Extract purchase order (for final check closing state)
+            purchase_id = line.logistic_purchase_id.order_id.id
             if purchase_id not in purchase_ids:
                 purchase_ids.append(purchase_id)
+                
+            sale_line = line.logistic_load_id
             product = line.product_id
-            product_qty = line.logistic_delivered_manual
-            remain_qty = line.logistic_undelivered_qty
-            logistic_sale_id = line.logistic_sale_id
-            
-            extra_qty = product_qty - remain_qty
+            product_qty = line.product_uom_qty # This move qty
+            undelivered_qty = sale_line.logistic_undelivered_qty
     
             # -----------------------------------------------------------------
             # Order that load account stock status:            
             # -----------------------------------------------------------------
-            if logistic_sale_id.order_id.logistic_source in (
+            if sale_line.order_id.logistic_source in (
                     'internal', 'workshop', 'resell'):
-                extra_qty = product_qty # all quant in stock!
-                remain_qty = 0 # no stock movement
-
-            if extra_qty >= 0.0:
-                sale_line_ready.append(logistic_sale_id) # line is ready!
-
-                if extra_qty > 0.0:
-                    quant_pool.create({
-                        # date and uid are default
-                        'order_id': self.id,
-                        'product_id': product.id, 
-                        'product_qty': extra_qty,
-                        'price': line.price_unit,                    
-                        })
-                product_qty = remain_qty # For stock movement
+                sale_line_ready.append(sale_line) # line is ready!
+                quant_pool.create({
+                    # date and uid are default
+                    'order_id': self.id,
+                    'product_id': product.id, 
+                    'product_qty': product_qty,
+                    'price': line.price_unit,                    
+                    })
 
             # -----------------------------------------------------------------
             # Create movement (not load stock):
             # -----------------------------------------------------------------
-            if product_qty > 0:
-                move_pool.create({
-                    'company_id': company.id,
-                    'partner_id': partner.id,
+            else:
+                line.write({
                     'picking_id': picking.id,
-                    'product_id': product.id, 
-                    'name': product.name or ' ',
-                    'date': scheduled_date,
-                    'date_expected': scheduled_date,
-                    'location_id': location_from,
-                    'location_dest_id': location_to,
-                    'product_uom_qty': product_qty,
-                    'product_uom': product.uom_id.id,
-                    'state': 'done',
-                    'origin': origin,
-                    'price_unit': line.price_unit, # Save purchase price
-                    
-                    # Sale order line link:
-                    'logistic_load_id': logistic_sale_id.id,
-                    
-                    # Purchase order line line: 
-                    'logistic_purchase_id': line.id,
-                    
-                    #'purchase_line_id': load_line.id, # XXX needed?
-                    #'logistic_quant_id': quant.id, # XXX no quants here
-
-                    # group_id
-                    # reference'
-                    # sale_line_id
-                    # procure_method,
-                    #'product_qty': select_qty,
+                    'origin': origin,                
                     })
-            
-        # Reset manual selection and link to pre-picking doc:    
-        self.purchase_line_ids.write({
-            'user_select_id': False,
-            'delivery_id': False,
-            'logistic_delivered_manual': 0.0,
-            })
-
+                if undelivered_qty <= product_qty:
+                    sale_line_ready.append(sale_line) # line is ready!
+                    
         # ---------------------------------------------------------------------
         #                         Manage extra delivery:
         # ---------------------------------------------------------------------
@@ -329,7 +288,6 @@ class StockPickingDelivery(models.Model):
         )
     carrier_id = fields.Many2one('carrier.supplier', 'Carrier')
     picking_id = fields.Many2one('stock.picking', 'Picking')
-    move_ids = fields.One2many('stock.move', related='picking_id.move_lines')
 
 class StockPickingDeliveryQuant(models.Model):
     """ Model name: Stock line that create real load of stock
@@ -353,12 +311,16 @@ class StockPickingDeliveryQuant(models.Model):
     product_qty = fields.Float('Q.', digits=(16, 2), required=True)
     price = fields.Float('Price', digits=(16, 2))
     account_sync = fields.Boolean('Account sync')
-    
 
-class PurchaseOrderLine(models.Model):
-    """ Model name: Purchase Order Line
+class StockMove(models.Model):
+    """ Model name: Stock Move
     """
-    _inherit = 'purchase.order.line'
+    _inherit = 'stock.move'
+
+    # -------------------------------------------------------------------------
+    #                                   COLUMNS:
+    # -------------------------------------------------------------------------
+    delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery')
 
     # -------------------------------------------------------------------------
     #                                   Button event:
@@ -374,10 +336,13 @@ class PurchaseOrderLine(models.Model):
         # ---------------------------------------------------------------------
         suppliers = {} # TODO also with carrier?
         for line in self:
-            supplier = line.order_id.partner_id
+            sale_order = line.logistic_load_id.order_id
+            purchase_order = line.logistic_purchase_id.order_id
+            
+            supplier = purchase_order.partner_id
             if supplier not in suppliers:
                 suppliers[supplier] = []
-            suppliers[supplier].append(line)            
+            suppliers[supplier].append(line)
         
         # ---------------------------------------------------------------------
         # Create purchase order:
@@ -394,7 +359,7 @@ class PurchaseOrderLine(models.Model):
                 }).id
             delivery_ids.append(delivery_id)
             for line in suppliers[supplier]: # TODO better
-                line.delivery_id = delivery_id # Link to delivery order!
+                line.delivery_id = delivery_id # Link to delivery order! xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                 
         # ---------------------------------------------------------------------
         # Return created order:
@@ -422,6 +387,11 @@ class PurchaseOrderLine(models.Model):
             'target': 'current', # 'new'
             'nodestroy': False,
             }
+
+class PurchaseOrderLine(models.Model):
+    """ Model name: Purchase Order Line
+    """
+    _inherit = 'purchase.order.line'
 
     @api.multi
     def dummy(self):
@@ -477,7 +447,7 @@ class PurchaseOrderLine(models.Model):
                 ],
             'domain': [
                 ('check_status', '!=', 'done'), 
-                ('delivery_id', '=', False), 
+                #('delivery_id', '=', False),  # TODO change or remove?!?
                 ('order_id.logistic_state', '=', 'confirmed'), 
                 '|', 
                 ('user_select_id', '=', uid), 
@@ -485,7 +455,7 @@ class PurchaseOrderLine(models.Model):
                 ('order_id.partner_id.internal_stock', '=', False),
                 ],
             'context': ctx,
-            'target': 'main',#            'target': 'current', # 'new'
+            'target': 'main',# 'target': 'current', # 'new'
             'nodestroy': False,
             }
 
@@ -545,6 +515,7 @@ class PurchaseOrderLine(models.Model):
             self.raggio,
             )
 
+    # On change not used!
     @api.onchange('logistic_delivered_manual')
     def onchange_logistic_delivered_manual(self, ):
         ''' Write check state depend on partial or done
@@ -554,7 +525,7 @@ class PurchaseOrderLine(models.Model):
         else:    
             self.check_status = 'total'
 
-    @api.multi
+    @api.multi    
     def create_delivery_orders(self):
         ''' Create the list of all order received splitted for supplier        
         '''
@@ -564,27 +535,95 @@ class PurchaseOrderLine(models.Model):
         # Search selection line for this user:
         # ---------------------------------------------------------------------
         lines = self.search([
-            ('delivery_id', '=', False), # Not linked
             ('user_select_id', '=', self.env.uid), # This user
             ('logistic_delivered_manual', '>', 0), # With quantity insert
             ('order_id.partner_id.internal_stock', '=', False), # No internal
-            #('check_status', '!=', 'done'), # Market previously
+            ('check_status', '!=', 'done'), # Market previously
             ])
 
         if not lines:
             raise exceptions.Warning('No selection for current user!') 
+
+        # ---------------------------------------------------------------------
+        # Pool used:
+        # ---------------------------------------------------------------------
+        # Stock:
+        move_pool = self.env['stock.move']
+        company_pool = self.env['res.company']
         
+        # ---------------------------------------------------------------------
+        #                          Load parameters
+        # ---------------------------------------------------------------------
+        company = company_pool.search([])[0]
+        logistic_pick_in_type = company.logistic_pick_in_type_id
+        location_from = logistic_pick_in_type.default_location_src_id.id
+        location_to = logistic_pick_in_type.default_location_dest_id.id
+        
+        # ---------------------------------------------------------------------
+        # Create picking:
+        # ---------------------------------------------------------------------
+        now = fields.Datetime.now()
         for line in lines:
+            purchase = line.order_id            
+            partner = purchase.partner_id
+            product = line.product_id
+
+            product_qty = line.logistic_delivered_manual
+            remain_qty = line.logistic_undelivered_qty
+            logistic_sale_id = line.logistic_sale_id
+            if product_qty > remain_qty:
+                raise exceptions.Warning(_(
+                    'Too much unload %s, max is %s (product %s)!') % (
+                        product_qty,
+                        remain_qty,
+                        product.default_code,
+                        ))
+            
             # Create stock movement without picking:
+            move_pool.create({
+                'company_id': company.id,
+                'partner_id': partner.id,
+                'picking_id': False, # TODO join after
+                'product_id': product.id, 
+                'name': product.name or ' ',
+                'date': now,
+                'date_expected': now,
+                'location_id': location_from,
+                'location_dest_id': location_to,
+                'product_uom_qty': product_qty,
+                'product_uom': product.uom_id.id,
+                'state': 'done',
+                'origin': _('Temporary load'), # TODO replace
+                'price_unit': line.price_unit, # Save purchase price
+                
+                # Sale order line link:
+                'logistic_load_id': logistic_sale_id.id,
+                
+                # Purchase order line line: 
+                'logistic_purchase_id': line.id,
+                
+                #'purchase_line_id': load_line.id, # XXX needed?
+                #'logistic_quant_id': quant.id, # XXX no quants here
+
+                # group_id
+                # reference'
+                # sale_line_id
+                # procure_method,
+                #'product_qty': select_qty,
+                })
             
-            # Reset partial q.
-            
-            # Partial not touched!
-            if line.check_status == 'total':
-                line.check_status = 'done'
+            # Partial not touched! # TODO correct?
+            check_status = line.check_status
+            if check_status == 'total':
+                check_status = 'done'            
+            line.write({
+                'user_select_id': False,
+                'logistic_delivered_manual': 0.0,
+                'check_status': check_status,
+                })
+
         return self.clean_fast_filter()
 
-        
     @api.multi
     def open_detail_delivery_in(self):
         ''' Return detail view for stock operator
@@ -682,7 +721,6 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     name_extended = fields.Char(
         compute='_get_name_extended_full', string='Extended name')
-    delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery')
     logistic_delivered_manual = fields.Float('Manual', digits=(16, 2))
     user_select_id = fields.Many2one('res.users', 'Selected user')
 
@@ -705,7 +743,6 @@ class PurchaseOrderLine(models.Model):
     
     check_status = fields.Selection([
         #('none', 'Not touched'), # Not selected
-
         ('done', 'Load in stock'), # Selected all remain to deliver
         
         ('total', 'Total received'), # Selected all to deliver
@@ -743,8 +780,8 @@ class StockPickingDelivery(models.Model):
     # -------------------------------------------------------------------------
     _inherit = 'stock.picking.delivery'
 
-    purchase_line_ids = fields.One2many(
-        'purchase.order.line', 'delivery_id', 'Purchase line')
+    move_line_ids = fields.One2many(
+        'stock.move', 'delivery_id', 'Load move')
     quant_ids = fields.One2many(
         'stock.picking.delivery.quant', 'order_id', 'Stock quant:')
 

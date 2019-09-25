@@ -195,7 +195,6 @@ class StockPicking(models.Model):
     invoice_filename = fields.Char(
         'Invoice filename', size=80,
         help='Invoice filename for PDF report') 
-
     carriage_condition_id = fields.Many2one(
         'stock.picking.carriage_condition', string='Carriage Condition')
     goods_description_id = fields.Many2one(

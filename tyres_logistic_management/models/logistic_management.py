@@ -929,6 +929,34 @@ class StockPicking(models.Model):
     def check_import_reply(self):
         ''' Check import reply for INVOICE
         '''
+        def get_invoice_reply_part(reply):
+            ''' Extract parameter from reply
+                Ex.: pick_in_19.003552-CEE.2019-9-24.csv
+            '''
+            reply_split = reply.split('.')
+            if len(reply_split) != 4:
+                return False
+
+            # TODO Mark as sync: quants.write({'account_sync': True, })
+            pick_id = int(reply_split[0].split('_')[-1]) # pick_in_ID.csv
+
+            invoice_number = reply_split[1]
+            invoice_date = reply_split[2].split('-')
+
+            if len(invoice_dat) != 3:
+                return False
+            invoice_date = '%s-%02d-%s' % (
+                invoice_date[2],
+                int(invoice_date[1]),
+                invoice_date[0],
+                )
+            invoice_filename = '%s.%s.PDF' % (
+                invoice_date[:4],
+                invoice_number,
+                )
+            return (
+                pick_id, invoice_number, invoice_date, invoice_filename)
+
         # TODO schedule action?
         # Pool used:
         company_pool = self.env['res.company']
@@ -944,28 +972,20 @@ class StockPicking(models.Model):
         move_list = []
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
-                f_split = f.split('.')
-                if len(f_split) != 4:
+
+                res = get_invoice_part(f)
+                if not res:
                     _logger.error('File not with correct syntax: '
-                        'pick_in_ID.00001-CEE.20191231.csv')
+                        'pick_in_19.003552-CEE.2019-9-24.csv')
                     continue
-
-                # TODO Mark as sync: quants.write({'account_sync': True, })
-                pick_id = int(f_split[0].split('_')[-1]) # pick_in_ID.csv
-
-                invoice_number = f_split[1]
-                invoice_date = f_split[2]
+                (pick_id, invoice_number, invoice_date, invoice_filename) = res
 
                 # Update invoice information on picking:
                 try:
                     self.browse(pick_id).write({
-                        'invoice_filename': '', # TODO save PDF name
+                        'invoice_filename': invoice_filename, # PDF name
                         'invoice_number': invoice_number,
-                        'invoice_date': '%s-%s-%s' % (
-                            invoice_date[6:8],
-                            invoice_date[4:6],
-                            invoice_date[:4],
-                            ),
+                        'invoice_date': invoice_date,
                         })
                 except:
                     _logger.error('Error update pick as invoice: %s' % (
