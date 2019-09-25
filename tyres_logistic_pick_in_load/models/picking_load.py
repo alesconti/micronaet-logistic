@@ -358,8 +358,8 @@ class StockMove(models.Model):
                 #'create_uid': self.env.uid,                
                 }).id
             delivery_ids.append(delivery_id)
-            for line in suppliers[supplier]: # TODO better
-                line.delivery_id = delivery_id # Link to delivery order! xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            for line in suppliers[supplier]:
+                line.delivery_id = delivery_id # Link to delivery order
                 
         # ---------------------------------------------------------------------
         # Return created order:
