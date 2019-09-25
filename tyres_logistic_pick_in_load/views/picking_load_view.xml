@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-        <record model="ir.actions.server" id="server_acton_picking_load_document_generator">
+        <record model="ir.actions.server" id="server_acton_stock_move_load_document_generator">
             <field name="name">Document generator</field>
-            <field name="model_id" ref="purchase.model_purchase_order_line"/>
+            <field name="model_id" ref="stock.model_stock_move"/>
             <field name="sequence">1</field>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
@@ -72,28 +72,28 @@
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
                 <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" decoration-success="check_status in ('total', 'done') and logistic_delivered_manual&gt;0" decoration-danger="logistic_undelivered_qty==0" decoration-warning="check_status=='partial' and logistic_delivered_manual&gt;0" ><!--user_select_id!=uid and user_select_id != False-->
-                     <button name="clean_fast_filter" string="Remove filters" type="object" icon="fa-home fa-2x" invisible="context.get('open_assign_bf', False)"/>
+                     <button name="clean_fast_filter" string="Remove filters" type="object" icon="fa-home fa-2x" />
                      <field name="logistic_source" invisible="1"/>
                      <field name="order_id" readonly="1" string="Rif." invisible="1"/>
                      <button name="open_detail_delivery_in" string="Open detail for line" type="object" icon="fa-list-alt fa-2x"/>
-                     <button name="fast_filter_product_id" string="Filter this product" type="object" icon="fa-search fa-2x"  attrs="{'invisible': [('product_id','=',False)]}" invisible="context.get('open_assign_bf', False)"/>
+                     <button name="fast_filter_product_id" string="Filter this product" type="object" icon="fa-search fa-2x"  attrs="{'invisible': [('product_id','=',False)]}" />
                      <field name="product_id" readonly="1" invisible="1"/>
                      <field name="product_name" readonly="1" invisible="1"/>
                      <field name="name_extended" readonly="1"/>
                      <!--<field name="name" readonly="1" />-->
                      <field name="date_planned" readonly="1" invisible="1"/>
                      
-                     <button name="fast_filter_supplier" string="Filter this supplier" type="object" icon="fa-search fa-2x" attrs="{'invisible': [('order_supplier_id','=',False)]}" invisible="context.get('open_assign_bf', False)"/>
+                     <button name="fast_filter_supplier" string="Filter this supplier" type="object" icon="fa-search fa-2x" attrs="{'invisible': [('order_supplier_id','=',False)]}" />
                      <field name="order_supplier_id" readonly="1" string="Fornitore" invisible="1"/>
                      <field name="order_supplier_name" readonly="1" string="Fornitore"/>
                      <field name="user_select_id" invisible="1" />
                      <field name="check_status" invisible="1" />
 
-                     <button name="fast_filter_larghezza" string="Filter this width" type="object" icon="fa-search fa-2x"  attrs="{'invisible': [('larghezza','=',False)]}" invisible="context.get('open_assign_bf', False)"/>
+                     <button name="fast_filter_larghezza" string="Filter this width" type="object" icon="fa-search fa-2x"  attrs="{'invisible': [('larghezza','=',False)]}" />
                      <field name="larghezza" readonly="1" string="L."/>
-                     <button name="fast_filter_spalla" string="Filter this shoulder" type="object" icon="fa-search fa-2x"  attrs="{'invisible': [('spalla','=',False)]}" invisible="context.get('open_assign_bf', False)"/>
+                     <button name="fast_filter_spalla" string="Filter this shoulder" type="object" icon="fa-search fa-2x"  attrs="{'invisible': [('spalla','=',False)]}" />
                      <field name="spalla" readonly="1" string="Sp."/>
-                     <button name="fast_filter_raggio" string="Filter this ray" type="object" icon="fa-search fa-2x"  attrs="{'invisible': [('raggio','=',False)]}" invisible="context.get('open_assign_bf', False)"/>
+                     <button name="fast_filter_raggio" string="Filter this ray" type="object" icon="fa-search fa-2x"  attrs="{'invisible': [('raggio','=',False)]}" />
                      <field name="raggio" readonly="1" string="r."/>
 
                      <!--Total: -->
@@ -101,14 +101,13 @@
                      <field name="logistic_delivered_qty" readonly="1" string="Cons." invisible="1"/>
                      <field name="logistic_undelivered_qty" readonly="1" string="Rim."/>
                      
-                     <button name="delivery_0" string="0" type="object" icon="fa-bitbucket fa-2x" invisible="context.get('open_assign_bf', False)"/>
-                     <button name="delivery_less_1" string="-" type="object" icon="fa-minus-square fa-2x" invisible="context.get('open_assign_bf', False)"/>
-                     <button name="delivery_more_1" string="+" type="object" invisible="context.get('open_assign_bf', False)" icon="fa-plus-square fa-2x" />
-                     <button name="delivery_all" string="Arrivo" type="object" icon="fa-fast-forward fa-2x" invisible="context.get('open_assign_bf', False)"/>
+                     <button name="delivery_0" string="0" type="object" icon="fa-bitbucket fa-2x" />
+                     <button name="delivery_less_1" string="-" type="object" icon="fa-minus-square fa-2x" />
+                     <button name="delivery_more_1" string="+" type="object"  icon="fa-plus-square fa-2x" />
+                     <button name="delivery_all" string="Arrivo" type="object" icon="fa-fast-forward fa-2x" />
                      
                      <field name="logistic_delivered_manual" string="Arrivo" />
-                     <field name="delivery_id" invisible="1"/>
-                     <button name="create_delivery_orders" string="Create delivery orders" type="object" class="oe_highlight" colspan="1" icon="fa-download fa-2x" confirm="Do you confirm the generation of all supplier delivery document (you selection)?" invisible="context.get('open_assign_bf', False)"/>
+                     <button name="create_delivery_orders" string="Create delivery orders" type="object" class="oe_highlight" colspan="1" icon="fa-download fa-2x" confirm="Do you confirm the generation of all supplier delivery document (you selection)?" />
                      <button name="dummy" string="Order not web (internal or workshop)" type="object" icon="fa-bell"  attrs="{'invisible': [('logistic_source','in',(False, 'web'))]}" />
                 </tree>
             </field>
@@ -189,7 +188,7 @@
                     <field name="spalla" />
                     <field name="raggio" />
 
-                    <filter name="my_selection" string="Current selected" domain="[('delivery_id','=',False), ('user_select_id', '=', uid), ('logistic_delivered_manual','&gt;',0)]"/>
+                    <filter name="my_selection" string="Current selected" domain="[('user_select_id', '=', uid), ('logistic_delivered_manual','&gt;',0)]"/><!--TODO Change ('delivery_id','=',False), -->
 
                     <!--<filter name="state_draft" string="Draft state" domain="[('state','=','draft')]"/>-->
                     <group expand="0" string="Group By...">
@@ -209,6 +208,37 @@
                 </search>
             </field>
         </record>
+        
+        <record model="ir.ui.view" id="view_delivery_selection_stock_move_search">
+            <field name="name">stock.move.search</field>
+            <field name="model">stock.move</field>
+            <field name="arch" type="xml">
+                <search string="String">        
+                    <field name="name" />
+                    <!--TODO-->
+                    <field name="partner_id" filter_domain="[('partner_id.name','=',self)]"/>
+                    <!--<filter name="state_draft" string="Draft state" domain="[('state','=','draft')]"/>-->
+                    <group expand="0" string="Group By...">
+                        <filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_delivery_selection_stock_move_tree">
+            <field name="name">stock.move.tree</field>
+            <field name="model">stock.move</field>
+            <field name="arch" type="xml">
+                <tree string="String" editable="bottom">        
+                    <field name="picking_id" invisible="1"/>
+                    <field name="partner_id" readonly="1"/>
+                    <field name="product_id" readonly="1"/>
+                    <field name="name" readonly="1" />
+                    <field name="product_uom_qty" readonly="1" />
+                    <field name="state" invisible="1" />
+                    <!--TODO-->
+                </tree>
+            </field>
+        </record>
         <record model="ir.actions.act_window" id="action_purchase_selection_order_line">
             <field name="name">Delivery PO pending</field>
             <field name="res_model">purchase.order.line</field>
@@ -217,22 +247,20 @@
             <field name="view_id" ref="view_delivery_selection_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_search"/>            
             <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
-            <field name="domain">[('check_status', '!=', 'done'), ('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), 
-                '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('order_id.partner_id.internal_stock', '=', False)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), -->
+            <field name="domain">[('check_status', '!=', 'done'), ('order_id.logistic_state', '=', 'confirmed'), 
+                '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('order_id.partner_id.internal_stock', '=', False)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), TODO ('delivery_id','=',False), -->
         </record>
 
-        <record model="ir.actions.act_window" id="action_purchase_selection_order_to_link_line">
-            <field name="name">Delivery lo link BF</field>
-            <field name="res_model">purchase.order.line</field>
+        <record model="ir.actions.act_window" id="action_stock_move_selection_order_to_link_line">
+            <field name="name">Assign BF document</field>
+            <field name="res_model">stock.move</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree</field>
-            <field name="view_id" ref="view_delivery_selection_tree"/>
-            <field name="search_view_id" ref="view_delivery_selection_search"/>            
-            <field name="context">{'open_assign_bf': True}</field>
-            <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
-            <field name="domain">[('logistic_delivered_manual', '&gt;', 0), ('delivery_id', '=', False), ('order_id.logistic_state', '=', 'confirmed'), ('order_id.partner_id.internal_stock', '=', False)]</field>
+            <field name="view_id" ref="view_delivery_selection_stock_move_tree"/>
+            <field name="search_view_id" ref="view_delivery_selection_stock_move_search"/>
+            <field name="context">{}</field>
+            <field name="domain">[('picking_id', '=', False)]</field>
         </record>
-
 
         <record model="ir.actions.act_window" id="action_purchase_order_line">
             <field name="name">Purchase line</field>
@@ -284,24 +312,28 @@
                                     <group colspan="4" col="4"> 
                                         <separator string="Selected purchase line:" colspan="4"/>
                                         <!--<button name="open_purchase_line" string="Open line" type="object" class="oe_highlight" colspan="1" icon="fa-align-justify"/>-->
-                                        <field name="purchase_line_ids" colspan="4" nolabel="1">
-                                            <tree string="Purchase line" editable="bottom" create="false" delete="false">
-                                                 <field name="order_id" readonly="1"/>
+                                        <field name="move_line_ids" colspan="4" nolabel="1">
+                                            <tree string="Load move" editable="bottom" create="false" delete="false">
+                                                 <!--<field name="order_id" readonly="1"/>-->
                                                  <field name="product_id" readonly="1" />
-                                                 <!--<field name="name" readonly="1" />-->
-                                                 <field name="product_qty" readonly="1" />
-                                                 <field name="date_planned" readonly="1" />
+                                                 <!--<field name="product_qty" readonly="1" />
+                                                 <field name="date_planned" readonly="1" />-->
                                                  
                                                  <!--Total: -->
-                                                 <field name="logistic_delivered_qty" readonly="1" />
+                                                 <!--<field name="logistic_delivered_qty" readonly="1" />
                                                  <field name="logistic_undelivered_qty" readonly="1" />
+                                                 <field name="logistic_delivered_manual" readonly="1"/>-->
                                                  
+                                                 
+                                                 
+                                                 
+                                                 
+                                                 <!--<field name="name" readonly="1" />-->
                                                  <!--<button name="delivery_0" string="0" type="object" icon="fa-bitbucket"/>
                                                  <button name="delivery_less_1" string="-" type="object" icon="fa-minus-square"/>
                                                  <button name="delivery_more_1" string="+" type="object" icon="fa-plus-square"/>
                                                  <button name="delivery_all" string="Remain" type="object" icon="fa-fast-forward"/>-->
                                                  
-                                                 <field name="logistic_delivered_manual" readonly="1"/>
 
                                                  <!--Sale reference:
                                                  <field name="logistic_sale_id" />
@@ -389,7 +421,7 @@
              <menuitem 
                  parent="menu_logistic_delivery_management_root" 
                  id="menu_purchase_selection_order_link_line" 
-                 action="action_purchase_selection_order_to_link_line"
+                 action="action_stock_move_selection_order_to_link_line"
                  sequence="10"
                  groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
                  />
