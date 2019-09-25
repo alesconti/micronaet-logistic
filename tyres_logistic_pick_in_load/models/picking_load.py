@@ -329,7 +329,6 @@ class StockMove(models.Model):
     def generate_delivery_orders_from_line(self):
         ''' Create the list of all order received splitted for supplier        
         '''
-        import pdb; pdb.set_trace()
         delivery_pool = self.env['stock.picking.delivery']
 
         # ---------------------------------------------------------------------
