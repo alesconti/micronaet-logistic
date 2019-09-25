@@ -288,7 +288,6 @@ class StockPickingDelivery(models.Model):
         )
     carrier_id = fields.Many2one('carrier.supplier', 'Carrier')
     picking_id = fields.Many2one('stock.picking', 'Picking')
-    move_ids = fields.One2many('stock.move', related='picking_id.move_lines')
 
 class StockPickingDeliveryQuant(models.Model):
     """ Model name: Stock line that create real load of stock
@@ -330,6 +329,7 @@ class StockMove(models.Model):
     def generate_delivery_orders_from_line(self):
         ''' Create the list of all order received splitted for supplier        
         '''
+        import pdb; pdb.set_trace()
         delivery_pool = self.env['stock.picking.delivery']
 
         # ---------------------------------------------------------------------
@@ -340,7 +340,7 @@ class StockMove(models.Model):
             sale_order = line.logistic_load_id.order_id
             purchase_order = line.logistic_purchase_id.order_id
             
-            supplier = sale_order.partner_id
+            supplier = purchase_order.partner_id
             if supplier not in suppliers:
                 suppliers[supplier] = []
             suppliers[supplier].append(line)
@@ -529,7 +529,6 @@ class PurchaseOrderLine(models.Model):
     def create_delivery_orders(self):
         ''' Create the list of all order received splitted for supplier        
         '''
-        import pdb; pdb.set_trace()
         delivery_pool = self.env['stock.picking.delivery']
 
         # ---------------------------------------------------------------------
@@ -614,7 +613,6 @@ class PurchaseOrderLine(models.Model):
                 })
             
             # Partial not touched! # TODO correct?
-            import pdb; pdb.set_trace()
             check_status = line.check_status
             if check_status == 'total':
                 check_status = 'done'            

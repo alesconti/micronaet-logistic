@@ -106,7 +106,7 @@
                      <button name="delivery_more_1" string="+" type="object"  icon="fa-plus-square fa-2x" />
                      <button name="delivery_all" string="Arrivo" type="object" icon="fa-fast-forward fa-2x" />
                      
-                     <field name="logistic_delivered_manual" string="Arrivo" />
+                     <field name="logistic_delivered_manual" string="Arrivo" readonly="1" />
                      <button name="create_delivery_orders" string="Create delivery orders" type="object" class="oe_highlight" colspan="1" icon="fa-download fa-2x" confirm="Do you confirm the generation of all supplier delivery document (you selection)?" />
                      <button name="dummy" string="Order not web (internal or workshop)" type="object" icon="fa-bell"  attrs="{'invisible': [('logistic_source','in',(False, 'web'))]}" />
                 </tree>
@@ -260,7 +260,7 @@
             <field name="view_id" ref="view_delivery_selection_stock_move_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_stock_move_search"/>
             <field name="context">{}</field>
-            <field name="domain">[('picking_id', '=', False)]</field>
+            <field name="domain">[('delivery_id', '=', False), ('picking_id', '=', False)]</field>
         </record>
 
         <record model="ir.actions.act_window" id="action_purchase_order_line">
@@ -309,44 +309,14 @@
                             <field name="picking_id" attrs="{'invisible': [('picking_id','=',False)]}" readonly="1"/>
                             
                             <notebook colspan="4">
-                                <page string="Selected purchase line:" attrs="{'invisible': [('picking_id','!=',False)]}">
+                                <page string="Stock move:">
                                     <group colspan="4" col="4"> 
-                                        <separator string="Selected purchase line:" colspan="4"/>
-                                        <!--<button name="open_purchase_line" string="Open line" type="object" class="oe_highlight" colspan="1" icon="fa-align-justify"/>-->
+                                        <separator string="Stock move:" colspan="4"/>
                                         <field name="move_line_ids" colspan="4" nolabel="1">
                                             <tree string="Load move" editable="bottom" create="false" delete="false">
-                                                 <!--<field name="order_id" readonly="1"/>-->
                                                  <field name="product_id" readonly="1" />
-                                                 <!--<field name="product_qty" readonly="1" />
-                                                 <field name="date_planned" readonly="1" />-->
-                                                 
-                                                 <!--Total: -->
-                                                 <!--<field name="logistic_delivered_qty" readonly="1" />
-                                                 <field name="logistic_undelivered_qty" readonly="1" />
-                                                 <field name="logistic_delivered_manual" readonly="1"/>-->
-                                                 
-                                                 
-                                                 
-                                                 
-                                                 
-                                                 <!--<field name="name" readonly="1" />-->
-                                                 <!--<button name="delivery_0" string="0" type="object" icon="fa-bitbucket"/>
-                                                 <button name="delivery_less_1" string="-" type="object" icon="fa-minus-square"/>
-                                                 <button name="delivery_more_1" string="+" type="object" icon="fa-plus-square"/>
-                                                 <button name="delivery_all" string="Remain" type="object" icon="fa-fast-forward"/>-->
-                                                 
-
-                                                 <!--Sale reference:
-                                                 <field name="logistic_sale_id" />
-                                                 <field name="load_line_ids" />-->
+                                                 <field name="product_uom_qty" readonly="1"/>
                                             </tree>
-                                        </field>
-                                    </group>    
-                                </page>
-                                <page string="Stock movement:" attrs="{'invisible': [('picking_id','=',False)]}">
-                                    <group colspan="4" col="4"> 
-                                        <separator string="Stock movement:" colspan="4"/>
-                                        <field name="move_ids" colspan="4" nolabel="1">
                                         </field>
                                     </group>    
                                 </page>
