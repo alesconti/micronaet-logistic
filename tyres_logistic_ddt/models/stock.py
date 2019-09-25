@@ -192,6 +192,13 @@ class StockPicking(models.Model):
     ddt_date = fields.Datetime('Document date')
     invoice_number = fields.Char('Invoice number') 
     invoice_date = fields.Datetime('Invoice date')
+<<<<<<< HEAD
+=======
+    invoice_filename = fields.Char(
+        'Invoice filename', size=80,
+        help='Invoice filename for PDF report') 
+
+>>>>>>> master
     carriage_condition_id = fields.Many2one(
         'stock.picking.carriage_condition', string='Carriage Condition')
     goods_description_id = fields.Many2one(

@@ -959,6 +959,7 @@ class StockPicking(models.Model):
                 # Update invoice information on picking:
                 try:
                     self.browse(pick_id).write({
+                        'invoice_filename': '', # TODO save PDF name
                         'invoice_number': invoice_number,
                         'invoice_date': '%s-%s-%s' % (
                             invoice_date[6:8],
