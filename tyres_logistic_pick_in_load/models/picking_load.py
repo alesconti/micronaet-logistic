@@ -171,7 +171,7 @@ class StockPickingDelivery(models.Model):
                     'picking_id': picking.id,
                     'origin': origin,                
                     })
-                if undelivered_qty >= product_qty:
+                if undelivered_qty <= product_qty:
                     sale_line_ready.append(sale_line) # line is ready!
                     
         # ---------------------------------------------------------------------
@@ -516,6 +516,7 @@ class PurchaseOrderLine(models.Model):
             self.raggio,
             )
 
+    # On change not used!
     @api.onchange('logistic_delivered_manual')
     def onchange_logistic_delivered_manual(self, ):
         ''' Write check state depend on partial or done
@@ -538,7 +539,7 @@ class PurchaseOrderLine(models.Model):
             ('user_select_id', '=', self.env.uid), # This user
             ('logistic_delivered_manual', '>', 0), # With quantity insert
             ('order_id.partner_id.internal_stock', '=', False), # No internal
-            #('check_status', '!=', 'done'), # Market previously
+            ('check_status', '!=', 'done'), # Market previously
             ])
 
         if not lines:
@@ -743,7 +744,6 @@ class PurchaseOrderLine(models.Model):
     
     check_status = fields.Selection([
         #('none', 'Not touched'), # Not selected
-
         ('done', 'Load in stock'), # Selected all remain to deliver
         
         ('total', 'Total received'), # Selected all to deliver
