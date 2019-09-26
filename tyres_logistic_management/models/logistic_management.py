@@ -2445,7 +2445,7 @@ class SaleOrderLine(models.Model):
             # -------------------------------------------------------------
             logistic_delivered_qty = 0.0
             for move in line.delivered_line_ids:
-                logistic_delivered_qty += move.product_uom_qty #TODO verify
+                logistic_delivered_qty += move.product_uom_qty
             line.logistic_delivered_qty = logistic_delivered_qty
 
             # -------------------------------------------------------------

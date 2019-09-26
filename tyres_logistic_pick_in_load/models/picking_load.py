@@ -209,13 +209,11 @@ class StockPickingDelivery(models.Model):
         # Sale order: Update Logistic status:
         # ---------------------------------------------------------------------
         # A. Mark Sale Order Line ready:
-        import pdb; pdb.set_trace()
         _logger.info('Update sale order line as ready:')
         for line in sale_line_pool.browse([
                 item.id for item in sale_line_check_ready]):
-            #logistic_remain_qty    
             if line.logistic_state == 'ordered' and \
-                    line.logistic_remain_qty <= 0:
+                    line.logistic_remain_qty <= 0: # (is sale order so remain)
                 line.logistic_state = 'ready'
 
         # B. Check Sale Order with all line ready:
@@ -522,7 +520,6 @@ class PurchaseOrderLine(models.Model):
     def onchange_logistic_delivered_manual(self, ):
         ''' Write check state depend on partial or done
         '''
-        import pdb; pdb.set_trace()
         if self.logistic_delivered_manual < self.logistic_undelivered_qty:
             self.check_status = 'partial'
         else:    
@@ -664,7 +661,6 @@ class PurchaseOrderLine(models.Model):
         '''
         logistic_undelivered_qty = self.logistic_undelivered_qty
         logistic_delivered_manual = self.logistic_delivered_manual
-        #logistic_remain_qty
         
         if logistic_delivered_manual >= logistic_undelivered_qty:
             raise exceptions.Warning(
