@@ -943,7 +943,7 @@ class StockPicking(models.Model):
             invoice_number = reply_split[1]
             invoice_date = reply_split[2].split('-')
 
-            if len(invoice_dat) != 3:
+            if len(invoice_date) != 3:
                 return False
             invoice_date = '%s-%02d-%s' % (
                 invoice_date[2],
