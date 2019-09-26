@@ -154,7 +154,6 @@ class StockPickingDelivery(models.Model):
             # -----------------------------------------------------------------
             if sale_line.order_id.logistic_source in (
                     'internal', 'workshop', 'resell'):
-                sale_line_ready.append(sale_line) # line is ready!
                 quant_pool.create({
                     # date and uid are default
                     'order_id': self.id,
@@ -171,8 +170,9 @@ class StockPickingDelivery(models.Model):
                     'picking_id': picking.id,
                     'origin': origin,                
                     })
-                if undelivered_qty <= product_qty:
-                    sale_line_ready.append(sale_line) # line is ready!
+                    
+            if product_qty >= undelivered_qty:
+                sale_line_ready.append(sale_line) # line is ready!
                     
         # ---------------------------------------------------------------------
         #                         Manage extra delivery:
@@ -327,7 +327,8 @@ class StockMove(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def generate_delivery_orders_from_line(self):
-        ''' Create the list of all order received splitted for supplier        
+        ''' Delivery order creation:
+            Create the list of all order received splitted for supplier        
         '''
         delivery_pool = self.env['stock.picking.delivery']
 
