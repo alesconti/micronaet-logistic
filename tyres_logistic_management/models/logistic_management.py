@@ -1070,7 +1070,7 @@ class StockPicking(models.Model):
                 invoice_file = open(invoice_filename, 'w')
 
                 # Export syntax:
-                cols = 26
+                cols = 27
                 invoice_file.write(
                     'RAGIONE SOCIALE|'
                     'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
@@ -1082,7 +1082,7 @@ class StockPicking(models.Model):
                     'SKU|DESCRIZIONE|QTA|PREZZO|IVA|AGENTE MAGO|PAGAMENTO\r\n'
                     )
 
-                mask = '%s|' * (cols - 1) + '%s\r\n' # 25 fields
+                mask = '%s|' * (cols - 1) + '%s\r\n' # 26 fields
 
                 # Parse extra data:
                 if order.carrier_shippy:
@@ -1374,9 +1374,9 @@ class SaleOrder(models.Model):
 
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         # XXX DISABLE INSTRUCTION
-        self.logistic_state = 'ready'
+        #self.logistic_state = 'ready'
         # XXX ENABLE INSTRUCTION
-        #self.logistic_state = 'pending'
+        self.logistic_state = 'pending'
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
         # ---------------------------------------------------------------------
