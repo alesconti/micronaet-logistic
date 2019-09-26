@@ -225,7 +225,7 @@ class StockPickingDelivery(models.Model):
         # Check Purchase order ready
         # ---------------------------------------------------------------------
         if purchase_ids:
-            _logger.info('Check purchase order closed (this):')
+            _logger.info('Check purchase order closed:')
             return purchase_pool.check_order_confirmed_done(purchase_ids)
 
     # -------------------------------------------------------------------------
