@@ -32,6 +32,26 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+class SaleOrderLine(models.Model):
+    """ Model name: Sale order line
+    """    
+    _inherit = 'sale.order.line'
+    
+    @api.model
+    def check_ordered_ready_status(self, browse_list):
+        ''' Check order ready from list browse obj passed
+        '''
+        # A. Mark Sale Order Line ready:
+        _logger.info('Update sale order line as ready:')
+        for line in self.browse([item.id for item in browse_list]):
+            if line.logistic_state == 'ordered' and \
+                    line.logistic_remain_qty <= 0: # (is sale order so remain)
+                line.logistic_state = 'ready'
+
+        # B. Check Sale Order with all line ready:
+        _logger.info('Update sale order as ready:')
+        self.logistic_check_ready_order(browse_list)
+
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document
     """
@@ -147,7 +167,6 @@ class StockPickingDelivery(models.Model):
             sale_line = line.logistic_load_id
             product = line.product_id
             product_qty = line.product_uom_qty # This move qty
-            #undelivered_qty = sale_line.logistic_undelivered_qty
     
             # -----------------------------------------------------------------
             # Order that load account stock status:            
@@ -208,17 +227,7 @@ class StockPickingDelivery(models.Model):
         # ---------------------------------------------------------------------
         # Sale order: Update Logistic status:
         # ---------------------------------------------------------------------
-        # A. Mark Sale Order Line ready:
-        _logger.info('Update sale order line as ready:')
-        for line in sale_line_pool.browse([
-                item.id for item in sale_line_check_ready]):
-            if line.logistic_state == 'ordered' and \
-                    line.logistic_remain_qty <= 0: # (is sale order so remain)
-                line.logistic_state = 'ready'
-
-        # B. Check Sale Order with all line ready:
-        _logger.info('Update sale order as ready:')
-        sale_line_pool.logistic_check_ready_order(sale_line_check_ready)
+        sale_line_pool.check_ordered_ready_status(sale_line_check_ready)
 
         # ---------------------------------------------------------------------
         # Check Purchase order ready
@@ -563,6 +572,7 @@ class PurchaseOrderLine(models.Model):
         # Create picking:
         # ---------------------------------------------------------------------
         now = fields.Datetime.now()
+        sale_line_check_ready = []
         for line in lines:
             purchase = line.order_id            
             partner = purchase.partner_id
@@ -570,7 +580,10 @@ class PurchaseOrderLine(models.Model):
 
             product_qty = line.logistic_delivered_manual
             remain_qty = line.logistic_undelivered_qty
-            logistic_sale_id = line.logistic_sale_id
+            logistic_sale = line.logistic_sale_id
+            if logistic_sale not in sale_line_check_ready:
+                sale_line_check_ready.append(logistic_sale)
+            
             if product_qty > remain_qty:
                 raise exceptions.Warning(_(
                     'Too much unload %s, max is %s (product %s)!') % (
@@ -597,7 +610,7 @@ class PurchaseOrderLine(models.Model):
                 'price_unit': line.price_unit, # Save purchase price
                 
                 # Sale order line link:
-                'logistic_load_id': logistic_sale_id.id,
+                'logistic_load_id': logistic_sale.id,
                 
                 # Purchase order line line: 
                 'logistic_purchase_id': line.id,
@@ -622,6 +635,12 @@ class PurchaseOrderLine(models.Model):
                 'check_status': check_status,
                 })
 
+        # ---------------------------------------------------------------------
+        # Sale order: Update Logistic status:
+        # ---------------------------------------------------------------------
+        sale_line_pool.check_ordered_ready_status(sale_line_check_ready)
+
+        # TODO check ready order now:
         return self.clean_fast_filter()
 
     @api.multi
