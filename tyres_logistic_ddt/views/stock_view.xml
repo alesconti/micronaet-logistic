@@ -19,7 +19,7 @@
                             <!--Invoice or credit note:-->
                             <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}"/>
                             <field name="invoice_date" attrs="{'invisible': [('invoice_number','=',False)]}"/>
-                            
+                            <field name="invoice_filename" attrs="{'invisible': [('invoice_number','=',False)]}"/>                            
                             <newline/>
                                                                  
                             <field name="carriage_condition_id" />
