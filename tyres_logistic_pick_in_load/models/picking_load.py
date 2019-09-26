@@ -136,7 +136,7 @@ class StockPickingDelivery(models.Model):
         # ---------------------------------------------------------------------
         # Append stock.move detail (or quants if in stock)
         # ---------------------------------------------------------------------           
-        sale_line_ready = [] # ready line after assign load qty to purchase
+        sale_line_check_ready = [] # ready line after assign load qty to purchase
         purchase_ids = [] # purchase order to chech state
         for line in self.move_line_ids: # Stock move to assign to picking                    
             # Extract purchase order (for final check closing state)
@@ -170,9 +170,8 @@ class StockPickingDelivery(models.Model):
                     'picking_id': picking.id,
                     'origin': origin,                
                     })
-                    
-            if product_qty >= undelivered_qty:
-                sale_line_ready.append(sale_line) # line is ready!
+            
+            sale_line_check_ready.append(sale_line)
                     
         # ---------------------------------------------------------------------
         #                         Manage extra delivery:
@@ -210,16 +209,14 @@ class StockPickingDelivery(models.Model):
         # ---------------------------------------------------------------------
         # A. Mark Sale Order Line ready:
         _logger.info('Update sale order line as ready:')
-        for line in sale_line_ready:
-            line.write({
-                'logistic_state': 'ready',
-                })
-
-        # TODO launch generate document action?        
+        for line in sale_line_pool.browse(sale_line_check_ready.mapped('id')):
+            if line.logistic_state == 'pending' and \
+                    line.logistic_undelivered_qty <= 0:
+                line.logistic_state = 'ready'
 
         # B. Check Sale Order with all line ready:
         _logger.info('Update sale order as ready:')
-        sale_line_pool.logistic_check_ready_order(sale_line_ready)
+        sale_line_pool.logistic_check_ready_order(sale_line_check_ready)
 
         # ---------------------------------------------------------------------
         # Check Purchase order ready
