@@ -147,7 +147,7 @@ class StockPickingDelivery(models.Model):
             sale_line = line.logistic_load_id
             product = line.product_id
             product_qty = line.product_uom_qty # This move qty
-            undelivered_qty = sale_line.logistic_undelivered_qty
+            #undelivered_qty = sale_line.logistic_undelivered_qty
     
             # -----------------------------------------------------------------
             # Order that load account stock status:            
@@ -171,7 +171,8 @@ class StockPickingDelivery(models.Model):
                     'origin': origin,                
                     })
             
-            sale_line_check_ready.append(sale_line)
+            if sale_line not in sale_line_check_ready:
+                sale_line_check_ready.append(sale_line)
                     
         # ---------------------------------------------------------------------
         #                         Manage extra delivery:
@@ -212,8 +213,9 @@ class StockPickingDelivery(models.Model):
         _logger.info('Update sale order line as ready:')
         for line in sale_line_pool.browse([
                 item.id for item in sale_line_check_ready]):
+            #logistic_remain_qty    
             if line.logistic_state == 'ordered' and \
-                    line.logistic_undelivered_qty <= 0:
+                    line.logistic_remain_qty <= 0:
                 line.logistic_state = 'ready'
 
         # B. Check Sale Order with all line ready:
@@ -520,6 +522,7 @@ class PurchaseOrderLine(models.Model):
     def onchange_logistic_delivered_manual(self, ):
         ''' Write check state depend on partial or done
         '''
+        import pdb; pdb.set_trace()
         if self.logistic_delivered_manual < self.logistic_undelivered_qty:
             self.check_status = 'partial'
         else:    
@@ -661,6 +664,7 @@ class PurchaseOrderLine(models.Model):
         '''
         logistic_undelivered_qty = self.logistic_undelivered_qty
         logistic_delivered_manual = self.logistic_delivered_manual
+        #logistic_remain_qty
         
         if logistic_delivered_manual >= logistic_undelivered_qty:
             raise exceptions.Warning(
