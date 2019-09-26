@@ -212,7 +212,7 @@ class StockPickingDelivery(models.Model):
         _logger.info('Update sale order line as ready:')
         for line in sale_line_pool.browse([
                 item.id for item in sale_line_check_ready]):
-            if line.logistic_state == 'pending' and \
+            if line.logistic_state == 'ordered' and \
                     line.logistic_undelivered_qty <= 0:
                 line.logistic_state = 'ready'
 
