@@ -1070,7 +1070,7 @@ class StockPicking(models.Model):
                 invoice_file = open(invoice_filename, 'w')
 
                 # Export syntax:
-                cols = 27
+                cols = 29
                 invoice_file.write(
                     'RAGIONE SOCIALE|'
                     'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
@@ -1079,10 +1079,11 @@ class StockPicking(models.Model):
                     'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
                     'ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
                     'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|'
-                    'SKU|DESCRIZIONE|QTA|PREZZO|IVA|AGENTE MAGO|PAGAMENTO\r\n'
+                    'SKU|DESCRIZIONE|QTA|PREZZO|IVA|AGENTE MAGO|PAGAMENTO'
+                    'TIPO RIGA|NOTE\r\n'
                     )
 
-                mask = '%s|' * (cols - 1) + '%s\r\n' # 26 fields
+                mask = '%s|' * (cols - 1) + '%s\r\n' # 29 fields
 
                 # Parse extra data:
                 if order.carrier_shippy:
@@ -1094,6 +1095,13 @@ class StockPicking(models.Model):
 
                 for move in self.move_lines:
                     line = move.logistic_unload_id
+                    product = move.product_id
+                    
+                    if product.type == 'service':
+                        row_mode = 'S'
+                    else:
+                        row_mode = 'M'
+                        
                     invoice_file.write(mask % (
                         partner.name,
                         get_address(partner),
@@ -1120,13 +1128,15 @@ class StockPicking(models.Model):
                         parcel,
                         weight,
 
-                        move.product_id.default_code or '',
+                        product.default_code or '',
                         move.name or '',
                         move.product_uom_qty,
                         line.price_unit, # XXX read from line
                         line.tax_id[0].account_ref or '', # TODO VAT code, >> sale order line?
                         line.order_id.team_id.channel_ref, # Channel agent code
                         order.payment_term_id.account_ref, # Payment code
+                        row_mode,
+                        '', # comment
                         ))
                 invoice_file.close()
                 self.check_import_reply() # Check previous import reply
