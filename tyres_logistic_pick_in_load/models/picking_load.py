@@ -539,6 +539,7 @@ class PurchaseOrderLine(models.Model):
         ''' Create the list of all order received splitted for supplier        
         '''
         delivery_pool = self.env['stock.picking.delivery']
+        sale_line_pool = self.env['sale.order.line']
 
         # ---------------------------------------------------------------------
         # Search selection line for this user:
