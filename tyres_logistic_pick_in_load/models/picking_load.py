@@ -208,6 +208,7 @@ class StockPickingDelivery(models.Model):
         # Sale order: Update Logistic status:
         # ---------------------------------------------------------------------
         # A. Mark Sale Order Line ready:
+        import pdb; pdb.set_trace()
         _logger.info('Update sale order line as ready:')
         for line in sale_line_pool.browse([
                 item.id for item in sale_line_check_ready]):
