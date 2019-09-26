@@ -973,7 +973,7 @@ class StockPicking(models.Model):
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
 
-                res = get_invoice_part(f)
+                res = get_invoice_reply_part(f)
                 if not res:
                     _logger.error('File not with correct syntax: '
                         'pick_in_19.003552-CEE.2019-9-24.csv')
