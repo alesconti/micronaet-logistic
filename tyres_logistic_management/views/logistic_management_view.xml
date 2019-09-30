@@ -470,9 +470,9 @@
                              <separator string="Picking note:" colspan="4"/>
                              <field name="note_stock" />
                              <separator string="DDT note:" colspan="4"/>
-                             <field name="ddt_stock" />
+                             <field name="note_ddt" />
                              <separator string="Picking note:" colspan="4"/>
-                             <field name="invoice_stock" />
+                             <field name="note_invoice" />
                          </group>    
                      </page>
                  
