@@ -1084,6 +1084,7 @@ class StockPicking(models.Model):
                     )
 
                 mask = '%s|' * (cols - 1) + '%s\r\n' # 29 fields
+                mask_note = '|' * (cols - 2) + 'D|%s\r\n' # Description row
 
                 # Parse extra data:
                 if order.carrier_shippy:
@@ -1143,6 +1144,11 @@ class StockPicking(models.Model):
                         row_mode,
                         '', # comment
                         ))
+
+                # Invoice note:        
+                if order.note_invoice:
+                    mask_note % order.note_invoice
+                    
                 invoice_file.close()
                 self.check_import_reply() # Check previous import reply
                 invoice_ids.append(picking.id)
