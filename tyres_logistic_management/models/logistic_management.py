@@ -1147,7 +1147,7 @@ class StockPicking(models.Model):
 
                 # Invoice note:        
                 if order.note_invoice:
-                    mask_note % order.note_invoice
+                    invoice_file.write(mask_note % order.note_invoice)
                     
                 invoice_file.close()
                 self.check_import_reply() # Check previous import reply
