@@ -465,6 +465,17 @@
                      <field name="logistic_source" />
                  </field>
                  <xpath expr="//page[1]" position="after">
+                     <page string="Note">
+                         <group colspan="4" col="4">
+                             <separator string="Picking note:" colspan="4"/>
+                             <field name="note_stock" />
+                             <separator string="DDT note:" colspan="4"/>
+                             <field name="ddt_stock" />
+                             <separator string="Picking note:" colspan="4"/>
+                             <field name="invoice_stock" />
+                         </group>    
+                     </page>
+                 
                      <page string="Picking">
                          <group colspan="4" col="4">
                              <separator string="Picking out:" colspan="4"/>

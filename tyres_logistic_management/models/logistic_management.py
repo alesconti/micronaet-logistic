@@ -1902,6 +1902,13 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     undo_comment = fields.Text('Undo comment', compute=_get_undo_comment)
 
+    note_invoice = fields.Text('Invoice note',
+        help='Note for invoice document')
+    note_ddt = fields.Text('DDT Note',
+        help='Note for DDT document')
+    note_picking = fields.Text('Stock note',
+        help='Note for Picking document and stock operator')
+
     market_type = fields.Selection((
         ('b2b', 'B2B'),
         ('b2c', 'B2C'),
