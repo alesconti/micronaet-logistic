@@ -1101,11 +1101,16 @@ class StockPicking(models.Model):
                         row_mode = 'S'
                     else:
                         row_mode = 'M'
-                        
+                    
+                    if partner.vat and len(partner.vat) == 13:
+                        vat = partner.vat[2:]
+                    else:
+                        vat = partner.vat or ''    
+
                     invoice_file.write(mask % (
                         partner.name,
                         get_address(partner),
-                        partner.vat or '',
+                        vat,
                         partner.fatturapa_fiscalcode or '',
 
                         partner.email or '',
