@@ -468,7 +468,7 @@
                      <page string="Note">
                          <group colspan="4" col="4">
                              <separator string="Picking note:" colspan="4"/>
-                             <field name="note_stock" />
+                             <field name="note_picking" />
                              <separator string="DDT note:" colspan="4"/>
                              <field name="note_ddt" />
                              <separator string="Picking note:" colspan="4"/>
