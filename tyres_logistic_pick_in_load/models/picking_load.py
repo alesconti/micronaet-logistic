@@ -449,6 +449,7 @@ class PurchaseOrderLine(models.Model):
                 (search_id, 'search'),
                 ],
             'domain': [
+                ('dropship_manage', '=', False),
                 ('check_status', '!=', 'done'), 
                 #('delivery_id', '=', False),  # TODO change or remove?!?
                 ('order_id.logistic_state', '=', 'confirmed'), 

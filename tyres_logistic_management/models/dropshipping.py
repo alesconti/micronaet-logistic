@@ -41,6 +41,17 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     dropship_manage = fields.Boolean('Dropship manage')
 
+class StockMove(models.Model):
+    """ Model name: Stock move
+    """
+    
+    _inherit = 'stock.move'
+
+    # -------------------------------------------------------------------------
+    # Columns:
+    # -------------------------------------------------------------------------
+    dropship_manage = fields.Boolean('Dropship manage')
+
 class ResPartner(models.Model):
     """ Model name: Partner for dropshipping
     """

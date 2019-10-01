@@ -590,6 +590,7 @@ class PurchaseOrderLine(models.Model):
                 'state': 'done',
                 'origin': _('Temporary load'), # TODO replace
                 'price_unit': line.price_unit, # Save purchase price
+                'dropship_manage': line.dropship_manage,
                 
                 # Sale order line link:
                 'logistic_load_id': logistic_sale.id,
