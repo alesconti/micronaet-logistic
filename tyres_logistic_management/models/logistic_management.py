@@ -1107,7 +1107,7 @@ class StockPicking(models.Model):
                         vat = partner.vat[2:]
                     else:
                         vat = partner.vat or ''    
-                    import pdb; pdb.set_trace()
+
                     invoice_file.write(mask % (
                         partner.name,
                         get_address(partner),
