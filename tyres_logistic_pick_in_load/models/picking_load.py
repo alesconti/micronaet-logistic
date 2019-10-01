@@ -735,7 +735,7 @@ class PurchaseOrderLine(models.Model):
             })        
         return self.onchange_logistic_delivered_manual()
 
-    @api.one
+    """@api.one
     def _get_name_extended_full(self):
         ''' Generate extended name
         '''
@@ -744,16 +744,16 @@ class PurchaseOrderLine(models.Model):
             self.name_extended = product.description_sale or \
                 product.titolocompleto or product.name or 'Non trovato' 
         except:
-            self.name_extended = _('Error generating name')
+            self.name_extended = _('Error generating name')"""
 
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
-    name_extended = fields.Char(
-        compute='_get_name_extended_full', string='Extended name')
-        
     #name_extended = fields.Char(
-    #    string='Extended name', related='product_id.name_extended')
+    #    compute='_get_name_extended_full', string='Extended name')
+        
+    name_extended = fields.Char(
+        string='Extended name', related='product_id.name_extended')
         
     logistic_delivered_manual = fields.Float('Manual', digits=(16, 2))
     user_select_id = fields.Many2one('res.users', 'Selected user')
