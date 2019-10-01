@@ -32,26 +32,6 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
-class SaleOrderLine(models.Model):
-    """ Model name: Sale order line
-    """    
-    _inherit = 'sale.order.line'
-    
-    @api.model
-    def check_ordered_ready_status(self, browse_list):
-        ''' Check order ready from list browse obj passed
-        '''
-        # A. Mark Sale Order Line ready:
-        _logger.info('Update sale order line as ready:')
-        for line in self.browse([item.id for item in browse_list]):
-            if line.logistic_state == 'ordered' and \
-                    line.logistic_remain_qty <= 0: # (is sale order so remain)
-                line.logistic_state = 'ready'
-
-        # B. Check Sale Order with all line ready:
-        _logger.info('Update sale order as ready:')
-        self.logistic_check_ready_order(browse_list)
-
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document
     """
@@ -552,9 +532,6 @@ class PurchaseOrderLine(models.Model):
     def create_delivery_orders(self):
         ''' Create the list of all order received splitted for supplier        
         '''
-        delivery_pool = self.env['stock.picking.delivery']
-        sale_line_pool = self.env['sale.order.line']
-
         # ---------------------------------------------------------------------
         # Search selection line for this user:
         # ---------------------------------------------------------------------
@@ -568,78 +545,11 @@ class PurchaseOrderLine(models.Model):
         if not lines:
             raise exceptions.Warning('No selection for current user!') 
 
-        # ---------------------------------------------------------------------
-        # Pool used:
-        # ---------------------------------------------------------------------
-        # Stock:
-        move_pool = self.env['stock.move']
-        company_pool = self.env['res.company']
-        
-        # ---------------------------------------------------------------------
-        #                          Load parameters
-        # ---------------------------------------------------------------------
-        company = company_pool.search([])[0]
-        logistic_pick_in_type = company.logistic_pick_in_type_id
-        location_from = logistic_pick_in_type.default_location_src_id.id
-        location_to = logistic_pick_in_type.default_location_dest_id.id
-        
-        # ---------------------------------------------------------------------
-        # Create picking:
-        # ---------------------------------------------------------------------
-        now = fields.Datetime.now()
-        sale_line_check_ready = []
+        # Create stock movements:
+        self.stock_move_from_purchase_line(lines)
+
+        # Update purchase line:
         for line in lines:
-            purchase = line.order_id            
-            partner = purchase.partner_id
-            product = line.product_id
-
-            product_qty = line.logistic_delivered_manual
-            remain_qty = line.logistic_undelivered_qty
-            logistic_sale = line.logistic_sale_id
-            if logistic_sale not in sale_line_check_ready:
-                sale_line_check_ready.append(logistic_sale)
-            
-            if product_qty > remain_qty:
-                raise exceptions.Warning(_(
-                    'Too much unload %s, max is %s (product %s)!') % (
-                        product_qty,
-                        remain_qty,
-                        product.default_code,
-                        ))
-            
-            # Create stock movement without picking:
-            move_pool.create({
-                'company_id': company.id,
-                'partner_id': partner.id,
-                'picking_id': False, # TODO join after
-                'product_id': product.id, 
-                'name': product.name or ' ',
-                'date': now,
-                'date_expected': now,
-                'location_id': location_from,
-                'location_dest_id': location_to,
-                'product_uom_qty': product_qty,
-                'product_uom': product.uom_id.id,
-                'state': 'done',
-                'origin': _('Temporary load'), # TODO replace
-                'price_unit': line.price_unit, # Save purchase price
-                
-                # Sale order line link:
-                'logistic_load_id': logistic_sale.id,
-                
-                # Purchase order line line: 
-                'logistic_purchase_id': line.id,
-                
-                #'purchase_line_id': load_line.id, # XXX needed?
-                #'logistic_quant_id': quant.id, # XXX no quants here
-
-                # group_id
-                # reference'
-                # sale_line_id
-                # procure_method,
-                #'product_qty': select_qty,
-                })
-            
             # Partial not touched! # TODO correct?
             check_status = line.check_status
             if check_status == 'total':
@@ -649,12 +559,6 @@ class PurchaseOrderLine(models.Model):
                 'logistic_delivered_manual': 0.0,
                 'check_status': check_status,
                 })
-
-        # ---------------------------------------------------------------------
-        # Sale order: Update Logistic status:
-        # ---------------------------------------------------------------------
-        sale_line_pool.check_ordered_ready_status(sale_line_check_ready)
-
         # TODO check ready order now:
         return self.clean_fast_filter()
 

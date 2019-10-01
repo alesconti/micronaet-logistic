@@ -527,6 +527,92 @@ class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
     # -------------------------------------------------------------------------
+    # Utility function:
+    # -------------------------------------------------------------------------
+    @api.model
+    def stock_move_from_purchase_line(self, lines):
+        ''' Create stock move for load stock
+        ''' 
+        # ---------------------------------------------------------------------
+        # Pool used:
+        # ---------------------------------------------------------------------
+        # Stock:
+        move_pool = self.env['stock.move']
+        company_pool = self.env['res.company']
+        sale_line_pool = self.env['sale.order.line']
+        
+        # ---------------------------------------------------------------------
+        #                          Load parameters
+        # ---------------------------------------------------------------------
+        company = company_pool.search([])[0]
+        logistic_pick_in_type = company.logistic_pick_in_type_id
+        location_from = logistic_pick_in_type.default_location_src_id.id
+        location_to = logistic_pick_in_type.default_location_dest_id.id
+        
+        # ---------------------------------------------------------------------
+        # Create picking:
+        # ---------------------------------------------------------------------
+        now = fields.Datetime.now()
+        sale_line_check_ready = []
+
+        for line in lines:
+            purchase = line.order_id            
+            partner = purchase.partner_id
+            product = line.product_id
+
+            product_qty = line.logistic_delivered_manual
+            remain_qty = line.logistic_undelivered_qty
+            logistic_sale = line.logistic_sale_id
+            if logistic_sale not in sale_line_check_ready:
+                sale_line_check_ready.append(logistic_sale)
+            
+            if product_qty > remain_qty:
+                raise exceptions.Warning(_(
+                    'Too much unload %s, max is %s (product %s)!') % (
+                        product_qty,
+                        remain_qty,
+                        product.default_code,
+                        ))
+            
+            # Create stock movement without picking:
+            move_pool.create({
+                'company_id': company.id,
+                'partner_id': partner.id,
+                'picking_id': False, # TODO join after
+                'product_id': product.id, 
+                'name': product.name or ' ',
+                'date': now,
+                'date_expected': now,
+                'location_id': location_from,
+                'location_dest_id': location_to,
+                'product_uom_qty': product_qty,
+                'product_uom': product.uom_id.id,
+                'state': 'done',
+                'origin': _('Temporary load'), # TODO replace
+                'price_unit': line.price_unit, # Save purchase price
+                
+                # Sale order line link:
+                'logistic_load_id': logistic_sale.id,
+                
+                # Purchase order line line: 
+                'logistic_purchase_id': line.id,
+                
+                #'purchase_line_id': load_line.id, # XXX needed?
+                #'logistic_quant_id': quant.id, # XXX no quants here
+
+                # group_id
+                # reference'
+                # sale_line_id
+                # procure_method,
+                #'product_qty': select_qty,
+                })
+
+        # ---------------------------------------------------------------------
+        # Sale order: Update Logistic status:
+        # ---------------------------------------------------------------------
+        sale_line_pool.check_ordered_ready_status(sale_line_check_ready)
+
+    # -------------------------------------------------------------------------
     # Function fields:
     # -------------------------------------------------------------------------
     #@api.depends('load_line_ids', )
@@ -1983,6 +2069,22 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     #                           UTILITY:
     # -------------------------------------------------------------------------
+    # moved here from load
+    @api.model
+    def check_ordered_ready_status(self, browse_list):
+        ''' Check order ready from list browse obj passed
+        '''
+        # A. Mark Sale Order Line ready:
+        _logger.info('Update sale order line as ready:')
+        for line in self.browse([item.id for item in browse_list]):
+            if line.logistic_state == 'ordered' and \
+                    line.logistic_remain_qty <= 0: # (is sale order so remain)
+                line.logistic_state = 'ready'
+
+        # B. Check Sale Order with all line ready:
+        _logger.info('Update sale order as ready:')
+        self.logistic_check_ready_order(browse_list)
+
     @api.model
     def logistic_check_ready_order(self, sale_lines=None):
         ''' Mask as done sale order with all ready lines
