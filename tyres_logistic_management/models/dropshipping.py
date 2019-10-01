@@ -30,6 +30,17 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+class PurchaseOrderLine(models.Model):
+    """ Model name: Partner for dropshipping
+    """
+    
+    _inherit = 'purchase.order.line'
+
+    # -------------------------------------------------------------------------
+    # Columns:
+    # -------------------------------------------------------------------------
+    dropship_manage = fields.Boolean('Dropship manage')
+
 class ResPartner(models.Model):
     """ Model name: Partner for dropshipping
     """

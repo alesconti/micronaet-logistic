@@ -2503,6 +2503,7 @@ class SaleOrderLine(models.Model):
                     'date_planned': now,
                     'product_uom': product.uom_id.id,
                     'price_unit': purchase_price,
+                    'dropship_manage': splitted.dropship_manage,
 
                     # Link to sale:
                     'logistic_sale_id': line.id, # multi line!
