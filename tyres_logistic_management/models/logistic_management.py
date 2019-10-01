@@ -530,7 +530,7 @@ class PurchaseOrderLine(models.Model):
     # Utility function:
     # -------------------------------------------------------------------------
     @api.model
-    def stock_move_from_purchase_line(self, lines):
+    def stock_move_from_purchase_line(self, lines, quantity_mode='manual'):
         ''' Create stock move for load stock
         ''' 
         # ---------------------------------------------------------------------
@@ -560,8 +560,12 @@ class PurchaseOrderLine(models.Model):
             partner = purchase.partner_id
             product = line.product_id
 
-            product_qty = line.logistic_delivered_manual
             remain_qty = line.logistic_undelivered_qty
+            if quantity_mode == 'manual':
+                product_qty = line.logistic_delivered_manual
+            else:    
+                product_qty = remain_qty
+
             logistic_sale = line.logistic_sale_id
             if logistic_sale not in sale_line_check_ready:
                 sale_line_check_ready.append(logistic_sale)
@@ -1712,6 +1716,7 @@ class SaleOrder(models.Model):
         '''
         return self.workflow_ready_to_done_draft_picking()
 
+    # TODO remove this trigger: 
     # Real trigger call:
     @api.model
     def workflow_ready_to_done_draft_picking(self, ):
@@ -1731,7 +1736,10 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Update Workflow:
         # ---------------------------------------------------------------------
-        self.logistic_state = 'delivering'
+        #self.logistic_state = 'delivering'
+        
+        # No delivering step so close the order:
+        self.wf_set_order_as_done()
 
     # -------------------------------------------------------------------------
     # C. delivering > done
@@ -1963,6 +1971,12 @@ class SaleOrder(models.Model):
                     note = _('<b>Need to be uloaded in internal stock!</b>')
                 else:
                     note = _('<b>Call %s to remove order!</b>') % partner.name
+
+                if line.dropship_manage:
+                    operation_comment = '(Dropship!)'
+                else:
+                    operation_comment = ''
+
                 if not comment_part['purchase']:
                     comment_part['purchase'] += _(
                         '<br><b>Purchase:</b><br/>'
@@ -1970,17 +1984,24 @@ class SaleOrder(models.Model):
                         )
                 
                 comment_part['purchase'] += _(
-                    '%s x [%s] (Doc. %s) %s<br/>') % (
+                    '%s x [%s] (Doc. %s) %s <b><font color="red">%s</font></b>'
+                    '<br/>') % (
                         line.product_qty,
                         product.default_code or '',
                         line.order_id.name,
                         note,
+                        operation_comment,
                         )
 
             # -----------------------------------------------------------------
             # BF line present:
             # -----------------------------------------------------------------
             for line in sol.load_line_ids:
+                if line.dropship_manage:
+                    operation_comment = _('Dropship (no stock movement)')
+                else:
+                    operation_comment = _('Go to internal stock')
+                    
                 if not comment_part['bf']:
                     comment_part['bf'] += _(
                         '<br><b>Pick in (from supplier):</b><br/>'
@@ -1988,12 +2009,14 @@ class SaleOrder(models.Model):
                         ' stock!<br/>'
                         )
                 comment_part['bf'] += _(
-                    '%s x [%s] (Doc. %s - %s)<b> Go to internal stock</b><br/>'
+                    '%s x [%s] (Doc. %s - %s)<b> <font color="red">%s</font>'
+                    '</b><br/>'
                         ) % (
                             line.product_uom_qty,
                             product.default_code or '',
-                            line.picking_id.origin or '?', # Undo movement = ?
-                            line.picking_id.name, 
+                            line.picking_id.origin or _('# not assigned'),
+                            line.picking_id.name or '', 
+                            operation_comment,
                             )
 
             # -----------------------------------------------------------------
@@ -2076,6 +2099,17 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     #                           UTILITY:
     # -------------------------------------------------------------------------
+    """@api.model
+    def get_vat_unit_price(self):
+        ''' Get vat price
+        '''
+        self.ensure_one()
+        unit_price = (self.price_tax + self.price_reduce_taxexcl) / \
+            self.product_uom_qty
+            
+        import pdb; pdb.set_trace()
+        return unit_price"""
+        
     # moved here from load
     @api.model
     def check_ordered_ready_status(self, browse_list):
@@ -2210,14 +2244,15 @@ class SaleOrderLine(models.Model):
                     order_file.write(header)
 
                 for line in pickings[picking_id]:
-                    order_file.write(row_mask % (
-                        line.product_id.default_code,
-                        line.product_qty,
-                        line.price_unit, # TODO Check!!!
-                        '', # No product code=undo
-                        'undo order', # Order ref.
-                        company_pool.formatLang(now, date=True),
-                        ))
+                    if not line.dropship_manage:
+                        order_file.write(row_mask % (
+                            line.product_id.default_code,
+                            line.product_qty,
+                            line.price_unit, # TODO Check!!!
+                            '', # No product code=undo
+                            'undo order', # Order ref.
+                            company_pool.formatLang(now, date=True),
+                            ))
                 order_file.close()
 
             # Check if procedure if fast to confirm reply (instead scheduled!):
@@ -2526,7 +2561,8 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         # Dropship line create stock:
         # ---------------------------------------------------------------------
-        purchase_line_pool.stock_move_from_purchase_line(dropship_line)
+        purchase_line_pool.stock_move_from_purchase_line(
+            dropship_line, quantity_mode='all')
 
         # ---------------------------------------------------------------------
         # Confirm now purchase order:

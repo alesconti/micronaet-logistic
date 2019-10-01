@@ -830,14 +830,6 @@
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'pending')]</field>
          </record>
-         <!--<record model="ir.actions.act_window" id="action_sale_order_dropshipped_form">
-             <field name="name">Sale order dropshipped</field>
-             <field name="res_model">sale.order</field>
-             <field name="view_type">form</field>
-             <field name="view_mode">tree,form,graph,pivot</field>
-             <field name="context">{}</field>
-             <field name="domain">[('logistic_state', '=', 'dropshipped')]</field>
-         </record>-->
          <record model="ir.actions.act_window" id="action_sale_order_locked_delivery_form">
              <field name="name">Sale order locked</field>
              <field name="res_model">sale.order</field>
@@ -1061,14 +1053,6 @@
                      action="action_sale_order_done_form"
                      sequence="100"
                      />
-
-                 <!--<menuitem
-                     id="menu_logistic_left_order_dropshipped" 
-                     parent="menu_logistic_left_order_root"
-                     name="Logistic: Dropshipped"
-                     action="action_sale_order_dropshipped_form"
-                     sequence="110"
-                     />-->
 
                  <menuitem
                      id="menu_logistic_left_order_problem" 
@@ -1306,4 +1290,3 @@
                      
     </data>
 </openerp>
-
