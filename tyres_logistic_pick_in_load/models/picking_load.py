@@ -171,6 +171,8 @@ class StockPickingDelivery(models.Model):
             # -----------------------------------------------------------------
             # Order that load account stock status:            
             # -----------------------------------------------------------------
+            # Duplicate row to load stock:
+            import pdb; pdb.set_trace()
             if sale_line.order_id.logistic_source in (
                     'internal', 'workshop', 'resell'):
                 quant_pool.create({
@@ -184,11 +186,11 @@ class StockPickingDelivery(models.Model):
             # -----------------------------------------------------------------
             # Create movement (not load stock):
             # -----------------------------------------------------------------
-            else:
-                line.write({
-                    'picking_id': picking.id,
-                    'origin': origin,                
-                    })
+            # Link stock movement to delivery:
+            line.write({
+                'picking_id': picking.id,
+                'origin': origin,                
+                })
             
             if sale_line not in sale_line_check_ready:
                 sale_line_check_ready.append(sale_line)
