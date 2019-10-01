@@ -50,4 +50,5 @@ class LogisticFeesExtractWizard(models.TransientModel):
     # -------------------------------------------------------------------------    
     evaluation_date = fields.Date('Date', required=True, 
         default=fields.Datetime.now())
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
