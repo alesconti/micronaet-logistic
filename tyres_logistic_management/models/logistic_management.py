@@ -1107,7 +1107,7 @@ class StockPicking(models.Model):
                         vat = partner.vat[2:]
                     else:
                         vat = partner.vat or ''    
-
+                    import pdb; pdb.set_trace()
                     invoice_file.write(mask % (
                         partner.name,
                         get_address(partner),
@@ -1138,7 +1138,7 @@ class StockPicking(models.Model):
                         move.name or '',
                         move.product_uom_qty,
                         line.price_unit, # XXX read from line
-                        move.tax_ids[0].account_ref or '', # TODO VAT code, >> sale order line?
+                        line.tax_ids[0].account_ref or '', # TODO VAT code, >> sale order line?
                         line.order_id.team_id.channel_ref, # Channel agent code
                         order.payment_term_id.account_ref, # Payment code
                         row_mode,
