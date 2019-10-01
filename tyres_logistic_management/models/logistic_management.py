@@ -680,8 +680,10 @@ class StockPicking(models.Model):
         return True
 
     @api.model
-    def csv_report_extract_accounting_fees(self, evaluation_date):
+    def csv_report_extract_accounting_fees(self, evaluation_date,
+            mode='extract'):
         ''' Extract file account fees in CSV for accounting
+            mode = extract for save CSV, data for return list of data
         '''
 
         # Pool used:
@@ -755,18 +757,22 @@ class StockPicking(models.Model):
                     code_ref, # Agent code
                     ))
 
-        date = evaluation_date.replace('-', '_')
-        for channel in channel_row:
-            fees_filename = os.path.join(path, '%s_%s.csv' % (channel, date))
-            fees_f = open(fees_filename, 'w')
+        if mode == 'extract':
+            date = evaluation_date.replace('-', '_')
+            for channel in channel_row:
+                fees_filename = os.path.join(
+                    path, '%s_%s.csv' % (channel, date))
+                fees_f = open(fees_filename, 'w')
 
-            fees_f.write(
-                'CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE|TIPO|AGENTE\r\n')
-            for row in channel_row[channel]:
-                fees_f.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\r\n' % row)
-            fees_f.close()
-
-        return True
+                fees_f.write(
+                    'CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE|TIPO|'
+                    'AGENTE\r\n')
+                for row in channel_row[channel]:
+                    fees_f.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\r\n' % row)
+                fees_f.close()
+            return True    
+        else:
+            return channel_row
 
     # -------------------------------------------------------------------------
     # Extract Excel:

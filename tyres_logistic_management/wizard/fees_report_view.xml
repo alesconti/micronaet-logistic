@@ -36,8 +36,7 @@
              name="Fees"
              sequence="51"             
              groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"            
-             />
-        
+             />        
              <menuitem 
                  parent="menu_logistic_management_fees_root"
                  id="menu_logistic_management_fees_extract"

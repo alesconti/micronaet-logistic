@@ -39,6 +39,68 @@ class LogisticFeesExtractWizard(models.TransientModel):
     #                               BUTTON EVENT:    
     # -------------------------------------------------------------------------    
     @api.multi
+    def fees_report_button(self):
+        """ Account fees report
+        """
+        stock_pool = self.env['stock.picking'] 
+        excel_pool = self.env['excel.writer']
+
+        evaluation_date = self.evaluation_date
+        channel_row = stock_pool.csv_report_extract_accounting_fees(
+            evaluation_date, mode='data')
+        
+        date = evaluation_date.replace('-', '_')
+        filename = 'corrispettivi_%s' % evaluation_date
+        
+        # ---------------------------------------------------------------------
+        #                               BUTTON EVENT:    
+        # ---------------------------------------------------------------------
+        ws_name = 'Corrispettivo'
+        excel_pool.create_worksheet(ws_name)
+
+        excel_pool.set_format()
+        format_text = {                
+            'title': excel_pool.get_format('title'),
+            'header': excel_pool.get_format('header'),
+            'text': excel_pool.get_format('text'),
+            'number': excel_pool.get_format('number'),
+            }
+
+        header = [
+            'Canale', 
+            'SKU',
+            'Data', 
+            'Pagamento',
+            'Prodotto',
+            'Q.',
+            'Totale',
+            'Tipo',
+            'Agente',
+            ]
+
+        width = [
+            15, 15, 10, 10, 40, 10, 10, 15, 10,
+            ]    
+
+        #excel_pool.columns_width(ws_name, width)
+
+        row = 0
+        excel_pool.write_xls_line(ws_name, row, [
+            'Corrispettivo: %s' % date,
+            ], default_format=format_text['title'])
+
+        row += 2
+        excel_pool.write_xls_line(ws_name, row, header,             
+            default_format=format_text['header'])            
+            
+        for channel in channel_row:
+            for line in channel_row[channel]:
+                row += 1
+                excel_pool.write_xls_line(ws_name, row, line,
+                    default_format=format_text['text'])            
+        return excel_pool.return_attachment(filename)
+
+    @api.multi
     def fees_extract_button(self):
         """ Account fees report
         """
