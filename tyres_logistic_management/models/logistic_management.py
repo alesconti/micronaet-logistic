@@ -2458,6 +2458,7 @@ class SaleOrderLine(models.Model):
                     purchase_db[key] = []
                 purchase_db[key].append(splitted)
 
+        dropship_line = [] # Create stock movement directly
         selected_purchase = [] # ID: to return view list
         for key in purchase_db:
             supplier, order = key
@@ -2470,8 +2471,8 @@ class SaleOrderLine(models.Model):
             for splitted in purchase_db[key]:
                 product = splitted.line_id.product_id
                 line = splitted.line_id
-                if not product or splitted.dropship_manage:
-                    _logger.warning('No product or dropship order')
+                if not product: # or splitted.dropship_manage:
+                    _logger.warning('No product on this line')
                     continue
 
                 purchase_qty = splitted.product_uom_qty
@@ -2509,6 +2510,15 @@ class SaleOrderLine(models.Model):
 
                 # Update line state for pending receiving:
                 line.logistic_state = 'ordered'
+
+                # Dropship management:
+                if splitted.dropship_manage:
+                    dropship_line.append(new_purchase)
+
+        # ---------------------------------------------------------------------
+        # Dropship line create stock:
+        # ---------------------------------------------------------------------
+        purchase_line_pool.stock_move_from_purchase_line(dropship_line)
 
         # ---------------------------------------------------------------------
         # Confirm now purchase order:

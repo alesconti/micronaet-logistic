@@ -559,6 +559,7 @@ class PurchaseOrderLine(models.Model):
                 'logistic_delivered_manual': 0.0,
                 'check_status': check_status,
                 })
+
         # TODO check ready order now:
         return self.clean_fast_filter()
 
