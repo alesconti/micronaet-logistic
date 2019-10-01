@@ -1079,7 +1079,7 @@ class StockPicking(models.Model):
                     'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
                     'ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
                     'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|'
-                    'SKU|DESCRIZIONE|QTA|PREZZO|IVA|AGENTE MAGO|PAGAMENTO'
+                    'SKU|DESCRIZIONE|QTA|PREZZO|IVA|AGENTE MAGO|PAGAMENTO|'
                     'TIPO RIGA|NOTE\r\n'
                     )
 
@@ -1138,7 +1138,7 @@ class StockPicking(models.Model):
                         move.name or '',
                         move.product_uom_qty,
                         line.price_unit, # XXX read from line
-                        line.tax_id[0].account_ref or '', # TODO VAT code, >> sale order line?
+                        move.tax_id[0].account_ref or '', # TODO VAT code, >> sale order line?
                         line.order_id.team_id.channel_ref, # Channel agent code
                         order.payment_term_id.account_ref, # Payment code
                         row_mode,
