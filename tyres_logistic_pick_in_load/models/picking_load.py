@@ -76,23 +76,32 @@ class StockPickingDelivery(models.Model):
             logistic_root_folder, 'delivery', 'reply')
         history_path = os.path.join(
             logistic_root_folder, 'delivery', 'history')
-
+            
+        move_list = []
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
                 f_split = f[:-4].split('_')
-                pick_id = int(f_split[-1]) # pick_in_ID.csv                
-                if f_split[1] == 'in': 
-                    quants = quant_pool.search([('order_id', '=', pick_id)])
-                    quants.write({'account_sync': True, })
-                # else: # 'undo' # not checked!
+                try:
+                    pick_id = int(f_split[-1]) # pick_in_ID.csv                
+                    if f_split[1] == 'in': 
+                        quants = quant_pool.search([
+                            ('order_id', '=', pick_id)])
+                        quants.write({'account_sync': True, })
+                    # else: # 'undo' # not checked!
+                except:
+                    _logger.error('Cannot read pick ID: %s' % f)
 
                 # XXX Move when all is done after?
-                shutil.move(
+                move_list.append((
                     os.path.join(reply_path, f),
                     os.path.join(history_path, f),
-                    )               
+                    ))
                 _logger.info('Pick ID: %s correct!' % f)
             break # only first folder
+
+        # Move files after all:
+        for origin, destination in move_list:
+            shutil.move(origin, destination)            
         return True
 
     # -------------------------------------------------------------------------
