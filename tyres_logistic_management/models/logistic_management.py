@@ -1734,12 +1734,18 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
 
         # ---------------------------------------------------------------------
+        # TODO Print free export document
+        # ---------------------------------------------------------------------
+
+        # XXX Invoice in last step!
+
+        # ---------------------------------------------------------------------
         # Update Workflow:
         # ---------------------------------------------------------------------
-        #self.logistic_state = 'delivering'
+        #self.logistic_state = 'delivering' # XXX no more used
         
         # No delivering step so close the order:
-        self.wf_set_order_as_done()
+        return self.wf_set_order_as_done()
 
     # -------------------------------------------------------------------------
     # C. delivering > done
