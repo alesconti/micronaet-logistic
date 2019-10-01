@@ -181,7 +181,6 @@ class StockPickingDelivery(models.Model):
             # Order that load account stock status:            
             # -----------------------------------------------------------------
             # Duplicate row to load stock:
-            import pdb; pdb.set_trace()
             if sale_line.order_id.logistic_source in (
                     'internal', 'workshop', 'resell'):
                 quant_pool.create({
@@ -752,6 +751,10 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     name_extended = fields.Char(
         compute='_get_name_extended_full', string='Extended name')
+        
+    #name_extended = fields.Char(
+    #    string='Extended name', related='product_id.name_extended')
+        
     logistic_delivered_manual = fields.Float('Manual', digits=(16, 2))
     user_select_id = fields.Many2one('res.users', 'Selected user')
 
@@ -801,7 +804,6 @@ class PurchaseOrderLine(models.Model):
     #interasse = fields.Char('Interasse')
     #bestpricecost = fields.Float('Costo bestprice')
     
-
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document: add relations
     """
