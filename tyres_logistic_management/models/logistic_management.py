@@ -1138,7 +1138,7 @@ class StockPicking(models.Model):
                         move.name or '',
                         move.product_uom_qty,
                         line.price_unit, # XXX read from line
-                        move.tax_id[0].account_ref or '', # TODO VAT code, >> sale order line?
+                        move.tax_ids[0].account_ref or '', # TODO VAT code, >> sale order line?
                         line.order_id.team_id.channel_ref, # Channel agent code
                         order.payment_term_id.account_ref, # Payment code
                         row_mode,
