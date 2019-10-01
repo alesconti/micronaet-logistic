@@ -168,16 +168,16 @@ class ProductTemplate(models.Model):
     account_ref = fields.Char('Account ref.', size=20,
         help='Account code, if not present use default setup in configuration')
 
-    @api.multi
+    @api.one
     def _get_name_extended_full(self):
         ''' Generate extended name
         '''
-        for product in self:
-            try:
-                self.name_extended = product.description_sale or \
-                    product.titolocompleto or product.name or 'Non trovato' 
-            except:
-                self.name_extended = _('Error generating name')
+        product = self
+        try:
+            product.name_extended = product.description_sale or \
+                product.titolocompleto or product.name or 'Non trovato' 
+        except:
+            product.name_extended = _('Error generating name')
 
     # -------------------------------------------------------------------------
     # Columns:

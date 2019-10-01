@@ -341,6 +341,8 @@ class StockMove(models.Model):
     delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery')
     name_extended = fields.Char(
         string='Extended name', related='product_id.name_extended')
+    default_code = fields.Char(
+        string='Default code', related='product_id.default_code')
 
     # -------------------------------------------------------------------------
     #                                   Button event:

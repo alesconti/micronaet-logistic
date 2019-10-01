@@ -609,7 +609,7 @@
                      <filter name="logistic_state_ready" string="Order ready" domain="[('logistic_state','=','ready')]"/>
                      <filter name="logistic_state_delivering" string="Order delivering ste" domain="[('logistic_state','=','delivering')]"/>
                      <filter name="logistic_state_done" string="Order done" domain="[('logistic_state','=','done')]"/>
-                     <filter name="logistic_state_dropshipped" string="Order dropshipped" domain="[('logistic_state','=','dropshipped')]"/>
+                     <!--<filter name="logistic_state_dropshipped" string="Order dropshipped" domain="[('logistic_state','=','dropshipped')]"/>-->
                      <filter name="logistic_state_error" string="Order error" domain="[('logistic_state','=','error')]"/>
                      <filter name="logistic_state_cancel" string="Order cancel" domain="[('logistic_state','=','cancel')]"/>
                  </field>
@@ -830,14 +830,14 @@
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'pending')]</field>
          </record>
-         <record model="ir.actions.act_window" id="action_sale_order_dropshipped_form">
+         <!--<record model="ir.actions.act_window" id="action_sale_order_dropshipped_form">
              <field name="name">Sale order dropshipped</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'dropshipped')]</field>
-         </record>
+         </record>-->
          <record model="ir.actions.act_window" id="action_sale_order_locked_delivery_form">
              <field name="name">Sale order locked</field>
              <field name="res_model">sale.order</field>
@@ -1062,13 +1062,13 @@
                      sequence="100"
                      />
 
-                 <menuitem
+                 <!--<menuitem
                      id="menu_logistic_left_order_dropshipped" 
                      parent="menu_logistic_left_order_root"
                      name="Logistic: Dropshipped"
                      action="action_sale_order_dropshipped_form"
                      sequence="110"
-                     />
+                     />-->
 
                  <menuitem
                      id="menu_logistic_left_order_problem" 
