@@ -47,6 +47,14 @@ class SaleOrder(models.Model):
     '''
     _inherit = 'sale.order'
 
+    """@api.multi
+    def check_unificable_order(self):
+        ''' Check if there's order with unificable characteristic
+        '''
+        self.ensure_one()
+        
+        return """
+    
     @api.multi
     def migrate_to_destination_button(self):
         ''' Migrate button:
@@ -74,10 +82,12 @@ class SaleOrder(models.Model):
     order_destination_id = fields.Many2one(
         'sale.order', 'Destination', help='Destination order for unification')
     unificated_order_ids = fields.One2many(
-        'sale.order', 'order_destination_id', 'Uificated order', 
+        'sale.order', 'order_destination_id', 'Unificated order', 
         help='List of order unificated here')
     unificated_line_ids = fields.One2many(
         'sale.order.line', 'unification_origin_id', 'Unificated line', 
         help='List of unificared line previous in order')
+    
+    #unificable_order_ids = fields.Many2many('Unificable orders', )    
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
