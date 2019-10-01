@@ -232,7 +232,8 @@
                     <field name="picking_id" invisible="1"/>
                     <field name="partner_id" readonly="1"/>
                     <field name="product_id" readonly="1"/>
-                    <field name="name" readonly="1" />
+                    <field name="name" readonly="1" invisible="1"/>
+                    <field name="name_extended" readonly="1" />
                     <field name="logistic_load_id" readonly="1"/>
                     <field name="product_uom_qty" readonly="1" />
                     <field name="state" invisible="1" />
