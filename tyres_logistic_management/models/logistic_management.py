@@ -1067,16 +1067,17 @@ class StockPicking(models.Model):
 
             invoice_number = reply_split[1]
             invoice_date = reply_split[2].split('-')
-
+            invoice_year = invoice_date[:4]
+            
             if len(invoice_date) != 3:
                 return False
-            invoice_date = '%s-%02d-%s' % (
+            invoice_date = '%s-%02d-%02d' % (
                 invoice_date[2],
                 int(invoice_date[1]),
-                invoice_date[0],
+                int(invoice_date[0]),
                 )
             invoice_filename = '%s.%s.PDF' % (
-                invoice_date[:4],
+                invoice_year,
                 invoice_number,
                 )
             return (
