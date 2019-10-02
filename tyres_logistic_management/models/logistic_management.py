@@ -1162,6 +1162,9 @@ class StockPicking(models.Model):
     def workflow_ready_to_done_done_picking(self):
         ''' Confirm draft picking documents
         '''
+        def clean_account(value):
+            return value.replace('"', '')
+            
         def get_address(partner):
             return '%s %s|%s|%s|%s|%s|%s' % (
                 partner.street or '',
@@ -1260,7 +1263,7 @@ class StockPicking(models.Model):
                         vat = partner.vat or ''    
 
                     invoice_file.write(mask % (
-                        partner.name,
+                        clean_name(partner.name),
                         get_address(partner),
                         vat,
                         partner.fatturapa_fiscalcode or '',
@@ -1270,7 +1273,7 @@ class StockPicking(models.Model):
                         partner.id,
                         partner.fatturapa_pec or '',
                         partner.fatturapa_unique_code or '',
-                        address.name,
+                        clean_name(address.name),
 
                         'privato' if partner.fatturapa_surname else 'business',
                         get_address(address),
