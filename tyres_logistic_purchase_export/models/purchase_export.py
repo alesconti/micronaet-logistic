@@ -43,7 +43,7 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def clean_account_char(self, value):
-        ''' Clean forbitten char
+        ''' Clean forbitten char for accounting program
         '''
         value = value.replace('"', '')
         return value
