@@ -757,18 +757,34 @@ class StockPicking(models.Model):
                 if stock_mode == 'out':
                     total = -total
                 product = move.product_id
-                channel_row[channel].append((
-                    # XXX Use scheduled date or ddt_date?
-                    channel,
-                    product.default_code or '',
-                    company_pool.formatLang(picking.scheduled_date, date=True),
-                    order.payment_term_id.account_ref or '',
-                    product.account_ref or product_account_ref or '',
-                    qty,
-                    total,
-                    'S' if product.is_expence else 'M',
-                    code_ref, # Agent code
-                    ))
+                if mode == 'extract':
+                    channel_row[channel].append((
+                        # XXX Use scheduled date or ddt_date?
+                        channel,
+                        product.default_code or '',
+                        company_pool.formatLang(picking.scheduled_date, date=True),
+                        order.payment_term_id.account_ref or '',
+                        product.account_ref or product_account_ref or '',
+                        qty,
+                        total,
+                        'S' if product.is_expence else 'M',
+                        code_ref, # Agent code
+                        ))
+                else:
+                    channel_row[channel].append((
+                        # XXX Use scheduled date or ddt_date?
+                        channel,
+                        order.name,
+                        product.default_code or '',
+                        product.name_extended or '',
+                        company_pool.formatLang(picking.scheduled_date, date=True),
+                        order.payment_term_id.account_ref or '',
+                        product.account_ref or product_account_ref or '',
+                        qty,
+                        total,
+                        'S' if product.is_expence else 'M',
+                        code_ref, # Agent code
+                        ))
 
         if mode == 'extract':
             date = evaluation_date.replace('-', '_')

@@ -68,10 +68,12 @@ class LogisticFeesExtractWizard(models.TransientModel):
 
         header = [
             'Canale', 
+            'Ordine',
             'SKU',
+            'Descrizione',
             'Data', 
             'Pagamento',
-            'Prodotto',
+            'Contropartita',
             'Q.',
             'Totale',
             'Tipo',
