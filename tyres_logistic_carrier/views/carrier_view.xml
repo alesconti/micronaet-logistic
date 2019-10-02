@@ -30,8 +30,10 @@
                         <group colspan="4" col="5" attrs="{'invisible': [('carrier_shippy','=',True)]}">
                              <field name="carrier_manual_weight" attrs="{'required': [('carrier_shippy','=',False)]}"/>
                              <field name="carrier_manual_parcel" attrs="{'required': [('carrier_shippy','=',False)]}"/>
-                             <newline/>
-                             <field name="manual_track_id" />
+
+                            <field name="carrier_supplier_id" />
+                            <field name="carrier_track_id" />
+
                              <!--Double fields: mandatory insert the name of carrier for stock people-->
                              <field name="carrier_stock_note" attrs="{'required': [('carrier_shippy','=',False)]}" colspan="4"/>
                              <newline/>
@@ -87,7 +89,7 @@
                             
                             <separator string="Carrier reply:" colspan="4"/>
                             <field name="carrier_cost" readonly="1"/>
-                            <field name="carrier_track_id" readonly="1" />
+                            <field name="carrier_track_id" />
                             <newline/>
                         </group>
                     </page>
