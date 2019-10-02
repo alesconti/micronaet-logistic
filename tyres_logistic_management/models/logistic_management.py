@@ -759,8 +759,8 @@ class StockPicking(models.Model):
                 product = move.product_id
                 if mode == 'extract':
                     channel_row[channel].append((
+                        code_ref, # Agent code
                         # XXX Use scheduled date or ddt_date?
-                        channel,
                         product.default_code or '',
                         company_pool.formatLang(picking.scheduled_date, date=True),
                         order.payment_term_id.account_ref or '',
@@ -768,7 +768,7 @@ class StockPicking(models.Model):
                         qty,
                         total,
                         'S' if product.is_expence else 'M',
-                        code_ref, # Agent code
+                        channel,
                         ))
                 else:
                     channel_row[channel].append((
