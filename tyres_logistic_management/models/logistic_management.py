@@ -1065,9 +1065,9 @@ class StockPicking(models.Model):
             # TODO Mark as sync: quants.write({'account_sync': True, })
             pick_id = int(reply_split[0].split('_')[-1]) # pick_in_ID.csv
 
+            invoice_year = reply_split[2][:4]
             invoice_number = reply_split[1]
             invoice_date = reply_split[2].split('-')
-            invoice_year = invoice_date[:4]
             
             if len(invoice_date) != 3:
                 return False
