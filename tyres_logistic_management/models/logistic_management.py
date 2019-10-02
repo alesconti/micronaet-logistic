@@ -194,6 +194,13 @@ class PurchaseOrder(models.Model):
     # -------------------------------------------------------------------------
     #                           UTILITY:
     # -------------------------------------------------------------------------
+    @api.model
+    def clean_account_char(self, value):
+        ''' Clean forbitten char
+        '''
+        value = value.replace('"', '')
+        return value
+        
     # Auto close internal order
     @api.model
     def purchase_internal_confirmed(self, purchases=None):
