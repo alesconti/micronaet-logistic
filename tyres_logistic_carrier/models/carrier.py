@@ -228,5 +228,6 @@ class SaleOrder(models.Model):
     # From Carrier:
     carrier_cost = fields.Float('Cost', digits=(16, 2))
     carrier_track_id = fields.Char('Track ID', size=64)
+    manual_track_id = fields.Char('Track ID (not shippy)', size=64)
     # TODO extra data needed!
 

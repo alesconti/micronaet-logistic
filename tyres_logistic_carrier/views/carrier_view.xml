@@ -41,7 +41,7 @@
                             <field name="carrier_supplier_id" />
                             <field name="carrier_mode_id" domain="[('supplier_id', '=', carrier_supplier_id)]"/>
 
-                            <field name="carrier_track_id" readonly="1" /><!--XXX double fields-->
+                            <field name="manual_track_id" />
                             <newline/>
 
                             <field name="carrier_parcel_template_id" domain="['|',('carrier_supplier_id','=',False),('carrier_supplier_id','=',carrier_supplier_id)]"/>
