@@ -288,12 +288,12 @@ class PurchaseOrder(models.Model):
                 # -------------------------------------------------------------
                 # Append stock.move detail (or quants if in stock)
                 # -------------------------------------------------------------
+                import pdb; pdb.set_trace()
                 for line in purchase.order_line:
                     product = line.product_id
                     product_qty = line.product_qty
                     remain_qty = line.logistic_undelivered_qty
                     logistic_sale_id = line.logistic_sale_id
-
                     if product_qty >= remain_qty:
                         sale_line_ready.append(logistic_sale_id)
                         logistic_sale_id.logistic_state = 'ready' # XXX needed?
