@@ -1390,7 +1390,7 @@ class SaleOrder(models.Model):
         company = company_pool.search([])[0]
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
         report_path = os.path.join(logistic_root_folder, 'report')
-        fullname = os.path(report_path, filename)
+        fullname = os.path.join(report_path, filename)
         
         if not os.path.isfile(fullname):
             raise exceptions.Warning('PDF not found: %s!' % fullname)
