@@ -735,6 +735,11 @@ class StockPicking(models.Model):
             stock_mode = picking.stock_mode #in: refund, out: DDT
 
             for move in picking.move_lines:
+                #product = move.product_id
+                # No PFU elements
+                #if product.not_in_invoice:
+                #    continue
+
                 qty = move.product_uom_qty
                 total = qty * move.logistic_unload_id.price_unit
 
