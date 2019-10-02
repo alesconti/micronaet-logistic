@@ -84,7 +84,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
             15, 15, 10, 10, 40, 10, 10, 15, 10,
             ]    
 
-        excel_pool.columns_width(ws_name, width)
+        #excel_pool.columns_width(ws_name, width)
 
         row = 0
         excel_pool.write_xls_line(ws_name, row, [
