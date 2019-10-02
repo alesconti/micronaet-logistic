@@ -318,7 +318,7 @@
                                 <page string="Stock move:">
                                     <group colspan="4" col="4"> 
                                         <separator string="Stock move:" colspan="4"/>
-                                        <field name="move_line_ids" colspan="4" nolabel="1" decoration-primary="dropship_manage==True">
+                                        <field name="move_line_ids" colspan="4" nolabel="1" >
                                             <tree string="Load move" editable="bottom" create="false" delete="false" >
                                                  <field name="partner_id" readonly="1"/>
                                                  <field name="default_code" readonly="1"/>
