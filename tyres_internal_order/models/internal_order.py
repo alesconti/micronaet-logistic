@@ -97,6 +97,7 @@ class SaleOrderInternal(models.Model):
             
             'logistic_source': self.logistic_source,
             'logistic_state': 'order',
+            'note_picking': self.note,
             })
         order_id = order.id
 
