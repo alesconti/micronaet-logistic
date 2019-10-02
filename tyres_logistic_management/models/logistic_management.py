@@ -1044,6 +1044,12 @@ class StockPicking(models.Model):
             ])
         return pickings.workflow_ready_to_done_done_picking()
 
+    @api.model
+    def check_import_reply_erpeek(self):
+        ''' Call manual from external:
+        '''
+        return self.check_import_reply()
+
     @api.multi
     def check_import_reply(self):
         ''' Check import reply for INVOICE
