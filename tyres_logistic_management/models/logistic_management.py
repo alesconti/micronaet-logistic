@@ -295,8 +295,12 @@ class PurchaseOrder(models.Model):
                     logistic_sale_id = line.logistic_sale_id
                     if product_qty >= remain_qty:
                         sale_line_ready.append(logistic_sale_id)
-                        if logistic_sale_id:
-                            logistic_sale_id.logistic_state = 'ready' # XXX needed?
+                        if not logistic_sale_id:
+                            _logger.error('Purchase unlinked to sale')
+                            # TODO manage this case
+                            continue
+                            
+                        logistic_sale_id.logistic_state = 'ready' # XXX needed?
 
                     # ---------------------------------------------------------
                     # Create movement (not load stock):
