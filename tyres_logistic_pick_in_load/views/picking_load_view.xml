@@ -410,7 +410,7 @@
              <field name="view_id" ref="view_sale_order_ready_tree"/>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('logistic_state', '=', 'ready'),('locked_delivery', '=', False)]</field>
+             <field name="domain">[('logistic_state', '=', ('ready', 'done')),('locked_delivery', '=', False)]</field>
          </record>                 
         <menuitem 
              id="menu_purchase_order_line" 

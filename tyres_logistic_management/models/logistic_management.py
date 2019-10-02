@@ -1357,25 +1357,59 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     # Print action:
     # -------------------------------------------------------------------------
-    @api.model
+    @api.multi
     def workflow_ready_print_picking(self):
         ''' Print picking
         '''
         return True
 
-    @api.model
-    def workflow_ready_print_invoice(self):
-        ''' Print picking
-        '''
-        return True
-
-    @api.model
+    @api.multi
     def workflow_ready_print_label(self):
         ''' Print picking
         '''
         return True
 
-    @api.model
+    @api.multi
+    def workflow_ready_print_ddt(self):
+        ''' Print ddt
+        '''
+        return True
+
+    @api.multi
+    def workflow_ready_print_invoice(self):
+        ''' Print picking
+        '''
+        try:
+            filename = self.logistic_picking_ids[0].invoice_filename
+        except:
+            raise exceptions.Warning('Invoice not generated!')
+        
+        company_pool = self.env['res.company']
+
+        # Parameter:
+        company = company_pool.search([])[0]
+        logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
+        report_path = os.path.join(logistic_root_folder, 'report')
+        fullname = os.path(report_path, filename)
+        
+        if not os.path.isfile(fullname):
+            raise exceptions.Warning('PDF not found: %s!' % fullname)
+        
+        # Print:
+        print_command = 'lp -d %s "%s"' % (
+            company.cups_invoice,
+            fullname,
+            )
+        _logger.warning('Print invoice: %s' % print_command)
+        try:
+            os.system(print_command)
+        except:    
+            raise exceptions.Warning('Error print PDF invoice on %s!' % (
+                company.cups_invoice))
+
+        return True
+
+    @api.multi
     def workflow_ready_print_extra(self):
         ''' Print picking
         '''
