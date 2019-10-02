@@ -1162,7 +1162,7 @@ class StockPicking(models.Model):
     def workflow_ready_to_done_done_picking(self):
         ''' Confirm draft picking documents
         '''
-        def clean_account(value):
+        def clean_name(value):
             return value.replace('"', '')
             
         def get_address(partner):
