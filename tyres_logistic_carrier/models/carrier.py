@@ -46,6 +46,7 @@ class CarrierSupplier(models.Model):
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     name = fields.Char('Name')
+    account_ref = fields.Char('Account ref.')
 
 class CarrierSupplierMode(models.Model):
     """ Model name: Parcels supplier mode of delivery

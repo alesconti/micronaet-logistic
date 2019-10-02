@@ -102,6 +102,7 @@
             <field name="arch" type="xml">
                 <tree string="Carrier supplier" editable="bottom">
                     <field name="name" />
+                    <field name="account_ref" />
                 </tree>
             </field>
         </record>
