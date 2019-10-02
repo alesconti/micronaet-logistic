@@ -184,6 +184,7 @@ class ProductTemplate(models.Model):
     # -------------------------------------------------------------------------
     name_extended = fields.Char(
         compute='_get_name_extended_full', string='Extended name')
+    not_in_invoice = fields.Boolean('Not in invoice')
 
 class PurchaseOrder(models.Model):
     """ Model name: Sale Order
@@ -1216,6 +1217,10 @@ class StockPicking(models.Model):
                     line = move.logistic_unload_id
                     product = move.product_id
                     
+                    if product.not_in_invoice:
+                        _logger.warning('Line not extract for invoice')
+                        continue
+
                     if product.type == 'service':
                         row_mode = 'S'
                     else:
