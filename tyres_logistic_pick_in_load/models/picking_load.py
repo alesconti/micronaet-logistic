@@ -188,7 +188,6 @@ class StockPickingDelivery(models.Model):
         # ---------------------------------------------------------------------
         quants = quant_pool.search([('order_id', '=', self.id)])
         path = os.path.join(logistic_root_folder, 'delivery')
-        order_file = os.path.join(path, 'pick_in_%s.csv' % self.id)
 
         try:
             os.system('mkdir -p %s' % path)
@@ -197,19 +196,25 @@ class StockPickingDelivery(models.Model):
         except:
             _logger.error('Cannot create %s' % path)
 
-        order_file = open(order_file, 'w')
-        order_file.write('SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA\r\n')
-        for quant in quants:
-            order = quant.order_id
-            order_file.write('%s|%s|%s|%s|%s|%s\r\n' % (
-                quant.product_id.default_code,
-                quant.product_qty,
-                quant.price,
-                order.supplier_id.sql_supplier_code or '',
-                order.name,
-                company_pool.formatLang(order.date, date=True),
-                ))
-        order_file.close()
+        # ---------------------------------------------------------------------
+        # Create Extra order file:
+        # ---------------------------------------------------------------------
+        if quants:
+            order_file = os.path.join(path, 'pick_in_%s.csv' % self.id)
+            order_file = open(order_file, 'w')
+            order_file.write('SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA'
+                '\r\n')
+            for quant in quants:
+                order = quant.order_id
+                order_file.write('%s|%s|%s|%s|%s|%s\r\n' % (
+                    quant.product_id.default_code,
+                    quant.product_qty,
+                    quant.price,
+                    order.supplier_id.sql_supplier_code or '',
+                    order.name,
+                    company_pool.formatLang(order.date, date=True),
+                    ))
+            order_file.close()
 
         # Check if procedure if fast to confirm reply (instead scheduled!):
         self.check_import_reply()
