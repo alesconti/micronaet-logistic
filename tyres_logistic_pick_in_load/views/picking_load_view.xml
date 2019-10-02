@@ -381,6 +381,7 @@
         <record model="ir.ui.view" id="view_sale_order_ready_tree">
             <field name="name">sale.order.tree</field>
             <field name="model">sale.order</field>
+            <field name="priority" eval="40" />
             <field name="arch" type="xml">
                 <tree string="Sale order ready" >
                     <field name="name" />
@@ -392,7 +393,13 @@
 	                <field name="team_id" />
 	                <field name="carrier_ok" />
 	                <field name="logistic_state" />
-	                <button name="workflow_ready_to_done_current_order" string="Vai in consegna" type="object" attrs="{'invisible': [('logistic_state','!=','ready')]}" icon="fa-caret-square-o-right" />
+	                <button name="workflow_ready_to_done_current_order" string="Vai in consegna" type="object" icon="fa-caret-square-o-right fa-x2" />
+
+	                <button name="workflow_ready_print_picking" string="Print picking" type="object" icon="fa-file-o fa-x2" />
+	                <button name="workflow_ready_print_ddt" string="Print DDT" type="object" icon="fa-file-text-o fa-x2" />
+	                <button name="workflow_ready_print_invoice" string="Print invoice" type="object" icon="fa-qrcode fa-x2" />
+	                <button name="workflow_ready_print_label" string="Print label" type="object" icon="fa-film fa-x2" />
+	                <button name="workflow_ready_print_extra" string="Print extra doc." type="object" icon="fa-list-alt fa-x2" />
                 </tree>
             </field>
         </record>
@@ -400,11 +407,11 @@
              <field name="name">Sale order ready</field>
              <field name="res_model">sale.order</field>
              <field name="view_type">form</field>
+             <field name="view_id" ref="view_sale_order_ready_tree"/>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', 'ready'),('locked_delivery', '=', False)]</field>
-         </record>
-                 
+         </record>                 
         <menuitem 
              id="menu_purchase_order_line" 
              parent="tyres_logistic_management.menu_logistic_management_root"

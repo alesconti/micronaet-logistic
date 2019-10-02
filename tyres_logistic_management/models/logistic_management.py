@@ -1355,6 +1355,33 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     # -------------------------------------------------------------------------
+    # Print action:
+    # -------------------------------------------------------------------------
+    @api.model
+    def workflow_ready_print_picking(self):
+        ''' Print picking
+        '''
+        return True
+
+    @api.model
+    def workflow_ready_print_invoice(self):
+        ''' Print picking
+        '''
+        return True
+
+    @api.model
+    def workflow_ready_print_label(self):
+        ''' Print picking
+        '''
+        return True
+
+    @api.model
+    def workflow_ready_print_extra(self):
+        ''' Print picking
+        '''
+        return True
+
+    # -------------------------------------------------------------------------
     #                           SERVER ACTION:
     # -------------------------------------------------------------------------
     @api.model
