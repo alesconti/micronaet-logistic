@@ -112,6 +112,7 @@
             <field name="arch" type="xml">
                 <field name="categ_id" position="after">
                     <field name="account_ref" />
+                    <field name="not_in_invoice" />
                 </field>
             </field>       
          </record>
