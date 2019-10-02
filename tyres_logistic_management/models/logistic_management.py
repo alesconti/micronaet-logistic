@@ -1189,7 +1189,7 @@ class StockPicking(models.Model):
                 invoice_file = open(invoice_filename, 'w')
 
                 # Export syntax:
-                cols = 29
+                cols = 30
                 invoice_file.write(
                     'RAGIONE SOCIALE|'
                     'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
@@ -1199,10 +1199,10 @@ class StockPicking(models.Model):
                     'ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
                     'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|'
                     'SKU|DESCRIZIONE|QTA|PREZZO|IVA|AGENTE MAGO|PAGAMENTO|'
-                    'TIPO RIGA|NOTE\r\n'
+                    'TIPO RIGA|NOTE|VETTORE\r\n'
                     )
 
-                mask = '%s|' * (cols - 1) + '%s\r\n' # 29 fields
+                mask = '%s|' * (cols - 1) + '%s\r\n' # 30 fields
                 mask_note = '|' * (cols - 2) + 'D|%s\r\n' # Description row
 
                 # Parse extra data:
@@ -1266,6 +1266,7 @@ class StockPicking(models.Model):
                         order.payment_term_id.account_ref, # Payment code
                         row_mode,
                         '', # comment
+                        order.carrier_supplier_id.account_ref or '', # code
                         ))
 
                 # Invoice note:        
