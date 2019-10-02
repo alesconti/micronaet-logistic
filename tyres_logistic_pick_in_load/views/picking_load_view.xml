@@ -378,6 +378,33 @@
             <field name="domain">[]</field>
         </record>
         
+        <record model="ir.ui.view" id="view_sale_order_ready_tree">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <tree string="Sale order ready" >
+                    <field name="name" />
+                    <field name="state" invisible="1" />
+	                <field name="name" />
+	                <field name="date_order" />
+	                <field name="partner_shipping_id" />
+	                <field name="amount_total" sum="Totale (Imposte incluse)" widget="monetary" />
+	                <field name="team_id" />
+	                <field name="carrier_ok" />
+	                <field name="logistic_state" />
+	                <button name="workflow_ready_to_done_current_order" string="Vai in consegna" type="object" attrs="{'invisible': [('logistic_state','!=','ready')]}" icon="fa-caret-square-o-right" />
+                </tree>
+            </field>
+        </record>
+         <record model="ir.actions.act_window" id="action_sale_order_ready_form">
+             <field name="name">Sale order ready</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form,graph,pivot</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'ready'),('locked_delivery', '=', False)]</field>
+         </record>
+                 
         <menuitem 
              id="menu_purchase_order_line" 
              parent="tyres_logistic_management.menu_logistic_management_root"
@@ -420,6 +447,14 @@
                  action="action_stock_picking_delivery_tree"
                  sequence="30"
                  groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
+                 />
+
+             <menuitem
+                 id="menu_logistic_ready_order_to_send" 
+                 parent="menu_logistic_delivery_management_root"
+                 name="Order ready"
+                 action="action_sale_order_ready_form"
+                 sequence="40"
                  />
              
              
