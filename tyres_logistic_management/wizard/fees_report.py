@@ -69,6 +69,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
         header = [
             'Canale', 
             'Ordine',
+            'Cliente',
             'SKU',
             'Descrizione',
             'Data', 
@@ -81,7 +82,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
             ]
 
         width = [
-            10, 15, 15, 40, 10, 10, 15, 10, 10, 10, 10,
+            10, 15, 30, 15, 40, 10, 10, 15, 10, 10, 10, 10,
             ]    
 
         excel_pool.column_width(ws_name, width)

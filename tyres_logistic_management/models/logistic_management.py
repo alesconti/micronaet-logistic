@@ -775,6 +775,7 @@ class StockPicking(models.Model):
                         # XXX Use scheduled date or ddt_date?
                         channel,
                         order.name,
+                        order.partner_id.name,
                         product.default_code or '',
                         product.name_extended or '',
                         company_pool.formatLang(picking.scheduled_date, date=True),
