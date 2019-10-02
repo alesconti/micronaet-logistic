@@ -145,6 +145,10 @@ class ResCompany(models.Model):
         required=True,
         )
     product_account_ref = fields.Char('Product account ref.', size=20)
+    
+    cups_picking = fields.Char('CUPS picking', size=30)
+    cups_ddt = fields.Char('CUPS ddt', size=30)
+    cups_invoice = fields.Char('CUPS Invoice', size=30)
 
 
 class ProductTemplate(models.Model):

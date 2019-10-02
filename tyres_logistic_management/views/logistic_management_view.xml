@@ -397,6 +397,11 @@
 
                                          <separator string="Account:" colspan="4"/>
                                          <field name="product_account_ref" colspan="4"/>
+
+                                         <separator string="Printer:" colspan="4"/>
+                                         <field name="cups_picking" />
+                                         <field name="cups_ddt" />
+                                         <field name="cups_invoice" />
                                      </group>
                                  </page>
                              </notebook>
