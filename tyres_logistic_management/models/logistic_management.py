@@ -1268,7 +1268,6 @@ class StockPicking(models.Model):
                         '', # comment
                         order.carrier_supplier_id.account_ref or '', # code
                         ))
-                import pdb; pdb.set_trace()        
 
                 # Invoice note:        
                 if order.note_invoice:
