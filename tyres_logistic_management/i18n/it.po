@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-19 08:17+0000\n"
-"PO-Revision-Date: 2019-09-19 10:32+0100\n"
+"POT-Creation-Date: 2019-10-02 12:37+0000\n"
+"PO-Revision-Date: 2019-10-02 14:42+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Generator: Poedit 1.6.10\n"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:2108
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2361
 #, python-format
 msgid ""
 " Customer order: %s\n"
@@ -32,50 +32,56 @@ msgstr ""
 "                    "
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:238
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1599
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2033
+#, python-format
+msgid "# not assigned"
+msgstr "# non assegnato"
+
+#. module: tyres_logistic_management
+#: code:addons/tyres_logistic_management/models/logistic_management.py:274
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1796
 #, python-format
 msgid "%s [%s]"
 msgstr "%s [%s]"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1257
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1444
 #, python-format
 msgid "%s [User: %s]"
 msgstr "%s [Utente: %s]"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1798
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2027
 #, python-format
-msgid "%s x [%s] %s<br/>"
-msgstr "%s x [%s] %s<br/>"
+msgid "%s x [%s] (Doc. %s - %s)<b> <font color=\"red\">%s</font></b><br/>"
+msgstr "%s x [%s] (Doc. %s - %s)<b> <font color=\"red\">%s</font></b><br/>"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1814
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2002
 #, python-format
-msgid "%s x [%s]<b> Go to internal stock</b><br/>"
-msgstr "%s x [%s]<b> Va nel magazzino interno</b><br/>"
+msgid "%s x [%s] (Doc. %s) %s <b><font color=\"red\">%s</font></b><br/>"
+msgstr "%s x [%s] (Doc. %s) %s <b><font color=\"red\">%s</font></b><br/>"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1831
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2049
 #, python-format
 msgid "%s x [%s]<br/>"
 msgstr "%s x [%s]<br/>"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1791
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1989
 #, python-format
 msgid "<b>Call %s to remove order!</b>"
 msgstr "<b>Chiamare:  %s per la rimozione dell'ordine!</b>"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1789
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1987
 #, python-format
 msgid "<b>Need to be uloaded in internal stock!</b>"
 msgstr "<b>Deve essere ricaricato al magazzino interno!</b>"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1809
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2022
 #, python-format
 msgid ""
 "<br><b>Pick in (from supplier):</b><br/>Need to move some received product "
@@ -85,7 +91,7 @@ msgstr ""
 "caricato al magazzino interno!<br/>"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1825
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2043
 #, python-format
 msgid ""
 "<br><b>Pick out (to customer):</b><br/><b><font color=\"red\">Delivered to "
@@ -96,7 +102,7 @@ msgstr ""
 "all'ordine!</font></b><br/>"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1793
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1997
 #, python-format
 msgid "<br><b>Purchase:</b><br/>Need to remove some purchase order line!<br/>"
 msgstr ""
@@ -202,6 +208,7 @@ msgstr ""
 "documenti collegati"
 
 #. module: tyres_logistic_management
+#: model:ir.ui.view,arch_db:tyres_logistic_management.view_logistic_fees_extract_wizard
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_logistic_manual_operation_wizard
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_status_extract_wizard
 #: selection:sale.order,logistic_state:0
@@ -214,7 +221,7 @@ msgid "Cancel order"
 msgstr "Annulla ordine"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1716
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1914
 #, python-format
 msgid "Cannot UNDO partial delivery present!"
 msgstr "Non è possibile modificare l'ordine consegne presenti!"
@@ -288,7 +295,7 @@ msgid "Confirmed"
 msgstr "Confermato"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1180
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1367
 #, python-format
 msgid "Consegne pronte"
 msgstr "Consegne pronte"
@@ -304,12 +311,14 @@ msgid "Counter"
 msgstr "Contatore"
 
 #. module: tyres_logistic_management
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_fees_extract_wizard_create_uid
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_manual_operation_wizard_create_uid
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_sale_order_status_extract_wizard_create_uid
 msgid "Created by"
 msgstr "Creato da"
 
 #. module: tyres_logistic_management
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_fees_extract_wizard_create_date
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_manual_operation_wizard_create_date
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_sale_order_status_extract_wizard_create_date
 msgid "Created on"
@@ -348,9 +357,24 @@ msgid "D. Generate supplier purchase:"
 msgstr "D. Genera ordini a fornitore:"
 
 #. module: tyres_logistic_management
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_sale_order_note_ddt
+msgid "DDT Note"
+msgstr "DDT Note"
+
+#. module: tyres_logistic_management
+#: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_logistic_form
+msgid "DDT note:"
+msgstr "DDT note:"
+
+#. module: tyres_logistic_management
 #: model:ir.ui.menu,name:tyres_logistic_management.menu_logistic_left_order_dashboard
 msgid "Dashboard"
 msgstr "Bacheca"
+
+#. module: tyres_logistic_management
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_fees_extract_wizard_evaluation_date
+msgid "Date"
+msgstr "Data"
 
 #. module: tyres_logistic_management
 #: model:res.groups,comment:tyres_logistic_management.group_logistic_debugger
@@ -395,6 +419,7 @@ msgid "Delivery undo"
 msgstr "Annulla conferma consegna"
 
 #. module: tyres_logistic_management
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_fees_extract_wizard_display_name
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_manual_operation_wizard_display_name
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_sale_order_status_extract_wizard_display_name
 msgid "Display Name"
@@ -417,6 +442,12 @@ msgid "Done"
 msgstr "Chiuso"
 
 #. module: tyres_logistic_management
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2017
+#, python-format
+msgid "Dropship (no stock movement)"
+msgstr "Dropship (nessuna movimentazione magazzino)"
+
+#. module: tyres_logistic_management
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_line_purchase_management_dropship_form
 msgid "Dropship Manage"
 msgstr "Gestione Dropship"
@@ -432,9 +463,11 @@ msgid "Dropship ON"
 msgstr "Dropship ON"
 
 #. module: tyres_logistic_management
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_purchase_order_line_dropship_manage
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_res_partner_dropship_manage
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_res_users_dropship_manage
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_sale_order_line_purchase_dropship_manage
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_stock_move_dropship_manage
 msgid "Dropship manage"
 msgstr "Gestione dropship"
 
@@ -449,6 +482,12 @@ msgstr "E' in dropship"
 #, python-format
 msgid "Error creating output folder (check param)"
 msgstr "Errore creando la cartella di output (controllare i parametri)"
+
+#. module: tyres_logistic_management
+#: code:addons/tyres_logistic_management/models/logistic_management.py:180
+#, python-format
+msgid "Error generating name"
+msgstr "Errore generando il nome"
 
 #. module: tyres_logistic_management
 #: selection:sale.order,logistic_state:0
@@ -479,9 +518,20 @@ msgid "Expense product is not order and produced"
 msgstr "I prodotti spesa non vengono prodotto o ordinati"
 
 #. module: tyres_logistic_management
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_product_product_name_extended
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_product_template_name_extended
+msgid "Extended name"
+msgstr "Nome esteso"
+
+#. module: tyres_logistic_management
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_status_extract_wizard
 msgid "Extract excel status:"
 msgstr "Estrai stato excel:"
+
+#. module: tyres_logistic_management
+#: model:ir.ui.view,arch_db:tyres_logistic_management.view_logistic_fees_extract_wizard
+msgid "Extract fees"
+msgstr "Estrai corrispettivi"
 
 #. module: tyres_logistic_management
 #: model:ir.model,name:tyres_logistic_management.model_sale_order_status_extract_wizard
@@ -492,6 +542,22 @@ msgstr "Estrai righe ordine a cliente"
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_logistic_manual_operation_wizard
 msgid "F. Update picking in loading:"
 msgstr "E. Aggiorna carichi di magazzino"
+
+#. module: tyres_logistic_management
+#: model:ir.ui.menu,name:tyres_logistic_management.menu_logistic_management_fees_root
+msgid "Fees"
+msgstr "Corrispettivi"
+
+#. module: tyres_logistic_management
+#: model:ir.model,name:tyres_logistic_management.model_logistic_fees_extract_wizard
+msgid "Fees extract report"
+msgstr "Report corrispettivi"
+
+#. module: tyres_logistic_management
+#: model:ir.actions.act_window,name:tyres_logistic_management.action_logistic_fees_extract_wizard
+#: model:ir.ui.menu,name:tyres_logistic_management.menu_logistic_management_fees_extract
+msgid "Fees operations"
+msgstr "Operazioni corrispettivi"
 
 #. module: tyres_logistic_management
 #: model:ir.model,name:tyres_logistic_management.model_account_fiscal_position
@@ -525,17 +591,24 @@ msgid "Go in purchase"
 msgstr "Genera ordini acquisto!"
 
 #. module: tyres_logistic_management
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2019
+#, python-format
+msgid "Go to internal stock"
+msgstr "Va in magazzino interno"
+
+#. module: tyres_logistic_management
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_line_search
 msgid "Group By..."
 msgstr "Raggruppa per..."
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:2099
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2352
 #, python-format
 msgid "Has delivered qty associated, cannot return!"
 msgstr "Ha delle quantità già associate, non è possibile ritornare!"
 
 #. module: tyres_logistic_management
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_fees_extract_wizard_id
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_manual_operation_wizard_id
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_sale_order_status_extract_wizard_id
 msgid "ID"
@@ -563,23 +636,36 @@ msgid "Invoice all"
 msgstr "Fattura tutto"
 
 #. module: tyres_logistic_management
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_sale_order_note_invoice
+msgid "Invoice note"
+msgstr "Note fattura"
+
+#. module: tyres_logistic_management
+#: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_logistic_form
+msgid "Invoice note:"
+msgstr "Note fattura:"
+
+#. module: tyres_logistic_management
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_stock_picking_is_fees
 msgid "Is fees"
 msgstr "E' corrispettivo"
 
 #. module: tyres_logistic_management
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_fees_extract_wizard___last_update
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_manual_operation_wizard___last_update
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_sale_order_status_extract_wizard___last_update
 msgid "Last Modified on"
 msgstr "Data di ultima modifica"
 
 #. module: tyres_logistic_management
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_fees_extract_wizard_write_uid
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_manual_operation_wizard_write_uid
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_sale_order_status_extract_wizard_write_uid
 msgid "Last Updated by"
 msgstr "Ultima modifica di"
 
 #. module: tyres_logistic_management
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_fees_extract_wizard_write_date
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_logistic_manual_operation_wizard_write_date
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_sale_order_status_extract_wizard_write_date
 msgid "Last Updated on"
@@ -684,7 +770,7 @@ msgid "Load document:"
 msgstr "Documenti di carico:"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1983
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2235
 #, python-format
 msgid "Load internal stock with internal/delivered q [#%s]<br/>"
 msgstr ""
@@ -779,6 +865,7 @@ msgid "Logistic manual operation"
 msgstr "Logistica: operazione manuale"
 
 #. module: tyres_logistic_management
+#: model:ir.ui.view,arch_db:tyres_logistic_management.view_logistic_fees_extract_wizard
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_logistic_manual_operation_wizard
 msgid "Logistic operation management:"
 msgstr "Gestione operazioni logistica:"
@@ -841,11 +928,6 @@ msgid "Logistic: Draft"
 msgstr "Logistica: Bozza"
 
 #. module: tyres_logistic_management
-#: model:ir.ui.menu,name:tyres_logistic_management.menu_logistic_left_order_dropshipped
-msgid "Logistic: Dropshipped"
-msgstr "Logistica: In dropship"
-
-#. module: tyres_logistic_management
 #: model:ir.ui.menu,name:tyres_logistic_management.menu_logistic_left_order_error
 msgid "Logistic: Error"
 msgstr "Logistica: Errati"
@@ -893,7 +975,7 @@ msgstr "Gestisce tutti i dati del modulo logistico"
 #. module: tyres_logistic_management
 #: model:res.groups,comment:tyres_logistic_management.group_undo_operator
 msgid "Manage all undo operations"
-msgstr "Manage all undo operations"
+msgstr "Gestisci tutte le operazioni di \"Undo\""
 
 #. module: tyres_logistic_management
 #: model:ir.ui.menu,name:tyres_logistic_management.menu_logistic_customer_management_root
@@ -913,13 +995,13 @@ msgid "Master root folder for output"
 msgstr "Cartella principale per output"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1358
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1545
 #, python-format
 msgid "No order line to order!"
 msgstr "Nessuna riga da ordinare!"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1331
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1518
 #, python-format
 msgid "Not all line are mapped to supplier!"
 msgstr "Non tutte le righe sono collegate al fornitore!"
@@ -930,19 +1012,45 @@ msgid "Not delivered qty"
 msgstr "Q. non consegnata"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:2032
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_product_product_not_in_invoice
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_product_template_not_in_invoice
+msgid "Not in invoice"
+msgstr "Non in fattura"
+
+#. module: tyres_logistic_management
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2285
 #, python-format
 msgid "Not pick IN doc.<br/>"
 msgstr "Nessun pick in doc..<br/>"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1326
+#: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_logistic_form
+msgid "Note"
+msgstr "Nota"
+
+#. module: tyres_logistic_management
+#: model:ir.model.fields,help:tyres_logistic_management.field_sale_order_note_ddt
+msgid "Note for DDT document"
+msgstr "Note per DDT"
+
+#. module: tyres_logistic_management
+#: model:ir.model.fields,help:tyres_logistic_management.field_sale_order_note_picking
+msgid "Note for Picking document and stock operator"
+msgstr "Note per documenti di picking"
+
+#. module: tyres_logistic_management
+#: model:ir.model.fields,help:tyres_logistic_management.field_sale_order_note_invoice
+msgid "Note for invoice document"
+msgstr "Note per fattura"
+
+#. module: tyres_logistic_management
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1513
 #, python-format
 msgid "Only order in confirmed payment could go in pending!"
 msgstr "Solo gli ordini in pagamento confermato possono andare in pendenti!"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1707
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1905
 #, python-format
 msgid "Only order in confirmed, pending, ready, delivering can undo!"
 msgstr ""
@@ -965,13 +1073,13 @@ msgid "Order"
 msgstr "Ordine"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1761
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1959
 #, python-format
 msgid "Order <b>cancel</b> state: "
 msgstr "Ordine in stato <b>annullato</b>: "
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1747
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1945
 #, python-format
 msgid ""
 "Order <b>confirmed</b>: Need to return in draft mode for changing if there's "
@@ -984,7 +1092,7 @@ msgstr ""
 "confermato)."
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1755
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1953
 #, python-format
 msgid "Order <b>done</b> state: No more modify, correct in account program!"
 msgstr ""
@@ -992,7 +1100,7 @@ msgstr ""
 "contabilmente il problema!"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1766
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1964
 #, python-format
 msgid "Order <b>error</b> state: "
 msgstr "Ordine in stato <b>errato</b>: "
@@ -1018,7 +1126,7 @@ msgid "Order cancel"
 msgstr "Ordine annullato"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1408
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1595
 #: selection:sale.order,logistic_state:0
 #: selection:sale.order.status.extract.wizard,order_logistic_state:0
 #, python-format
@@ -1054,28 +1162,23 @@ msgstr "Ordini bozza"
 
 #. module: tyres_logistic_management
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_logistic_search
-msgid "Order dropshipped"
-msgstr "Ordine in dropship"
-
-#. module: tyres_logistic_management
-#: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_logistic_search
 msgid "Order error"
 msgstr "Ordine errato"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1742
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1940
 #, python-format
 msgid "Order in <b>draft</b> mode: Do all the change nothing is needed"
 msgstr "Ordine in stato <b>bozza</b>: Modificare quello che serve direttamente"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1285
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1472
 #, python-format
 msgid "Order marked as payed"
 msgstr "Ordine con pagamento confermato"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1724
+#: code:addons/tyres_logistic_management/models/logistic_management.py:1922
 #, python-format
 msgid "Order moved in draft from: %s state"
 msgstr "Ordine riportato in stato bozza da: %s"
@@ -1086,7 +1189,7 @@ msgid "Order need invoice invoice"
 msgstr "Ordine richiede fattura"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:2071
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2324
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_logistic_search
 #, python-format
 msgid "Order pending"
@@ -1184,6 +1287,11 @@ msgstr "Picking non fatturato"
 
 #. module: tyres_logistic_management
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_logistic_form
+msgid "Picking note:"
+msgstr "Picking note:"
+
+#. module: tyres_logistic_management
+#: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_logistic_form
 msgid "Picking out:"
 msgstr "Picking uscita:"
 
@@ -1196,6 +1304,11 @@ msgstr "Picking:"
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_logistic_manual_operation_wizard
 msgid "Print account fees"
 msgstr "Stampa corrispettivi"
+
+#. module: tyres_logistic_management
+#: model:ir.ui.view,arch_db:tyres_logistic_management.view_logistic_fees_extract_wizard
+msgid "Print report"
+msgstr "Print report"
 
 #. module: tyres_logistic_management
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_line_search
@@ -1213,9 +1326,9 @@ msgid "Product account ref."
 msgstr "Contropartita contabile prodotto"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:2154
-#: code:addons/tyres_logistic_management/models/logistic_management.py:2175
-#: code:addons/tyres_logistic_management/models/logistic_management.py:2196
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2407
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2428
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2449
 #, python-format
 msgid "Product detail"
 msgstr "Dettaglio prodotto"
@@ -1233,6 +1346,11 @@ msgid "Product template"
 msgstr "Modello di prodotto"
 
 #. module: tyres_logistic_management
+#: model:ir.ui.view,arch_db:tyres_logistic_management.view_logistic_fees_extract_wizard
+msgid "Program will generate the fees data in accounting, confirm?"
+msgstr "Il programma genererà i file dei corrispettivi, confermi?"
+
+#. module: tyres_logistic_management
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_sale_order_purchase_button_override_button_form
 msgid "Purchase Management"
 msgstr "Gestione acquisti"
@@ -1248,7 +1366,7 @@ msgid "Purchase Order Line"
 msgstr "Riga Ordine d'Acquisto"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:389
+#: code:addons/tyres_logistic_management/models/logistic_management.py:430
 #: model:ir.actions.act_window,name:tyres_logistic_management.action_purchase_order_line
 #, python-format
 msgid "Purchase line"
@@ -1295,7 +1413,7 @@ msgid "Purchase order line"
 msgstr "Righe ordine acquisto"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:337
+#: code:addons/tyres_logistic_management/models/logistic_management.py:378
 #, python-format
 msgid "Purchase order selected:"
 msgstr "Righe ordine acquisto selezionate"
@@ -1388,14 +1506,14 @@ msgid "Remain qty"
 msgstr "Q. rimanente"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:2029
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2282
 #, python-format
 msgid "Remove delivery/internal line in Pick IN doc.<br/>"
 msgstr ""
 "Rimozione consegna / scarico diretto magazzino nel documento di Pick IN.<br/>"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:2037
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2290
 #, python-format
 msgid "Remove purchase line [#%s]."
 msgstr "Rimozione riga di acquisto [#%s]."
@@ -1406,6 +1524,7 @@ msgid "Report:"
 msgstr "Stampe:"
 
 #. module: tyres_logistic_management
+#: model:ir.ui.view,arch_db:tyres_logistic_management.view_logistic_fees_extract_wizard
 #: model:ir.ui.view,arch_db:tyres_logistic_management.view_logistic_manual_operation_wizard
 msgid "Report: Accounting Fees"
 msgstr "Stampe: Registro corrispettivi"
@@ -1441,7 +1560,7 @@ msgid "Sale manager see all order"
 msgstr "Manager vendite (vede tutti gli ordini)"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:2133
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2386
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_stock_picking_sale_order_id
 #: model:ir.ui.menu,name:tyres_logistic_management.menu_logistic_left_order_root
 #, python-format
@@ -1472,11 +1591,6 @@ msgstr "Ordini chiusi"
 #: model:ir.actions.act_window,name:tyres_logistic_management.action_sale_order_draft_form
 msgid "Sale order draft"
 msgstr "Ordini bozza"
-
-#. module: tyres_logistic_management
-#: model:ir.actions.act_window,name:tyres_logistic_management.action_sale_order_dropshipped_form
-msgid "Sale order dropshipped"
-msgstr "Ordini in dropshipping"
 
 #. module: tyres_logistic_management
 #: model:ir.actions.act_window,name:tyres_logistic_management.action_sale_order_error_form
@@ -1577,6 +1691,11 @@ msgid "Stock move logistic"
 msgstr "Movimenti logistica"
 
 #. module: tyres_logistic_management
+#: model:ir.model.fields,field_description:tyres_logistic_management.field_sale_order_note_picking
+msgid "Stock note"
+msgstr "Stock note"
+
+#. module: tyres_logistic_management
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_stock_move_logistic_quant_id
 msgid "Stock quant"
 msgstr "Q. magazzino"
@@ -1632,12 +1751,24 @@ msgstr "ID Team"
 #. module: tyres_logistic_management
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_crm_team_team_code_ref
 msgid "Team code ref."
-msgstr "Codice di rif. team"
+msgstr "Rif. codice team"
+
+#. module: tyres_logistic_management
+#: code:addons/tyres_logistic_management/models/logistic_management.py:600
+#, python-format
+msgid "Temporary load"
+msgstr "Carico temporaneo"
 
 #. module: tyres_logistic_management
 #: model:ir.model.fields,field_description:tyres_logistic_management.field_sale_order_status_extract_wizard_to_date
 msgid "To date"
 msgstr "Alla data"
+
+#. module: tyres_logistic_management
+#: code:addons/tyres_logistic_management/models/logistic_management.py:579
+#, python-format
+msgid "Too much unload %s, max is %s (product %s)!"
+msgstr "Troppi scarichi %s, il max è %s (prodotto %s)!"
 
 #. module: tyres_logistic_management
 #: model:ir.model,name:tyres_logistic_management.model_stock_picking
@@ -1695,13 +1826,13 @@ msgstr ""
 "collegati  (es. riga ordine di acquisto, documento di consegna ecc.)"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1967
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2219
 #, python-format
 msgid "Unlink order line: %s x %s<br/>"
 msgstr "Scollega riga ordine: %s x %s<br/>"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1976
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2228
 #, python-format
 msgid "Unlink pre-assigned purchase line [#%s]<br/>"
 msgstr "Scollega le assegnazioni di fornitore per acquisto [#%s]<br/>"
@@ -1722,7 +1853,7 @@ msgid "Unused"
 msgstr "Inutilizzato"
 
 #. module: tyres_logistic_management
-#: code:addons/tyres_logistic_management/models/logistic_management.py:1931
+#: code:addons/tyres_logistic_management/models/logistic_management.py:2183
 #, python-format
 msgid "Updated lines"
 msgstr "Aggiorna righe"
