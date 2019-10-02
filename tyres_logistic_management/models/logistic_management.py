@@ -288,7 +288,6 @@ class PurchaseOrder(models.Model):
                 # -------------------------------------------------------------
                 # Append stock.move detail (or quants if in stock)
                 # -------------------------------------------------------------
-                import pdb; pdb.set_trace()
                 for line in purchase.order_line:
                     product = line.product_id
                     product_qty = line.product_qty
