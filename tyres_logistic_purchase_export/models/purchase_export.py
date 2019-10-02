@@ -32,6 +32,22 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+class PurchaseOrderLine(models.Model):
+    """ Model name: Purchase order line
+    """
+    
+    _inherit = 'purchase.order.line'
+    
+    # -------------------------------------------------------------------------
+    #                                   UTILITY:
+    # -------------------------------------------------------------------------
+    @api.model
+    def clean_account_char(self, value):
+        ''' Clean forbitten char
+        '''
+        value = value.replace('"', '')
+        return value
+
 class ResSupplierPurchaseExport(models.Model):
     """ Model name: ResSupplierPurchaseExport
     """

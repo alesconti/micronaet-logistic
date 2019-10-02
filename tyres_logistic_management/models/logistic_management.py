@@ -463,18 +463,7 @@ class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
     """
 
-    _inherit = 'purchase.order.line'
-
-    # -------------------------------------------------------------------------
-    #                                   UTILITY:
-    # -------------------------------------------------------------------------
-    @api.model
-    def clean_account_char(self, value):
-        ''' Clean forbitten char
-        '''
-        value = value.replace('"', '')
-        return value
-        
+    _inherit = 'purchase.order.line'        
 
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
