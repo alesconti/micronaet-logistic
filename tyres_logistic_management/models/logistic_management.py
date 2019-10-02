@@ -1237,7 +1237,7 @@ class StockPicking(models.Model):
                     else:
                         row_mode = 'M'
                     
-                    if partner.vat and len(partner.vat) == 13:
+                    if partner.vat and not partner.vat[:2].isdigit():
                         vat = partner.vat[2:]
                     else:
                         vat = partner.vat or ''    
