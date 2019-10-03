@@ -1304,7 +1304,7 @@ class StockPicking(models.Model):
                         '', # comment
                         order.carrier_supplier_id.account_ref or '', # code
                         )
-                    text_line = text_line.replace('\n', ' ').replace('\r', ' ')
+                    text_line = text_line.replace('\r\n', ' ')
                     text_line = text_line + '\r\n'        
                     invoice_file.write(text_line)
  
