@@ -1238,7 +1238,7 @@ class StockPicking(models.Model):
                     'TIPO RIGA|NOTE|VETTORE\r\n'
                     )
 
-                mask = '%s|' * (cols - 1) + '%s\r\n' # 30 fields
+                mask = '%s|' * (cols - 1) + '%s' # 30 fields
                 mask_note = '|' * (cols - 2) + 'D|%s|\r\n' # Description row
 
                 # Parse extra data:
@@ -1306,6 +1306,7 @@ class StockPicking(models.Model):
                         )
                     invoice_file.write(text_line.replace('\n', ' ').replace(
                         '\r', ' '))
+                text_line = text_line + '\r\n'        
  
                 # Invoice note:        
                 if order.note_invoice:
