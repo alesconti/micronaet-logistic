@@ -328,6 +328,7 @@ class StockMove(models.Model):
         string='Extended name', related='product_id.name_extended')
     default_code = fields.Char(
         string='Default code', related='product_id.default_code')
+        
 
     # -------------------------------------------------------------------------
     #                                   Button event:
@@ -651,8 +652,32 @@ class PurchaseOrderLine(models.Model):
         return self.onchange_logistic_delivered_manual()
 
     # -------------------------------------------------------------------------
+    # Compute function:
+    # -------------------------------------------------------------------------
+    @api.multi
+    def _get_stock_extended_name(self):
+        ''' Add stock note from order
+        '''
+        for line in self:
+            try:
+                order_note = line.logistic_sale_id.order_id.note_picking or ''
+            except:
+                order_note = ''
+
+            line.name_extended_stock = '%s %s%s%s' % (
+                line.product_id.name_extended,
+                '<font color="red">[' if order_note else '',
+                order_note,                
+                ']</font>' if order_note else '',
+                )            
+
+    # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
+    name_extended_stock = fields.Char(
+        string='Stock name', compute='_get_stock_extended_name')
+
+    # TODO remove:
     name_extended = fields.Char(
         string='Extended name', related='product_id.name_extended')
         
