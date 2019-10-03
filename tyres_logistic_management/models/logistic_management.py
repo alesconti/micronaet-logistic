@@ -789,6 +789,7 @@ class StockPicking(models.Model):
                     excel_row.append((                    
                         # XXX Use scheduled date or ddt_date?
                         'CORR.' if picking.is_fees else 'FATT.',
+                        order.team_id.market_type or '',
                         channel or '',
                         company_pool.formatLang(
                             picking.scheduled_date, date=True),
