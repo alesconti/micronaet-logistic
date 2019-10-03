@@ -116,7 +116,11 @@ class ResUsers(models.Model):
         action_pool = self.env['ir.actions.act_window']
 
         # Domain integration:
-        action = origin_action.domain
+        
+        try:
+            action = origin_action.domain
+        except:
+            action = '[]'    
         if action == '[]':
             domain = str(domain)
         else:
