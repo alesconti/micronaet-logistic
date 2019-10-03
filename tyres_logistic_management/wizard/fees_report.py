@@ -97,6 +97,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
         excel_pool.write_xls_line(ws_name, row, header,             
             default_format=format_text['header'])            
             
+        import pdb; pdb.set_trace()
         for line in sorted(excel_row):
             row += 1
             excel_pool.write_xls_line(ws_name, row, line,
