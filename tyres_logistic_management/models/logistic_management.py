@@ -204,7 +204,6 @@ class PurchaseOrder(models.Model):
     def purchase_internal_confirmed(self, purchases=None):
         ''' Check if there's some PO internal to close
         '''
-        import pdb; pdb.set_trace()
         # TODO schedule action?
         # Pool used:
         company_pool = self.env['res.company']
