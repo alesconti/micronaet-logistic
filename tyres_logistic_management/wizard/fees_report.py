@@ -50,12 +50,12 @@ class LogisticFeesExtractWizard(models.TransientModel):
             evaluation_date, mode='data')
         
         date = evaluation_date.replace('-', '_')
-        filename = 'corrispettivi_%s' % evaluation_date
+        filename = 'consegnato_il_giorno_%s' % evaluation_date
         
         # ---------------------------------------------------------------------
         #                               BUTTON EVENT:    
         # ---------------------------------------------------------------------
-        ws_name = 'Corrispettivo'
+        ws_name = 'Consegnato giornaliero'
         excel_pool.create_worksheet(ws_name)
 
         excel_pool.set_format()
@@ -90,7 +90,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
 
         row = 0
         excel_pool.write_xls_line(ws_name, row, [
-            'Corrispettivi e fatture: %s' % date,
+            'Corrispettivi e fatture del giorno: %s' % date,
             ], default_format=format_text['title'])
 
         row += 2
