@@ -1168,7 +1168,7 @@ class StockPicking(models.Model):
         ''' Confirm draft picking documents
         '''
         def clean_name(value):
-            return value.replace('"', '')
+            return value.replace('"', '').replace('\n', ' ').replace('\r', ' ')
             
         def get_address(partner):
             return '%s %s|%s|%s|%s|%s|%s' % (
@@ -1307,7 +1307,8 @@ class StockPicking(models.Model):
 
                 # Invoice note:        
                 if order.note_invoice:
-                    invoice_file.write(mask_note % order.note_invoice)
+                    invoice_file.write(mask_note % clean_name(
+                        order.note_invoice))
                     
                 invoice_file.close()
                 self.check_import_reply() # Check previous import reply
