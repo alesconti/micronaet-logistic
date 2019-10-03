@@ -1306,7 +1306,7 @@ class StockPicking(models.Model):
                         )
                     invoice_file.write(text_line.replace('\n', ' ').replace(
                         '\r', ' '))
-                text_line = text_line + '\r\n'        
+                    text_line = text_line + '\r\n'        
  
                 # Invoice note:        
                 if order.note_invoice:
