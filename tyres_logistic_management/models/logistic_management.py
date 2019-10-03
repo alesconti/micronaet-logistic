@@ -1594,6 +1594,9 @@ class SaleOrder(models.Model):
     def payment_is_done(self):
         """ Update payment field done
         """
+        if not self.payment_term_id:
+            raise exceptions.Warning(_('Payment is needed for confirm order!'))
+
         self.payment_done = True
 
         # ---------------------------------------------------------------------
@@ -1652,13 +1655,7 @@ class SaleOrder(models.Model):
             if line.logistic_state != 'ready' and not line.state_check:
                 raise exceptions.UserError(
                 _('Not all line are mapped to supplier!'))
-
-        # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        # XXX DISABLE INSTRUCTION
-        #self.logistic_state = 'ready'
-        # XXX ENABLE INSTRUCTION
         self.logistic_state = 'pending'
-        # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
         # ---------------------------------------------------------------------
         #                            Generate purchase:

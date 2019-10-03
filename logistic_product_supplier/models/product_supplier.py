@@ -254,12 +254,14 @@ class SaleOrderLinePurchase(models.Model):
     # -------------------------------------------------------------------------
     line_id = fields.Many2one('sale.order.line', 'Line')
     purchase_price = fields.Float(
-        'Purchase Price', digits=dp.get_precision('Product Price'))
+        'Purchase Price', digits=dp.get_precision('Product Price'), 
+        required=True)
     product_uom_qty = fields.Float(
-        'Q.ty', digits=dp.get_precision('Product Unit of Measure'))
+        'Q.ty', digits=dp.get_precision('Product Unit of Measure'),
+        required=True)
     supplier_id = fields.Many2one(
         'res.partner', 'Partner', index=True, ondelete='cascade',
-        domain="[('supplier', '=', True)]",
+        required=True, domain="[('supplier', '=', True)]",
         )
     # -------------------------------------------------------------------------
 
