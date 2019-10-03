@@ -1258,9 +1258,14 @@ class StockPicking(models.Model):
                             order.team_id.market_type == \
                                 account_position.private_market:
                         private_code = 'privato'
-                    else:    
-                        private_code = 'business'
-                    
+                    else:
+                        if account_position.partner_private:
+                            if partner.company_type == 'company':
+                                private_code = 'business'
+                            else:    
+                                private_code = 'privato'
+                        else:    
+                            private_code = 'business'
                 
                 for move in self.move_lines:
                     line = move.logistic_unload_id
@@ -1368,6 +1373,9 @@ class AccountFiscalPosition(models.Model):
     # -------------------------------------------------------------------------
     need_invoice = fields.Boolean('Always invoice')
     private_market = fields.Char('Market private code', size=20)
+    partner_private = fields.Boolean('Partner private', 
+        help='Enable partner private managamente (company or private '
+            'for invoice)')
 
 class AccountPaymentTerm(models.Model):
     """ Model name: Account Payment term
