@@ -1239,7 +1239,7 @@ class StockPicking(models.Model):
                     )
 
                 mask = '%s|' * (cols - 1) + '%s\r\n' # 30 fields
-                mask_note = '|' * (cols - 2) + 'D|%s\r\n' # Description row
+                mask_note = '|' * (cols - 2) + 'D|%s|\r\n' # Description row
 
                 # Parse extra data:
                 if order.carrier_shippy:
