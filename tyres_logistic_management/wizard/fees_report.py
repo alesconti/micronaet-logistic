@@ -46,7 +46,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
         excel_pool = self.env['excel.writer']
 
         evaluation_date = self.evaluation_date
-        channel_row = stock_pool.csv_report_extract_accounting_fees(
+        excel_row = stock_pool.csv_report_extract_accounting_fees(
             evaluation_date, mode='data')
         
         date = evaluation_date.replace('-', '_')
@@ -97,11 +97,10 @@ class LogisticFeesExtractWizard(models.TransientModel):
         excel_pool.write_xls_line(ws_name, row, header,             
             default_format=format_text['header'])            
             
-        for channel in channel_row:
-            for line in channel_row[channel]:
-                row += 1
-                excel_pool.write_xls_line(ws_name, row, line,
-                    default_format=format_text['text'])            
+        for line in sorted(excel_row):
+            row += 1
+            excel_pool.write_xls_line(ws_name, row, line,
+                default_format=format_text['text'])            
         return excel_pool.return_attachment(filename)
 
     @api.multi

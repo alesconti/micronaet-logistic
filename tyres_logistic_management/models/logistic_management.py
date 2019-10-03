@@ -733,6 +733,7 @@ class StockPicking(models.Model):
         pickings = self.search(domain)
 
         channel_row = {}
+        excel_row = []
         for picking in pickings:
             # Readability:
             order = picking.sale_order_id
@@ -782,7 +783,7 @@ class StockPicking(models.Model):
                         channel,
                         ))
                 else:
-                    channel_row[channel].append((                    
+                    excel_row.append((                    
                         # XXX Use scheduled date or ddt_date?
                         'CORR.' if picking.is_fees else 'FATT.',
                         channel,
@@ -796,8 +797,7 @@ class StockPicking(models.Model):
                         qty,
                         total,
                         'S' if product.is_expence else 'M',
-                        code_ref, # Agent code
-                        
+                        code_ref, # Agent code                        
                         ))
 
         if mode == 'extract':
@@ -815,7 +815,7 @@ class StockPicking(models.Model):
                 fees_f.close()
             return True    
         else:
-            return channel_row
+            return excel_row
 
     # -------------------------------------------------------------------------
     # Extract Excel:
