@@ -67,12 +67,13 @@ class LogisticFeesExtractWizard(models.TransientModel):
             }
 
         header = [
+            'Tipo',
             'Canale', 
-            'Ordine',
+            'Data', 
             'Cliente',
+            'Ordine',
             'SKU',
             'Descrizione',
-            'Data', 
             'Pagamento',
             'Contropartita',
             'Q.',
@@ -82,14 +83,14 @@ class LogisticFeesExtractWizard(models.TransientModel):
             ]
 
         width = [
-            10, 25, 30, 15, 40, 10, 10, 15, 10, 10, 10, 10,
+            6, 10, 15, 30, 25, 15, 40, 10, 10, 15, 10, 10, 10,
             ]    
 
         excel_pool.column_width(ws_name, width)
 
         row = 0
         excel_pool.write_xls_line(ws_name, row, [
-            'Corrispettivo: %s' % date,
+            'Corrispettivi e fatture: %s' % date,
             ], default_format=format_text['title'])
 
         row += 2

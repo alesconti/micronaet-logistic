@@ -718,14 +718,19 @@ class StockPicking(models.Model):
         _logger.warning('Account Fees evalutation: %s' % evaluation_date)
 
         # Picking not invoiced (DDT and Refund):
-        pickings = self.search([
-            ('is_fees', '=', True),
-
+        domain = [
             # Period:
             ('scheduled_date', '>=', '%s 00:00:00' % evaluation_date),
             ('scheduled_date', '<=', '%s 23:59:59' % evaluation_date),
             # XXX: This? ('ddt_date', '=', now_dt),
-            ])
+            ]
+            
+        if mode == 'extract':
+            domain.append(
+                ('is_fees', '=', True),
+                )
+        #else: in Excel mode see all
+        pickings = self.search(domain)
 
         channel_row = {}
         for picking in pickings:
@@ -762,8 +767,9 @@ class StockPicking(models.Model):
                 if stock_mode == 'out':
                     total = -total
                 product = move.product_id
+
                 if mode == 'extract':
-                    channel_row[channel].append((
+                    channel_row[channel].append((                        
                         code_ref, # Agent code
                         # XXX Use scheduled date or ddt_date?
                         product.default_code or '',
@@ -776,20 +782,22 @@ class StockPicking(models.Model):
                         channel,
                         ))
                 else:
-                    channel_row[channel].append((
+                    channel_row[channel].append((                    
                         # XXX Use scheduled date or ddt_date?
+                        'CORR.' if picking.is_fees else 'FATT.',
                         channel,
-                        order.name,
+                        company_pool.formatLang(picking.scheduled_date, date=True),
                         order.partner_id.name,
+                        order.name,
                         product.default_code or '',
                         product.name_extended or '',
-                        company_pool.formatLang(picking.scheduled_date, date=True),
                         order.payment_term_id.account_ref or '',
                         product.account_ref or product_account_ref or '',
                         qty,
                         total,
                         'S' if product.is_expence else 'M',
                         code_ref, # Agent code
+                        
                         ))
 
         if mode == 'extract':
