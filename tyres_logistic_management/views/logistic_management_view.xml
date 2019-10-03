@@ -76,6 +76,7 @@
             <field name="arch" type="xml">
                 <field name="company_id" position="after">
                     <field name="need_invoice" />
+                    <field name="private_market" />
                 </field>
             </field>
         </record>
@@ -86,6 +87,7 @@
             <field name="arch" type="xml">
                 <field name="company_id" position="before">
                     <field name="need_invoice" />
+                    <field name="private_market" />
                 </field>
             </field>
         </record>

@@ -1249,6 +1249,19 @@ class StockPicking(models.Model):
                     weight = order.carrier_manual_weight
                     parcel = order.carrier_manual_parcel
 
+                # Private management:
+                account_position = partner.property_account_position_id
+                if partner.fatturapa_surname:
+                    private_code = 'privato'
+                else:
+                    if account_position.private_market and \
+                            order.team_id.market_type == \
+                                account_position.private_market:
+                        private_code = 'privato'
+                    else:    
+                        private_code = 'business'
+                    
+                
                 for move in self.move_lines:
                     line = move.logistic_unload_id
                     product = move.product_id
@@ -1280,7 +1293,7 @@ class StockPicking(models.Model):
                         partner.fatturapa_unique_code or '',
                         clean_name(address.name),
 
-                        'privato' if partner.fatturapa_surname else 'business',
+                        private_code,
                         get_address(address),
                         address.id,
                         '', # TODO Account ID of Bank
@@ -1289,7 +1302,7 @@ class StockPicking(models.Model):
                         order.name or '',
                         company_pool.formatLang(
                             order.date_order, date=True),
-                        partner.property_account_position_id.id, # ODOO ID
+                        account_position.id, # ODOO ID
                         parcel,
                         weight,
 
@@ -1354,6 +1367,7 @@ class AccountFiscalPosition(models.Model):
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     need_invoice = fields.Boolean('Always invoice')
+    private_market = fields.Char('Market private code', size=20)
 
 class AccountPaymentTerm(models.Model):
     """ Model name: Account Payment term
