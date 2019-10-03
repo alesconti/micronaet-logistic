@@ -737,6 +737,9 @@ class StockPicking(models.Model):
         for picking in pickings:
             # Readability:
             order = picking.sale_order_id
+            if not order:
+                _logger.warning('No order linhed for this picking')
+                continue
             partner = order.partner_id
             stock_mode = picking.stock_mode #in: refund, out: DDT
 
