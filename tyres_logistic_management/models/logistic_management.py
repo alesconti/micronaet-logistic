@@ -1267,7 +1267,7 @@ class StockPicking(models.Model):
                     else:
                         vat = partner.vat or ''    
 
-                    invoice_file.write(mask % (
+                    text_line = mask % (
                         clean_name(partner.name),
                         get_address(partner),
                         vat,
@@ -1303,8 +1303,10 @@ class StockPicking(models.Model):
                         row_mode,
                         '', # comment
                         order.carrier_supplier_id.account_ref or '', # code
-                        ))
-
+                        )
+                    invoice_file.write(text_line.replace('\n', ' ').replace(
+                        '\r', ' '))
+ 
                 # Invoice note:        
                 if order.note_invoice:
                     invoice_file.write(mask_note % clean_name(
