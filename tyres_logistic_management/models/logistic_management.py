@@ -786,10 +786,11 @@ class StockPicking(models.Model):
                     excel_row.append((                    
                         # XXX Use scheduled date or ddt_date?
                         'CORR.' if picking.is_fees else 'FATT.',
-                        channel,
-                        company_pool.formatLang(picking.scheduled_date, date=True),
-                        order.partner_id.name,
-                        order.name,
+                        channel or '',
+                        company_pool.formatLang(
+                            picking.scheduled_date, date=True),
+                        order.partner_id.name or '',
+                        order.name or '',
                         product.default_code or '',
                         product.name_extended or '',
                         order.payment_term_id.account_ref or '',
@@ -797,7 +798,7 @@ class StockPicking(models.Model):
                         qty,
                         total,
                         'S' if product.is_expence else 'M',
-                        code_ref, # Agent code                        
+                        code_ref or '', # Agent code                        
                         ))
 
         if mode == 'extract':
