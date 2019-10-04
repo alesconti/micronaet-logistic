@@ -291,7 +291,6 @@ class PurchaseOrder(models.Model):
                 
             # Get export path:
             fullpath = partner.purchase_folder_id.fullpath
-            
             export = partner.purchase_export_id
             
             # Name was generated once:
@@ -357,4 +356,5 @@ class PurchaseOrder(models.Model):
                     WB.close()
                 except:    
                     _logger.error('Error closing XLSX file')
+                  
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

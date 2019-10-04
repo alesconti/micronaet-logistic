@@ -659,6 +659,7 @@
                      <field name="order_id" />
                      <button name="open_view_sale_order_product" string="Open sale order product" type="object" icon="fa-arrow-circle-o-right"/>
                      <field name="product_id" />
+                     <!--TODO order must be in draft!!!-->
                      <button name="chain_broken_purchase_line" attrs="{'invisible': [('logistic_state','!=','ordered')]}" string="" help="Delete purchase line and return to order phase" type="object" icon="fa-chain-broken" confirm="Reassign product if needed, program delete purchase line and return do order step, confirm?"/>
                      <field name="name" />
                      <field name="product_uom_qty" />

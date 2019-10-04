@@ -204,7 +204,6 @@ class PurchaseOrder(models.Model):
     def purchase_internal_confirmed(self, purchases=None):
         ''' Check if there's some PO internal to close
         '''
-        # TODO schedule action?
         # Pool used:
         company_pool = self.env['res.company']
         move_pool = self.env['stock.move']
@@ -227,6 +226,7 @@ class PurchaseOrder(models.Model):
             'unused': os.path.join(
                 logistic_root_folder, 'order', 'internal', 'unused'),
             }
+
         _logger.warning(
             'Checking internal order in folder: %s' % path_folder['reply'])
         for path in path_folder: # Create if not present
@@ -786,9 +786,9 @@ class StockPicking(models.Model):
                         ))
                 else:
                     excel_row.append((                    
-                        # XXX Use scheduled date or ddt_date?
                         'CORR.' if picking.is_fees else 'FATT.',
                         order.team_id.market_type or '',
+                        order.partner_id.property_account_position_id.name,
                         channel or '',
                         company_pool.formatLang(
                             picking.scheduled_date, date=True),
@@ -1237,7 +1237,7 @@ class StockPicking(models.Model):
                 invoice_file = open(invoice_filename, 'w')
 
                 # Export syntax:
-                cols = 30
+                cols = 31
                 invoice_file.write(
                     'RAGIONE SOCIALE|'
                     'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
@@ -1247,7 +1247,7 @@ class StockPicking(models.Model):
                     'ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
                     'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|'
                     'SKU|DESCRIZIONE|QTA|PREZZO|IVA|AGENTE MAGO|PAGAMENTO|'
-                    'TIPO RIGA|NOTE|VETTORE\r\n'
+                    'TIPO RIGA|NOTE|VETTORE|IVA INCLUSA\r\n'
                     )
 
                 mask = '%s|' * (cols - 1) + '%s' # 30 fields
@@ -1333,6 +1333,7 @@ class StockPicking(models.Model):
                         row_mode,
                         '', # comment
                         order.carrier_supplier_id.account_ref or '', # code
+                        's' if line.tax_id[0].price_include or 'n', # VAT incl.
                         )
                     text_line = text_line.replace('\r\n', ' ')
                     text_line = text_line + '\r\n'        
@@ -2255,7 +2256,6 @@ class SaleOrderLine(models.Model):
         unit_price = (self.price_tax + self.price_reduce_taxexcl) / \
             self.product_uom_qty
             
-        import pdb; pdb.set_trace()
         return unit_price"""
         
     # moved here from load
