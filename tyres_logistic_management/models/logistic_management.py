@@ -1237,7 +1237,7 @@ class StockPicking(models.Model):
                 invoice_file = open(invoice_filename, 'w')
 
                 # Export syntax:
-                cols = 30# TODO 31
+                cols = 31
                 invoice_file.write(
                     'RAGIONE SOCIALE|'
                     'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
@@ -1247,7 +1247,7 @@ class StockPicking(models.Model):
                     'ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
                     'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|'
                     'SKU|DESCRIZIONE|QTA|PREZZO|IVA|AGENTE MAGO|PAGAMENTO|'
-                    'TIPO RIGA|NOTE|VETTORE\r\n' # TODO |IVA INCLUSA
+                    'TIPO RIGA|NOTE|VETTORE|IVA INCLUSA\r\n'
                     )
 
                 mask = '%s|' * (cols - 1) + '%s' # 30 fields
@@ -1333,7 +1333,7 @@ class StockPicking(models.Model):
                         row_mode,
                         '', # comment
                         order.carrier_supplier_id.account_ref or '', # code
-                        #'1' if line.tax_id[0].price_include or '0', # VAT incl.
+                        '1' if line.tax_id[0].price_include or '0', # VAT incl.
                         )
                     text_line = text_line.replace('\r\n', ' ')
                     text_line = text_line + '\r\n'        
