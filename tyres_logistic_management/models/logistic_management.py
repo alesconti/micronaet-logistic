@@ -1333,7 +1333,7 @@ class StockPicking(models.Model):
                         row_mode,
                         '', # comment
                         order.carrier_supplier_id.account_ref or '', # code
-                        '1' if line.tax_id[0].price_include or '0', # VAT incl.
+                        '1' if line.tax_id[0].price_include else '0', # VAT incl.
                         )
                     text_line = text_line.replace('\r\n', ' ')
                     text_line = text_line + '\r\n'        
