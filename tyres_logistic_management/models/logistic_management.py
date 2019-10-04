@@ -1237,7 +1237,7 @@ class StockPicking(models.Model):
                 invoice_file = open(invoice_filename, 'w')
 
                 # Export syntax:
-                cols = 31
+                cols = 30# TODO 31
                 invoice_file.write(
                     'RAGIONE SOCIALE|'
                     'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
