@@ -323,7 +323,8 @@ class StockMove(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery')
+    delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery', 
+        ondelete='set null')
     name_extended = fields.Char(
         string='Extended name', related='product_id.name_extended')
     default_code = fields.Char(
