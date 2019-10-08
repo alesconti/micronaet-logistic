@@ -1263,6 +1263,7 @@ class StockPicking(models.Model):
 
                 # Private management:
                 account_position = partner.property_account_position_id
+                private_code = 'privato'
                 if partner.fatturapa_surname:
                     private_code = 'privato'
                 else:
