@@ -837,7 +837,6 @@ class StockPicking(models.Model):
                     try:
                         fees_f.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\r\n' % row)
                     except:
-                        print row
                         import pdb; pdb.set_trace()    
                 fees_f.close()
             return True    
