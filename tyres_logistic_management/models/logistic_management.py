@@ -788,7 +788,8 @@ class StockPicking(models.Model):
                     excel_row.append((                    
                         'CORR.' if picking.is_fees else 'FATT.',
                         order.team_id.market_type or '',
-                        order.partner_id.property_account_position_id.name,
+                        order.partner_id.property_account_position_id.name \
+                            or '',
                         channel or '',
                         company_pool.formatLang(
                             picking.scheduled_date, date=True),
@@ -798,8 +799,8 @@ class StockPicking(models.Model):
                         product.name_extended or '',
                         order.payment_term_id.account_ref or '',
                         product.account_ref or product_account_ref or '',
-                        qty,
-                        total,
+                        qty or 0.0,
+                        total or 0.0,
                         'S' if product.is_expence else 'M',
                         code_ref or '', # Agent code                        
                         ))
