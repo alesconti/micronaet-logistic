@@ -1264,21 +1264,16 @@ class StockPicking(models.Model):
                 # Private management:
                 account_position = partner.property_account_position_id
                 private_code = 'privato'
-                if partner.fatturapa_surname:
-                    private_code = 'privato'
-                else:
-                    if account_position.private_market and \
-                            order.team_id.market_type == \
-                                account_position.private_market:
-                        private_code = 'privato'
-                    else:
-                        if account_position.partner_private:
-                            if partner.company_type == 'company':
-                                private_code = 'business'
-                            else:    
-                                private_code = 'privato'
-                        else:    
-                            private_code = 'business'
+                #if account_position.private_market and \
+                #        order.team_id.market_type == \
+                #            account_position.private_market:
+                #    private_code = 'privato'
+                #else:
+                if account_position.partner_private:
+                    if partner.company_type == 'company':
+                        private_code = 'business'
+                else:    
+                    private_code = 'business'
                 
                 for move in self.move_lines:
                     line = move.logistic_unload_id
