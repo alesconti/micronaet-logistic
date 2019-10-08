@@ -838,6 +838,7 @@ class StockPicking(models.Model):
                         fees_f.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\r\n' % row)
                     except:
                         import pdb; pdb.set_trace()    
+                        _logger.error('Not enouth argument')
                 fees_f.close()
             return True    
         else:
