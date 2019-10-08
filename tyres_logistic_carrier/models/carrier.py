@@ -175,7 +175,7 @@ class SaleOrder(models.Model):
             def format_error(field):
                 return '<font color="red"><b> [%s] </b></font>' % field
                 
-            return '%s %s %s - %s %s [%s %s] %s<br/>' % (
+            return '%s %s %s - %s %s [%s %s] %s - %s<br/>' % (
                 partner.name or '',
                 partner.street or format_error(_('Address')),
                 partner.street2 or '',
