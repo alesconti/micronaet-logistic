@@ -168,6 +168,7 @@
                      <field name="need_invoice" />
                      <field name="sql_customer_code" />
                      <field name="sql_supplier_code" />
+                     <field name="always_in_invoice" />
                  </field>
              </field>
          </record>
