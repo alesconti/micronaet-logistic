@@ -733,6 +733,7 @@ class StockPicking(models.Model):
 
         channel_row = {}
         excel_row = []
+        pfu_db = [] # to be added in product (for extract)
         for picking in pickings:
             # Readability:
             order = picking.sale_order_id
@@ -743,17 +744,13 @@ class StockPicking(models.Model):
             stock_mode = picking.stock_mode #in: refund, out: DDT
 
             for move in picking.move_lines:
-                # Remove PFU line:
-                product = move.product_id
-                if mode == 'extract' and product.not_in_invoice:                    
-                    continue
-
                 qty = move.product_uom_qty
                 total = qty * move.logistic_unload_id.price_unit
 
                 # Get channel
                 try:
-                    order = move.logistic_unload_id.order_id
+                    order_line = move.logistic_unload_id
+                    order = order_line.order_id
                     channel = order.team_id.channel_ref
                 except:
                     channel = ''
@@ -764,14 +761,27 @@ class StockPicking(models.Model):
                 except:
                     code_ref = ''
 
-                if channel not in channel_row:
-                    channel_row[channel] = []
-
                 if stock_mode == 'out':
                     total = -total
 
+                # -------------------------------------------------------------
+                # Manage PFU line for extracted feed:
+                # -------------------------------------------------------------
+                product = move.product_id
+                # TODO remove not_in_invoice and use mmac PFU field?
+                if mode == 'extract' and product.not_in_invoice: 
+                    # TODO check data?                  
+                    pfu_db.append((
+                        total, channel, order_line.mmac_pfu_line_id.id,
+                        ))
+                    continue
+
+                # Prepare database for extract:
+                if channel not in channel_row:
+                    channel_row[channel] = {}
+
                 if mode == 'extract':                
-                    channel_row[channel].append((                        
+                    channel_row[channel][order_line.id] = [                        
                         code_ref, # Agent code
                         # XXX Use scheduled date or ddt_date?
                         product.default_code or '',
@@ -783,7 +793,7 @@ class StockPicking(models.Model):
                         total,
                         'S' if product.is_expence else 'M',
                         channel,
-                        ))
+                        ]
                 else:
                     excel_row.append((                    
                         'CORR.' if picking.is_fees else 'FATT.',
@@ -807,6 +817,14 @@ class StockPicking(models.Model):
 
         if mode == 'extract':
             date = evaluation_date.replace('-', '_')
+            
+            # Add PFU to product:
+            for total, channel, mmac_pfu_line_id in pfu_db:
+                try:
+                    channel_row[channel][mmac_pfu_line_id][6] += total
+                except:
+                    _logger.error('PFU error with line')                    
+                    
             for channel in channel_row:
                 fees_filename = os.path.join(
                     path, '%s_%s.csv' % (channel, date))
@@ -815,7 +833,8 @@ class StockPicking(models.Model):
                 fees_f.write(
                     'CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE|TIPO|'
                     'AGENTE\r\n')
-                for row in channel_row[channel]:
+
+                for row in channel_row[channel].values():
                     fees_f.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\r\n' % row)
                 fees_f.close()
             return True    
