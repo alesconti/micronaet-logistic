@@ -1279,11 +1279,16 @@ class StockPicking(models.Model):
                     line = move.logistic_unload_id
                     product = move.product_id
                     
-                    # Partner and product case:
-                    if not partner.always_in_invoice and \
-                            product.not_in_invoice:
-                        _logger.warning('Line not extract for invoice')
-                        continue
+                    # ---------------------------------------------------------
+                    # PFU Line:
+                    # ---------------------------------------------------------
+                    # Produt not in invoice (except partner and fis. pos. case)
+                    if product.not_in_invoice:
+                        if not partner.pfu_invoice_fiscal or not \
+                                account_position.pfu_invoice_enable:
+                            _logger.warning('Line not extract for invoice')
+                            continue
+                    # ---------------------------------------------------------
 
                     if product.type == 'service':
                         row_mode = 'S'
@@ -1372,8 +1377,8 @@ class ResPartner(models.Model):
     need_invoice = fields.Boolean('Always invoice')
     sql_customer_code = fields.Char('SQL customer code', size=20)
     sql_supplier_code = fields.Char('SQL supplier code', size=20)
-    always_in_invoice = fields.Boolean('Always in invoice', 
-        help='All product in order goes in invoide (PFU always passed)')
+    pfu_invoice_fiscal = fields.Boolean('PFU fiscal', 
+        help='PFU inserti if required in fiscal position')
 
 class AccountFiscalPosition(models.Model):
     """ Model name: Account Fiscal Position
@@ -1384,6 +1389,8 @@ class AccountFiscalPosition(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
+    pfu_invoice_enable = fields.Boolean('Partner PFU exported', 
+        help='If setup on partner will export PFU line') 
     need_invoice = fields.Boolean('Always invoice')
     private_market = fields.Char('Market private code', size=20)
     partner_private = fields.Boolean('Partner private', 

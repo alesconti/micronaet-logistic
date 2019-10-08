@@ -78,6 +78,7 @@
                     <field name="need_invoice" />
                     <field name="private_market" />
                     <field name="partner_private" />
+                    <field name="pfu_invoice_enable" />
                 </field>
             </field>
         </record>
@@ -90,6 +91,7 @@
                     <field name="need_invoice" />
                     <field name="private_market" />
                     <field name="partner_private" />
+                    <field name="pfu_invoice_enable" />
                 </field>
             </field>
         </record>
@@ -168,7 +170,7 @@
                      <field name="need_invoice" />
                      <field name="sql_customer_code" />
                      <field name="sql_supplier_code" />
-                     <field name="always_in_invoice" />
+                     <field name="pfu_invoice_fiscal" />
                  </field>
              </field>
          </record>
