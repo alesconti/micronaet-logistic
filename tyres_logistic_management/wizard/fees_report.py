@@ -151,7 +151,8 @@ class LogisticFeesExtractWizard(models.TransientModel):
             excel_pool.write_xls_line(ws_name, row, header,             
                 default_format=format_text['header'])
             total = 0.0
-            for order in pages[ws_name]:
+            for order in sorted(pages[ws_name], 
+                    key=lambda x: (pages[ws_name][x][1], x)):
                 row += 1
                 subtotal, line = pages[ws_name][order]
                 total += subtotal
