@@ -180,10 +180,12 @@ class SaleOrder(models.Model):
                 partner.street or format_error(_('Address')),
                 partner.street2 or '',
                 partner.zip or format_error(_('ZIP')),
-                partner.city or  format_error(_('City')),
-                partner.state_id.name or  format_error(_('State')),
-                partner.country_id.name or  format_error(_('Country')),
-                partner.phone or  format_error(_('Phone')),
+                partner.city or format_error(_('City')),
+                partner.state_id.name or format_error(_('State')),
+                partner.country_id.name or format_error(_('Country')),
+                partner.phone or format_error(_('Phone')),
+                partner.property_account_position_id.name or format_error(
+                    _('Pos. fisc.')),
                 )
         
         mask = _('<b>ORD.:</b> %s\n<b>INV.:</b> %s\n<b>DELIV.:</b> %s')
