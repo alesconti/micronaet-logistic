@@ -64,6 +64,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
             'header': excel_pool.get_format('header'),
             'text': excel_pool.get_format('text'),
             'number': excel_pool.get_format('number'),
+            'total': excel_pool.get_format('text_total'),
             }
 
         header = [
@@ -98,11 +99,77 @@ class LogisticFeesExtractWizard(models.TransientModel):
         row += 2
         excel_pool.write_xls_line(ws_name, row, header,             
             default_format=format_text['header'])            
-            
+        pages = {}
         for line in sorted(excel_row):
             row += 1
+            
+            # Readability: 
+            mode = line[0] 
+            fiscal = line[2]          
+            order = line[6] 
+            total = line[12]
+            
+            if mode == 'CORR.':
+                page = 'Corrispettivo'
+            else: # invoice:
+                page = fiscal # Fiscal position
+
+            if page not in pages:
+                pages[page] = {}
+
+            if order in pages[page]:
+                pages[page][order][0] += total
+            else:
+                pages[page][order] = [total, line]
+
             excel_pool.write_xls_line(ws_name, row, line,
-                default_format=format_text['text'])            
+                default_format=format_text['text'])
+        
+        # ---------------------------------------------------------------------
+        # Extra pages:
+        # ---------------------------------------------------------------------
+        header = [
+            'Modo',
+            'Canale', 
+            'Data', 
+            'Cliente',
+            'Ordine',
+            'Pagamento',
+            'Totale',
+            'Tipo',
+            'Agente',
+            ]
+
+        width = [
+            6, 10, 15, 30, 25, 10, 10, 10, 10,
+            ]    
+
+        for ws_name in sorted(pages):
+            excel_pool.create_worksheet(ws_name)
+            excel_pool.column_width(ws_name, width)
+            row = 0
+            excel_pool.write_xls_line(ws_name, row, header,             
+                default_format=format_text['header'])
+            total = 0.0
+            for order in pages[ws_name]:
+                row += 1
+                subtotal, line = pages[ws_name][order]
+                total += subtotal
+                excel_pool.write_xls_line(ws_name, row, [
+                    line[1], # Mode
+                    line[3], # Channel
+                    line[4], # Date
+                    line[5], # Customer
+                    order,
+                    line[9], # Payment
+                    subtotal, 
+                    line[13], # Type
+                    line[14], # Agent             
+                    ], default_format=format_text['text'])
+            row += 1
+            excel_pool.write_xls_line(
+                ws_name, row, ['Totale', total], format_text['total'], col=5)
+                
         return excel_pool.return_attachment(filename)
 
     @api.multi
