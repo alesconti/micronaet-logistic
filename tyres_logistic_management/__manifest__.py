@@ -43,6 +43,7 @@
         'logistic_product_supplier', # Supplier purchase management
         'logistic_secure_payment', # For auto go ahead when confirmed payment
         'tyres_logistic_carrier', # Carrier management
+        'mmac_odoo4', # Extra fields
         
         #'logistic_stock_position', # Stock position
         #'order_line_explode_kit', # Sale kit explode
