@@ -1263,6 +1263,7 @@ class StockPicking(models.Model):
 
                 # Private management:
                 account_position = partner.property_account_position_id
+                import pdb; pdb.set_trace()
                 private_code = 'privato'
                 #if account_position.private_market and \
                 #        order.team_id.market_type == \
