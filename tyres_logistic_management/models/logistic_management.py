@@ -770,11 +770,10 @@ class StockPicking(models.Model):
                 product = move.product_id
                 # TODO remove not_in_invoice and use mmac PFU field?
                 if mode == 'extract' and product.not_in_invoice: 
-                    # TODO check data?                  
-                    import pdb; pdb.set_trace()
-                    pfu_db.append((
-                        total, channel, order_line.mmac_pfu_line_id.id,
-                        ))
+                    # TODO check the 3 fields?                  
+                    #pfu_db.append((
+                    #    total, channel, order_line.mmac_pfu_line_id.id,
+                    #    ))
                     continue
 
                 # Prepare database for extract:
