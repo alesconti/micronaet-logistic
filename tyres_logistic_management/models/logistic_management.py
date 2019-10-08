@@ -743,10 +743,10 @@ class StockPicking(models.Model):
             stock_mode = picking.stock_mode #in: refund, out: DDT
 
             for move in picking.move_lines:
-                #product = move.product_id
-                # No PFU elements
-                #if product.not_in_invoice:
-                #    continue
+                # Remove PFU line:
+                product = move.product_id
+                if mode == 'extract' and product.not_in_invoice:                    
+                    continue
 
                 qty = move.product_uom_qty
                 total = qty * move.logistic_unload_id.price_unit
@@ -769,14 +769,14 @@ class StockPicking(models.Model):
 
                 if stock_mode == 'out':
                     total = -total
-                product = move.product_id
 
-                if mode == 'extract':
+                if mode == 'extract':                
                     channel_row[channel].append((                        
                         code_ref, # Agent code
                         # XXX Use scheduled date or ddt_date?
                         product.default_code or '',
-                        company_pool.formatLang(picking.scheduled_date, date=True),
+                        company_pool.formatLang(
+                            picking.scheduled_date, date=True),
                         order.payment_term_id.account_ref or '',
                         product.account_ref or product_account_ref or '',
                         qty,
