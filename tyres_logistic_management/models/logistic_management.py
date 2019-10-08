@@ -834,11 +834,8 @@ class StockPicking(models.Model):
                     'CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE|TIPO|'
                     'AGENTE\r\n')
                 for row in channel_row[channel].values():#channel_row[channel].keys()
-                    try:
-                        fees_f.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\r\n' % row)
-                    except:
-                        import pdb; pdb.set_trace()    
-                        _logger.error('Not enouth argument')
+                    fees_f.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\r\n' % tuple(
+                        row))
                 fees_f.close()
             return True    
         else:
