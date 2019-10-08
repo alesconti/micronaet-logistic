@@ -1372,8 +1372,8 @@ class ResPartner(models.Model):
     need_invoice = fields.Boolean('Always invoice')
     sql_customer_code = fields.Char('SQL customer code', size=20)
     sql_supplier_code = fields.Char('SQL supplier code', size=20)
-    always_in_invoice = fields.Boolean('Always in invoice', 
-        help='All product in order goes in invoide (PFU always passed)')
+    #always_in_invoice = fields.Boolean('Always in invoice', 
+    #    help='All product in order goes in invoide (PFU always passed)')
 
 class AccountFiscalPosition(models.Model):
     """ Model name: Account Fiscal Position
