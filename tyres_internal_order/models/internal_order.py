@@ -213,23 +213,26 @@ class SaleOrderLine(models.Model):
     def _get_internal_order_pending(self, ):
         ''' Get detail status of pending order
         '''
-        self.ensureone()
+        self.ensure_one()
         
         lines = self.search([
-            ('product_id', '=', self.product_id),
-            ('order_id.logistic_state', 'not in', (
-                'done', 'ready', 'draft', 'cancel'),
+            ('product_id', '=', self.product_id.id),
+            ('order_id.logistic_source', '=', 'internal'), # internal order
+            ('order_id.logistic_state', '=', 'pending'),
             ])
         if lines:
-        res = ''    
-        for line in lines:
-            res += '%s %s' % (
-                line.order_id.name, 
-                line.product_uom_qty, # TODO only remain           
-                )
-        self.internal_order_pending = res
+            res = ''    
+            for line in lines:
+                remain = line.logistic_remain_qty
+                if not remain:
+                    continue
+                res += 'Ordine interno residuo: %s <b>q. %s</b><br/>' % (
+                    line.order_id.name, 
+                    remain,
+                    )
+            self.internal_order_pending = res
         else:
-            self.internal_order_pending = _('Nothing pending')
+            self.internal_order_pending = ''#_('Nothing pending')
             
                 
     internal_order_pending = fields.Text('Internal pending', 
