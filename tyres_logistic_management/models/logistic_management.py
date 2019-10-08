@@ -833,7 +833,7 @@ class StockPicking(models.Model):
                 fees_f.write(
                     'CANALE|SKU|DATA|PAGAMENTO|PRODOTTO|Q|TOTALE|TIPO|'
                     'AGENTE\r\n')
-
+                import pdb; pdb.set_trace()
                 for row in channel_row[channel].values():
                     fees_f.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\r\n' % row)
                 fees_f.close()
