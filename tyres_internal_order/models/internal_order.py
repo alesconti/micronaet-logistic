@@ -58,7 +58,7 @@ class ProductProduct(models.Model):
                     product.titolocompleto or product.name or _('Not found'),
                 ))
         return res
-          
+    
 class SaleOrderInternal(models.Model):
     ''' Model name: Internal sale order
     '''
@@ -202,5 +202,39 @@ class SaleOrderInternal(models.Model):
     # -------------------------------------------------------------------------    
     line_ids = fields.One2many(
         'sale.order.line.internal', 'order_id', 'Detail')
+
+class SaleOrderLine(models.Model):
+    """ Model name: Internal sale line
+    """
+    
+    _inherit = 'sale.order.line'
+    
+    @api.multi # no api.depends?
+    def _get_internal_order_pending(self, ):
+        ''' Get detail status of pending order
+        '''
+        self.ensureone()
+        
+        lines = self.search([
+            ('product_id', '=', self.product_id),
+            ('order_id.logistic_state', 'not in', (
+                'done', 'ready', 'draft', 'cancel'),
+            ])
+        if lines:
+        res = ''    
+        for line in lines:
+            res += '%s %s' % (
+                line.order_id.name, 
+                line.product_uom_qty, # TODO only remain           
+                )
+        self.internal_order_pending = res
+        else:
+            self.internal_order_pending = _('Nothing pending')
+            
+                
+    internal_order_pending = fields.Text('Internal pending', 
+        compute='_get_internal_order_pending',
+        help='Internal order pending')
+          
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -137,7 +137,7 @@
                              <field name="product_uom_qty" />
                              <field name="state_qty" readonly="1" />
 
-                             <separator string="Purchase stock" colspan="4"/>
+                             <separator string="Purchase stock" colspan="4"/>                             
                              <field name="product_supplier_ids" nolabel="1" editable="bottom" colspan="4" readonly="1">
                                 <tree string="Supplier stock" editable="bottom" decoration-info="best_price==True" decoration-danger="stock_qty&lt;=0">
                                     <field name="best_price" invisible="1"/>
@@ -152,8 +152,7 @@
                                     <button name="assign_to_purchase_none" string="0" type="object" context="{'sale_order_id': parent.id}" icon="fa-bitbucket"/> <!--fa-dot-circle-o-->
                                     <button name="assign_to_purchase_all" string="all" type="object" context="{'sale_order_id': parent.id}" icon="fa-fast-forward"/>
                                 </tree>
-                                <form/>
-                                
+                                <form/>                                
                              </field>
                              
                              <separator string="Purchase order:" colspan="3"/>
