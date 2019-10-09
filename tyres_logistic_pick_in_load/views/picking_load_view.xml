@@ -386,23 +386,24 @@
             <field name="arch" type="xml">
                 <tree string="Sale order ready" >
                     <field name="name" />
-                    <field name="state" invisible="1" />
-	                <field name="name" />
 	                <field name="date_order" />
 	                <field name="partner_id" />
 	                <field name="partner_shipping_id" />
 	                <field name="amount_total" sum="Totale (Imposte incluse)" widget="monetary" />
 	                <field name="team_id" />
 	                <field name="carrier_ok" />
+	                <field name="carrier_stock_note" />
 	                <field name="logistic_state" />
+	                
+	                <field name="mmac_shippy_order_id" />
+
 	                <field name="need_invoice" invisible="1" />
 	                <field name="carrier_shippy" invisible="1" />
 	                <field name="partner_need_invoice" invisible="1" />
-	                <field name="mmac_shippy_order_id" invisible="1" />
+                    <field name="state" invisible="1" />
 	                <field name="logistic_done" invisible="1" />
 	                
 	                <button name="workflow_ready_to_done_current_order" string="Vai in consegna" type="object" icon="fa-caret-square-o-right fa-x2" attrs="{'invisible': [('logistic_state','!=','ready')]}"/>
-
 	                <button name="workflow_ready_print_picking" string="Print picking" type="object" icon="fa-file-o fa-x2" />
 	                <button name="workflow_ready_print_ddt" string="Print DDT" type="object" icon="fa-file-text-o fa-x2" attrs="{'invisible': [('need_invoice','=',True)]}"/>
 	                <button name="workflow_ready_print_invoice" string="Print invoice" type="object" icon="fa-qrcode fa-x2" attrs="{'invisible': [('need_invoice','=',False)]}"/>
