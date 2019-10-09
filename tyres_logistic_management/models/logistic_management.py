@@ -1799,6 +1799,12 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
     # -------------------------------------------------------------------------
+    @api.multi
+    def workflow_logistic_done(self, ):
+        ''' Order was exit
+        '''
+        self.workflow_logistic_done = True
+        
     # 0. Cancel error order
     # -------------------------------------------------------------------------
     @api.multi
@@ -2251,6 +2257,7 @@ class SaleOrder(models.Model):
         ], 'Logistic source', default='web',
         )
 
+    logistic_done = fields.Boolean('Logistic Done')
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft, new order received
 
