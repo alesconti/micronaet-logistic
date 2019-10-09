@@ -37,6 +37,7 @@
         'account',
         'stock',
         'purchase',
+        'web',
         'product_folder_image', # For image management
         'excel_export', # Export in Excel
         'tyres_logistic_ddt',

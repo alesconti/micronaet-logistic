@@ -1468,8 +1468,21 @@ class SaleOrder(models.Model):
     def workflow_ready_print_ddt(self):
         ''' Print ddt
         '''
+        report_name = 'sale.report_saleorder'
         server = 'localhost:8069'
         order_id = self.id
+        
+        pdf = self.env['report'].sudo().get_pdf([order_id], report_name)
+        #self.env['ir.attachment'].create({
+        #    'name': 'Cats',
+        #    'type': 'binary',
+        #    'datas': base64.encodestring(pdf),
+        #    'res_model': 'account.invoice',
+        #    'res_id': invoice.id
+        #    'mimetype': 'application/x-pdf'
+        #})        
+        import pdb; pdb.set_trace()
+        """
         chunk_size = 2000
 
         url = 'http://%s/report/pdf/sale.report_saleorder/%s' % (
@@ -1483,7 +1496,7 @@ class SaleOrder(models.Model):
         f_pdf = open(file_pdf, 'wb')
         for chunk in r.iter_content(chunk_size):
             f_pdf.write(chunk)
-        f_pdf.close()        
+        f_pdf.close()        """
         return True
 
     @api.multi
