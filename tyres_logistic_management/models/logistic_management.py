@@ -1476,6 +1476,8 @@ class SaleOrder(models.Model):
             filename = self.logistic_picking_ids[0].invoice_filename
         except:
             raise exceptions.Warning('Invoice not generated!')
+        if not filename:
+            raise exceptions.Warning('Invoice not generated (filename missed!')
         
         company_pool = self.env['res.company']
 
