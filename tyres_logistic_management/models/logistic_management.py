@@ -26,6 +26,7 @@ import sys
 import logging
 import odoo
 import shutil
+import requests
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
@@ -1453,6 +1454,8 @@ class SaleOrder(models.Model):
     def workflow_ready_print_picking(self):
         ''' Print picking
         '''
+        # TODO param in DDT report for add stock note
+        self.workflow_ready_print_ddt()
         return True
 
     @api.multi
@@ -1465,6 +1468,22 @@ class SaleOrder(models.Model):
     def workflow_ready_print_ddt(self):
         ''' Print ddt
         '''
+        server = 'localhost:8069'
+        order_id = self.id
+        chunk_size = 2000
+
+        url = 'http://%s/report/pdf/sale.report_saleorder/%s' % (
+            server, order_id)
+        try:
+            r = requests.get(url, stream=True)
+        except:
+            raise exceptions.Warning('Cannot get: %s!' % url)
+
+        file_pdf = '/tmp/order_%s.pdf' % order_id
+        f_pdf = open(file_pdf, 'wb')
+        for chunk in r.iter_content(chunk_size):
+            f_pdf.write(chunk)
+        f_pdf.close()        
         return True
 
     @api.multi
@@ -2109,6 +2128,9 @@ class SaleOrder(models.Model):
             self.undo_comment = _(
                 'Order in <b>draft</b> mode: Do all the change nothing is '
                 'needed')
+            # TODO for sol in self.order_line:
+            #    product = sol.product_id
+
             return
         elif self.logistic_state == 'order':
             self.undo_comment = _(

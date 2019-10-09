@@ -384,7 +384,7 @@
             <field name="model">sale.order</field>
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
-                <tree string="Sale order ready (highlith no label line)" decoration-warning="mmac_shippy_order_id > 0">
+                <tree string="Sale order ready (highlith no label line)" decoration-primary="mmac_shippy_order_id > 0">
                     <field name="name" />
 	                <field name="date_order" />
 	                <field name="partner_id" />
