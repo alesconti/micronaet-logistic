@@ -1460,7 +1460,7 @@ class SaleOrder(models.Model):
     def workflow_ready_print_label(self):
         ''' Print picking
         '''
-        return True
+        return self.shippy_print()
 
     @api.multi
     def workflow_ready_print_ddt(self):
