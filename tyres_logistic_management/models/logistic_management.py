@@ -1800,7 +1800,7 @@ class SaleOrder(models.Model):
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
     # -------------------------------------------------------------------------
     @api.multi
-    def workflow_logistic_done(self, ):
+    def set_workflow_logistic_done(self, ):
         ''' Order was exit
         '''
         self.workflow_logistic_done = True
