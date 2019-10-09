@@ -1803,7 +1803,7 @@ class SaleOrder(models.Model):
     def set_workflow_logistic_done(self, ):
         ''' Order was exit
         '''
-        self.workflow_logistic_done = True
+        self.logistic_done = True
         
     # 0. Cancel error order
     # -------------------------------------------------------------------------
