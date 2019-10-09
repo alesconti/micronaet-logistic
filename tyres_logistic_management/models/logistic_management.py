@@ -1326,7 +1326,8 @@ class StockPicking(models.Model):
                         clean_name(partner.name),
                         get_address(partner),
                         vat,
-                        partner.fatturapa_fiscalcode or '',
+                        partner.fatturapa_fiscalcode or partner.mmac_fiscalid \
+                            or '',
 
                         partner.email or '',
                         partner.phone or '',
