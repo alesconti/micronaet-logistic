@@ -406,10 +406,10 @@
 	                <button name="workflow_ready_print_picking" string="Print picking" type="object" icon="fa-file-o fa-x2" />
 	                <button name="workflow_ready_print_ddt" string="Print DDT" type="object" icon="fa-file-text-o fa-x2" attrs="{'invisible': [('need_invoice','=',True)]}"/>
 	                <button name="workflow_ready_print_invoice" string="Print invoice" type="object" icon="fa-qrcode fa-x2" attrs="{'invisible': [('need_invoice','=',False)]}"/>
-	                <button name="workflow_ready_print_label" string="Print label" type="object" icon="fa-film fa-x2" attrs="{'invisible': [('mmac_shippy_order_id', '=', False), ('carrier_shippy','=',False)]}"/>
+	                <button name="workflow_ready_print_label" string="Print label" type="object" icon="fa-film fa-x2" attrs="{'invisible': ['|', ('mmac_shippy_order_id', '=', False), ('carrier_shippy','=',False)]}"/>
 	                <button name="workflow_ready_print_extra" string="Print extra doc." type="object" icon="fa-list-alt fa-x2" />
 	                
-	                <button name="set_workflow_logistic_done" string="Done!" type="object" icon="fa-thumbs-up fa-x2" />
+	                <button name="set_workflow_logistic_done" string="Done!" type="object" icon="fa-thumbs-up fa-x2" confirm="" />
 	                
                 </tree>
             </field>
