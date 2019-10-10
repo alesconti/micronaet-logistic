@@ -1169,33 +1169,29 @@ class StockPicking(models.Model):
 
                 # Update invoice information on picking:
                 (pick_id, invoice_number, invoice_date, invoice_filename) = res
-                try:
-                    check_ids = self.search([('id', '=', pick_id)])
-                    if check_ids:
-                        invoice_pick = self.browse(pick_id)
-                        invoice_pick.write({
-                            'invoice_filename': invoice_filename, # PDF name
-                            'invoice_number': invoice_number,
-                            'invoice_date': invoice_date,
-                            })
-                        destination_path = history_path                                
-                    else:   
-                        destination_path = notfound_path                                
-                        _logger.error('Pick ID: %s not found!' % f)
+                
+                check_ids = self.search([('id', '=', pick_id)])
+                if check_ids:
+                    invoice_pick = self.browse(pick_id)
+                    invoice_pick.write({
+                        'invoice_filename': invoice_filename, # PDF name
+                        'invoice_number': invoice_number,
+                        'invoice_date': invoice_date,
+                        })
+                    destination_path = history_path                                
+                else:   
+                    destination_path = notfound_path                                
+                    _logger.error('Pick ID: %s not found!' % f)
 
-                    # -------------------------------------------------------------
-                    # Move operation:
-                    # -------------------------------------------------------------
-                    move_list.append((
-                        os.path.join(reply_path, f),
-                        os.path.join(destination_path, f),
-                        ))
-                    _logger.info('Pick ID: %s correct!' % f)
+                # -------------------------------------------------------------
+                # Move operation:
+                # -------------------------------------------------------------
+                move_list.append((
+                    os.path.join(reply_path, f),
+                    os.path.join(destination_path, f),
+                    ))
+                _logger.info('Pick ID: %s correct!' % f)
 
-                except:
-                    _logger.error('Error update pick as invoice: %s' % (
-                        sys.exc_info(),
-                        ))
             break # Only first folder
 
         # ---------------------------------------------------------------------
