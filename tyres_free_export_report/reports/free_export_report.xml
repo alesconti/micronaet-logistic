@@ -16,6 +16,7 @@
                                         <img src='/web/binary/company_logo' style="width: 100%"/>
                                     </div>
                                 </div>
+
                                 <div class="col-xs-9">
                                     <div align="center">
                                        <!--<span t-esc="o.get_report_header_company()" />-->
@@ -27,8 +28,8 @@
                                     </div>
                                 </div>    
                             </div>                            
-                            <hr />
-
+                            <hr/>
+                            <br/>
                             <div class="row">
                                 <div class="col-xs-12">
                                     Io sottoscritto <u>Felappi Alessandro</u> in qualità di 
@@ -38,7 +39,6 @@
                                 </div>
                             </div>       
                             <br/>
-                                                 
                             <div class="row">
                                 <div class="col-xs-12">
                                     <b>Rif. fattura nr. </b><span t-esc="o.qweb_get_invoice_text()"/> 
@@ -49,45 +49,40 @@
                              <!-- BODY: -->
                             <div class="row">
                                 <div class="col-xs-12" align="justfy">                                
+                                    <p>
                                     <b>DICHIARAZIONE PER DUPLICE USO</b> (certificato Y901)
                                     non rientra nell’elenco dei beni previsti dal Reg. (CE) n. 428/09 e successive modifiche che istituisce un regime comunitario di controllo delle esportazioni di prodotti e tecnologie a duplice uso (Dual Use) e pertanto destinata ad uso civile. 
-                                    <br/>
+                                    </p>
 
                                     <p>
                                     <b>DICHIARAZIONE DI WASHINGTON</b> (certificato Y900)
                                     non rientra tra quelle protette dalla Convenzione di Washington, come da Reg. (CE) n. 338/97 e successive modifiche, relativo alla protezione di specie della flora e fauna selvatiche.
                                     </p>
-                                    <br/>
 
                                     <p>
                                     <b>DICHIARAZIONE PER PELLICCE DI CANI E GATTI</b> (certificato Y922)
                                     non consiste in pellicce di cane e di gatto e di prodotti che le contengono, come previsto dal Reg. (CE) n. 1523/07 e successive modifiche che ne vieta la commercializzazione, l'importazione e l'esportazione. 
                                     </p>
-                                    <br/>
 
                                     <p>
                                     <b>DICHIARAZIONE PER L'OZONO </b>(certificato Y902)
                                     non rientra nell’elenco dei beni ritenuti dannosi per l'ozono elencati nel Reg. (CE) n. 1005/09 e successive modifiche. 
                                     </p>
-                                    <br/>
 
                                     <p>
                                     <b>DICHIARAZIONE PER BENI CULTURALI</b> (certificato Y903)
                                     non rientra nell’elenco dei beni previsti dal Reg. (CE) n. 116/09 del Consiglio del 18 dicembre 2008 e successive modifiche relativo all’esportazione di beni culturali.  
                                     </p>
-                                    <br/>
 
                                     <p>
                                     <b>DICHIARAZIONE PER SOSTANZE CHIMICHE PERICOLOSE</b> (certificati Y916 - Y917)
                                     non rientra tra quelle elencate negli allegati I e V del Reg. (UE) 649/2012 e successive modifiche recante disposizioni in materia di esportazioni e importazioni di sostanze chimiche pericolose. 
                                     </p>
-                                    <br/>
 
                                     <p>
                                     <b>DICHIARAZIONE PER MERCE CHE POTREBBE ESSERE UTILIZZATA PER LA PENA DI MORTE, LA TORTURA O PER ALTRI TRATTAMENTI O PENE CRUDELI, INUMANE O DEGRADANTI</b> (certificati Y904 - Y906 – Y907- Y908)  
                                     non rientra nell’elenco dei beni previsti da Reg. (CE) 1236/05 e successive modifiche relativo al commercio di determinate merci che potrebbero essere utilizzate per la pena di morte, la tortura o per altri trattamenti o pene crudeli, inumane o degradanti. 
                                     </p>
-                                    <br/>
 
                                     <p>
                                     <b>DICHIARAZIONE PER MERCE DESTINATA IN UNO DEI PAESI SOTTO INDICATI</b> (certificati Y920 - Y921- Y949 - Y966 – Y967) 
@@ -119,25 +114,21 @@
                                          </li>
                                       </ul>
                                     </p>
-                                    <br/>
 
                                     <p>
                                     <b>DICHIARAZIONE Y935</b> (certificato Y935)
                                     non rientra nell’elenco dei beni previsti dal Reg. (UE) 1332/13 e successive modifiche, concernente misure restrittive in considerazione della situazione in Siria. 
                                     </p>
-                                    <br/>
 
                                     <p>
                                     <b>DICHIARAZIONE PER RUSSIA</b> (certificati Y939 – Y920)
                                     non rientra tra quelle elencate nell’allegato II del Reg. (UE) 833/14 e della Dec. 0512/14, e successive modifiche concernente misure restrittive in considerazione delle azioni della Russia che destabilizzano la situazione in Ucraina. 
                                     </p>
-                                    <br/>
 
                                     <p>
                                     <b>DICHIARAZIONE PER SPEDIZIONI DI RIFIUTI</b> (certificato Y923)
                                     non rientra nei prodotti soggetti alle disposizioni del Regolamento (CE) n. 1013/2006 (GUCE L190) e successive modifiche. 
                                     </p>
-                                    <br/>
 
                                 </div>    
                             </div>                            
@@ -146,13 +137,14 @@
                             <div class="oe_structure"/>                            
                             <div class="row">
                                 <div class="col-xs-8">
-                                    <span t-esc="o.company_id.city or ''" /> <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')"/>
+                                    <span t-esc="o.company_id.city or ''" /> <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/>
                                 </div>
                                 <div class="col-xs-4" align="center">                                
                                     <!--<span t-esc="(o.company_id.name or '').upper()" />
                                         <t t-foreach="o.get_report_footer_stamp()" t-as="line">
                                         <t t-esc="line" /><br/>
-                                    </t>-->                                        
+                                    </t>--> 
+                                    <b>                                       
                                     FELAPPI<br/>
                                     
                                     FELAPPI S.R.L.<br/>
@@ -160,6 +152,7 @@
                                     25054 MARONE (BS)<br/>
                                     ITALIA - Tel 030.9827021<br/>
                                     CF / Partiva IVA: 03 337 210 177
+                                    </b>
                                 </div>
                             </div>    
                         </div>
@@ -200,10 +193,10 @@
             name="tyres_free_export_report.report_free_export_lang"
             file="tyres_free_export_report.report_free_export_lang"
             attachment_use="False"
-            attachment="'%s.pdf' % (object.name or 'draft').replace('/', '_')"
             print_report_name="'%s.pdf' % (object.name or 'draft').replace('/', '_')"
             paperformat="paperformat_free_export"
         />
+        <!--attachment="'%s.pdf' % (object.name or 'draft').replace('/', '_')"-->
 
    </data>
 </openerp>

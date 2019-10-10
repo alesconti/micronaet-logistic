@@ -32,6 +32,26 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+class SaleOrder(models.Model):
+    """ Model name: Sale order
+    """
+    
+    _inherit = 'sale.order'
+    
+    @api.multi
+    def _get_has_extra_document(self, ):
+        ''' 
+        '''
+        for order in self:
+            try:
+                order.has_extra_document = \
+                    order.logistic_picking_ids[0].invoice_filename
+            except:
+                order.has_extra_document = False
+
+    has_extra_document = fields.Boolean(
+        'Has extra document', compute='_get_has_extra_document')
+
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document
     """
