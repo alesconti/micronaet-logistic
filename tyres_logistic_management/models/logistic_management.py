@@ -1181,14 +1181,14 @@ class StockPicking(models.Model):
                     else:   
                         destination_path = notfound_path                                
 
-                # -------------------------------------------------------------
-                # Move operation:
-                # -------------------------------------------------------------
-                move_list.append((
-                    os.path.join(reply_path, f),
-                    os.path.join(destination_path, f),
-                    ))
-                _logger.info('Pick ID: %s correct!' % f)
+                    # -------------------------------------------------------------
+                    # Move operation:
+                    # -------------------------------------------------------------
+                    move_list.append((
+                        os.path.join(reply_path, f),
+                        os.path.join(destination_path, f),
+                        ))
+                    _logger.info('Pick ID: %s correct!' % f)
 
                 except:
                     _logger.error('Error update pick as invoice: %s' % (
