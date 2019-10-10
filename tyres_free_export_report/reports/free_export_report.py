@@ -51,7 +51,7 @@ class SaleOrder(models.Model):
                 Rif. fattura n. %s del %s intestata a %s 
                 destinazione %s %s''' % (
                     picking.invoice_number,
-                    picking.invoice_date,
+                    picking.invoice_date[:10],
                     self.partner_invoice_id.name,
 
                     self.partner_shipping_id.city.upper(),

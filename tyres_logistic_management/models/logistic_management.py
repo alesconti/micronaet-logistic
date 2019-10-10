@@ -1154,37 +1154,46 @@ class StockPicking(models.Model):
             logistic_root_folder, 'invoice', 'reply')
         history_path = os.path.join(
             logistic_root_folder, 'invoice', 'history')
+        notfound_path = os.path.join(
+            logistic_root_folder, 'invoice', 'notfound') # TODO create folder
+            
 
         move_list = []
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
-
                 res = get_invoice_reply_part(f)
                 if not res:
                     _logger.error('File not with correct syntax: '
                         'pick_in_19.003552-CEE.2019-9-24.csv')
                     continue
-                (pick_id, invoice_number, invoice_date, invoice_filename) = res
 
                 # Update invoice information on picking:
+                (pick_id, invoice_number, invoice_date, invoice_filename) = res
                 try:
-                    self.browse(pick_id).write({
-                        'invoice_filename': invoice_filename, # PDF name
-                        'invoice_number': invoice_number,
-                        'invoice_date': invoice_date,
-                        })
+                    invoice_pick = self.browse(pick_id)
+                    if invoice_pick.id:                    
+                        invoice_pick.write({
+                            'invoice_filename': invoice_filename, # PDF name
+                            'invoice_number': invoice_number,
+                            'invoice_date': invoice_date,
+                            })
+                        destination_path = history_path                                
+                    else:   
+                        destination_path = notfound_path                                
+
+                # -------------------------------------------------------------
+                # Move operation:
+                # -------------------------------------------------------------
+                move_list.append((
+                    os.path.join(reply_path, f),
+                    os.path.join(destination_path, f),
+                    ))
+                _logger.info('Pick ID: %s correct!' % f)
+
                 except:
                     _logger.error('Error update pick as invoice: %s' % (
                         sys.exc_info(),
                         ))
-                    continue
-
-                # Move operation:
-                move_list.append((
-                    os.path.join(reply_path, f),
-                    os.path.join(history_path, f),
-                    ))
-                _logger.info('Pick ID: %s correct!' % f)
             break # Only first folder
 
         # ---------------------------------------------------------------------
