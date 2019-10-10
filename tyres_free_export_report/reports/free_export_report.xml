@@ -16,7 +16,6 @@
                                         <img src='/web/binary/company_logo' style="width: 100%"/>
                                     </div>
                                 </div>
-
                                 <div class="col-xs-9">
                                     <div align="center">
                                        <!--<span t-esc="o.get_report_header_company()" />-->
@@ -28,7 +27,6 @@
                                     </div>
                                 </div>    
                             </div>                            
-                            <hr/>
                             <br/>
                             <div class="row">
                                 <div class="col-xs-12">
