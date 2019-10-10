@@ -1250,6 +1250,18 @@ class StockPicking(models.Model):
                 is_fees = False
 
                 # -------------------------------------------------------------
+                # Log operation:
+                # -------------------------------------------------------------
+                log_f = open(log_file, 'a')
+                log_f.write('%s. Utente ID %s, Pick id: %s, Order: %s\n' % (
+                    fields.Datetime.now(),
+                    self.env.uid,
+                    picking.id,
+                    order.name,
+                    ))
+                log_f.close()
+
+                # -------------------------------------------------------------
                 # Extract invoice from account:
                 # -------------------------------------------------------------
                 path = os.path.join(logistic_root_folder, 'invoice')
@@ -1383,18 +1395,6 @@ class StockPicking(models.Model):
                 invoice_file.close()
                 self.check_import_reply() # Check previous import reply
                 invoice_ids.append(picking.id)
-
-                # -------------------------------------------------------------
-                # Log operation:
-                # -------------------------------------------------------------
-                log_f = open(log_file, 'a')
-                log_f.write('%s. Utente ID %s, Pick id: %s, Order: %s\n' % (
-                    fields.Datetime.now(),
-                    self.env.uid,
-                    picking.id,
-                    order.name,
-                    ))
-                log_f.close()
 
             picking.write({
                 'state': 'done', # TODO needed?
