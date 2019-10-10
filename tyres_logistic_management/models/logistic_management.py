@@ -1180,6 +1180,7 @@ class StockPicking(models.Model):
                         destination_path = history_path                                
                     else:   
                         destination_path = notfound_path                                
+                        _logger.error('Pick ID: %s not found!' % f)
 
                     # -------------------------------------------------------------
                     # Move operation:
