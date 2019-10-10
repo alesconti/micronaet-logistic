@@ -1170,8 +1170,9 @@ class StockPicking(models.Model):
                 # Update invoice information on picking:
                 (pick_id, invoice_number, invoice_date, invoice_filename) = res
                 try:
-                    invoice_pick = self.browse(pick_id)
-                    if invoice_pick.id:                    
+                    check_ids = self.search([('id', '=', pick_id)])
+                    if check_ids:
+                        invoice_pick = self.browse(pick_id)
                         invoice_pick.write({
                             'invoice_filename': invoice_filename, # PDF name
                             'invoice_number': invoice_number,
