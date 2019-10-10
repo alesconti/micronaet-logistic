@@ -40,7 +40,7 @@ class SaleOrder(models.Model):
     
     @api.multi
     def _get_has_extra_document(self, ):
-        ''' 
+        ''' Check if needed
         '''
         for order in self:
             try:
@@ -49,8 +49,17 @@ class SaleOrder(models.Model):
             except:
                 order.has_extra_document = False
 
+    @api.multi
+    def _get_has_label_to_print(self, ):
+        ''' Check if needed label
+        '''        
+        for order in self:
+            order.has_label_to_print = order.mmac_shippy_order_id > 0
+
     has_extra_document = fields.Boolean(
         'Has extra document', compute='_get_has_extra_document')
+    has_label_to_print = fields.Boolean(
+        'Has label', compute='_get_has_label_to_print')
 
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document
