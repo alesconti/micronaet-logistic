@@ -27,6 +27,7 @@ import logging
 import odoo
 import shutil
 import requests
+import base64
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
@@ -1450,12 +1451,50 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     # Print action:
     # -------------------------------------------------------------------------
+    @api.model
+    def send_report_to_printer(self, fullname, printer_mode):
+        ''' Send report to printer
+            Report file
+            Printer mode
+        '''
+
+        # Parameter:
+        company_pool = self.env['res.company']
+        company = company_pool.search([])[0]
+        
+        if not os.path.isfile(fullname):
+            raise exceptions.Warning(
+                'PDF %s not found: %s!' % (printer_mode, fullname))
+
+        # Print:
+        printer_name = eval('company.cups_%s' % printer_mode)
+        if not printer_name:
+            raise exceptions.Warning(
+                _('Printer not found, configure name for %s mode!') % (
+                    printer_name))
+            
+        print_command = 'lp -d %s "%s"' % (
+            printer_name,
+            fullname,
+            )
+        _logger.warning('Printing %s on %s [%s file]...' % (
+            fullname, printer_name, printer_mode, 
+            ))
+
+        try:
+            os.system(print_command)
+        except:    
+            raise exceptions.Warning('Error print PDF invoice on %s!' % (
+                company.cups_invoice))
+        return True
+        
     @api.multi
     def workflow_ready_print_picking(self):
         ''' Print picking
         '''
         # TODO param in DDT report for add stock note
-        self.workflow_ready_print_ddt()
+        #self.workflow_ready_print_ddt()
+        #return send_report_to_printer(fullname, picking')
         return True
 
     @api.multi
@@ -1469,35 +1508,18 @@ class SaleOrder(models.Model):
         ''' Print ddt
         '''
         report_name = 'sale.report_saleorder'
-        server = 'localhost:8069'
-        order_id = self.id
+        fullname = '/tmp/stock_picking_%s.pdf' % self.id
+
+        # Pool used:
+        report_pool = self.env['ir.actions.report']
         
-        pdf = self.env['report'].sudo().get_pdf([order_id], report_name)
-        #self.env['ir.attachment'].create({
-        #    'name': 'Cats',
-        #    'type': 'binary',
-        #    'datas': base64.encodestring(pdf),
-        #    'res_model': 'account.invoice',
-        #    'res_id': invoice.id
-        #    'mimetype': 'application/x-pdf'
-        #})        
-        import pdb; pdb.set_trace()
-        """
-        chunk_size = 2000
+        report = report_pool._get_report_from_name(report_name)
+        pdf = report.render_qweb_pdf(self.ids)
 
-        url = 'http://%s/report/pdf/sale.report_saleorder/%s' % (
-            server, order_id)
-        try:
-            r = requests.get(url, stream=True)
-        except:
-            raise exceptions.Warning('Cannot get: %s!' % url)
-
-        file_pdf = '/tmp/order_%s.pdf' % order_id
-        f_pdf = open(file_pdf, 'wb')
-        for chunk in r.iter_content(chunk_size):
-            f_pdf.write(chunk)
-        f_pdf.close()        """
-        return True
+        f_pdf = open(fullname, 'wb')
+        f_pdf.write(pdf[0])
+        f_pdf.close()
+        return self.send_report_to_printer(fullname, 'ddt')
 
     @api.multi
     def workflow_ready_print_invoice(self):
@@ -1514,26 +1536,10 @@ class SaleOrder(models.Model):
 
         # Parameter:
         company = company_pool.search([])[0]
-        logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
         report_path = os.path.join(logistic_root_folder, 'report')
         fullname = os.path.join(report_path, filename)
         
-        if not os.path.isfile(fullname):
-            raise exceptions.Warning('PDF not found: %s!' % fullname)
-        
-        # Print:
-        print_command = 'lp -d %s "%s"' % (
-            company.cups_invoice,
-            fullname,
-            )
-        _logger.warning('Print invoice: %s' % print_command)
-        try:
-            os.system(print_command)
-        except:    
-            raise exceptions.Warning('Error print PDF invoice on %s!' % (
-                company.cups_invoice))
-
-        return True
+        return send_report_to_printer(fullname, 'invoice')
 
     @api.multi
     def workflow_ready_print_extra(self):
