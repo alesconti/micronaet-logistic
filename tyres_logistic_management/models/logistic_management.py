@@ -1540,7 +1540,7 @@ class SaleOrder(models.Model):
         report_path = os.path.join(logistic_root_folder, 'report')
         fullname = os.path.join(report_path, filename)
         
-        return send_report_to_printer(fullname, 'invoice')
+        return self.send_report_to_printer(fullname, 'invoice')
 
     @api.multi
     def workflow_ready_print_extra(self):
