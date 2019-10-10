@@ -1389,9 +1389,10 @@ class StockPicking(models.Model):
                 # -------------------------------------------------------------
                 log_f = open(log_file, 'a')
                 log_f.write('%s. Utente ID %s, Pick id: %s, Order: %s\n' % (
+                    fields.Datetime.now()
                     self.env.uid,
                     picking.id,
-                    clean_name(order.name),
+                    order.name,
                     ))
                 log_f.close()
 
