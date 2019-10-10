@@ -24,7 +24,7 @@
 import os
 import sys
 import logging
-from odoo import fields, api, models
+from odoo import fields, api, models, exceptions
 from odoo import tools
 from odoo.tools.translate import _
 
@@ -44,6 +44,9 @@ class SaleOrder(models.Model):
         self.ensure_one()
         try:
             picking = self.logistic_picking_ids[0]
+            if not picking.invoice_number:
+                raise exceptions.Warning(_('Invoice number not yet present!'))
+            
             return '''
                 Rif. fattura n. %s del %s intestata a %s 
                 destinazione %s %s''' % (
@@ -56,8 +59,7 @@ class SaleOrder(models.Model):
                     )
                 
         except:
-            return 'ERRORE!!!!' # TODO raise error    
-        
+            raise exceptions.Warning(_('Invoice not present!'))
         
     @api.multi
     def get_report_footer_stamp(self, ):
@@ -82,7 +84,8 @@ class SaleOrder(models.Model):
                 company.city or '',
                 company.state_id.name if company.state_id else '',
 
-                (company.country_id.name if company.country_id else '').upper(),
+                (company.country_id.name if company.country_id else ''
+                    ).upper(),
                 company.phone or '',
                 
                 company.vat or '',
