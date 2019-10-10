@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+   <data>
+        <!--Report template:-->
+        <template id="report_free_export">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                        
+                             <!-- HEADER: -->
+                            <!--<div class="col-xs-5" style="height: 150px; border: 1px solid black;">-->
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <!--LOGO-->
+                                    <div style="width: 100%;float: left;">
+                                        <img src='/web/binary/company_logo' style="width: 100%"/>
+                                    </div>
+                                </div>
+                                <div class="col-xs-9">
+                                    <!--<div t-field="o.get_report_header_company()" />-->
+                                </div>    
+                            </div>                            
+                            <div class="oe_structure"/>
+                            <hr />
+
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    Io sottoscritto <u>Felappi Alessandro</u> in qualità di 
+                                    <u>legale rappresentante dichiaro</u>, sotto la mia personale 
+                                    responsabilit aacute che la merce contenuta nella spedizione nr.
+                                    <span t-field="o.name" />
+                                </div>    
+                            </div>                            
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <!-- TODO -->
+                                    Rif. fattura nr.  635/E del 08/10/2019 intestata a ANGEL PEREZ destinazione VEGA BAJA - PUERTO RICO 
+                                </div>    
+                            </div>                            
+
+                             <!-- BODY: -->
+                            <div class="row">
+                                <div class="col-xs-12">                                
+                                    <p>
+                                    <b>DICHIARAZIONE PER DUPLICE USO</b> (certificato Y901)
+                                    non rientra nell’elenco dei beni previsti dal Reg. (CE) n. 428/09 e successive modifiche che istituisce un regime comunitario di controllo delle esportazioni di prodotti e tecnologie a duplice uso (Dual Use) e pertanto destinata ad uso civile. 
+                                    </p>
+                                    <br/>
+
+                                    <p>
+                                    <b>DICHIARAZIONE DI WASHINGTON</b> (certificato Y900)
+                                    non rientra tra quelle protette dalla Convenzione di Washington, come da Reg. (CE) n. 338/97 e successive modifiche, relativo alla protezione di specie della flora e fauna selvatiche.
+                                    </p>
+                                    <br/>
+
+                                    <p>
+                                    <b>DICHIARAZIONE PER PELLICCE DI CANI E GATTI</b> (certificato Y922)
+                                    non consiste in pellicce di cane e di gatto e di prodotti che le contengono, come previsto dal Reg. (CE) n. 1523/07 e successive modifiche che ne vieta la commercializzazione, l'importazione e l'esportazione. 
+                                    </p>
+                                    <br/>
+
+                                    <p>
+                                    <b>DICHIARAZIONE PER L'OZONO </b>(certificato Y902)
+                                    non rientra nell’elenco dei beni ritenuti dannosi per l'ozono elencati nel Reg. (CE) n. 1005/09 e successive modifiche. 
+                                    </p>
+                                    <br/>
+
+                                    <p>
+                                    <b>DICHIARAZIONE PER BENI CULTURALI</b> (certificato Y903)
+                                    non rientra nell’elenco dei beni previsti dal Reg. (CE) n. 116/09 del Consiglio del 18 dicembre 2008 e successive modifiche relativo all’esportazione di beni culturali.  
+                                    </p>
+                                    <br/>
+
+                                    <p>
+                                    <b>DICHIARAZIONE PER SOSTANZE CHIMICHE PERICOLOSE</b> (certificati Y916 - Y917)
+                                    non rientra tra quelle elencate negli allegati I e V del Reg. (UE) 649/2012 e successive modifiche recante disposizioni in materia di esportazioni e importazioni di sostanze chimiche pericolose. 
+                                    </p>
+                                    <br/>
+
+                                    <p>
+                                    <b>DICHIARAZIONE PER MERCE CHE POTREBBE ESSERE UTILIZZATA PER LA PENA DI MORTE, LA TORTURA O PER ALTRI TRATTAMENTI O PENE CRUDELI, INUMANE O DEGRADANTI</b> (certificati Y904 - Y906 – Y907- Y908)  
+                                    non rientra nell’elenco dei beni previsti da Reg. (CE) 1236/05 e successive modifiche relativo al commercio di determinate merci che potrebbero essere utilizzate per la pena di morte, la tortura o per altri trattamenti o pene crudeli, inumane o degradanti. 
+                                    </p>
+                                    <br/>
+
+                                    <p>
+                                    <b>DICHIARAZIONE PER MERCE DESTINATA IN UNO DEI PAESI SOTTO INDICATI</b> (certificati Y920 - Y921- Y949 - Y966 – Y967) 
+                                    la merce non rientra nell’ elenco dei beni previsti dal:
+                                      <ul>
+                                         <li>
+                                            <u>Reg. (CE) 314/04</u> e successive modifiche, concernente misure restrittive nei confronti dello Zimbabwe; 
+                                         </li>
+                                         <li>
+                                            <u>Dec. (CFSP) 2016/917</u> e successive modifiche, concernente misure restrittive nei confronti della Costa D’Avorio;  
+                                         </li>
+                                         <li>
+                                            <u>Reg. (UE) 2017/1509</u> e successive modifiche, concernente misure restrittive nei confronti della Repubblica popolare democratica di Corea; 
+                                         </li>
+                                         <li>
+                                            <u>Reg. (UE) 401/2013</u> e successive modifiche, concernente misure restrittive nei confronti del Myanmar;
+                                         </li>
+                                         <li>
+                                            <u>Reg. (UE) 44/2016</u> e successive modifiche, concernente misure restrittive nei confronti della Libia;
+                                         </li>
+                                         <li>
+                                            <u>Reg. (UE) 36/12</u> e successive modifiche, concernente misure restrittive nei confronti della Siria; 
+                                         </li>
+                                         <li>
+                                            <u>Reg. (UE) 267/12</u> e successive modifiche e attuazioni, concernente misure restrittive nei confronti dell’Iran;  
+                                         </li>
+                                         <li>
+                                            <u>Reg.(UE) 747/14</u> e successive modifiche, concernente misure restrittive nei confronti del Sudan.
+                                         </li>
+                                      </ul>
+                                    </p>
+                                    <br/>
+
+                                    <p>
+                                    <b>DICHIARAZIONE Y935</b> (certificato Y935)
+                                    non rientra nell’elenco dei beni previsti dal Reg. (UE) 1332/13 e successive modifiche, concernente misure restrittive in considerazione della situazione in Siria. 
+                                    </p>
+                                    <br/>
+
+                                    <p>
+                                    <b>DICHIARAZIONE PER RUSSIA</b> (certificati Y939 – Y920)
+                                    non rientra tra quelle elencate nell’allegato II del Reg. (UE) 833/14 e della Dec. 0512/14, e successive modifiche concernente misure restrittive in considerazione delle azioni della Russia che destabilizzano la situazione in Ucraina. 
+                                    </p>
+                                    <br/>
+
+                                    <p>
+                                    <b>DICHIARAZIONE PER SPEDIZIONI DI RIFIUTI</b> (certificato Y923)
+                                    non rientra nei prodotti soggetti alle disposizioni del Regolamento (CE) n. 1013/2006 (GUCE L190) e successive modifiche. 
+                                    </p>
+                                    <br/>
+
+                                </div>    
+                            </div>                            
+
+                            <!-- END OF PAGE: -->
+                            <div class="oe_structure"/>                            
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <span t-esc="o.company_id.city or ''" /> XXXX
+                                </div>
+                                <div class="col-xs-6">
+                                    <span t-esc="(o.company_id.name or '').upper()" />
+                                    XXXX                                    
+                                </div>
+                            </div>    
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>   
+        <template id="report_free_export_lang">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="tyres_free_export_report.report_free_export" t-lang="doc.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+
+        <record id="paperformat_free_export" model="report.paperformat">
+            <field name="name">Free Export Paperformat</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">297</field>
+            <field name="page_width">210</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="True"/>
+            <field name="header_spacing">3</field>
+            <field name="dpi">90</field>
+        </record>
+        
+        <!--Report action:-->
+        <report
+            id="action_report_free_export"
+            model="sale.order"
+            string="Free Export Report"
+            report_type="qweb-pdf"
+            name="tyres_free_export_report.report_free_export_lang"
+            file="tyres_free_export_report.report_free_export_lang"
+            attachment_use="False"
+            attachment="'%s.pdf' % (object.name or 'draft').replace('/', '_')"
+            print_report_name="'%s.pdf' % (object.name or 'draft').replace('/', '_')"
+            paperformat="paperformat_free_export"
+        />
+
+   </data>
+</openerp>

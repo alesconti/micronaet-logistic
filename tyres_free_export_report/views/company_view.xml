@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <!--<record model="ir.ui.view" id="view_res_company_form">
+            <field name="name">res.company.form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <field name="vat" position="after">
+                    <field name="uk_vat" />
+                </field>
+                <xpath expr="//page" position="after">
+                    <page string="Report">
+                        <group colspan="4" col="4">
+                            <separator string="Privacy clause:" colspan="4"/>
+                            <field name="report_text_privacy" nolabel="1" colspan="4"/>
+                            <separator string="Thanks clause:" colspan="4"/>
+                            <field name="report_text_thanks" nolabel="1" colspan="4"/>
+                            <separator string="Invoice clause:" colspan="4"/>
+                            <field name="report_text_invoice" nolabel="1" colspan="4"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>-->
+    </data>
+</openerp>
+
