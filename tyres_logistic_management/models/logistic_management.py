@@ -1536,6 +1536,7 @@ class SaleOrder(models.Model):
 
         # Parameter:
         company = company_pool.search([])[0]
+        logistic_root_folder = company.logistic_root_folder
         report_path = os.path.join(logistic_root_folder, 'report')
         fullname = os.path.join(report_path, filename)
         
