@@ -5,7 +5,7 @@
         <template id="report_free_export">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <t t-call="web.external_layout">
+                    <!--<t t-call="web.external_layout">-->
                         <div class="page">                        
                              <!-- HEADER: -->
                             <!--<div class="col-xs-5" style="height: 150px; border: 1px solid black;">-->
@@ -156,7 +156,7 @@
                                 </div>
                             </div>    
                         </div>
-                    </t>
+                    <!--</t>-->
                 </t>
             </t>
         </template>   
@@ -179,7 +179,7 @@
             <field name="margin_bottom">5</field>
             <field name="margin_left">5</field>
             <field name="margin_right">5</field>
-            <field name="header_line" eval="True"/>
+            <field name="header_line" eval="False"/>
             <field name="header_spacing">3</field>
             <field name="dpi">90</field>
         </record>
