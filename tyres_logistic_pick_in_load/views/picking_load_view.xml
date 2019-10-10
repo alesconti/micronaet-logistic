@@ -405,15 +405,15 @@
 	                <field name="has_extra_document" invisible="1" />
 	                <field name="has_label_to_print" invisible="1" />
 	                
-	                <button name="workflow_ready_to_done_current_order" string="Vai in consegna" type="object" icon="fa-caret-square-o-right fa-x2" attrs="{'invisible': [('logistic_state','!=','ready')]}"/>
-	                <button name="workflow_ready_print_picking" string="Print picking" type="object" icon="fa-file-o fa-x2" />
-	                <button name="workflow_ready_print_ddt" string="Print DDT" type="object" icon="fa-file-text-o fa-x2" attrs="{'invisible': [('need_invoice','=',True)]}"/>
-	                <button name="workflow_ready_print_invoice" string="Print invoice" type="object" icon="fa-qrcode fa-x2" attrs="{'invisible': [('need_invoice','=',False)]}"/>
-	                <button name="workflow_ready_print_label" string="Print label" type="object" icon="fa-film fa-x2" attrs="{'invisible': [('has_label_to_print', '=', False)]}"/>
+	                <button name="workflow_ready_to_done_current_order" string="Vai in consegna" type="object" icon="fa-caret-square-o-right fa-x4" attrs="{'invisible': [('logistic_state','!=','ready')]}"/>
+	                <button name="workflow_ready_print_picking" string="Print picking" type="object" icon="fa-file-o fa-x4" />
+	                <button name="workflow_ready_print_ddt" string="Print DDT" type="object" icon="fa-file-text-o fa-x4" attrs="{'invisible': [('need_invoice','=',True)]}"/>
+	                <button name="workflow_ready_print_invoice" string="Print invoice" type="object" icon="fa-qrcode fa-x4" attrs="{'invisible': [('need_invoice','=',False)]}"/>
+	                <button name="workflow_ready_print_label" string="Print label" type="object" icon="fa-film fa-x4" attrs="{'invisible': [('has_label_to_print', '=', False)]}"/>
 	                
-	                <button name="workflow_ready_print_extra" string="Print extra doc." type="object" icon="fa-list-alt fa-x2" attrs="{'invisible': [('has_extra_document','=',False)]}"/>
+	                <button name="workflow_ready_print_extra" string="Print extra doc." type="object" icon="fa-list-alt fa-x4" attrs="{'invisible': [('has_extra_document','=',False)]}"/>
 	                
-	                <button name="set_workflow_logistic_done" string="Done!" type="object" icon="fa-thumbs-up fa-x2" confirm="Confirm? (cannot print document after mark as done!)" />
+	                <button name="set_workflow_logistic_done" string="Done!" type="object" icon="fa-thumbs-up fa-x4" confirm="Confirm? (cannot print document after mark as done!)" />
 	                
                 </tree>
             </field>
