@@ -36,6 +36,7 @@
         'purchase',
         'tyres_logistic_carrier',
         'tyres_logistic_management',
+        'tyres_free_export_report', # Report
         'mmac_odoo4', # product tyres extra data 
         ],
     'data': [

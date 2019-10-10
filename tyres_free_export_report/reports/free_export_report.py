@@ -35,14 +35,67 @@ class SaleOrder(models.Model):
     ''' Stock picking extract
     '''
     _inherit = 'sale.order'
-    
+
+    @api.multi
+    def qweb_get_invoice_text(self, ):
+        ''' Get partner extra info data (for address print)
+            self: res.partner obj
+        '''
+        self.ensure_one()
+        try:
+            picking = self.logistic_picking_ids[0]
+            return '''
+                Rif. fattura n. %s del %s intestata a %s 
+                destinazione %s %s''' % (
+                    picking.invoice_number,
+                    picking.invoice_date,
+                    self.partner_invoice_id.name,
+
+                    self.partner_shipping_id.city.upper(),
+                    self.partner_shipping_id.country_id.name.upper(),                    
+                    )
+                
+        except:
+            return 'ERRORE!!!!' # TODO raise error    
+        
+        
+    @api.multi
+    def get_report_footer_stamp(self, ):
+        ''' Get partner extra info data (for address print)
+            self: res.partner obj
+        '''
+        self.ensure_one()
+        company = self.company_id
+        
+        text = u'''%s
+            %s%s
+            %s - %s (%s)
+            %s - Tel. %s
+            Cod. Fisc. e P.I. %s
+            ''' % (
+                (company.name or '').upper(),
+
+                company.street or '',
+                company.street2 or '',
+                
+                company.zip or '', 
+                company.city or '',
+                company.state_id.name if company.state_id else '',
+
+                (company.country_id.name if company.country_id else '').upper(),
+                company.phone or '',
+                
+                company.vat or '',
+                )
+        return text.split('\n')        
+            
     @api.multi
     def get_report_header_company(self, ):
         ''' Get partner extra info data (for address print)
             self: res.partner obj
         '''
         self.ensure_one()
-        
+        company = self.company_id
         return u'''
             COMMERCIO INGROSSO E DETTAGLIO PNEUMATICI E CERCHI
             Sede Legale e Amministrativa:
@@ -50,51 +103,18 @@ class SaleOrder(models.Model):
             %s - %s (%s)
             Email: %s
             Cod. Fisc. e P.I. %s
-            CAPITALE SOCIALE i.v. € %s''' % (
-                o.street or '',
-                o.street2 or '',
+            CAPITALE SOCIALE i.v. € %s
+            ''' % (
+                company.street or '',
+                company.street2 or '',
                 
-                o.zip or '', 
-                o.city or '',
-                o.state_id.name if o.state_id else '',
+                company.zip or '', 
+                company.city or '',
+                company.state_id.name if company.state_id else '',
                 
-                o.email or '',
-                o.phone or '',
-                o.vat or '',
+                company.email or '',
+                company.phone or '',
+                company.vat or '',
                 )
-
-    """@api.multi
-    def get_partner_extra_info(self, ):
-        ''' Get partner extra info data (for address print)
-            self: res.partner obj
-        '''
-        for o in self:
-            if o:
-                mask = u'''
-                    COMMERCIO INGROSSO E DETTAGLIO PNEUMATICI E CERCHI
-                    Sede Legale e Amministrativa:
-                    %s%s
-                    %s - %s (%s)
-                    Email: %s
-                    Cod. Fisc. e P.I. %s
-                    CAPITALE SOCIALE i.v. € %s'''
-
-                o.contact_info = mask % (
-                    o.street or '',
-                    o.street2 or '',
-                    
-                    o.zip or '', 
-                    o.city or '',
-                    o.state_id.name if o.state_id else '',
-                    
-                    o.email or '',
-                    o.phone or '',
-                    o.vat or '',
-                    )
-            else:    
-                o.contact_info = ''
-    
-    contact_info = fields.Text('Extra info', compute='get_partner_extra_info')        
-    """
         
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

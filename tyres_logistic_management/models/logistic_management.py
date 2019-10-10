@@ -1547,8 +1547,20 @@ class SaleOrder(models.Model):
     @api.multi
     def workflow_ready_print_extra(self):
         ''' Print picking
-        '''
-        return True
+        '''        
+        report_name = 'tyres_free_export_report.report_free_export_lang'
+        fullname = '/tmp/free_export_%s.pdf' % self.id
+
+        # Pool used:
+        report_pool = self.env['ir.actions.report']
+        
+        report = report_pool._get_report_from_name(report_name)
+        pdf = report.render_qweb_pdf(self.ids)
+
+        f_pdf = open(fullname, 'wb')
+        f_pdf.write(pdf[0])
+        f_pdf.close()
+        return self.send_report_to_printer(fullname, 'picking')
 
     # -------------------------------------------------------------------------
     #                           SERVER ACTION:

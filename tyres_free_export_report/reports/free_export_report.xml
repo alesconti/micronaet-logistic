@@ -6,8 +6,7 @@
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-call="web.external_layout">
-                        <div class="page">
-                        
+                        <div class="page">                        
                              <!-- HEADER: -->
                             <!--<div class="col-xs-5" style="height: 150px; border: 1px solid black;">-->
                             <div class="row">
@@ -18,34 +17,40 @@
                                     </div>
                                 </div>
                                 <div class="col-xs-9">
-                                    <!--<div t-field="o.get_report_header_company()" />-->
+                                    <div align="center">
+                                       <!--<span t-esc="o.get_report_header_company()" />-->
+                                       COMMERCIO INGROSSO E DETTAGLIO PNEUMATICI E CERCHI<br/>
+                                       Sede Legale e Amministrativa: <br/>
+                                       Via Grumello, 2/C - 25054 MARONE (BS)<br/>
+                                       Tel. 030 / 9827021 - 030 / 9827426 Email: felappisrl@libero.it<br/>
+                                       Cod. Fisc. e P.I. IT03337210177 CAPITALE SOCIALE i.v. € 67.600.00<br/>                                       
+                                    </div>
                                 </div>    
                             </div>                            
-                            <div class="oe_structure"/>
                             <hr />
 
                             <div class="row">
                                 <div class="col-xs-12">
                                     Io sottoscritto <u>Felappi Alessandro</u> in qualità di 
                                     <u>legale rappresentante dichiaro</u>, sotto la mia personale 
-                                    responsabilit aacute che la merce contenuta nella spedizione nr.
-                                    <span t-field="o.name" />
-                                </div>    
-                            </div>                            
+                                    responsabilità che la merce contenuta nella spedizione nr.
+                                    <b><span t-field="o.name" /></b>
+                                </div>
+                            </div>       
+                            <br/>
+                                                 
                             <div class="row">
                                 <div class="col-xs-12">
-                                    <!-- TODO -->
-                                    Rif. fattura nr.  635/E del 08/10/2019 intestata a ANGEL PEREZ destinazione VEGA BAJA - PUERTO RICO 
+                                    <b>Rif. fattura nr. </b><span t-esc="o.qweb_get_invoice_text()"/> 
                                 </div>    
                             </div>                            
+                            <br/>
 
                              <!-- BODY: -->
                             <div class="row">
-                                <div class="col-xs-12">                                
-                                    <p>
+                                <div class="col-xs-12" align="justfy">                                
                                     <b>DICHIARAZIONE PER DUPLICE USO</b> (certificato Y901)
                                     non rientra nell’elenco dei beni previsti dal Reg. (CE) n. 428/09 e successive modifiche che istituisce un regime comunitario di controllo delle esportazioni di prodotti e tecnologie a duplice uso (Dual Use) e pertanto destinata ad uso civile. 
-                                    </p>
                                     <br/>
 
                                     <p>
@@ -140,12 +145,21 @@
                             <!-- END OF PAGE: -->
                             <div class="oe_structure"/>                            
                             <div class="row">
-                                <div class="col-xs-6">
-                                    <span t-esc="o.company_id.city or ''" /> XXXX
+                                <div class="col-xs-8">
+                                    <span t-esc="o.company_id.city or ''" /> <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')"/>
                                 </div>
-                                <div class="col-xs-6">
-                                    <span t-esc="(o.company_id.name or '').upper()" />
-                                    XXXX                                    
+                                <div class="col-xs-4" align="center">                                
+                                    <!--<span t-esc="(o.company_id.name or '').upper()" />
+                                        <t t-foreach="o.get_report_footer_stamp()" t-as="line">
+                                        <t t-esc="line" /><br/>
+                                    </t>-->                                        
+                                    FELAPPI<br/>
+                                    
+                                    FELAPPI S.R.L.<br/>
+                                    Via Grumello, 2<br/>
+                                    25054 MARONE (BS)<br/>
+                                    ITALIA - Tel 030.9827021<br/>
+                                    CF / Partiva IVA: 03 337 210 177
                                 </div>
                             </div>    
                         </div>
