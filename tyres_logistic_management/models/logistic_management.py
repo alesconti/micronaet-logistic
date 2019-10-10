@@ -242,6 +242,10 @@ class PurchaseOrder(models.Model):
         move_file = []
         for root, subfolders, files in os.walk(path_folder['reply']):
             for f in files:
+                if f[-3:].upper() != 'CSV':
+                    _logger.warning('Jump no CSV file: %s' % f)
+                    continue
+                    
                 _logger.warning('Check internal purchase: %s' % f)
                 po_id = int(f[:-4].split('_')[-1]) # SUPPLIER_NAME_ID.csv
                 if po_id not in open_po_ids:
@@ -297,8 +301,9 @@ class PurchaseOrder(models.Model):
                 for line in purchase.order_line:
                     product = line.product_id
                     product_qty = line.product_qty
-                    remain_qty = line.logistic_undelivered_qty
                     logistic_sale_id = line.logistic_sale_id
+                    #remain_qty = line.logistic_undelivered_qty # XXX ERROR!
+                    remain_qty = logistic_sale_id.logistic_remain_qty
                     if product_qty >= remain_qty:
                         sale_line_ready.append(logistic_sale_id)
                         if not logistic_sale_id:
