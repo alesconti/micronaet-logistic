@@ -1156,7 +1156,6 @@ class StockPicking(models.Model):
             logistic_root_folder, 'invoice', 'history')
         notfound_path = os.path.join(
             logistic_root_folder, 'invoice', 'notfound') # TODO create folder
-            
 
         move_list = []
         for root, subfolders, files in os.walk(reply_path):
@@ -1261,9 +1260,12 @@ class StockPicking(models.Model):
                     os.system('mkdir -p %s' % path)
                     os.system('mkdir -p %s' % os.path.join(path, 'reply'))
                     os.system('mkdir -p %s' % os.path.join(path, 'history'))
+                    os.system('mkdir -p %s' % os.path.join(path, 'notfound'))
                 except:
                     _logger.error('Cannot create %s' % path)
                 invoice_file = open(invoice_filename, 'w')
+
+                log_file = os.path.join(notfound_path, 'invoice.log')
 
                 # Export syntax:
                 cols = 31
@@ -1380,6 +1382,17 @@ class StockPicking(models.Model):
                 invoice_file.close()
                 self.check_import_reply() # Check previous import reply
                 invoice_ids.append(picking.id)
+
+                # -------------------------------------------------------------
+                # Log operation:
+                # -------------------------------------------------------------
+                log_f = open(log_file, 'a')
+                log_f.write('%s. Utente ID %s, Pick id: %s, Order: %s\n' % (
+                    self.env.uid,
+                    picking.id,
+                    clean_name(order.name),
+                    ))
+                log_f.close()
 
             picking.write({
                 'state': 'done', # TODO needed?
