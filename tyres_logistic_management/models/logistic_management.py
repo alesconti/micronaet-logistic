@@ -1257,10 +1257,11 @@ class StockPicking(models.Model):
                     path, 'pick_in_%s.csv' % picking.id)
 
                 try:
+                    notfound_path = os.path.join(path, 'notfound')
                     os.system('mkdir -p %s' % path)
                     os.system('mkdir -p %s' % os.path.join(path, 'reply'))
                     os.system('mkdir -p %s' % os.path.join(path, 'history'))
-                    os.system('mkdir -p %s' % os.path.join(path, 'notfound'))
+                    os.system('mkdir -p %s' % notfound_path)
                 except:
                     _logger.error('Cannot create %s' % path)
                 invoice_file = open(invoice_filename, 'w')
