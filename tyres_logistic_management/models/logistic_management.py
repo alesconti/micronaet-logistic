@@ -1473,7 +1473,8 @@ class SaleOrder(models.Model):
                 _('Printer not found, configure name for %s mode!') % (
                     printer_name))
             
-        print_command = 'lp -d %s "%s"' % (
+        # -o landscape -o fit-to-page -o media=A4     
+        print_command = 'lp -o fit-to-page -o media=A4 -d %s "%s"' % (
             printer_name,
             fullname,
             )
