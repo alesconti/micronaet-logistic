@@ -1255,18 +1255,6 @@ class StockPicking(models.Model):
                 is_fees = False
 
                 # -------------------------------------------------------------
-                # Log operation:
-                # -------------------------------------------------------------
-                log_f = open(log_file, 'a')
-                log_f.write('%s. Utente ID %s, Pick id: %s, Order: %s\n' % (
-                    fields.Datetime.now(),
-                    self.env.uid,
-                    picking.id,
-                    order.name,
-                    ))
-                log_f.close()
-
-                # -------------------------------------------------------------
                 # Extract invoice from account:
                 # -------------------------------------------------------------
                 path = os.path.join(logistic_root_folder, 'invoice')
@@ -1283,7 +1271,18 @@ class StockPicking(models.Model):
                     _logger.error('Cannot create %s' % path)
                 invoice_file = open(invoice_filename, 'w')
 
+                # -------------------------------------------------------------
+                # Log operation:
+                # -------------------------------------------------------------
                 log_file = os.path.join(notfound_path, 'invoice.log')
+                log_f = open(log_file, 'a')
+                log_f.write('%s. Utente ID %s, Pick id: %s, Order: %s\n' % (
+                    fields.Datetime.now(),
+                    self.env.uid,
+                    picking.id,
+                    order.name,
+                    ))
+                log_f.close()
 
                 # Export syntax:
                 cols = 31
