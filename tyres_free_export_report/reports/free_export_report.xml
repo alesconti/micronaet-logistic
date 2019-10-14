@@ -33,7 +33,7 @@
                                     Io sottoscritto <u>Felappi Alessandro</u> in qualità di 
                                     <u>legale rappresentante dichiaro</u>, sotto la mia personale 
                                     responsabilità che la merce contenuta nella spedizione nr.
-                                    <b><span t-field="o.name" /></b>
+                                    <b><span t-field="o.carrier_track_id" /></b>
                                 </div>
                             </div>       
                             <br/>
