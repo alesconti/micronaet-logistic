@@ -753,6 +753,12 @@ class StockPicking(models.Model):
             for move in picking.move_lines:
                 qty = move.product_uom_qty
                 total = qty * move.logistic_unload_id.price_unit
+                if not total:
+                    raise exceptions.Warning(_(
+                        'Found empty picking %s in order %s') % (
+                            picking.name,
+                            order.name,
+                            ))
 
                 # Get channel
                 try:
