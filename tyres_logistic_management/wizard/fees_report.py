@@ -187,6 +187,11 @@ class LogisticFeesExtractWizard(models.TransientModel):
                     previous_mode = mode
                     partial = 0.0
 
+                if subtotal:
+                    format_color = format_text['text']
+                else:
+                    format_color = format_text['red']
+
                 excel_pool.write_xls_line(ws_name, row, [
                     mode, # Mode
                     line[3], # Channel
@@ -197,7 +202,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
                     subtotal, 
                     line[13], # Type
                     line[14], # Agent             
-                    ], default_format=format_text['text'])
+                    ], default_format=format_color)
             row += 1
 
             # -----------------------------------------------------------------
