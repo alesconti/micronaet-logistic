@@ -2472,6 +2472,8 @@ class SaleOrderLine(models.Model):
         company = company_pool.search([])[0]
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
         path = os.path.join(logistic_root_folder, 'delivery')
+        purchase_path = os.path.join(logistic_root_folder, 'order', 'internal')
+        
         try:
             os.system('mkdir -p %s' % path)
         except:
@@ -2482,6 +2484,21 @@ class SaleOrderLine(models.Model):
             self.product_id.default_code,
             self.product_uom_qty,
             )
+
+        # ---------------------------------------------------------------------
+        # Check Purchase order pending to import:
+        # ---------------------------------------------------------------------
+        purchase_order = []
+        for line in self.purchase_line_ids:
+            purchase = line.order_id
+            if purchase.partner_id.internal_stock and purchase.filename:
+                os.remove(purchase.filename)
+                purchase_order.append(purchase)
+                comment = \
+                    _('Delete pending internal order %s, file: %s<br/>') % (
+                    purchase.name,
+                    purchase.filename,
+                    )
 
         # ---------------------------------------------------------------------
         # Purchase pre-selection:

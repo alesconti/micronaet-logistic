@@ -170,6 +170,7 @@ class PurchaseOrder(models.Model):
                 # Change italian mode:
                 if not field:
                     return field
+                    
                 res = '%s/%s/%s%s' % (
                     field[8:10],
                     field[5:7],
