@@ -755,10 +755,10 @@ class StockPicking(models.Model):
                 total = qty * move.logistic_unload_id.price_unit
                 if not total:
                     _logger.error(
-                        'Found empty picking %s in order %s') % (
+                        'Found empty picking %s in order %s' % (
                             picking.name,
                             order.name,
-                            )
+                            ))
                     #raise exceptions.Warning(_(
                     #    'Found empty picking %s in order %s') % (
                     #        picking.name,
