@@ -66,9 +66,10 @@
         # Views:
         'views/logistic_management_view.xml',
         'views/dropship_view.xml',
+        #'views/extra_search_view.xml',
         'wizard/manual_operation_view.xml', # Test events
         'wizard/status_extract_view.xml', # Extract operation
-        'wizard/fees_report_view.xml', # Extract feed
+        'wizard/fees_report_view.xml', # Extract feed        
         #'views/fatturapa_view.xml',
         #'views/account_parameter_view.xml', # XXX move in logistic_ddt
         ],

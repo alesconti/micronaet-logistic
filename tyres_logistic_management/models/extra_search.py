@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 ###############################################################################
 #
 # ODOO (ex OpenERP) 
 # Open Source Management Solution
-# Copyright (C) 2001-2018 Micronaet S.r.l. (<https://micronaet.com>)
+# Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -20,7 +20,22 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
+import os
+import sys
+import odoo
+import logging
+from odoo import models, fields, api
+from odoo.tools.translate import _
 
-from . import logistic_management
-from . import dropshipping # Dropship management
-#from . import extra_search # Extra search
+
+_logger = logging.getLogger(__name__)
+
+class SaleOrderExtra(models.Model):
+    """ Model name: Sale order extra search
+    """
+    
+    _inherit = 'sale.order'
+
+
+
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
