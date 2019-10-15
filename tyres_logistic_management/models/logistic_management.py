@@ -754,11 +754,16 @@ class StockPicking(models.Model):
                 qty = move.product_uom_qty
                 total = qty * move.logistic_unload_id.price_unit
                 if not total:
-                    raise exceptions.Warning(_(
+                    _logger.error(
                         'Found empty picking %s in order %s') % (
                             picking.name,
                             order.name,
-                            ))
+                            )
+                    #raise exceptions.Warning(_(
+                    #    'Found empty picking %s in order %s') % (
+                    #        picking.name,
+                    #        order.name,
+                    #        ))
 
                 # Get channel
                 try:
@@ -2510,7 +2515,12 @@ class SaleOrderLine(models.Model):
             for picking_id in pickings:
                 order_file = os.path.join(
                     path, 'pick_undo_%s.csv' % picking_id) # XXX Name with undo
-                if os.path.isfile(order_file): # File yet present
+
+                comment += _(
+                    'Reload account file: %s<br/>'
+                        ) % order_file
+
+                if os.path.isfile(order_file): # XXX File yet present
                     order_file = open(order_file, 'a')
                 else: # New file:
                     order_file = open(order_file, 'w')
