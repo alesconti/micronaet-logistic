@@ -36,6 +36,29 @@ class SaleOrderExtra(models.Model):
     
     _inherit = 'sale.order'
 
-
+    # -------------------------------------------------------------------------
+    # Compute Search fields:
+    # -------------------------------------------------------------------------
+    @api.multi
+    def _extra_search_product(self, operator, value):
+        ''' Search product SKU in order header
+        '''
+        import pdb; pdb.set_trace()
+        line_pool = self.env['sale.order.line']
+        line_ids = line_pool.search([
+            ('product_id.default_code', 'ilike', value),
+            ])
+        if line_ids:
+            order_ids = { # Set of order
+                line.order_id.id for line in line_pool.browse(line_ids)
+                }
+        return [('id', 'in', order_ids)]
+        
+    # -------------------------------------------------------------------------
+    # Columns:
+    # -------------------------------------------------------------------------
+    search_product = fields.Many2one(
+        'product.product', 'Extra Search product', 
+        search='_extra_search_product')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
