@@ -743,22 +743,6 @@ class PurchaseOrderLine(models.Model):
         'Logistic source', readonly=True,
         related='logistic_sale_id.order_id.logistic_source',
         )
-        
-    #ivel = fields.Char(
-    #    'Indice di velocità', related='product_id.raggio', store=True)
-    #icarico = fields.Char(
-    #    'Indice di carico', related='product_id.raggio', store=True)
-    #runflat = fields.Boolean(
-    #    'Run flat', related='product_id.raggio', store=True)
-    #brand = fields.Many2one('mmac_brand', 'Marca')
-    #misuracompleta = fields.Char('Misura completa')
-    #stagione = fields.Char('Stagione')
-    #canale = fields.Char('Canale')
-    #offset = fields.Char('Offset')
-    #cb = fields.Char('CB')
-    #numerofori = fields.Char('Numero fori')
-    #interasse = fields.Char('Interasse')
-    #bestpricecost = fields.Float('Costo bestprice')
     
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document: add relations
