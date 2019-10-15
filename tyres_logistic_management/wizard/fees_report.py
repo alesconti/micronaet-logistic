@@ -65,6 +65,8 @@ class LogisticFeesExtractWizard(models.TransientModel):
             'text': excel_pool.get_format('text'),
             'number': excel_pool.get_format('number'),
             'total': excel_pool.get_format('text_total'),
+
+            'red': excel_pool.get_format('text_red'),
             }
 
         header = [
@@ -122,8 +124,13 @@ class LogisticFeesExtractWizard(models.TransientModel):
             else:
                 pages[page][order] = [total, line]
 
+            if line[12]:
+                format_color = format_text['text']
+            else:
+                format_color = format_text['red']
+            # Write formatted with color        
             excel_pool.write_xls_line(ws_name, row, line,
-                default_format=format_text['text'])
+                default_format=format_color)
         
         # ---------------------------------------------------------------------
         # Extra pages:
