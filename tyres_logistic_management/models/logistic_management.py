@@ -2488,7 +2488,6 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         # Check Purchase order pending to import:
         # ---------------------------------------------------------------------
-        import pdb; pdb.set_trace()
         purchase_order = []
         for line in self.purchase_line_ids:
             purchase = line.order_id
@@ -2498,14 +2497,21 @@ class SaleOrderLine(models.Model):
             filename = purchase.filename
             if filename and purchase not in purchase_order:
                 purchase_order.append(purchase)
+                
                 fullname = os.path.join(purchase_path, filename)
+                if not os.path.isfile(fullname):
+                    comment = _('No pending file for internal order<br/>')
+                    continue
+
                 try:
                     os.remove(fullname)                    
                     comment = \
                         _('Delete pending internal order %s file: %s<br/>') % (
                         purchase.name, fullname)
                 except:        
-                    comment = _('No pending file for internal order<br/>')
+                    raise exceptions.Warning(
+                        'Cannot delete %s maybe account is importing...' % \
+                            fullname)
 
         # ---------------------------------------------------------------------
         # Purchase pre-selection:
