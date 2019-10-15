@@ -217,9 +217,13 @@
                     <field name="name" />
                     <!--TODO-->
                     <field name="partner_id" filter_domain="[('partner_id.name','=',self)]"/>
+                    <field name="product_id" filter_domain="[('product_id','=',self)]"/>
                     
                     <filter name="dropship_manage_selected" string="Dropship line" domain="[('dropship_manage','=',True)]"/>
                     <group expand="0" string="Group By...">
+                        <filter name="group_date_day" string="Day" context="{'group_by': 'date:day'}"/>
+                        <filter name="group_date_week" string="Week" context="{'group_by': 'date:week'}"/>
+                        <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
                         <filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
                         <filter name="group_dropship" string="Dropship" context="{'group_by': 'dropship_manage'}"/>
                     </group>
@@ -232,6 +236,7 @@
             <field name="arch" type="xml">
                 <tree string="String" editable="bottom" decoration-primary="dropship_manage==True">
                     <field name="picking_id" invisible="1"/>
+                    <field name="date" />
                     <field name="partner_id" readonly="1"/>
                     <field name="product_id" readonly="1" invisible="1"/>
                     <field name="name" readonly="1" invisible="1"/>
@@ -279,7 +284,30 @@
             <field name="domain">[]</field>
         </record>
         
-        <!--stock.picking.delivery-->
+        <!--stock.picking.delivery-->    
+        <record model="ir.ui.view" id="view_stock_picking_delivery_search">
+            <field name="name">stock.picking.delivery.search</field>
+            <field name="model">stock.picking.delivery</field>
+            <field name="arch" type="xml">
+                <search string="String"> 
+                    <field name="name" />                    
+                    <field name="supplier_id" filter_domain="[('supplier_id.name','=',self)]"/>
+                    <field name="product_id" />
+                    <field name="quant_id" />
+                    <field name="picking_id" />
+                    <field name="date" />
+                    <field name="create_uid" />
+                    
+                    <!--<filter name="my_order" string="My" domain="[('create_uid','=',user.id)]"/>-->
+                    <group expand="0" string="Group By...">
+                        <filter name="group_supplier" string="Supplier" context="{'group_by': 'supplier_id'}"/>
+                        <filter name="group_date" string="Date" context="{'group_by': 'date'}"/>
+                        <filter name="group_date_week" string="Week" context="{'group_by': 'date:week'}"/>
+                        <filter name="group_date_day" string="Day" context="{'group_by': 'date:day'}"/>
+                    </group>                
+                </search>
+            </field>
+        </record>
         <record model="ir.ui.view" id="view_stock_picking_delivery_tree">
             <field name="name">stock.picking.delivery.tree</field>
             <field name="model">stock.picking.delivery</field>
@@ -345,7 +373,6 @@
                                     </group>    
                                 </page>
                             </notebook> 
-
                         </group>    
                     </sheet>
                 </form>
