@@ -15,6 +15,11 @@
                           <separator string="Filter:" colspan="4"/>
                           <field name="from_date" />
                           <field name="to_date" />
+                          
+                          <field name="fiscal_id" />
+                          <field name="team_id" />
+                          
+                          <field name="mode" />
                       </group>                          
                   </sheet>
               </form>

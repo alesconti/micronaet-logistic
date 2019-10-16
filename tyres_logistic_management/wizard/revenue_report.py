@@ -74,7 +74,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
             domain.append(
                 ('sale_order_id.fiscal_position_id', '=', fiscal.id),
                 )    
-            title += ', posizione fiscale: %s' % fiscal.name,
+            title += ', posizione fiscale: %s' % fiscal.name
         else:    
             title += ', posizione fiscale: Tutte'
 
@@ -82,7 +82,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
             domain.append(
                 ('sale_order_id.team_id', '=', team.id),
                 )    
-            title += ', Team: %s' % team.name,
+            title += ', Team: %s' % team.name
         else:    
             title += ', Team: Tutti'
 
@@ -90,7 +90,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
             domain.append(
                 ('sale_order_id.team_id.team_code_ref', '=', mode.id),
                 )    
-            title += ', Mercato: %s' % mode,
+            title += ', Mercato: %s' % mode
         else:    
             title += ', Mercato: Tutti'
             
