@@ -171,7 +171,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
             for move in picking.move_lines:                
                 row += 1
                 
-                error_comment = ''
+                error = ''
                 sale_line = move.logistic_load_id                
                 #refund_line = move.logistic_refund_id
                 
@@ -180,7 +180,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
                     vat_amount = vat.amount
                     vat_included = vat.price_include
                 except:
-                    error_comment += 'Aliq. non presente'
+                    error += 'Aliq. non presente'
                     vat_amount = 0.0
                     vat_included = True # XXX Default
                     
