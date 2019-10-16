@@ -135,16 +135,16 @@
                             <div class="oe_structure"/>                            
                             <div class="row">
                                 <div class="col-xs-8">
-                                    <span t-esc="o.company_id.city or ''" /> <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/>
+                                    <span t-esc="o.company_id.city or ''" /> 
+                                    <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/>
                                 </div>
-                                <div class="col-xs-4" align="center">                                
-                                    <!--<span t-esc="(o.company_id.name or '').upper()" />
-                                        <t t-foreach="o.get_report_footer_stamp()" t-as="line">
-                                        <t t-esc="line" /><br/>
-                                    </t>--> 
+
+                                <div class="col-xs-4" align="center"><!--t-attf-style="background-image:url('data:image/*;base64,{{o.company_id.logo}}')"-->
                                     <b>                                       
                                     FELAPPI<br/>
-                                    <img class="img img-responsive" src="/sale_order_report/static/src/img/header.jpg"/>
+                                    <!--<img class="img img-responsive" 
+                                         t-attf-src="data:image/*;base64,{{o.company_id.logo}}"
+                                         t-att-alt="o.company_id.name"/>-->
                                     FELAPPI S.R.L.<br/>
                                     Via Grumello, 2<br/>
                                     25054 MARONE (BS)<br/>
