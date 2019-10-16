@@ -107,7 +107,8 @@ class LogisticDeliveryReportWizard(models.TransientModel):
             ]
 
         width = [
-            25, 10, 8, 15, 14, 12, 12, 30, 10, 10, 15, 5, 5,
+            30, 10, 8, 15, 18, 12, 
+            12, 40, 5, 10, 15, 5, 5,
             ]    
 
         excel_pool.column_width(ws_name, width)
