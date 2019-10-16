@@ -42,6 +42,7 @@ class SaleOrder(models.Model):
     def _get_has_extra_document(self, ):
         ''' Check if needed
         '''
+        # TODO setup correct check (filename will raise an error not hide button)
         for order in self:
             try:
                 order.has_extra_document = \
@@ -56,10 +57,26 @@ class SaleOrder(models.Model):
         for order in self:
             order.has_label_to_print = order.mmac_shippy_order_id > 0
 
+    @api.multi
+    def _get_label_status(self, ):
+        ''' Check if needed label
+        '''        
+        for order in self:
+            if order.carrier_shippy:
+                if order.mmac_shippy_order_id > 0: # has the code
+                    order.get_label_status = 'shippy'
+                else:
+                    order.get_label_status = 'error'
+            else:
+                order.get_label_status = 'manual'
+
     has_extra_document = fields.Boolean(
         'Has extra document', compute='_get_has_extra_document')
     has_label_to_print = fields.Boolean(
         'Has label', compute='_get_has_label_to_print')
+
+    get_label_status = fields.Char(
+        'Label satus', size=10, compute='_get_label_status')
 
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document
