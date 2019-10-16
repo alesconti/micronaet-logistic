@@ -66,6 +66,9 @@ class LogisticDeliveryReportWizard(models.TransientModel):
         if supplier:
             domain.append(('supplier_id', '>=', supplier.id))    
             title += ', fornitore: %s' % supplier.name
+        else:    
+            title += ', fornitore: Tutti'
+            
         delivery_data = delivery_pool.search(domain)
         
         
@@ -147,9 +150,9 @@ class LogisticDeliveryReportWizard(models.TransientModel):
                 line = [
                     detail.default_code,
                     detail.name_extended,
-                    detail.product_uom_qty,
-                    detail.price_unit,
-                    subtotal,
+                    (detail.product_uom_qty, format_text['number']),
+                    (detail.price_unit, format_text['number']),
+                    (subtotal, format_text['number']),
                     detail.dropship_manage,
                     internal,
                     ]
@@ -172,9 +175,9 @@ class LogisticDeliveryReportWizard(models.TransientModel):
                 line = [
                     quant.product_id.default_code,
                     quant.product_id.name_extended,
-                    quant.product_qty,
-                    quant.price,
-                    subtotal,
+                    (quant.product_qty, format_text['number']),
+                    (quant.price, format_text['number']),
+                    (subtotal, format_text['number']),
                     '', # never for internal
                     internal,
                     ]
@@ -183,8 +186,10 @@ class LogisticDeliveryReportWizard(models.TransientModel):
             
         row += 1
         # Write formatted with color        
-        excel_pool.write_xls_line(ws_name, row, ['Totale', total],
-            default_format=format_text['text'], col=9)        
+        excel_pool.write_xls_line(ws_name, row, [
+            'Totale', 
+            (total, format_text['number']),
+            ], default_format=format_text['text'], col=9)        
         return excel_pool.return_attachment(filename)
 
     # -------------------------------------------------------------------------
