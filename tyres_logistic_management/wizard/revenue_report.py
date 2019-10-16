@@ -41,7 +41,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
     #                               BUTTON EVENT:    
     # -------------------------------------------------------------------------    
     @api.multi
-    def delivery_report_button(self):
+    def revenue_report_button(self):
         """ Account fees report
         """
         picking_pool = self.env['stock.picking'] 
@@ -66,8 +66,9 @@ class LogisticRevenueReportWizard(models.TransientModel):
             ('scheduled_date', '<', to_date),
             ]
 
-        title = '''Statistiche consegne del periodo: [%s - %s], 
-            esclusi ordini interni''' % (from_date, to_date)
+        title = 'Statistiche consegne del periodo: [%s - %s], ' % (
+            from_date, to_date)
+        title += 'esclusi ordini interni' 
             
         if fiscal:
             domain.append(
@@ -116,7 +117,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
         header = [
             'Cliente',
             'Rif.', # Fattura o consegna
-            'Data',            
+            'Data',   
             'Ordine',
             'Tipo',
             'Picking',
@@ -132,7 +133,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
             ]
 
         width = [
-            30, 15, 10, 10, 10, 10, 15, 10, 5,
+            30, 15, 15, 10, 10, 10, 18, 12, 7,
             15, 40, 5, 10, 10,
             ]    
 
@@ -148,15 +149,14 @@ class LogisticRevenueReportWizard(models.TransientModel):
             default_format=format_text['header'])            
 
         total = 0.0
-        for picking in sorted(picking_data, key=lambda x: 
-                (x.supplier_id.name, x.date)):
+        for picking in sorted(picking_data, key=lambda x: x.partner_id.name):
             order = picking.sale_order_id
             partner = order.partner_invoice_id   
             header = [
                 partner.name,
                 picking.invoice_number or 'Non presente',
                 picking.scheduled_date,
-                order.number,
+                order.name,
                 order.logistic_source,                
                 picking.name,
                 order.fiscal_position_id.name or '?',
