@@ -49,7 +49,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
     # -------------------------------------------------------------------------
     #                            COLUMNS:
     # -------------------------------------------------------------------------    
-    partner_id = fields.Many2one('res.partner', 'Supplier')
+    partner_id = fields.Many2one('res.partner', 'Supplier', required=True)
     from_date = fields.Date('From date', required=True)
     to_date = fields.Date('To date', required=True)
     # -------------------------------------------------------------------------    
@@ -63,47 +63,52 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         
         from_date = self.from_date
         to_date = self.to_date
-        partner_id = self.partner_id.id
+        supplier = self.partner_id
         
-        moves = move_pool.search([
-            # Date filter:
-            ('picking_id.scheduled_date', '>=', from_date),
-            ('picking_id.scheduled_date', '<=', to_date),
+        domain = [
+            # Header
+            ('delivery_id.date', '>=', from_date),
+            ('delivery_id.date', '<', to_date),
+            ('delivery_id.supplier_id', '=', supplier.id)
 
-            # Selection filter:
-            ('logistic_unload_id', '!=', False), # Linked to Sale line
             ('product_id.mmac_pfu', '!=', False), # PFU category present
-            ])
-            
-        supplier_moves = {}    
-        for move in moves:   
-            # TODO is invoice filter???  is_invoiced?!?
+            ('logistic_load_id', '!=', False), # Linked to order
+            #('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '!=', False), # Linked to order
+            ]
+
+        # ---------------------------------------------------------------------
+        # Collect data:
+        # ---------------------------------------------------------------------        
+        supplier_moves = {}
+        for move in move_pool.browse(domain):
+            sale_line = move.logistic_load_id
             product_uom_qty = move.product_uom_qty
-            sale_line = move.logistic_unload_id
-            customer = sale_line.order_id.partner_id
+            customer = sale_line.order_id.partner_invoice_id
             fiscal_position = customer.property_account_position_id
 
-            if not fiscal_position.is_pfu:
+            if not fiscal_position.is_pfu: # not refund!
                 continue # Jump movement not PFU report
-            
-            for load in sale_line.load_line_ids:
-                supplier = load.picking_id.partner_id
-                if partner_id and supplier_id.id != partner_id:
-                    continue
-                    
-                if supplier not in supplier_moves:
-                    supplier_moves[supplier] = []
-                supplier_moves[partner].append(load) # load movement
-                
-                # TODO check no extra quantity!!!
+
+            supplier_moves.append(move)
         
         if not supplier_moves:
-            _logger.error('No moves to write file')
-            return False
-            
+            raise exceptions.Warning('No PFU movement with this selection!')
+
         # ---------------------------------------------------------------------
         #                          EXTRACT EXCEL:
         # ---------------------------------------------------------------------
+        # Header setup:
+        ws_name = supplier.name
+        excel_pool.create_worksheet(ws_name)
+        excel_pool.set_format()
+        format_text = {                
+            'title': excel_pool.get_format('title'),
+            'header': excel_pool.get_format('header'),
+            'text': excel_pool.get_format('text'),
+            'number': excel_pool.get_format('number'),
+            }            
+        excel_pool.columns_width(ws_name, column_width)
+
         # Excel file configuration:
         header = ('RAEE', 'Cod. Articolo', 'Descrizione', u'Q.tà', 
             'Doc Fornitore', 'Data Doc.', 'N. Fattura', 'N. Nostra fattura', 
@@ -114,107 +119,87 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             5, 6, 10, 10, 
             6, 6,
             )    
+
+        # Header write:
+        row = 0
+        excel_pool.write_xls_line(ws_name, row, [
+            'Fornitore:',
+            supplier.sql_supplier_code,
+            supplier.name,
+            '',
+            'Dalla data: %s' % from_date,
+            'Alla data: %s' % to_date,
+            ], default_format=format_text['title'])
+            
+        row += 2
+        excel_pool.write_xls_line(ws_name, row, header, 
+            default_format=format_text['header'])
+        
         
         format_text = False # Setup first page
-        for supplier in supplier_moves:
         
+        # ---------------------------------------------------------------------
+        # Write detail:
+        # ---------------------------------------------------------------------        
+        total = 0
+        subtotal = 0
+        last = False # Break level PFU code
+        for move in sorted(supplier_moves, key=lambda m: (
+                m.product_id.mmac_pfu.name, m.date)):
+            row += 1
+            
             # Readability:
-            supplier_name = supplier.name
+            product = move.product_id
+            pfu = product.mmac_pfu
+            qty = move.product_uom_qty
 
-            # -----------------------------------------------------------------
-            # Header setup:
-            # -----------------------------------------------------------------
-            ws_name = supplier_name
-            excel_pool.create_worksheet(ws_name)
-            if not format_text:
-                excel_pool.set_format()
-                format_text = {                
-                    'title': excel_pool.get_format('title'),
-                    'header': excel_pool.get_format('header'),
-                    'text': excel_pool.get_format('text'),
-                    'number': excel_pool.get_format('number'),
-                    }            
-            excel_pool.columns_width(ws_name, column_width)
-            
-            # -----------------------------------------------------------------
-            # Header write:
-            # -----------------------------------------------------------------
-            row = 0
-            excel_pool.write_xls_line(ws_name, row, [
-                'Fornitore:',
-                supplier.sql_supplier_code,
-                supplier_name,
-                '',
-                'Dalla data: %s' % from_date,
-                'Alla data: %s' % to_date,
-                ], default_format=format_text['title'])
-                
-            row += 2    
-            excel_pool.write_xls_line(ws_name, row, header, 
-                default_format=format_text['header'])
-            
-            # -----------------------------------------------------------------
-            # Write detail:
-            # -----------------------------------------------------------------            
-            total = 0
-            subtotal = 0
-            last = False # Break level PFU code
-            for move in sorted(supplier_moves[supplier], key=lambda m: (
-                    m.product_id.mmac_pfu.name, m.date)):                    
+            if last != pfu:
+                if last != False:
+                    excel_pool.write_xls_line(ws_name, row, (
+                        subtotal,
+                        ), default_format=format_text['number'], col=3)                    
+                subtotal = 0
                 row += 1
-                
-                # Readability:
-                product = move.product_id
-                pfu = product.mmac_pfu
-                qty = move.product_uom_qty
 
-                if last != pfu:
-                    if last != False:
-                        excel_pool.write_xls_line(ws_name, row, (
-                            subtotal,
-                            ), default_format=format_text['number'], col=3)                    
-                    subtotal = 0
-                    row += 1
-
-                # Total operation:
-                total += qty
-                subtotal += qty
-                
-                # -------------------------------------------------------------
-                # Write data line:
-                # -------------------------------------------------------------
-                excel_pool.write_xls_line(ws_name, row, (
-                    product.mmac_pfu.name,
-                    product.default_code,
-                    product.name,
-                    (qty, number), # TODO check if it's all!!
-                    '', # TODO supplier document number
-                    move.picking_id.scheduled_date,
-                    '', # Number supplier invoice
-                    '', # Our invoice
-                    '', # Date doc,
-                    '', # ISO country
-                    ), default_format=format_text['text'])
-
-            # -----------------------------------------------------------------
+            # Total operation:
+            total += qty
+            subtotal += qty
+            
+            # -------------------------------------------------------------
             # Write data line:
-            # -----------------------------------------------------------------
-            if last != False:
-                # Subtotal
-                row += 1
-                excel_pool.write_xls_line(ws_name, row, (
-                    subtotal,
-                    ), default_format=format_text['number'], col=3)
+            # -------------------------------------------------------------
+            excel_pool.write_xls_line(ws_name, row, (
+                product.mmac_pfu.name,
+                product.default_code,
+                product.name,
+                (qty, format_text['number']), # TODO check if it's all!!
+                move.delivery_id.name, # Delivery ref.
+                move.delivery_id.date,
+                '?', # Number supplier invoice
+                '', # Our invoice
+                '', # Date doc,
+                '', # ISO country
+                ), default_format=format_text['text'])
 
-                # Total
-                row += 1
-                excel_pool.write_xls_line(ws_name, row, (
-                    'Totale:', total,
-                    ), default_format=format_text['number'], col=2)
-                
+        # -----------------------------------------------------------------
+        # Write data line:
+        # -----------------------------------------------------------------
+        if last != False:
+            # Subtotal
+            row += 1
+            excel_pool.write_xls_line(ws_name, row, (
+                subtotal,
+                ), default_format=format_text['number'], col=3)
+
+            # Total
+            row += 1
+            excel_pool.write_xls_line(ws_name, row, (
+                'Totale:', total,
+                ), default_format=format_text['number'], col=2)
+            
         # ---------------------------------------------------------------------
         # Save file:
         # ---------------------------------------------------------------------
-        return excel_pool.return_attachment('Stato_righe_ordini')
+        return excel_pool.return_attachment('Report_PFU')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

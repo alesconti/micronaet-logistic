@@ -139,7 +139,7 @@
                                     <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/>
                                 </div>
 
-                                <div class="col-xs-4" align="center"><!--t-attf-style="background-image:url('data:image/*;base64,{{o.company_id.logo}}')"-->
+                                <div class="col-xs-4" align="center"> <!--t-attf-style="background-image:url('data:image/*;base64,{{o.company_id.logo}}')"-->
                                     <b>                                       
                                     FELAPPI<br/>
                                     <!--<img class="img img-responsive" 
