@@ -64,7 +64,7 @@ class LogisticDeliveryReportWizard(models.TransientModel):
                 from_date, to_date,
                 )    
         if supplier:
-            domain.append(('supplier_id', '>=', supplier.id))    
+            domain.append(('supplier_id', '=', supplier.id))    
             title += ', fornitore: %s' % supplier.name
         else:    
             title += ', fornitore: Tutti'
