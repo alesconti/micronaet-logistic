@@ -167,7 +167,7 @@ class LogisticDeliveryReportWizard(models.TransientModel):
                     default_format=format_text['text'])
                     
                 # Detail:    
-                subtotal = detail.product_qty * detail.price
+                subtotal = quant.product_qty * quant.price
                 total += subtotal
                 line = [
                     quant.product_id.default_code,
