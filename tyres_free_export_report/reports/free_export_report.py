@@ -48,7 +48,7 @@ class SaleOrder(models.Model):
                 raise exceptions.Warning(_('Invoice number not yet present!'))
             
             return '''
-                Rif. fattura n. %s del %s intestata a %s 
+                n. %s del %s intestata a %s 
                 destinazione %s %s''' % (
                     picking.invoice_number,
                     picking.invoice_date[:10],
