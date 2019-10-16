@@ -114,17 +114,21 @@ class LogisticRevenueReportWizard(models.TransientModel):
             'red': excel_pool.get_format('text_red'),
             }
 
-        header = [
+        header = [ 
+            # Header:
             'Cliente',
             'Rif.', # Fattura o consegna
             'Data',   
+            'Picking',
+
             'Ordine',
             'Tipo',
-            'Picking',
+
             'Posizione fiscale',
             'Team',
             'Mercato',
-            
+
+            # Detail:            
             'Codice',
             'Nome',
             'Q.',
@@ -156,9 +160,11 @@ class LogisticRevenueReportWizard(models.TransientModel):
                 partner.name,
                 picking.invoice_number or 'Non presente',
                 picking.scheduled_date,
+                picking.name,
+
                 order.name,
                 order.logistic_source,                
-                picking.name,
+                
                 order.fiscal_position_id.name or '?',
                 order.team_id.name,
                 order.team_id.team_code_ref,
@@ -172,7 +178,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
                 row += 1
                 
                 error = ''
-                sale_line = move.logistic_load_id                
+                sale_line = move.logistic_unload_id                
                 #refund_line = move.logistic_refund_id
                 
                 try:
