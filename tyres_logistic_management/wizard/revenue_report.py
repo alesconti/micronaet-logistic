@@ -176,8 +176,16 @@ class LogisticRevenueReportWizard(models.TransientModel):
                     default_format=format_text['text'])
                     
                 # Moves: 
-                #sale_line = move.sale_line_id # TODO
-                subtotal = 0.0 #sale_line.product_uom_qty * sale_line.price_unit
+                sale_line = move.logistic_load_id                
+                #refund_line = move.logistic_refund_id
+                
+                vat = sale_line.tax_id[0]
+                if vat.price_include:
+                    price = sale_line.price_unit / (100.0 + vat.amount)
+                else:
+                    price = sale_line.price_unit
+                qty = sale_line.product_uom_qty                
+                subtotal = qty * price
                 total += subtotal
 
                 # TODO remove VAT!!!
@@ -185,8 +193,8 @@ class LogisticRevenueReportWizard(models.TransientModel):
                     move.default_code,
                     move.name_extended,
                     # TODO change:
-                    (move.product_uom_qty, format_text['number']),
-                    (move.price_unit, format_text['number']),
+                    (qty, format_text['number']),
+                    (price, format_text['number']),
                     (subtotal, format_text['number']),
                     ]
                 excel_pool.write_xls_line(ws_name, row, line,             
