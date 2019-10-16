@@ -88,7 +88,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
 
         if mode:
             domain.append(
-                ('sale_order_id.team_id.team_code_ref', '=', mode.id),
+                ('sale_order_id.team_id.market_type', '=', mode.id),
                 )    
             title += ', Mercato: %s' % mode
         else:    
@@ -167,7 +167,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
                 
                 order.fiscal_position_id.name or '?',
                 order.team_id.name,
-                order.team_id.team_code_ref,
+                order.team_id.market_type,
                 ]
             
             # -----------------------------------------------------------------
