@@ -49,7 +49,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
     # -------------------------------------------------------------------------
     #                            COLUMNS:
     # -------------------------------------------------------------------------    
-    partner_id = fields.Many2one('res.partner', 'Supplier', required=True)
+    partner_id = fields.Many2one('res.partner', 'Supplier', required=True,
+        domain="[('supplier', '=', True)]")
     from_date = fields.Date('From date', required=True)
     to_date = fields.Date('To date', required=True)
     # -------------------------------------------------------------------------    
@@ -69,7 +70,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             # Header
             ('delivery_id.date', '>=', from_date),
             ('delivery_id.date', '<', to_date),
-            ('delivery_id.supplier_id', '=', supplier.id)
+            ('delivery_id.supplier_id', '=', supplier.id),
 
             ('product_id.mmac_pfu', '!=', False), # PFU category present
             ('logistic_load_id', '!=', False), # Linked to order
@@ -80,7 +81,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # Collect data:
         # ---------------------------------------------------------------------        
         supplier_moves = {}
-        for move in move_pool.browse(domain):
+        for move in move_pool.search(domain):
             sale_line = move.logistic_load_id
             product_uom_qty = move.product_uom_qty
             customer = sale_line.order_id.partner_invoice_id
