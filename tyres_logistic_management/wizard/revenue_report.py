@@ -133,7 +133,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
             ]
 
         width = [
-            30, 15, 15, 10, 10, 10, 18, 12, 7,
+            30, 15, 15, 17, 10, 10, 18, 12, 7,
             15, 40, 5, 10, 10,
             ]    
 

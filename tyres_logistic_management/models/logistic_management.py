@@ -1818,6 +1818,19 @@ class SaleOrder(models.Model):
                     order.logistic_state = 'done'
                 else:
                     order.logistic_state = 'ready'
+                    # ---------------------------------------------------------
+                    # Shippy call:
+                    # ---------------------------------------------------------
+                    # TODO Shippy part to enable!
+                    ''' 
+                    _logger.warning(
+                        'Shippy call for order name: %s' % order.name)
+                    if order.carrier_shippy and order.carrier_supplier_id and \
+                            order.carrier_mode_id:
+                        order.shippy_ship()
+                    '''    
+                    # ---------------------------------------------------------
+
                 order_ids.append(order.id)
 
         _logger.warning('Closed because ready # %s order' % len(order_ids))
@@ -2378,17 +2391,6 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     #                           UTILITY:
     # -------------------------------------------------------------------------
-    """@api.model
-    def get_vat_unit_price(self):
-        ''' Get vat price
-        '''
-        self.ensure_one()
-        unit_price = (self.price_tax + self.price_reduce_taxexcl) / \
-            self.product_uom_qty
-            
-        return unit_price"""
-        
-    # moved here from load
     @api.model
     def check_ordered_ready_status(self, browse_list):
         ''' Check order ready from list browse obj passed
