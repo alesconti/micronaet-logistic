@@ -409,7 +409,7 @@ class StockPicking(models.Model):
     # Override function
     # -------------------------------------------------------------------------
     # XXX Override original procedure un l18n_it_fatturapa:
-    @api.multi
+    @api.multi    
     def fatturapa_get_details(self):
         ''' Extract line detail sumary
         '''
@@ -1035,8 +1035,8 @@ class StockPicking(models.Model):
         q = line.product_uom_qty
         total = line.price_unit * q
         if vat_rate:
-            vat = total * vat_rate / 100.0
-            net = total - vat
+            net = (total * 100.0 ) / (100.0 + vat_rate)
+            vat = total - net
         else:
             vat = 0
             net = total 
