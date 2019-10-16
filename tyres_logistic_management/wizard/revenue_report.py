@@ -192,7 +192,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
                     vat_included = True # XXX Default
                     
                 if vat_included:
-                    price = sale_line.price_unit / (100.0 + vat_amount)
+                    price = sale_line.price_unit * 100.0 / (100.0 + vat_amount)
                 else:
                     price = sale_line.price_unit
                 qty = sale_line.product_uom_qty                
