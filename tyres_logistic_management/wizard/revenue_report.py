@@ -171,23 +171,41 @@ class LogisticRevenueReportWizard(models.TransientModel):
             for move in picking.move_lines:                
                 row += 1
                 
-                # Header:
-                excel_pool.write_xls_line(ws_name, row, header,             
-                    default_format=format_text['text'])
-                    
-                # Moves: 
+                error_comment = ''
                 sale_line = move.logistic_load_id                
                 #refund_line = move.logistic_refund_id
                 
-                vat = sale_line.tax_id[0]
-                if vat.price_include:
-                    price = sale_line.price_unit / (100.0 + vat.amount)
+                try:
+                    vat = sale_line.tax_id[0]
+                    vat_amount = vat.amount
+                    vat_included = vat.price_include
+                except:
+                    error_comment += 'Aliq. non presente'
+                    vat_amount = 0.0
+                    vat_included = True # XXX Default
+                    
+                if vat_included:
+                    price = sale_line.price_unit / (100.0 + vat_amount)
                 else:
                     price = sale_line.price_unit
                 qty = sale_line.product_uom_qty                
                 subtotal = qty * price
                 total += subtotal
 
+                # -------------------------------------------------------------
+                # Header:
+                # -------------------------------------------------------------
+                if error:
+                    format_color = format_text['red']
+                else:    
+                    format_color = format_text['text']
+                    
+                excel_pool.write_xls_line(ws_name, row, header,             
+                    default_format=format_color)
+
+                # -------------------------------------------------------------
+                # Moves: 
+                # -------------------------------------------------------------
                 # TODO remove VAT!!!
                 line = [
                     move.default_code,
