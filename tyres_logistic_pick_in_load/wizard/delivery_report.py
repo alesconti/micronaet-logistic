@@ -171,7 +171,7 @@ class LogisticDeliveryReportWizard(models.TransientModel):
                 total += subtotal
                 line = [
                     quant.product_id.default_code,
-                    quant.name_extended,
+                    quant.product_id.name_extended,
                     quant.product_qty,
                     quant.price,
                     subtotal,
