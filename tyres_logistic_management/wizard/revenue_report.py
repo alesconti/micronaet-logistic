@@ -134,11 +134,12 @@ class LogisticRevenueReportWizard(models.TransientModel):
             'Q.',
             'Prezzo un.',
             'Subtotal',
+            'Note',
             ]
 
         width = [
             30, 15, 15, 17, 10, 10, 18, 12, 7,
-            15, 40, 5, 10, 10,
+            15, 40, 5, 10, 10, 40,
             ]    
 
         excel_pool.column_width(ws_name, width)
@@ -220,6 +221,7 @@ class LogisticRevenueReportWizard(models.TransientModel):
                     (qty, format_text['number']),
                     (price, format_text['number']),
                     (subtotal, format_text['number']),
+                    error,
                     ]
                 excel_pool.write_xls_line(ws_name, row, line,             
                     default_format=format_text['text'], col=9)
