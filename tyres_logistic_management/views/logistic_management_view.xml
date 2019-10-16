@@ -1261,6 +1261,13 @@
 
 
              <menuitem
+                 id="menu_logistic_left_report_root" 
+                 parent="menu_logistic_header_root"
+                 name="Report"
+                 sequence="90"             
+                 />
+
+             <menuitem
                  id="menu_logistic_left_configuration_root" 
                  parent="menu_logistic_header_root"
                  name="Configuration"

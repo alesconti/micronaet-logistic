@@ -21,33 +21,5 @@
 #
 ###############################################################################
 
-{
-    'name': 'Tyres logistic load',
-    'version': '1.0',
-    'category': 'Purchase',
-    'sequence': 5,
-    'summary': 'Picking, load delivered material',
-    #'description': '',
-    'website': 'https://micronaet.com',
-    'depends': [
-        'base',
-        'product',
-        'stock',
-        'purchase',
-        'tyres_logistic_carrier',
-        'tyres_logistic_management',
-        'tyres_free_export_report', # Report
-        'mmac_odoo4', # product tyres extra data 
-        ],
-    'data': [
-        'security/ir.model.access.csv',
-        
-        'views/picking_load_view.xml',
-        'wizard/delivery_report_view.xml',
-        ],
-    'demo': [],
-    'css': [],
-    'installable': True,
-    'application': False,
-    'auto_install': False,
-    }
+from . import delivery_report
+
