@@ -2057,7 +2057,11 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         if not self.payment_term_id:
             raise exceptions.Warning(
-                _('Payment not present, insert before confirm!'))
+                _('Payment not present in sale order!'))
+
+        if not self.partner_invoice_id.property_account_position_id:
+            raise exceptions.Warning(
+                _('Fiscal position not present (invoice partner)!'))
 
         # ---------------------------------------------------------------------
         # Select order to prepare:
