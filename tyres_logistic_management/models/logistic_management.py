@@ -2053,7 +2053,7 @@ class SaleOrder(models.Model):
         location_to = logistic_pick_out_type.default_location_dest_id.id
 
         # ---------------------------------------------------------------------
-        # Pre check:
+        # Pre-Check (before document generation):
         # ---------------------------------------------------------------------
         if not self.payment_term_id:
             raise exceptions.Warning(
@@ -2337,6 +2337,16 @@ class SaleOrder(models.Model):
                     )
         self.undo_comment = comment + ''.join(comment_part.values())
 
+    @api.multi
+    def _get_check_need_invoice_boolean(self, ):
+        ''' Check if need invoice this order
+        '''
+        for order in self:
+            partner = order.partner_invoice_id or order.partner_id
+            order.check_need_invoice = \
+                partner.property_account_position_id.need_invoice or \
+                    partner.need_invoice or order.need_invoice
+
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
@@ -2362,6 +2372,9 @@ class SaleOrder(models.Model):
     need_invoice = fields.Boolean(
         'Order need invoice invoice',
         default=lambda s: s.partner_id.need_invoice)
+    check_need_invoice = fields.Boolean('Check need invoice', 
+        compute = '_get_check_need_invoice_boolean',
+        help='Used for show / hide print button')
 
     logistic_picking_ids = fields.One2many(
         'stock.picking', 'sale_order_id', 'Picking')
