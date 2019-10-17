@@ -1821,13 +1821,15 @@ class SaleOrder(models.Model):
                     # Shippy call:
                     # ---------------------------------------------------------
                     # TODO Shippy part to enable!
-                    ''' 
+                     
                     _logger.warning(
                         'Shippy call for order name: %s' % order.name)
-                    if order.carrier_shippy and order.carrier_supplier_id and \
-                            order.carrier_mode_id:
-                        order.shippy_ship()
-                    '''    
+                    if order.carrier_shippy:
+                        if order.carrier_supplier_id and order.carrier_mode_id:
+                            order.shippy_ship()
+                        else:
+                            order.shippy_ship_error = True    
+                    
                     # ---------------------------------------------------------
 
                 order_ids.append(order.id)
@@ -2382,6 +2384,8 @@ class SaleOrder(models.Model):
     partner_need_invoice = fields.Boolean(
          'Partner need invoice', related='partner_id.need_invoice',
          )
+    shippy_ship_error = fields.Boolean(
+        'Shippy ship OK', help='Shippy ship called correctly!') 
     need_invoice = fields.Boolean(
         'Order need invoice invoice',
         default=lambda s: s.partner_id.need_invoice)
