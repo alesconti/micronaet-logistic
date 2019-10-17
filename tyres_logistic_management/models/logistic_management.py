@@ -1800,6 +1800,22 @@ class SaleOrder(models.Model):
         line_pool.workflow_order_pending(lines)
         return True # Return nothing
 
+    @api.multi
+    def launch_shippy_ship(self, ):
+        ''' Check and launch shippy ship function:
+        '''
+        if self.carrier_shippy:
+            if self.carrier_supplier_id and self.carrier_mode_id:
+                self.shippy_ship()
+                self.shippy_ship_error = 'ok' # reset error state
+                self.write_log_chatter_message(_('Relaunch shippy ship call')
+            else:
+                raise exceptions.Warning(
+                    _('Check supplier or mode before launch'))
+        else:            
+            raise exceptions.Warning(_('No shippy carrier!'))
+
+        
     # -------------------------------------------------------------------------
     #                           UTILITY:
     # -------------------------------------------------------------------------
@@ -1817,19 +1833,20 @@ class SaleOrder(models.Model):
                     order.logistic_state = 'done'
                 else:
                     order.logistic_state = 'ready'
+
                     # ---------------------------------------------------------
                     # Shippy call:
                     # ---------------------------------------------------------
-                    # TODO Shippy part to enable!
-                     
-                    _logger.warning(
-                        'Shippy call for order name: %s' % order.name)
                     if order.carrier_shippy:
                         if order.carrier_supplier_id and order.carrier_mode_id:
                             order.shippy_ship()
+                            order.shippy_ship_error = 'ok'               
+                            order.write_log_chatter_message(
+                                _('Launch shippy ship call now!'))
                         else:
-                            order.shippy_ship_error = True    
-                    
+                            order.shippy_ship_error = 'error'               
+                            order.write_log_chatter_message(
+                                _('Error check shippy info after relaunch'))
                     # ---------------------------------------------------------
 
                 order_ids.append(order.id)
@@ -2384,8 +2401,10 @@ class SaleOrder(models.Model):
     partner_need_invoice = fields.Boolean(
          'Partner need invoice', related='partner_id.need_invoice',
          )
-    shippy_ship_error = fields.Boolean(
-        'Shippy ship OK', help='Shippy ship called correctly!') 
+    shippy_ship_error = fields.Selection([
+        ('ok', 'Ship OK'),
+        ('error', 'Error'),
+        ], 'Shippy ship result', help='Shippy ship called correctly!') 
     need_invoice = fields.Boolean(
         'Order need invoice invoice',
         default=lambda s: s.partner_id.need_invoice)

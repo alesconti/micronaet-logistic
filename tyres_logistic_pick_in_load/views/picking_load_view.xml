@@ -435,6 +435,11 @@
 	                
                     <field name="state" invisible="1" />
 	                <field name="logistic_done" invisible="1" />
+	                <field name="shippy_ship_error" /><!--TODO hide-->
+	                <button name="launch_shippy_ship" string="Relaunch shippy ship call, missing data: carrier or mode, insert and press this button, if done confirm?" 
+	                    type="object" icon="fa-caret-square-o-right fa-2x" attrs="{'invisible': [('shippy_ship_error','!=','error')]}"
+	                    confirm="Relaunch shippy ship call?"/>
+	                
 	                <field name="has_extra_document" invisible="1" />
 	                <field name="has_label_to_print" invisible="1" />
 	                <field name="get_label_status" invisible="1"/>
