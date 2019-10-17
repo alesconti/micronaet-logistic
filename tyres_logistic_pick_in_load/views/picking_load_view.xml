@@ -429,16 +429,16 @@
                     <field name="mmac_fattura_inviata" invisible='1'/>
                     <button name="mmac_fattura_inviata" string='FT' icon="fa-dollar text-danger" attrs="{'invisible': [('mmac_fattura_inviata','=',False)]}" />
 
+	                <field name="shippy_ship_error" string="Check"/><!--TODO hide-->
+	                <button name="launch_shippy_ship" string="Relaunch shippy ship call, missing data: carrier or mode, insert and press this button, if done confirm?" 
+	                    type="object" icon="fa-caret-square-o-right fa-2x" attrs="{'invisible': [('shippy_ship_error','!=','error')]}"
+	                    confirm="Relaunch shippy ship call?" icon="fa-ban"/>
 	                <field name="carrier_shippy" string="Shippy"/>
 	                <field name="carrier_supplier_id" string="Carrier"/>
 	                <field name="carrier_track_id" />
 	                
                     <field name="state" invisible="1" />
 	                <field name="logistic_done" invisible="1" />
-	                <field name="shippy_ship_error" /><!--TODO hide-->
-	                <button name="launch_shippy_ship" string="Relaunch shippy ship call, missing data: carrier or mode, insert and press this button, if done confirm?" 
-	                    type="object" icon="fa-caret-square-o-right fa-2x" attrs="{'invisible': [('shippy_ship_error','!=','error')]}"
-	                    confirm="Relaunch shippy ship call?"/>
 	                
 	                <field name="has_extra_document" invisible="1" />
 	                <field name="has_label_to_print" invisible="1" />

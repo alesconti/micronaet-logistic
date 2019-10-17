@@ -1808,7 +1808,7 @@ class SaleOrder(models.Model):
             if self.carrier_supplier_id and self.carrier_mode_id:
                 self.shippy_ship()
                 self.shippy_ship_error = 'ok' # reset error state
-                self.write_log_chatter_message(_('Relaunch shippy ship call')
+                self.write_log_chatter_message(_('Relaunch shippy ship call'))
             else:
                 raise exceptions.Warning(
                     _('Check supplier or mode before launch'))
@@ -1842,7 +1842,7 @@ class SaleOrder(models.Model):
                             order.shippy_ship()
                             order.shippy_ship_error = 'ok'               
                             order.write_log_chatter_message(
-                                _('Launch shippy ship call now!'))
+                                _('Launched shippy ship call now!'))
                         else:
                             order.shippy_ship_error = 'error'               
                             order.write_log_chatter_message(
