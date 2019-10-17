@@ -1908,10 +1908,20 @@ class SaleOrder(models.Model):
         ''' Order was exit
         '''
         self.write_log_chatter_message(
-            _('Marked as done!') % (
+            _('Marked as done [Previous state: %s]!') % (
                 self.logistic_state,
                 ))
         self.logistic_done = True
+
+    @api.multi
+    def set_workflow_logistic_undone(self, ):
+        ''' Order was restored
+        '''
+        self.write_log_chatter_message(
+            _('Marked as undone [Previous state: %s]!') % (
+                self.logistic_state,
+                ))
+        self.logistic_done = False
         
     # 0. Cancel error order
     # -------------------------------------------------------------------------
