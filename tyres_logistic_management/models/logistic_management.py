@@ -1907,6 +1907,10 @@ class SaleOrder(models.Model):
     def set_workflow_logistic_done(self, ):
         ''' Order was exit
         '''
+        self.write_log_chatter_message(
+            _('Marked as done!') % (
+                self.logistic_state,
+                ))
         self.logistic_done = True
         
     # 0. Cancel error order
