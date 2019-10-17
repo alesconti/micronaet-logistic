@@ -420,12 +420,14 @@
 	                <field name="team_id" />
 	                <field name="carrier_ok" invisible="1"/>
 	                <field name="carrier_stock_note" />
-	                <field name="logistic_state" invisible="1"/>
-	                
+	                <field name="logistic_state" invisible="1"/>	                
 	                <field name="mmac_shippy_order_id" invisible="1" />
-
 	                <field name="need_invoice" invisible="1" />
-	                <field name="carrier_shippy" invisible="1" />
+
+	                <field name="carrier_shippy" string="Shippy"/>
+	                <field name="carrier_supplier_id" />
+	                <field name="carrier_track_id" />
+
 	                <field name="partner_need_invoice" invisible="1" />
                     <field name="state" invisible="1" />
 	                <field name="logistic_done" invisible="1" />
