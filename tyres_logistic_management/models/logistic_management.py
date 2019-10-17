@@ -1192,7 +1192,7 @@ class StockPicking(models.Model):
                         'invoice_number': invoice_number,
                         'invoice_date': invoice_date,
                         })
-                    destination_path = history_path                                
+                    destination_path = history_path
                 else:   
                     destination_path = notfound_path                                
                     _logger.error('Pick ID: %s not found!' % f)
