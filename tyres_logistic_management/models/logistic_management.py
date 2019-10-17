@@ -1233,7 +1233,7 @@ class StockPicking(models.Model):
 
                 partner.zip,
                 partner.city or '',
-                partner.state_id.name or '',
+                partner.state_id.code or '',
                 partner.country_id.name,
                 partner.country_id.code,
                 )
