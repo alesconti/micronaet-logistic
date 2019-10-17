@@ -2054,6 +2054,13 @@ class SaleOrder(models.Model):
         location_to = logistic_pick_out_type.default_location_dest_id.id
 
         # ---------------------------------------------------------------------
+        # Pre check:
+        # ---------------------------------------------------------------------
+        if not self.payment_term_id:
+            raise exceptions.Warning(
+                _('Payment not present, insert before confirm!'))
+
+        # ---------------------------------------------------------------------
         # Select order to prepare:
         # ---------------------------------------------------------------------
         picking_ids = [] # return value
