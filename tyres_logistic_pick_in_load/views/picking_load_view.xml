@@ -443,7 +443,7 @@
 	                
 	                <button name="workflow_ready_print_extra" string="Print extra doc." type="object" icon="fa-list-alt fa-2x" attrs="{'invisible': [('has_extra_document','=',False)]}"/>
 	                
-	                <button name="set_workflow_logistic_done" string="Done!" type="object" icon="fa-thumbs-up fa-2x" confirm="Confirm? (cannot print document after mark as done!)" />
+	                <button name="set_workflow_logistic_done" string="Done!" type="object" icon="fa-thumbs-up fa-2x" confirm="Confirm? (cannot print document after mark as done!)" attrs="{'invisible': [('logistic_done','=',True)]}"/>
 	                
                 </tree>
             </field>
@@ -456,6 +456,15 @@
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_state', '=', ('ready', 'done')), ('locked_delivery', '=', False), ('logistic_done', '=', False)]</field>
+         </record>                 
+         <record model="ir.actions.act_window" id="action_sale_order_closed_form">
+             <field name="name">Sale order ready</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_id" ref="view_sale_order_ready_tree"/>
+             <field name="view_mode">tree,form,graph,pivot</field>
+             <field name="context">{}</field>
+             <field name="domain">[('logistic_state', '=', 'done'), ('locked_delivery', '=', False), ('logistic_done', '=', True)]</field>
          </record>                 
         <menuitem 
              id="menu_purchase_order_line" 
@@ -507,6 +516,13 @@
                  name="Order ready"
                  action="action_sale_order_ready_form"
                  sequence="40"
+                 />
+             <menuitem
+                 id="menu_logistic_ready_order_to_send_closed" 
+                 parent="menu_logistic_delivery_management_root"
+                 name="Order closed"
+                 action="action_sale_order_closed_form"
+                 sequence="50"
                  />
              
              
