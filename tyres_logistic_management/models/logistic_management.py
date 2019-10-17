@@ -1178,8 +1178,7 @@ class StockPicking(models.Model):
             for f in files:
                 res = get_invoice_reply_part(f)
                 if not res:
-                    _logger.error('File not with correct syntax: '
-                        'pick_in_19.003552-CEE.2019-9-24.csv')
+                    _logger.error('File not with correct syntax: %s' % f)
                     continue
 
                 # Update invoice information on picking:
