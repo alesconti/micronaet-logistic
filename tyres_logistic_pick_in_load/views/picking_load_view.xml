@@ -411,7 +411,7 @@
             <field name="model">sale.order</field>
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
-                <tree string="Sale order ready (highlith no label line)" decoration-warning="get_label_status=='manual'" decoration-danger="get_label_status=='error'" decoration-success="get_label_status=='shippy'">
+                <tree string="Sale order ready (highlith no label line)" decoration-info="get_label_status=='manual'" decoration-danger="get_label_status=='error'" decoration-success="get_label_status=='shippy'">
                     <field name="name" />
 	                <field name="date_order" />
 	                <field name="partner_id" />
