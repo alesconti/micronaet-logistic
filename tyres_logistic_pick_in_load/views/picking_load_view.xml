@@ -431,8 +431,8 @@
 
 	                <field name="shippy_ship_error" string="Check"/><!--TODO hide-->
 	                <button name="launch_shippy_ship" string="Relaunch shippy ship call, missing data: carrier or mode, insert and press this button, if done confirm?" 
-	                    type="object" icon="fa-caret-square-o-right fa-2x" attrs="{'invisible': [('shippy_ship_error','!=','error')]}"
-	                    confirm="Relaunch shippy ship call?" icon="fa-ban"/>
+	                    type="object" icon="fa-ban fa-2x" attrs="{'invisible': [('shippy_ship_error','!=','error')]}"
+	                    confirm="Relaunch shippy ship call?" />
 	                <field name="carrier_shippy" string="Shippy"/>
 	                <field name="carrier_supplier_id" string="Carrier"/>
 	                <field name="carrier_track_id" />
