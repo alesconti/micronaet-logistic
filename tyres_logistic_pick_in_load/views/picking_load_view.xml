@@ -430,7 +430,7 @@
                     <button name="mmac_fattura_inviata" string='FT' icon="fa-dollar text-danger" attrs="{'invisible': [('mmac_fattura_inviata','=',False)]}" />
 
 	                <field name="carrier_shippy" string="Shippy"/>
-	                <field name="carrier_supplier_id" />
+	                <field name="carrier_supplier_id" string="Carrier"/>
 	                <field name="carrier_track_id" />
 	                
                     <field name="state" invisible="1" />
