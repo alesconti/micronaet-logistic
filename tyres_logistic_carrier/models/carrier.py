@@ -169,11 +169,12 @@ class SaleOrder(models.Model):
         self.ensure_one()
 
         # Function:
+        def format_error(field):
+            return '<font color="red"><b> [%s] </b></font>' % field
+
         def get_partner_data(partner):
             ''' Embedded function to check partner data
             '''
-            def format_error(field):
-                return '<font color="red"><b> [%s] </b></font>' % field
                 
             return '%s %s %s - %s %s [%s %s] %s - %s<br/>' % (
                 partner.name or '',
@@ -188,12 +189,23 @@ class SaleOrder(models.Model):
                     _('Pos. fisc.')),
                 )
         
-        mask = _('<b>ORD.:</b> %s\n<b>INV.:</b> %s\n<b>DELIV.:</b> %s')
+        partner = self.partner_invoice_id
+        if self.fiscal_position_id != partner.property_account_position_id:
+            check_fiscal = format_error(
+                _('Fiscal pos.: Order: %s, Partner %s<br/>') % (
+                    self.fiscal_position_id.name,
+                    partner.property_account_position_id.name,
+                    ))
+        else:
+            check_fiscal = ''             
+
+        mask = _('%s<b>ORD.:</b> %s\n<b>INV.:</b> %s\n<b>DELIV.:</b> %s')
         self.carrier_check = mask % (
-                get_partner_data(self.partner_id),
-                get_partner_data(self.partner_invoice_id),
-                get_partner_data(self.partner_shipping_id),
-                )
+            check_fiscal,
+            get_partner_data(self.partner_id),
+            get_partner_data(partner),
+            get_partner_data(self.partner_shipping_id),
+            )
     
     # -------------------------------------------------------------------------
     #                                   COLUMNS:

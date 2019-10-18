@@ -2099,7 +2099,6 @@ class SaleOrder(models.Model):
         #if self.fiscal_position_id != partner.property_account_position_id:
         #    raise exceptions.Warning(
         #        _('Fiscal position different for order and fiscal partner!'))
-                
 
         # ---------------------------------------------------------------------
         # Select order to prepare:
