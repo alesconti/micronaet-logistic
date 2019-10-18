@@ -2087,13 +2087,19 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Pre-Check (before document generation):
         # ---------------------------------------------------------------------
+        partner = self.partner_invoice_id
         if not self.payment_term_id:
             raise exceptions.Warning(
                 _('Payment not present in sale order!'))
 
-        if not self.partner_invoice_id.property_account_position_id:
+        if not partner.property_account_position_id:
             raise exceptions.Warning(
                 _('Fiscal position not present (invoice partner)!'))
+        
+        if self.fiscal_position_id != partner.property_account_position_id:
+            raise exceptions.Warning(
+                _('Fiscal position different for order and fiscal partner!'))
+                
 
         # ---------------------------------------------------------------------
         # Select order to prepare:
