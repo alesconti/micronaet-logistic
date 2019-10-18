@@ -2096,9 +2096,9 @@ class SaleOrder(models.Model):
             raise exceptions.Warning(
                 _('Fiscal position not present (invoice partner)!'))
         
-        if self.fiscal_position_id != partner.property_account_position_id:
-            raise exceptions.Warning(
-                _('Fiscal position different for order and fiscal partner!'))
+        #if self.fiscal_position_id != partner.property_account_position_id:
+        #    raise exceptions.Warning(
+        #        _('Fiscal position different for order and fiscal partner!'))
                 
 
         # ---------------------------------------------------------------------
