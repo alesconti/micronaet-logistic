@@ -1838,7 +1838,8 @@ class SaleOrder(models.Model):
                     # Shippy call:
                     # ---------------------------------------------------------
                     if order.carrier_shippy:
-                        if order.carrier_supplier_id and order.carrier_mode_id:
+                        if order.carrier_supplier_id and order.carrier_mode_id\
+                                and order.shippy_rate_selected:
                             order.shippy_ship()
                             order.shippy_ship_error = 'ok'               
                             order.write_log_chatter_message(
