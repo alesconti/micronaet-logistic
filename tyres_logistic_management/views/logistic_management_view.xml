@@ -483,9 +483,15 @@
              <field name="model">sale.order</field>
              <field name="inherit_id" ref="sale.view_order_form"/>
              <field name="arch" type="xml">
-                <xpath expr="//button[@name='action_confirm']" position="after">
+                 <field name="date_order" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                 </field>
+                 <field name="validity_date" position="before">
+                     <field name="date_order" />
+                 </field>
+                 <xpath expr="//button[@name='action_confirm']" position="after">
                      <button name="wk_order_cancel" type="object" attrs="{'invisible': [('logistic_state','!=','error')]}" string="Cancel order" confirm="Order will go in cancel order and end the process, confirm?"/>
-                </xpath>
+                 </xpath>
                  <field name="payment_term_id" position="before">
                      <field name="partner_need_invoice" />
                      <field name="need_invoice" />
