@@ -1837,9 +1837,8 @@ class SaleOrder(models.Model):
                     # ---------------------------------------------------------
                     # Shippy call:
                     # ---------------------------------------------------------
-                    shippy_selected = [
-                        True for item in order.shippy_rate_ids if \
-                            item.shippy_rate_selected]
+                    shippy_selected = [True for item in order.shippy_rate_ids\
+                         if item.shippy_rate_selected]
                     if order.carrier_shippy:
                         if order.carrier_supplier_id and \
                                 order.carrier_mode_id and \
