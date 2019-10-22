@@ -1560,7 +1560,7 @@ class SaleOrder(models.Model):
         f_pdf = open(fullname, 'wb')
         f_pdf.write(pdf[0])
         f_pdf.close()
-        self.write_log_chatter_message(_('Print DDT %s') % fullname)
+        #self.write_log_chatter_message(_('Print DDT %s') % fullname)
         return self.send_report_to_printer(fullname, 'ddt')
 
     @api.multi
