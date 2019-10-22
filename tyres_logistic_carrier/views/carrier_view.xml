@@ -91,7 +91,7 @@
                             <field name="carrier_cost" readonly="1"/>
                             <field name="carrier_track_id" />                            
                             <newline/>
-                            <field name="mmac_shippy_order_id" />
+                            <!--<field name="mmac_shippy_order_id" />-->
                         </group>
                     </page>
                 </xpath>

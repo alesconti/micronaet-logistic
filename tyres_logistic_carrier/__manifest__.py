@@ -34,6 +34,7 @@
         'stock',
         'sale',
         'product',
+        #'mmac_odoo4', # Extra Fields
         #'tyres_logistic_management',
         ],
     'data': [
