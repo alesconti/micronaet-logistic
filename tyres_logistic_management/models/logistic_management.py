@@ -1827,18 +1827,18 @@ class SaleOrder(models.Model):
         order_ids = []
         for order in self:
             # Only carrier confirmed order goes in ready? internal order?
-            if order.logistic_source == 'web' and not order.carrier_ok:
-                order.write_log_chatter_message(
-                    _('Order cannot go in ready if carrier is not OK'))
-                continue    
+            #if order.logistic_source == 'web' and not order.carrier_ok:
+            #    order.write_log_chatter_message(
+            #        _('Order cannot go in ready if carrier is not OK'))
+            #    continue    
             
             line_state = set(order.order_line.mapped('logistic_state'))
             line_state.discard('unused') # remove kit line (exploded)
             line_state.discard('done') # if some line are in done multidelivery
             if tuple(line_state) == ('ready', ): # All line are logistic ready
-                if order.logistic_state in ('ready', 'done', 'cancel'):
-                    # Do nothing if in this states:
-                    continue
+                #if order.logistic_state in ('ready', 'done', 'cancel'):
+                #    # Do nothing if in this states:
+                #    continue
                 
                 if order.logistic_source in ('internal', 'workshop', 'resell'):
                     order.logistic_state = 'done'
@@ -1854,10 +1854,11 @@ class SaleOrder(models.Model):
                         if order.carrier_supplier_id and \
                                 order.carrier_mode_id and \
                                 any(shippy_selected):
-                            order.shippy_ship()
+                            order_ref = order.shippy_ship()
                             order.shippy_ship_error = 'ok'               
                             order.write_log_chatter_message(
-                                _('Launched shippy ship call now!'))
+                                _('Launched shippy ship call now [%s]!'
+                                    ) % order_ref)
                         else:
                             order.shippy_ship_error = 'error'               
                             order.write_log_chatter_message(
