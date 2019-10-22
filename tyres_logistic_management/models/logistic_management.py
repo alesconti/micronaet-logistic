@@ -1539,7 +1539,8 @@ class SaleOrder(models.Model):
     def workflow_ready_print_label(self):
         ''' Print picking
         '''
-        return self[0].shippy_print()
+        self.label_printed = True
+        return self.shippy_print()
 
     @api.multi
     def workflow_ready_print_ddt(self):
@@ -1733,6 +1734,12 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     #                           BUTTON EVENTS:
     # -------------------------------------------------------------------------
+    @api.multi
+    def label_printed_ok(self):
+        ''' Do nothing
+        '''
+        return True
+        
     @api.multi
     def locked_delivery_on(self):
         '''Update fields
@@ -2458,6 +2465,7 @@ class SaleOrder(models.Model):
         )
 
     logistic_done = fields.Boolean('Logistic Done')
+    label_printed = fields.Boolean('Label printed')
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft, new order received
 
