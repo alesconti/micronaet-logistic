@@ -2611,9 +2611,9 @@ class SaleOrderLine(models.Model):
         # ---------------------------------------------------------------------
         # Purchase pre-selection:
         # ---------------------------------------------------------------------
-        self.purchase_split_ids.unlink()
         comment += _('Unlink pre-assigned purchase line [#%s]<br/>') % len(
             self.purchase_split_ids)
+        self.purchase_split_ids.unlink()
 
         # ---------------------------------------------------------------------
         # Check BF
@@ -2667,11 +2667,11 @@ class SaleOrderLine(models.Model):
             #self.check_import_reply() # Needed?
 
             # Remove all lines:
+            comment += _('Remove delivery/internal line in Pick IN doc.<br/>')
             self.load_line_ids.write({
                 'state': 'draft',
                 })
             self.load_line_ids.unlink()
-            comment += _('Remove delivery/internal line in Pick IN doc.<br/>')
 
         else:
             comment += _('Not pick IN doc.<br/>')
