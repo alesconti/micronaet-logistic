@@ -1855,10 +1855,15 @@ class SaleOrder(models.Model):
                                 order.carrier_mode_id and \
                                 any(shippy_selected):
                             order_ref = order.shippy_ship()
-                            order.shippy_ship_error = 'ok'               
-                            order.write_log_chatter_message(
-                                _('Launched shippy ship call now [%s]!'
-                                    ) % order_ref)
+                            if order_ref:
+                                order.shippy_ship_error = 'ok'               
+                                order.write_log_chatter_message(
+                                    _('Launched shippy ship call now [%s]!'
+                                        ) % order_ref)
+                            else:            
+                                order.shippy_ship_error = 'error'               
+                                order.write_log_chatter_message(
+                                    _('Shippy call return no Order ID!'))
                         else:
                             order.shippy_ship_error = 'error'               
                             order.write_log_chatter_message(
