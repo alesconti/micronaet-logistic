@@ -1829,13 +1829,17 @@ class SaleOrder(models.Model):
             # Only carrier confirmed order goes in ready? internal order?
             if order.logistic_source == 'web' and not order.carrier_ok:
                 order.write_log_chatter_message(
-                    _('Order cannot go in ready if carrier is not OK')
+                    _('Order cannot go in ready if carrier is not OK'))
                 continue    
             
             line_state = set(order.order_line.mapped('logistic_state'))
             line_state.discard('unused') # remove kit line (exploded)
             line_state.discard('done') # if some line are in done multidelivery
-            if tuple(line_state) == ('ready', ): # All ready
+            if tuple(line_state) == ('ready', ): # All line are logistic ready
+                if order.logistic_state in ('done', 'cancel'):
+                    # Do nothing if in this states:
+                    continue
+                
                 if order.logistic_source in ('internal', 'workshop', 'resell'):
                     order.logistic_state = 'done'
                 else:

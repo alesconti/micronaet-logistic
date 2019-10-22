@@ -152,12 +152,11 @@ class SaleOrder(models.Model):
     def set_carrier_ok_yes(self, ):
         ''' Set carrier as OK
         '''
-        self.write_log_chatter_message(
-            _('Carrier data is OK')      
+        self.write_log_chatter_message(_('Carrier data is OK'))
 
         # Check if order needs to be passed in ready status:  
-        self.logistic_check_and_set_ready()
         self.carrier_ok = True
+        self.logistic_check_and_set_ready()
         return True
 
     @api.multi
@@ -165,7 +164,7 @@ class SaleOrder(models.Model):
         ''' Set carrier as UNDO
         '''
         self.write_log_chatter_message(
-            _('Carrier data is not OK (undo operation)')        
+            _('Carrier data is not OK (undo operation)'))      
         self.carrier_ok = False
         return True
 
