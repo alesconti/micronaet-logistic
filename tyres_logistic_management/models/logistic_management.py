@@ -1819,12 +1819,19 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     #                           UTILITY:
     # -------------------------------------------------------------------------
-    @api.multi # XXX not api.one?!?
+    @api.multi
     def logistic_check_and_set_ready(self):
         ''' Check if all line are in ready state (excluding unused)
+            Create for N orders not only one
         '''
         order_ids = []
         for order in self:
+            # Only carrier confirmed order goes in ready? internal order?
+            if order.logistic_source == 'web' and not order.carrier_ok:
+                order.write_log_chatter_message(
+                    _('Order cannot go in ready if carrier is not OK')
+                continue    
+            
             line_state = set(order.order_line.mapped('logistic_state'))
             line_state.discard('unused') # remove kit line (exploded)
             line_state.discard('done') # if some line are in done multidelivery
