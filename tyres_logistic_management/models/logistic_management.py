@@ -1845,40 +1845,6 @@ class SaleOrder(models.Model):
                 else:
                     order.logistic_state = 'ready'
 
-                    # ---------------------------------------------------------
-                    # Shippy call:
-                    # ---------------------------------------------------------
-                    shippy_selected = [True for item in order.shippy_rate_ids\
-                         if item.shippy_rate_selected]
-                    if order.carrier_shippy:
-                        if order.carrier_supplier_id and \
-                                order.carrier_mode_id and \
-                                any(shippy_selected):
-                            order_ref = order.shippy_ship()
-                            if order_ref:
-                                order.shippy_ship_error = 'ok'               
-                                order.write_log_chatter_message(
-                                    _('Launched shippy ship call now [%s]!'
-                                        ) % order_ref)
-                            else:            
-                                order.shippy_ship_error = 'error'               
-                                order.write_log_chatter_message(
-                                    _('Shippy call return no Order ID!'))
-                        else:
-                            order.shippy_ship_error = 'error'               
-                            order.write_log_chatter_message(
-                                _('Error check shippy needed data: %s%s%s') % (
-                                    '' if order.carrier_supplier_id else _(
-                                        ' Carrier not present'),
-                                    '' if order.carrier_mode_id else _(
-                                        ' Carrier mode not present'),
-                                    '' if any(shippy_selected) else _(
-                                        ' No rates selected!'),
-                                ))
-                    #else:
-                                    
-                    # ---------------------------------------------------------
-
                 order_ids.append(order.id)
 
         _logger.warning('Closed because ready # %s order' % len(order_ids))
@@ -2098,6 +2064,7 @@ class SaleOrder(models.Model):
         ''' Set order as done (from delivering)
         '''
         now = fields.Datetime.now()
+        order = self # readability
 
         # Pool used:
         picking_pool = self.env['stock.picking']
@@ -2130,11 +2097,43 @@ class SaleOrder(models.Model):
         #    raise exceptions.Warning(
         #        _('Fiscal position different for order and fiscal partner!'))
 
+        # ---------------------------------------------------------
+        # Shippy call:
+        # ---------------------------------------------------------
+        shippy_selected = any([True for item in order.shippy_rate_ids\
+             if item.shippy_rate_selected])
+        if order.carrier_shippy:
+            if order.carrier_supplier_id and \
+                    order.carrier_mode_id and \
+                    shippy_selected:
+                order_ref = order.shippy_ship()
+                if order_ref:
+                    order.shippy_ship_error = 'ok'               
+                    order.write_log_chatter_message(
+                        _('Launched shippy ship call now [%s]!'
+                            ) % order_ref)
+                else:            
+                    order.shippy_ship_error = 'error' # XXX No more need!
+                    raise exceptions.Warning(
+                        _('Shippy call return no Order ID!'))
+            else:
+                order.shippy_ship_error = 'error'
+                raise exceptions.Warning(
+                    _('Error check shippy needed data: %s%s%s') % (
+                        '' if order.carrier_supplier_id else _(
+                            ' Carrier not present'),
+                        '' if order.carrier_mode_id else _(
+                            ' Carrier mode not present'),
+                        '' if shippy_selected else _(
+                            ' No rates selected!'),
+                    ))
+                        
+        # ---------------------------------------------------------
+
         # ---------------------------------------------------------------------
         # Select order to prepare:
         # ---------------------------------------------------------------------
         picking_ids = [] # return value
-        order = self # readability
         _logger.warning('Generate pick out from order')
 
         # -----------------------------------------------------------------
