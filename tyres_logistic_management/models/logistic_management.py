@@ -2097,12 +2097,12 @@ class SaleOrder(models.Model):
         #    raise exceptions.Warning(
         #        _('Fiscal position different for order and fiscal partner!'))
 
-        # ---------------------------------------------------------
+        # ---------------------------------------------------------------------
         # Shippy call:
-        # ---------------------------------------------------------
+        # ---------------------------------------------------------------------
         shippy_selected = any([True for item in order.shippy_rate_ids\
              if item.shippy_rate_selected])
-        if order.carrier_shippy:
+        if order.carrier_shippy and not order.mmac_shippy_order_id:                    
             if order.carrier_supplier_id and \
                     order.carrier_mode_id and \
                     shippy_selected:
@@ -2127,8 +2127,8 @@ class SaleOrder(models.Model):
                         '' if shippy_selected else _(
                             ' No rates selected!'),
                     ))
-                        
-        # ---------------------------------------------------------
+        # else: order no shippy or yet assegnet mmac_shippy_order_id                
+        # ---------------------------------------------------------------------
 
         # ---------------------------------------------------------------------
         # Select order to prepare:
