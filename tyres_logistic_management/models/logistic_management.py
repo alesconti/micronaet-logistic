@@ -1850,7 +1850,16 @@ class SaleOrder(models.Model):
                         else:
                             order.shippy_ship_error = 'error'               
                             order.write_log_chatter_message(
-                                _('Error check shippy info after relaunch'))
+                                _('Error check shippy needed data: %s%s%s') % (
+                                    '' if order.carrier_supplier_id else _(
+                                        ' Carrier not present'),
+                                    '' if order.carrier_mode_id else _(
+                                        ' Carrier mode not present'),
+                                    '' if any(shippy_selected) else _(
+                                        ' No rates selected!'),
+                                ))
+                    #else:
+                                    
                     # ---------------------------------------------------------
 
                 order_ids.append(order.id)
