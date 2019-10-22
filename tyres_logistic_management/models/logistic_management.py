@@ -1836,7 +1836,7 @@ class SaleOrder(models.Model):
             line_state.discard('unused') # remove kit line (exploded)
             line_state.discard('done') # if some line are in done multidelivery
             if tuple(line_state) == ('ready', ): # All line are logistic ready
-                if order.logistic_state in ('done', 'cancel'):
+                if order.logistic_state in ('ready', 'done', 'cancel'):
                     # Do nothing if in this states:
                     continue
                 
