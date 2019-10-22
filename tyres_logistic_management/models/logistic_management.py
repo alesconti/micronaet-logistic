@@ -1515,9 +1515,10 @@ class SaleOrder(models.Model):
             printer_name,
             fullname,
             )
-        _logger.warning('Printing %s on %s [%s file]...' % (
-            fullname, printer_name, printer_mode, 
-            ))
+        self.write_log_chatter_message(_(
+            'Printing %s on %s [%s file]...') % (
+                fullname, printer_name, printer_mode, 
+                ))
 
         try:
             os.system(print_command)
@@ -1540,6 +1541,7 @@ class SaleOrder(models.Model):
         ''' Print picking
         '''
         self.label_printed = True
+        self.write_log_chatter_message(_('Shippy print label'))
         return self.shippy_print()
 
     @api.multi
@@ -1558,6 +1560,7 @@ class SaleOrder(models.Model):
         f_pdf = open(fullname, 'wb')
         f_pdf.write(pdf[0])
         f_pdf.close()
+        self.write_log_chatter_message(_('Print DDT %s') % fullname)
         return self.send_report_to_printer(fullname, 'ddt')
 
     @api.multi
@@ -1745,12 +1748,14 @@ class SaleOrder(models.Model):
         '''Update fields
         '''
         self.locked_delivery = True
+        self.write_log_chatter_message(_('Lock delivery'))
 
     @api.multi
     def locked_delivery_off(self):
         '''Update fields
         '''
         self.locked_delivery = False
+        self.write_log_chatter_message(_('Unlock delivery'))
 
     @api.multi
     def dummy(self):
