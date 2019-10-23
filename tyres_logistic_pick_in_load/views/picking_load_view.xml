@@ -187,6 +187,7 @@
                     <field name="larghezza" />
                     <field name="spalla" />
                     <field name="raggio" />
+                    <field name="misuracompleta" />
 
                     <filter name="my_selection" string="Current selected" domain="[('user_select_id', '=', uid), ('logistic_delivered_manual','&gt;',0)]"/><!--TODO Change ('delivery_id','=',False), -->
 
