@@ -811,7 +811,7 @@
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph,pivot</field>            
              <field name="context">{'view_mode_carrier': True}</field>
-             <field name="domain">[('carrier_ok', '=', False), ('logistic_state', 'in', ('order', 'pending', 'ready', 'delivering'))]</field>
+             <field name="domain">[('partner_id.internal_stock', '=', False), ('carrier_ok', '=', False), ('logistic_state', 'in', ('order', 'pending', 'ready', 'delivering'))]</field>
          </record>
 
          <record model="ir.actions.act_window" id="action_sale_order_dashboard_form">
