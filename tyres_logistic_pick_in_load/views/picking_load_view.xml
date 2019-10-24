@@ -178,6 +178,7 @@
             <field name="priority" eval="40"/>
             <field name="arch" type="xml">
                 <search string="Purchase line">
+                    <field name="misuracompleta" />
                     <field name="name" />
                     <field name="product_id" filter_domain="[('product_id','=',self)]"/>
                     <field name="order_id" filter_domain="[('order_id.name','ilike',self)]"/>
@@ -187,7 +188,6 @@
                     <field name="larghezza" />
                     <field name="spalla" />
                     <field name="raggio" />
-                    <field name="misuracompleta" />
 
                     <filter name="my_selection" string="Current selected" domain="[('user_select_id', '=', uid), ('logistic_delivered_manual','&gt;',0)]"/><!--TODO Change ('delivery_id','=',False), -->
 
