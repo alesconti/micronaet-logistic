@@ -1162,7 +1162,6 @@ class StockPicking(models.Model):
         # TODO schedule action?
         # Pool used:
         company_pool = self.env['res.company']
-        import pdb; pdb.set_trace()
 
         # Parameter:
         company = company_pool.search([])[0]
@@ -1214,6 +1213,9 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         for from_file, to_file in move_list:
             shutil.move(from_file, to_file)
+            _logger.warning('Moved files from %s to %s' % (
+                from_file, to_file,
+                ))
         return True
 
     # -------------------------------------------------------------------------
