@@ -212,7 +212,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     invoice_number, # Our invoice
                     invoice_date[:10], # Date doc,
                     '', # ISO country
-                    order.partner_invoice_id.property_account_position_id# TODO remove
+                    order.partner_invoice_id.property_account_position_id.name# TODO remove
                     ), default_format=format_text['text'])
             row += 1
             excel_pool.write_xls_line(ws_name, row, (
