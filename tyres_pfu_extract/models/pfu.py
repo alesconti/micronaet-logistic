@@ -177,8 +177,6 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         excel_pool.write_xls_line(ws_name, row, header, 
             default_format=format_text['header'])
         
-        format_text = False # Setup first page
-        
         # ---------------------------------------------------------------------
         # Write detail:
         # ---------------------------------------------------------------------        
