@@ -74,7 +74,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             ('delivery_id.supplier_id', '=', supplier.id),
 
             ('logistic_load_id', '!=', False), # Linked to order
-            #('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '=', True), # Linked to order
+            # TODO ('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '=', True), # Linked to order
             ]
 
         # ---------------------------------------------------------------------
@@ -111,11 +111,12 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         category_move = {}
         for move in moves:
+            real_product = move.product_id
             sale_line = move.logistic_load_id                
             if sale_line not in pfu_products: # Line dont' have PFU linked
                 continue
             pfu_product = pfu_products[sale_line].product_id
-            category = pfu_product.mmac_pfu.name or ''
+            category = real_product.mmac_pfu.name or ''
             if category not in category_move:
                 category_move[category] = []
             category_move[category].append((move.date, move))
