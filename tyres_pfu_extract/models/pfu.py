@@ -81,7 +81,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         #                           Collect data:
         # ---------------------------------------------------------------------
-        supplier_moves = {}
+        supplier_moves = []
         pfu_line_ids = [] # list of all sale order line (to check PFU)
         
         # ---------------------------------------------------------------------
@@ -89,10 +89,9 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         sold_moves = move_pool.search(domain)
         _logger.warning('Sold moves # %s' % len(sold_moves))
-        import pdb; pdb.set_trace()
+
         for move in sold_moves:
             sale_line = move.logistic_load_id
-            pfu_line_ids.append(sale_line.id)
             
             product_uom_qty = move.product_uom_qty
             customer = sale_line.order_id.partner_invoice_id
@@ -102,6 +101,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             if not fiscal_position.is_pfu: # not refund!
                 continue # Jump movement not PFU report
 
+            pfu_line_ids.append(sale_line.id)
             supplier_moves.append(move)
 
         # ---------------------------------------------------------------------
