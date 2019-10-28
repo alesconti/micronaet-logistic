@@ -74,8 +74,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             ('delivery_id.supplier_id', '=', supplier.id),
 
             ('logistic_load_id', '!=', False), # Linked to order
-            #('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '!=', False), # Linked to order
-            # NOT USED: ('product_id.mmac_pfu', '!=', False), # PFU category
+            ('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '!=', False), # Linked to order
             ]
 
         # ---------------------------------------------------------------------
@@ -87,21 +86,12 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         # A. All stock move sale
         # ---------------------------------------------------------------------
-        sold_moves = move_pool.search(domain)
-        _logger.warning('Sold moves # %s' % len(sold_moves))
-
-        for move in sold_moves:
-            sale_line = move.logistic_load_id
-            
-            product_uom_qty = move.product_uom_qty
-            customer = sale_line.order_id.partner_invoice_id
-            fiscal_position = customer.property_account_position_id
-            
-            # TODO used domain filter:
-            if not fiscal_position.is_pfu: # not refund!
-                continue # Jump movement not PFU report
-
-            pfu_line_ids.append(sale_line.id)
+        for move in move_pool.search(domain):
+            #sale_line = move.logistic_load_id            
+            #product_uom_qty = move.product_uom_qty
+            #customer = sale_line.order_id.partner_invoice_id
+            #fiscal_position = customer.property_account_position_id
+            pfu_line_ids.append(move.logistic_load_id.id)
             moves.append(move)
 
         # ---------------------------------------------------------------------
@@ -113,13 +103,12 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # Search sale line linked to sold product:
         pfu_lines = order_line_pool.search([
             ('mmac_pfu_line_id', 'in', pfu_line_ids),
-            #('product_id.mmac_pfu', '!=', False), # PFU category present
             ])
         _logger.warning('Sale line linked # %s' % len(pfu_lines))
 
         pfu_products = {}
-        for line in pfu_lines:
-            pfu_products[line.mmac_pfu_line_id] = line # product > PFU
+        for pfu_line in pfu_lines:
+            pfu_products[pfu_line.mmac_pfu_line_id] = pfu_line # product > PFU
 
         # ---------------------------------------------------------------------
         # C. Moves for category (clean no PFU sales):
@@ -127,12 +116,11 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         category_move = {}
         for move in moves:
             sale_line = move.logistic_load_id                
-            if sale_line not in pfu_products:
-                # Line dont' have PFU linked
+            if sale_line not in pfu_products: # Line dont' have PFU linked
                 continue
-            pfu_product = pfu_products.get(m.logistic_load_id.product_id)
+            pfu_product = pfu_products[sale_line].product_id
             category = pfu_product.mmac_pfu.name or ''
-            if category not in ctegory_move:
+            if category not in category_move:
                 category_move[category] = []
             category_move[category].append((move.date, move))
 
@@ -190,7 +178,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 pfu_line = pfu_products[move.logistic_load_id] # use pfu line
                 product = pfu_line.product_id
                 pfu = product.mmac_pfu
-                qty = pfu_line.product_uom_qty # XXX use order line not move!
+                qty = move.product_uom_qty # XXX use move not line qty!
 
                 # -------------------------------------------------------------
                 #                    Excel writing:
