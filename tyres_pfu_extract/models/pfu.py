@@ -81,7 +81,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         #                           Collect data:
         # ---------------------------------------------------------------------
-        supplier_moves = []
+        moves = [] # sold moves (article not PFU)
         pfu_line_ids = [] # list of all sale order line (to check PFU)
         
         # ---------------------------------------------------------------------
@@ -102,12 +102,12 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 continue # Jump movement not PFU report
 
             pfu_line_ids.append(sale_line.id)
-            supplier_moves.append(move)
+            moves.append(move)
 
         # ---------------------------------------------------------------------
         # B. PFU product linked
         # ---------------------------------------------------------------------
-        if not supplier_moves:
+        if not moves:
             raise exceptions.Warning('No PFU movement with this selection!')
 
         # Search sale line linked to sold product:
@@ -120,6 +120,21 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         pfu_products = {}
         for line in pfu_lines:
             pfu_products[line.mmac_pfu_line_id] = line # product > PFU
+
+        # ---------------------------------------------------------------------
+        # C. Moves for category (clean no PFU sales):
+        # ---------------------------------------------------------------------
+        category_move = {}
+        for move in moves:
+            sale_line = move.logistic_load_id                
+            if sale_line not in pfu_products:
+                # Line dont' have PFU linked
+                continue
+            pfu_product = pfu_products.get(m.logistic_load_id.product_id)
+            category = pfu_product.mmac_pfu.name or ''
+            if category not in ctegory_move:
+                category_move[category] = []
+            category_move[category].append((move.date, move))
 
         # ---------------------------------------------------------------------
         #                          EXTRACT EXCEL:
@@ -162,80 +177,58 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         excel_pool.write_xls_line(ws_name, row, header, 
             default_format=format_text['header'])
         
-        
         format_text = False # Setup first page
         
         # ---------------------------------------------------------------------
         # Write detail:
         # ---------------------------------------------------------------------        
         total = 0
-        subtotal = 0
-        last = False # Break level PFU code
-        for move in sorted(supplier_moves, key=lambda m: (
-                pfu_products.get(m.logistic_load_id.product_id.mmac_pfu.name),
-                m.date,
-                )):
-                #m.product_id.mmac_pfu.name, m.date)):
-
-            # First check:
-            sale_line = move.logistic_load_id                
-            if sale_line not in pfu_products:
-                # Line dont' have PFU linked
-                continue
-            
-            # Readability:
-            pfu_line = pfu_products[sale_line] # change in pfu move line
-            product = pfu_line.product_id
-            pfu = product.mmac_pfu
-            qty = pfu_line.product_uom_qty # XXX use order line not move!
-
-            if last != pfu:
-                if last != False:
-                    excel_pool.write_xls_line(ws_name, row, (
-                        subtotal,
-                        ), default_format=format_text['number'], col=3)                    
-                subtotal = 0
+        for category in sorted(category_move):
+            subtotal = 0
+            for date, move in sorted(category_move[category]):
                 row += 1
 
-            # -----------------------------------------------------------------
-            #                    Excel writing:
-            # -----------------------------------------------------------------
-            row += 1
-            # Total operation:
-            total += qty
-            subtotal += qty
-            
-            # -----------------------------------------------------------------
-            # Write data line:
-            # -----------------------------------------------------------------
+                # Readability:
+                pfu_line = pfu_products[move.logistic_load_id] # use pfu line
+                product = pfu_line.product_id
+                pfu = product.mmac_pfu
+                qty = pfu_line.product_uom_qty # XXX use order line not move!
+
+                # -------------------------------------------------------------
+                #                    Excel writing:
+                # -------------------------------------------------------------
+                # Total operation:
+                total += qty
+                subtotal += qty
+                
+                # -------------------------------------------------------------
+                # Write data line:
+                # -------------------------------------------------------------
+                excel_pool.write_xls_line(ws_name, row, (
+                    product.mmac_pfu.name,
+                    product.default_code,
+                    product.name,
+                    (qty, format_text['number']), # TODO check if it's all!!
+                    move.delivery_id.name, # Delivery ref.
+                    move.delivery_id.date,
+                    # TODO 
+                    '?', # Number supplier invoice
+                    '', # Our invoice
+                    '', # Date doc,
+                    '', # ISO country
+                    ), default_format=format_text['text'])
             excel_pool.write_xls_line(ws_name, row, (
-                product.mmac_pfu.name,
-                product.default_code,
-                product.name,
-                (qty, format_text['number']), # TODO check if it's all!!
-                move.delivery_id.name, # Delivery ref.
-                move.delivery_id.date,
-                '?', # Number supplier invoice
-                '', # Our invoice
-                '', # Date doc,
-                '', # ISO country
-                ), default_format=format_text['text'])
+                subtotal,
+                ), default_format=format_text['number'], col=3)                    
 
         # ---------------------------------------------------------------------
         # Write data line:
         # ---------------------------------------------------------------------
-        if last != False:
-            # Subtotal
-            row += 1
-            excel_pool.write_xls_line(ws_name, row, (
-                subtotal,
-                ), default_format=format_text['number'], col=3)
-
-            # Total
-            row += 1
-            excel_pool.write_xls_line(ws_name, row, (
-                'Totale:', total,
-                ), default_format=format_text['number'], col=2)
+        # Total
+        row += 1
+        excel_pool.write_xls_line(ws_name, row, (
+            'Totale:', total,
+            ), default_format=format_text['number'], col=2)
             
         # ---------------------------------------------------------------------
         # Save file:
