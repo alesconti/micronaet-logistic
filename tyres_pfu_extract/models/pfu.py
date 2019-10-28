@@ -180,7 +180,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 
                 # Get invoice reference:
                 try:
-                    invoice = order.logistic_picking_ids[0] or False
+                    invoice = order.logistic_picking_ids[0]
                 except:
                     _logger.error('No invoice for order %s' % order.name)
                     invoice = False
@@ -205,8 +205,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     move.delivery_id.date,
                     # TODO 
                     '?', # Number supplier invoice
-                    invoice.invoice_number if invoice else '?' , # Our invoice
-                    (invoice.invoice_date if invoice else '/')[:10], # Date doc,
+                    '?' if not invoice else invoice.invoice_number, # Our invoice
+                    ('' if not invoice else invoice.invoice_date)[:10], # Date doc,
                     '', # ISO country
                     order.partner_invoice_id.property_account_position_id# TODO remove
                     ), default_format=format_text['text'])
