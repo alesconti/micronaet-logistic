@@ -180,7 +180,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 
                 # Get invoice reference:
                 try:
-                    invoice = order.logistic_picking_ids[0]                    
+                    invoice = order.logistic_picking_ids[0] or False
                 except:
                     _logger.error('No invoice for order %s' % order.name)
                     invoice = False
