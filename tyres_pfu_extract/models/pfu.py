@@ -134,7 +134,6 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             'text': excel_pool.get_format('text'),
             'number': excel_pool.get_format('number'),
             }            
-        excel_pool.columns_width(ws_name, column_width)
 
         # Excel file configuration:
         header = ('RAEE', 'Cod. Articolo', 'Descrizione', u'Q.tà', 
@@ -146,6 +145,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             5, 6, 10, 10, 
             6, 6,
             )    
+        excel_pool.column_width(ws_name, column_width)
 
         # Header write:
         row = 0
