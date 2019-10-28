@@ -142,8 +142,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             
         column_width = (
             5, 15, 25, 5, 
-            5, 6, 10, 10, 
-            6, 6,
+            15, 10, 10, 15, 
+            10, 8,
             )    
         excel_pool.column_width(ws_name, column_width)
 
@@ -205,9 +205,10 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     move.delivery_id.date,
                     # TODO 
                     '?', # Number supplier invoice
-                    invoice.invoice_number if invoice else '' , # Our invoice
-                    invoice.invoice_date if invoice else '', # Date doc,
+                    invoice.invoice_number if invoice else '?' , # Our invoice
+                    (invoice.invoice_date if invoice else '/')[:10], # Date doc,
                     '', # ISO country
+                    order.partner_invoice_id.property_account_position_id# TODO remove
                     ), default_format=format_text['text'])
             row += 1
             excel_pool.write_xls_line(ws_name, row, (
