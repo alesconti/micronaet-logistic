@@ -173,9 +173,18 @@ class StockPickingPfuExtractWizard(models.TransientModel):
 
                 # Readability:
                 pfu_line = pfu_products[move.logistic_load_id] # use pfu line
+                order = move.logistic_load_id.order_id
                 product = pfu_line.product_id
-                pfu = product.mmac_pfu
+                #pfu = product.mmac_pfu
                 qty = move.product_uom_qty # XXX use move not line qty!
+                
+                # Get invoice reference:
+                try:
+                    invoice = order.logistic_picking_ids[0]                    
+                except:
+                    _logger.error('No invoice for order %s' % order.name)
+                    invoice = False
+                # TODO check more than one error
 
                 # -------------------------------------------------------------
                 #                    Excel writing:
@@ -188,7 +197,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 # Write data line:
                 # -------------------------------------------------------------
                 excel_pool.write_xls_line(ws_name, row, (
-                    product.mmac_pfu.name,
+                    category, #product.mmac_pfu.name,
                     product.default_code,
                     product.name,
                     (qty, format_text['number']), # TODO check if it's all!!
@@ -196,8 +205,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     move.delivery_id.date,
                     # TODO 
                     '?', # Number supplier invoice
-                    '', # Our invoice
-                    '', # Date doc,
+                    invoice.invoice_number if invoice else '' , # Our invoice
+                    invoice.invoice_date if invoice else '', # Date doc,
                     '', # ISO country
                     ), default_format=format_text['text'])
             excel_pool.write_xls_line(ws_name, row, (
