@@ -172,7 +172,10 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         subtotal = 0
         last = False # Break level PFU code
         for move in sorted(supplier_moves, key=lambda m: (
-                m.product_id.mmac_pfu.name, m.date)):
+                pfu_products.get(m.logistic_load_id.product_id.mmac_pfu.name),
+                m.date,
+                )):
+                #m.product_id.mmac_pfu.name, m.date)):
 
             # First check:
             sale_line = move.logistic_load_id                
