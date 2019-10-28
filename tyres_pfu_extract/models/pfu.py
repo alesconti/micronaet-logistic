@@ -60,6 +60,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         ''' Extract Excel PFU report
         '''
         move_pool = self.env['stock.move']
+        order_line_pool = self.env['sale.order.line']
         excel_pool = self.env['excel.writer']
         
         from_date = self.from_date
@@ -72,28 +73,48 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             ('delivery_id.date', '<', to_date),
             ('delivery_id.supplier_id', '=', supplier.id),
 
-            ('product_id.mmac_pfu', '!=', False), # PFU category present
             ('logistic_load_id', '!=', False), # Linked to order
             #('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '!=', False), # Linked to order
+            # NOT USED: ('product_id.mmac_pfu', '!=', False), # PFU category
             ]
 
         # ---------------------------------------------------------------------
-        # Collect data:
-        # ---------------------------------------------------------------------        
+        #                           Collect data:
+        # ---------------------------------------------------------------------
         supplier_moves = {}
+        pfu_line_ids = [] # list of all sale order line (to check PFU)
+        
+        # ---------------------------------------------------------------------
+        # A. All stock move sale
+        # ---------------------------------------------------------------------
         for move in move_pool.search(domain):
             sale_line = move.logistic_load_id
+            pfu_line_ids.append(sale_line.id)
+            
             product_uom_qty = move.product_uom_qty
             customer = sale_line.order_id.partner_invoice_id
             fiscal_position = customer.property_account_position_id
-
+            
+            # TODO used domain filter:
             if not fiscal_position.is_pfu: # not refund!
                 continue # Jump movement not PFU report
 
             supplier_moves.append(move)
-        
+
+        # ---------------------------------------------------------------------
+        # B. PFU product linked
+        # ---------------------------------------------------------------------
         if not supplier_moves:
             raise exceptions.Warning('No PFU movement with this selection!')
+
+        # Search sale line linked to sold product:
+        pfu_lines = order_line_pool.search([
+            ('mmac_pfu_line_id', 'in', pfu_line_ids),
+            #('product_id.mmac_pfu', '!=', False), # PFU category present
+            ])
+        pfu_products = {}
+        for line in pfu_lines:
+            pfu_products[line.mmac_pfu_line_id] = line # product > PFU
 
         # ---------------------------------------------------------------------
         #                          EXTRACT EXCEL:
@@ -147,12 +168,18 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         last = False # Break level PFU code
         for move in sorted(supplier_moves, key=lambda m: (
                 m.product_id.mmac_pfu.name, m.date)):
-            row += 1
+
+            # First check:
+            sale_line = move.logistic_load_id                
+            if sale_line not in pfu_products:
+                # Line dont' have PFU linked
+                continue
             
             # Readability:
-            product = move.product_id
+            pfu_line = pfu_products[sale_line] # change in pfu move line
+            product = pfu_line.product_id
             pfu = product.mmac_pfu
-            qty = move.product_uom_qty
+            qty = pfu_line.product_uom_qty # XXX use order line not move!
 
             if last != pfu:
                 if last != False:
@@ -162,13 +189,17 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 subtotal = 0
                 row += 1
 
+            # -----------------------------------------------------------------
+            #                    Excel writing:
+            # -----------------------------------------------------------------
+            row += 1
             # Total operation:
             total += qty
             subtotal += qty
             
-            # -------------------------------------------------------------
+            # -----------------------------------------------------------------
             # Write data line:
-            # -------------------------------------------------------------
+            # -----------------------------------------------------------------
             excel_pool.write_xls_line(ws_name, row, (
                 product.mmac_pfu.name,
                 product.default_code,
@@ -182,9 +213,9 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 '', # ISO country
                 ), default_format=format_text['text'])
 
-        # -----------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # Write data line:
-        # -----------------------------------------------------------------
+        # ---------------------------------------------------------------------
         if last != False:
             # Subtotal
             row += 1
