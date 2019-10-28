@@ -87,7 +87,10 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         # A. All stock move sale
         # ---------------------------------------------------------------------
-        for move in move_pool.search(domain):
+        sold_moves = move_pool.search(domain)
+        _logger.warning('Sold moves # %s' % len(sold_moves))
+        import pdb; pdb.set_trace()
+        for move in sold_moves:
             sale_line = move.logistic_load_id
             pfu_line_ids.append(sale_line.id)
             
@@ -112,6 +115,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             ('mmac_pfu_line_id', 'in', pfu_line_ids),
             #('product_id.mmac_pfu', '!=', False), # PFU category present
             ])
+        _logger.warning('Sale line linked # %s' % len(pfu_lines))
+
         pfu_products = {}
         for line in pfu_lines:
             pfu_products[line.mmac_pfu_line_id] = line # product > PFU
