@@ -209,6 +209,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     invoice.invoice_date if invoice else '', # Date doc,
                     '', # ISO country
                     ), default_format=format_text['text'])
+            row += 1
             excel_pool.write_xls_line(ws_name, row, (
                 subtotal,
                 ), default_format=format_text['number'], col=3)                    
