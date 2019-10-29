@@ -120,7 +120,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # ---------------------------------------------------------------------        
         setup_complete = False # For initial setup:
         for supplier in sorted(supplier_category_move):
-            ws_name = supplier.name
+            ws_name = supplier.name.strip()
             
             # -----------------------------------------------------------------
             # Excel sheet creation:
