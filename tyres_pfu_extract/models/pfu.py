@@ -74,7 +74,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             ('delivery_id.supplier_id', '=', supplier.id),
 
             ('logistic_load_id', '!=', False), # Linked to order
-            # TODO ('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '=', True), # Linked to order
+            ('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '=', True), # Linked to order
             ]
 
         # ---------------------------------------------------------------------
@@ -108,7 +108,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             'Data Doc.', 'ISO stato')
             
         column_width = (
-            5, 15, 25, 5, 
+            5, 15, 35, 5, 
             15, 10, 10, 15, 
             10, 8,
             )    
@@ -118,10 +118,15 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         row = 0
         excel_pool.write_xls_line(ws_name, row, [
             'Fornitore:',
-            supplier.sql_supplier_code,
-            supplier.name,
+            '',
+            '% [%s]' % (
+                supplier.name or '',
+                supplier.sql_supplier_code or '/',
+                ),
+            '',
             '',
             'Dalla data: %s' % from_date,
+            '',
             'Alla data: %s' % to_date,
             ], default_format=format_text['title'])
             
@@ -178,7 +183,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     invoice_number, # Our invoice
                     invoice_date[:10], # Date doc,
                     partner.country_id.code or '??', # ISO country
-                    order.partner_invoice_id.property_account_position_id.name, # TODO remove
+                    #order.partner_invoice_id.property_account_position_id.name, # TODO remove
                     ), default_format=format_text['text'])
             row += 1
             excel_pool.write_xls_line(ws_name, row, (
