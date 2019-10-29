@@ -126,6 +126,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             # Excel sheet creation:
             # -----------------------------------------------------------------
             excel_pool.create_worksheet(ws_name)
+            excel_pool.column_width(ws_name, column_width)
             if not setup_complete: # First page only:
                 setup_complete = True
                 excel_pool.set_format()
@@ -135,7 +136,6 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     'text': excel_pool.get_format('text'),
                     'number': excel_pool.get_format('number'),
                     }
-                excel_pool.column_width(ws_name, column_width)
                 
             # Header write:
             row = 0
