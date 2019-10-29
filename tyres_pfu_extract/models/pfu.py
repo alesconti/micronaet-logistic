@@ -155,9 +155,9 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 default_format=format_text['header'])
                 
             total = 0
-            for category in sorted(category_move[supplier]):
+            for category in sorted(supplier_category_move[supplier]):
                 subtotal = 0
-                for move in sorted(category_move[supplier][category],
+                for move in sorted(supplier_category_move[supplier][category],
                         key=lambda x: x.date):
                     row += 1
 
