@@ -121,7 +121,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             u'',
             u'% %s' % (
                 supplier.name or u'',
-                supplier.sql_supplier_code or u'/',
+                supplier.sql_supplier_code or '',
                 ),
             u'',
             u'',
