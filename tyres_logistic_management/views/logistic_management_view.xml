@@ -188,6 +188,30 @@
 
          
          <!--stock.picking-->
+         <record model="ir.ui.view" id="view_stock_picking_invoice_tree">
+             <field name="name">stock.picking.invoice.tree</field>
+             <field name="model">stock.picking</field>
+             <field name="priority" eval="40" />
+             <field name="arch" type="xml">
+                 <tree string="String" editable="bottom">
+                     <field name="name" readonly="1"/>
+                     <field name="scheduled_date" readonly="1"/>
+                     <field name="invoice_number" />
+                     <field name="invoice_filename" />
+                     <field name="invoice_date" />
+                 </tree>
+             </field>
+         </record>
+         <record model="ir.actions.act_window" id="action_stock_picking_invoice_tree">
+             <field name="name">Stock picking invoice</field>
+             <field name="res_model">stock.picking</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree</field>
+             <field name="view_id" ref="view_stock_picking_invoice_tree"/>
+             <field name="context">{}</field>
+             <field name="domain">[('invoice_number', '!=', False)]</field>
+         </record>
+         
          <record model="ir.ui.view" id="view_stock_picking_confirm_out_form">
              <field name="name">stock.picking.form</field>
              <field name="model">stock.picking</field>
@@ -1218,6 +1242,15 @@
                      action="action_stock_picking_invoice_out"
                      sequence="20"             
                      />
+                 <menuitem
+                     id="menu_logistic_left_pick_out_document_invoice_change" 
+                     parent="menu_logistic_left_pick_out_root"
+                     name="Change invoice ref."
+                     action="action_stock_picking_invoice_tree"
+                     sequence="30"             
+                     groups="tyres_logistic_management.group_logistic_manager"            
+                     />
+                 
 
              <menuitem
                  id="menu_logistic_left_stock_move_root" 
