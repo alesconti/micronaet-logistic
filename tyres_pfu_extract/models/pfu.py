@@ -117,17 +117,17 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # Header write:
         row = 0
         excel_pool.write_xls_line(ws_name, row, [
-            'Fornitore:',
-            '',
-            '% [%s]' % (
-                supplier.name or '',
-                supplier.sql_supplier_code or '/',
+            u'Fornitore:',
+            u'',
+            u'% [%s]' % (
+                supplier.name or u'',
+                supplier.sql_supplier_code or u'/',
                 ),
-            '',
-            '',
-            'Dalla data: %s' % from_date,
-            '',
-            'Alla data: %s' % to_date,
+            u'',
+            u'',
+            u'Dalla data: %s' % from_date,
+            u'',
+            u'Alla data: %s' % to_date,
             ], default_format=format_text['title'])
             
         row += 2
