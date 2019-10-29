@@ -84,7 +84,9 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # A. All stock move sale
         category_move = {}
         for move in move_pool.search(domain):            
-            category = move.product_id.mmac_pfu.name or ''
+            category = move.product_id.mmac_pfu.name or False
+            if not category: # Missed category product not in report
+                continue
             if category not in category_move:
                 category_move[category] = []
             category_move[category].append(move)
