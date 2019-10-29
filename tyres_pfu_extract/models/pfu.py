@@ -111,8 +111,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             'Data Doc.', 'ISO stato')
             
         column_width = (
-            5, 15, 35, 5, 
-            15, 10, 10, 15, 
+            5, 15, 45, 5, 
+            15, 12, 12, 15, 
             10, 8,
             )    
         excel_pool.column_width(ws_name, column_width)
@@ -122,8 +122,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         excel_pool.write_xls_line(ws_name, row, [
             u'Fornitore:',
             u'',
-            supplier.sql_supplier_code or '',
             supplier.name or '',
+            supplier.sql_supplier_code or '',
             u'',
             u'Dalla data: %s' % from_date,
             u'',
