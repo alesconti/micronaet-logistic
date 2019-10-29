@@ -75,6 +75,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
 
             ('logistic_load_id', '!=', False), # Linked to order
             ('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '=', True), # Linked to order
+            # TODO Order web only?
             ]
 
         # ---------------------------------------------------------------------
@@ -172,7 +173,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 excel_pool.write_xls_line(ws_name, row, (
                     category, #product.mmac_pfu.name,
                     product.default_code,
-                    product.name,
+                    product.name_extended, #name,
                     (qty, format_text['number']), # TODO check if it's all!!
                     move.delivery_id.name, # Delivery ref.
                     move.delivery_id.date,
