@@ -119,11 +119,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         excel_pool.write_xls_line(ws_name, row, [
             u'Fornitore:',
             u'',
-            u'% %s' % (
-                supplier.name or u'',
-                supplier.sql_supplier_code or '',
-                ),
-            u'',
+            supplier.sql_supplier_code or '',
+            supplier.name or '',
             u'',
             u'Dalla data: %s' % from_date,
             u'',
