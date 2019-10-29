@@ -51,8 +51,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
     # -------------------------------------------------------------------------    
     partner_id = fields.Many2one('res.partner', 'Supplier',# required=True,
         domain="[('supplier', '=', True)]")
-    from_date = fields.Date('From date', required=True)
-    to_date = fields.Date('To date', required=True)
+    from_date = fields.Date('From date >=', required=True)
+    to_date = fields.Date('To date <', required=True)
     # -------------------------------------------------------------------------    
 
     @api.multi
