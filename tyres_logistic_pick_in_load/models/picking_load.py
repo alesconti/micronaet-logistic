@@ -381,6 +381,29 @@ class StockMove(models.Model):
     #                                   Button event:
     # -------------------------------------------------------------------------
     @api.multi
+    def unlink_pending_stock_movement(self):
+        ''' Unlink stock move with log
+        '''
+        # Log deletion on original order:
+        order = self.logistic_load_id.order_id
+        order.write_log_chatter_message(_(
+            'Delete stock move, Delivery: %s, wrong load: %s [%s] q %s') % (
+                self.partner_id.name,
+                self.product_id.name,
+                self.product_id.default_code,
+                self.product_uom_qty,
+                ))
+        purchase_line = self.logistic_purchase_id
+        purchase_line.write({
+            'user_select_id': False,
+            'logistic_delivered_manual': 0.0,
+            'check_status': 'partial',
+            })
+        
+        self.state = 'draft'
+        self.unlink()
+        
+    @api.multi
     def generate_delivery_orders_from_line(self):
         ''' Delivery order creation:
             Create the list of all order received splitted for supplier        

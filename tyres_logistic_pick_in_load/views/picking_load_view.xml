@@ -235,7 +235,7 @@
             <field name="name">stock.move.tree</field>
             <field name="model">stock.move</field>
             <field name="arch" type="xml">
-                <tree string="String" editable="bottom" decoration-primary="dropship_manage==True">
+                <tree string="Orphan stock move" editable="bottom" decoration-primary="dropship_manage==True">
                     <field name="picking_id" invisible="1"/>
                     <field name="date" />
                     <field name="partner_id" readonly="1"/>
@@ -248,6 +248,7 @@
                     <field name="product_uom_qty" readonly="1" />
                     <field name="dropship_manage" invisible="1"/>
                     <field name="state" invisible="1" />
+                    <button name="unlink_pending_stock_movement" string="Unlink stock move" type="object" confirm="Confirm remove of pending stock movement?" icon="fa-minus-square fa-2x" attrs="{'invisible': [('dropship_manage','=',True)]}"/>
                     <!--TODO-->
                 </tree>
             </field>
