@@ -60,7 +60,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         ''' Extract Excel PFU report
         '''
         move_pool = self.env['stock.move']
-        #order_line_pool = self.env['sale.order.line']
+        order_line_pool = self.env['sale.order.line']
         excel_pool = self.env['excel.writer']
         
         from_date = self.from_date
@@ -80,13 +80,46 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         #                           Collect data:
         # ---------------------------------------------------------------------
+        moves = [] # sold moves (article not PFU)
+        pfu_line_ids = [] # list of all sale order line (to check PFU)
+        
+        # ---------------------------------------------------------------------
         # A. All stock move sale
+        # ---------------------------------------------------------------------
+        for move in move_pool.search(domain):
+            pfu_line_ids.append(move.logistic_load_id.id)
+            moves.append(move)
+
+        # ---------------------------------------------------------------------
+        # B. PFU product linked
+        # ---------------------------------------------------------------------
+        if not moves:
+            raise exceptions.Warning('No PFU movement with this selection!')
+
+        # Search sale line linked to sold product:
+        pfu_lines = order_line_pool.search([
+            ('mmac_pfu_line_id', 'in', pfu_line_ids),
+            ])
+        _logger.warning('Sale line linked # %s' % len(pfu_lines))
+
+        pfu_products = {}
+        for pfu_line in pfu_lines:
+            pfu_products[pfu_line.mmac_pfu_line_id] = pfu_line # product > PFU
+
+        # ---------------------------------------------------------------------
+        # C. Moves for category (clean no PFU sales):
+        # ---------------------------------------------------------------------
         category_move = {}
-        for move in move_pool.search(domain):            
-            category = move.product_id.mmac_pfu.name or ''
+        for move in moves:
+            real_product = move.product_id
+            sale_line = move.logistic_load_id                
+            if sale_line not in pfu_products: # Line dont' have PFU linked
+                continue
+            pfu_product = pfu_products[sale_line].product_id
+            category = real_product.mmac_pfu.name or ''
             if category not in category_move:
                 category_move[category] = []
-            category_move[category].append(move)
+            category_move[category].append((move.date, move))
 
         # ---------------------------------------------------------------------
         #                          EXTRACT EXCEL:
@@ -135,15 +168,15 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         total = 0
         for category in sorted(category_move):
             subtotal = 0
-            for move in sorted(category_move[category],
-                    key=lambda x: x.date):
+            for date, move in sorted(category_move[category]):
                 row += 1
 
                 # Readability:
+                pfu_line = pfu_products[move.logistic_load_id] # use pfu line
                 order = move.logistic_load_id.order_id
-                partner = order.partner_invoice_id
-                product = move.product_id
-                qty = move.product_uom_qty # Delivered qty
+                product = pfu_line.product_id
+                #pfu = product.mmac_pfu
+                qty = move.product_uom_qty # XXX use move not line qty!
                 
                 # Get invoice reference:
                 try:
@@ -174,11 +207,12 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     (qty, format_text['number']), # TODO check if it's all!!
                     move.delivery_id.name, # Delivery ref.
                     move.delivery_id.date,
-                    '', # Number supplier invoice
+                    # TODO 
+                    '?', # Number supplier invoice
                     invoice_number, # Our invoice
                     invoice_date[:10], # Date doc,
-                    partner.country_id.code or '??', # ISO country
-                    order.partner_invoice_id.property_account_position_id.name, # TODO remove
+                    '', # ISO country
+                    order.partner_invoice_id.property_account_position_id.name# TODO remove
                     ), default_format=format_text['text'])
             row += 1
             excel_pool.write_xls_line(ws_name, row, (
