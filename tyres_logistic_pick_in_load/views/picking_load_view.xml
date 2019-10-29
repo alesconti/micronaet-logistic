@@ -248,7 +248,11 @@
                     <field name="product_uom_qty" readonly="1" />
                     <field name="dropship_manage" invisible="1"/>
                     <field name="state" invisible="1" />
-                    <button name="unlink_pending_stock_movement" string="Unlink stock move" type="object" confirm="Confirm remove of pending stock movement?" icon="fa-minus-square fa-2x" attrs="{'invisible': [('dropship_manage','=',True)]}"/>
+                    <button name="unlink_pending_stock_movement" string="Unlink stock move" 
+                        type="object" confirm="Confirm remove of pending stock movement?" 
+                        icon="fa-minus-square fa-2x" attrs="{'invisible': [('dropship_manage','=',True)]}"
+                        groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
+                        />
                     <!--TODO-->
                 </tree>
             </field>
