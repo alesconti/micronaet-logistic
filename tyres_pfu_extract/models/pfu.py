@@ -119,7 +119,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # Write detail:
         # ---------------------------------------------------------------------        
         setup_complete = False # For initial setup:
-        for supplier in sorted(supplier_category_move):
+        for supplier in sorted(supplier_category_move, key=lambda x: x.name):
             ws_name = supplier.name.strip()
             
             # -----------------------------------------------------------------
