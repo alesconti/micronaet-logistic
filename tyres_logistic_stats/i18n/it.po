@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-31 16:05+0000\n"
-"PO-Revision-Date: 2019-10-31 17:06+0100\n"
+"POT-Creation-Date: 2019-10-31 17:11+0000\n"
+"PO-Revision-Date: 2019-10-31 18:12+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,40 +18,51 @@ msgstr ""
 "X-Generator: Poedit 1.6.10\n"
 
 #. module: tyres_logistic_stats
-#: code:addons/tyres_logistic_stats/models/logistic_stats.py:171
+#: code:addons/tyres_logistic_stats/models/logistic_stats.py:195
 #, python-format
 msgid "- Marketplace fee: <b>%10.2f</b><br/>"
 msgstr "- Costo Marketplace: <b>%10.2f</b><br/>"
 
 #. module: tyres_logistic_stats
-#: code:addons/tyres_logistic_stats/models/logistic_stats.py:180
+#: code:addons/tyres_logistic_stats/models/logistic_stats.py:205
 #, python-format
 msgid "- PFU: <b>%10.2f</b><br/><i>%s</i><br/>"
 msgstr "- PFU: <b>%10.2f</b><br/><i>%s</i><br/>"
 
 #. module: tyres_logistic_stats
-#: code:addons/tyres_logistic_stats/models/logistic_stats.py:170
+#: code:addons/tyres_logistic_stats/models/logistic_stats.py:194
 #, python-format
 msgid "- Payment fee: <b>%10.2f</b><br/>"
 msgstr "- Costo pagamenti: <b>%10.2f</b><br/>"
 
 #. module: tyres_logistic_stats
-#: code:addons/tyres_logistic_stats/models/logistic_stats.py:186
+#: code:addons/tyres_logistic_stats/models/logistic_stats.py:211
 #, python-format
 msgid "- Purchase: <b>%10.2f</b><br/><i>%s</i><br/>"
 msgstr "- Costo acquisti: <b>%10.2f</b><br/><i>%s</i><br/>"
 
 #. module: tyres_logistic_stats
-#: code:addons/tyres_logistic_stats/models/logistic_stats.py:174
+#: code:addons/tyres_logistic_stats/models/logistic_stats.py:196
+#, python-format
+msgid "- Shippy: <b>%10.2f</b><br/>"
+msgstr "- Shippy: <b>%10.2f</b><br/>"
+
+#. module: tyres_logistic_stats
+#: code:addons/tyres_logistic_stats/models/logistic_stats.py:199
 #, python-format
 msgid "- Transport: <b>%10.2f</b><br/><i>%s</i><br/>"
 msgstr "- Trasporto: <b>%10.2f</b><br/><i>%s</i><br/>"
 
 #. module: tyres_logistic_stats
-#: code:addons/tyres_logistic_stats/models/logistic_stats.py:191
+#: code:addons/tyres_logistic_stats/models/logistic_stats.py:216
 #, python-format
 msgid "= Margin: <b>%10.2f</b> >> %10.2f %%<br/>"
 msgstr "= Margine: <b>%10.2f</b> >> %10.2f %%<br/>"
+
+#. module: tyres_logistic_stats
+#: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_tree
+msgid "Canale"
+msgstr "Canale"
 
 #. module: tyres_logistic_stats
 #: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_search
@@ -64,6 +75,12 @@ msgid "Detail:"
 msgstr "Dettagli:"
 
 #. module: tyres_logistic_stats
+#: model:ir.model.fields,field_description:tyres_logistic_stats.field_sale_order_stat_excluded
+#: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_search
+msgid "Excluded"
+msgstr "Escluso"
+
+#. module: tyres_logistic_stats
 #: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_search
 msgid "Fiscal position"
 msgstr "Posizione fiscale"
@@ -72,6 +89,11 @@ msgstr "Posizione fiscale"
 #: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_search
 msgid "Group By..."
 msgstr "Raggruppa per..."
+
+#. module: tyres_logistic_stats
+#: model:ir.model.fields,help:tyres_logistic_stats.field_sale_order_stat_excluded
+msgid "Has internal purchase"
+msgstr "Ha acquisti interni che sfalsano la statistica"
 
 #. module: tyres_logistic_stats
 #: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_search
@@ -99,20 +121,57 @@ msgid "Logistic state"
 msgstr "Stato logistica"
 
 #. module: tyres_logistic_stats
+#: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_tree
+msgid "Market"
+msgstr "Market"
+
+#. module: tyres_logistic_stats
 #: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_search
 msgid "No Shippy"
 msgstr "No Shippy"
 
 #. module: tyres_logistic_stats
+#: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_search
+msgid "Not excluded"
+msgstr "Ordini per statistica"
+
+#. module: tyres_logistic_stats
+#: code:addons/tyres_logistic_stats/models/logistic_stats.py:71
+#, python-format
+msgid "Order"
+msgstr "Ordini"
+
+#. module: tyres_logistic_stats
 #: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_form
 msgid "Order line:"
-msgstr "Order line:"
+msgstr "Righe ordine"
 
 #. module: tyres_logistic_stats
 #: model:ir.actions.act_window,name:tyres_logistic_stats.action_sale_order_statistics
-#: model:ir.ui.menu,name:tyres_logistic_stats.menu_logistic_left_statistic_all
+#: model:ir.ui.menu,name:tyres_logistic_stats.menu_logistic_left_statistic_used
 msgid "Order statistic"
 msgstr "Statistiche ordini"
+
+#. module: tyres_logistic_stats
+#: model:ir.actions.act_window,name:tyres_logistic_stats.action_sale_order_statistics_all
+#: model:ir.ui.menu,name:tyres_logistic_stats.menu_logistic_left_statistic_all
+msgid "Order statistic (all)"
+msgstr "Tutti"
+
+#. module: tyres_logistic_stats
+#: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_tree
+msgid "PFU"
+msgstr "PFU"
+
+#. module: tyres_logistic_stats
+#: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_tree
+msgid "Pag."
+msgstr "Pag."
+
+#. module: tyres_logistic_stats
+#: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_tree
+msgid "Pagamento"
+msgstr "Pagamento"
 
 #. module: tyres_logistic_stats
 #: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_search
@@ -123,6 +182,12 @@ msgstr "Partner"
 #: model:ir.model,name:tyres_logistic_stats.model_sale_order
 msgid "Quotation"
 msgstr "Preventivo"
+
+#. module: tyres_logistic_stats
+#: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_form
+#: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_tree
+msgid "Real Order"
+msgstr "Ordine originale"
 
 #. module: tyres_logistic_stats
 #: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_form
@@ -147,7 +212,7 @@ msgid "Sale order stats"
 msgstr "Statistiche ordini"
 
 #. module: tyres_logistic_stats
-#: code:addons/tyres_logistic_stats/models/logistic_stats.py:196
+#: code:addons/tyres_logistic_stats/models/logistic_stats.py:221
 #, python-format
 msgid "Sale result: <b>%s</b><br/>"
 msgstr "Vendita: <b>%s</b><br/>"
@@ -180,10 +245,15 @@ msgid "Team"
 msgstr "Team"
 
 #. module: tyres_logistic_stats
-#: code:addons/tyres_logistic_stats/models/logistic_stats.py:168
+#: code:addons/tyres_logistic_stats/models/logistic_stats.py:192
 #, python-format
 msgid "Total sold untaxed: <b>%10.2f</b><br/>"
 msgstr "Imponibile vendita: <b>%10.2f</b><br/>"
+
+#. module: tyres_logistic_stats
+#: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_tree
+msgid "Trasp."
+msgstr "Trasp."
 
 #. module: tyres_logistic_stats
 #: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_search
@@ -194,6 +264,11 @@ msgstr "Utente"
 #: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_search
 msgid "Validity date"
 msgstr "Data validità"
+
+#. module: tyres_logistic_stats
+#: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_tree
+msgid "Vendita"
+msgstr "Vendita"
 
 #. module: tyres_logistic_stats
 #: model:ir.ui.view,arch_db:tyres_logistic_stats.view_sale_order_statistics_search
