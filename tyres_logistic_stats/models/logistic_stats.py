@@ -107,6 +107,7 @@ class SaleOrderStats(models.Model):
         shippy = self.carrier_cost
 
         pfu = purchase = 0.0
+        stat_excluded = False
         detail_block = {
             'pfu': '',
             'purchase': '',
@@ -150,7 +151,6 @@ class SaleOrderStats(models.Model):
             # -----------------------------------------------------------------
             # Purchase cost:
             # -----------------------------------------------------------------
-            stat_excluded = False
             for purchase_line in line.purchase_line_ids:                
                 if purchase_line.order_id.partner_id.internal_stock:
                     stat_excluded = True
