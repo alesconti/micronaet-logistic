@@ -82,6 +82,19 @@
                     </header>
                     <sheet>
                         <group colspan="4" col="4">
+                            <div style="background-color: red;text-align: center;font-weight:bold;color:white;">
+                                <field name="stat_level" nolabel="1"  readonly="1" colspan="4" attrs="{'invisible': [('stat_level','!=','negative')]}"/>
+                            </div>
+                            <newline/>
+                            <div style="background-color: green; text-align: center; font-weight:bold; color:white;">
+                                <field name="stat_level" nolabel="1"  readonly="1" colspan="4" attrs="{'invisible': [('stat_level','!=','positive')]}"/>
+                            </div>
+                            <newline/>
+                            <div style="background-color: grey; text-align: center; font-weight:bold; color:white;">
+                                <field name="stat_level" nolabel="1"  readonly="1" colspan="4" attrs="{'invisible': [('stat_level','!=','neutral')]}"/>
+                            </div>
+                            <newline/>
+                            
                             <field name="name" readonly="1"/>
                             <field name="date_order" readonly="1" />
                             
@@ -115,6 +128,29 @@
                 </form>
             </field>
         </record>
+
+        <record model="ir.ui.view" id="view_sale_order_logistic_form">
+             <field name="name">sale.order.logistic.form</field>
+             <field name="model">sale.order</field>
+             <field name="inherit_id" ref="sale.view_order_form"/>
+             <field name="arch" type="xml">
+                 <field name="partner_id" position="before">
+                            <div style="background-color: red;text-align: center;font-weight:bold;color:white;">
+                                <field name="stat_level" nolabel="1"  readonly="1" colspan="4" attrs="{'invisible': [('stat_level','!=','negative')]}"/>
+                            </div>
+                            <newline/>
+                            <div style="background-color: green; text-align: center; font-weight:bold; color:white;">
+                                <field name="stat_level" nolabel="1"  readonly="1" colspan="4" attrs="{'invisible': [('stat_level','!=','positive')]}"/>
+                            </div>
+                            <newline/>
+                            <div style="background-color: grey; text-align: center; font-weight:bold; color:white;">
+                                <field name="stat_level" nolabel="1"  readonly="1" colspan="4" attrs="{'invisible': [('stat_level','!=','neutral')]}"/>
+                            </div>
+                            <newline/>
+                 </field>
+             </field>
+         </record>             
+        
         <record model="ir.ui.view" id="view_sale_order_stats_graph">
            <field name="name">sale.order.stats.graph</field>
            <field name="model">sale.order</field>
