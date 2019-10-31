@@ -62,6 +62,25 @@ class SaleOrderStats(models.Model):
     #                           BUTTON EVENTS:
     # -------------------------------------------------------------------------
     @api.multi
+    def go_real_sale_order(self):
+        ''' Call real order
+        '''
+        form_id = self.env.ref('sale.view_order_form').id
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Order'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': self.id,
+            'res_model': 'sale.order',
+            'view_id': form_id,
+            'views': [(form_id, 'form'), (False, 'tree')],
+            'domain': [],
+            'context': self.env.context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+    @api.multi
     def sale_order_refresh_margin_stats(self):    
         ''' Update margin data:
         '''

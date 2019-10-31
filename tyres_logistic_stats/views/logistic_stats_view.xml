@@ -50,16 +50,16 @@
                     <field name="date_order" invisible="1" />
                     <field name="validity_date" invisible="1" />
                     <field name="fiscal_position_id"  />
-                    <field name="team_id"  />
+                    <field name="team_id" string="Canale" />
                     <field name="user_id" invisible="1" />
                     <field name="logistic_source" invisible="1" />
-                    <field name="payment_term_id" />
+                    <field name="payment_term_id" string="Pagamento" />
                     <field name="carrier_shippy" string="Shippy" />
                     
-                    <field name="stat_sale" sum="total_sale"  />                    
+                    <field name="stat_sale" sum="total_sale" string="Vendita" />                    
                     <field name="mmac_payment_transaction_fee" sum="total_payment" string="Pag."/>
                     <field name="mmac_marketplace_transaction_fee" sum="total_marketplace" string="Market"/>
-                    <field name="stat_pfu" sum="total_pfu" />
+                    <field name="stat_pfu" sum="total_pfu" string="PFU"/>
                     <field name="stat_transport" sum="total_transport" string="Trasp."/>
                     <field name="stat_margin" sum="total_margin" />
                     <field name="stat_margin_rate" string="%" />                    
@@ -68,6 +68,7 @@
                     <field name="state" invisible="1" />
 
                     <field name="stat_level" invisible="1" />
+                    <button name="go_real_sale_order" string="Real Order" type="object" icon="fa-file-o fa-x2"/>
                     <button name="sale_order_refresh_margin_stats" string="Refresh" type="object" icon="fa-rotate-left fa-x2"/>
                 </tree>
             </field>
@@ -80,6 +81,7 @@
                 <form string="Sale order stats">
                     <header>
                         <button name="sale_order_refresh_margin_stats" string="Refresh" type="object" icon="fa-rotate-left fa-x2"/>
+                        <button name="go_real_sale_order" string="Real Order" type="object" />
                     </header>
                     <sheet>
                         <group colspan="4" col="4">
