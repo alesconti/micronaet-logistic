@@ -189,7 +189,7 @@ class SaleOrderStats(models.Model):
         
         detail += _('- Payment fee: <b>%10.2f</b><br/>') % payment_fee
         detail += _('- Marketplace fee: <b>%10.2f</b><br/>') % marketplace_fee
-        detail += _('- Shippy: <b>%10.2f</b><br/>') % 
+        detail += _('- Shippy: <b>%10.2f</b><br/>') % shippy
 
         if detail_block['transport']: 
             detail += _('- Transport: <b>%10.2f</b><br/><i>%s</i><br/>') % (
