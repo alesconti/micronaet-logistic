@@ -53,8 +53,8 @@ odoo = erppeek.Client(
 order_pool = odoo.model('sale.order')
 
 order_ids = order_pool.search([
-    #('stats_level', '=', 'unsed'), # ALL for now
+    ('stats_level', '=', 'unset'), # Remove for ALL
     ])
-import pdb; pdb.set_trace()
+
 for order in order_pool.browse(order_ids):
     order.sale_order_refresh_margin_stats()
