@@ -64,9 +64,9 @@
                     <field name="mmac_payment_transaction_fee" sum="total_payment" string="Pag."/>
                     <field name="mmac_marketplace_transaction_fee" sum="total_marketplace" string="Market"/>
                     <field name="stat_pfu" sum="total_pfu" string="PFU"/>
-                    <field name="stat_transport" sum="total_transport" string="Trasp."/>
+                    <!--<field name="stat_transport" sum="total_transport" string="Trasp."/>-->
                     <field name="stat_shippy" />
-                    <field name="carrier_shippy" string="" />
+                    <field name="carrier_shippy" string="Sh." />
                     <field name="stat_margin" sum="total_margin" />
                     <field name="stat_margin_rate" string="%" />                    
 

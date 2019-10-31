@@ -106,10 +106,9 @@ class SaleOrderStats(models.Model):
         marketplace_fee = self.mmac_marketplace_transaction_fee
         shippy = self.carrier_cost
 
-        transport = pfu = purchase = 0.0
+        pfu = purchase = 0.0
         detail_block = {
             'pfu': '',
-            'transport': '',
             'purchase': '',
             'lines': '',
             }
@@ -119,11 +118,12 @@ class SaleOrderStats(models.Model):
         for line in self.order_line:
             price = get_net(line)
             subtotal = (price * line.product_uom_qty)
+            product = line.product_id
             
             # -----------------------------------------------------------------
             # PFU article
             # -----------------------------------------------------------------
-            if line.product_id.default_code == 'PFU':
+            if product.default_code == 'PFU':
                 detail_block['pfu'] += service_mask % (
                     line.product_uom_qty,
                     price,
@@ -133,16 +133,10 @@ class SaleOrderStats(models.Model):
                 continue
             
             # -----------------------------------------------------------------
-            # Transport article
+            # Expence article
             # -----------------------------------------------------------------
-            if line.product_id.default_code == 'TRASPORTO':
-                detail_block['transport'] += service_mask % (
-                    line.product_uom_qty,
-                    price,
-                    subtotal,
-                    )
-                transport += subtotal
-                continue
+            if product.is_expence:
+                continue # not used!
             
             # -----------------------------------------------------------------
             # Product detail
@@ -150,7 +144,7 @@ class SaleOrderStats(models.Model):
             detail_block['lines'] += product_mask % (
                 line.product_uom_qty,
                 price,
-                line.product_id.name_extended,
+                product.name_extended,
                 )
             
             # -----------------------------------------------------------------
@@ -171,7 +165,7 @@ class SaleOrderStats(models.Model):
                 purchase += subtotal
                 continue
         
-        margin = amount_untaxed - payment_fee - marketplace_fee - transport - \
+        margin = amount_untaxed - payment_fee - marketplace_fee - \
             pfu - purchase - shippy
 
         if amount_untaxed:    
@@ -194,12 +188,6 @@ class SaleOrderStats(models.Model):
         detail += _('- Payment fee: <b>%10.2f</b><br/>') % payment_fee
         detail += _('- Marketplace fee: <b>%10.2f</b><br/>') % marketplace_fee
         detail += _('- Shippy: <b>%10.2f</b><br/>') % shippy
-
-        if detail_block['transport']: 
-            detail += _('- Transport: <b>%10.2f</b><br/><i>%s</i><br/>') % (
-                transport,
-                detail_block['transport'],
-                )
 
         if detail_block['pfu']: 
             detail += _('- PFU: <b>%10.2f</b><br/><i>%s</i><br/>') % (
@@ -228,7 +216,6 @@ class SaleOrderStats(models.Model):
             # marketplace_fee
             'stat_shippy': shippy,
             'stat_pfu': pfu,
-            'stat_transport': transport,
             'stat_purchase': purchase,
             'stat_margin': margin,
             'stat_margin_rate': margin_rate,
@@ -247,7 +234,6 @@ class SaleOrderStats(models.Model):
     # marketplace_fee
     stat_shippy = fields.Float('Shippy', digits=(16, 2))  
     stat_pfu = fields.Float('PFU Total', digits=(16, 2))  
-    stat_transport = fields.Float('Transport total', digits=(16, 2))  
     stat_purchase = fields.Float('Purchase total', digits=(16, 2))  
     stat_margin = fields.Float('Margin', digits=(16, 2))  
     stat_margin_rate = fields.Float('Margin rate', digits=(16, 2))  
