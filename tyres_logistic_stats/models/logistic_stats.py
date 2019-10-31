@@ -92,8 +92,8 @@ class SaleOrderStats(models.Model):
                 tax = line.tax_id[0]
                 if not tax.price_include:
                     return price_unit
-                amount = tax.amount
-                return price_unit / (100 + amount)
+                amount = tax.amount / 100.0
+                return price_unit / (1 + amount)
             except:    
                 _logger.error('Error reading tax for line: %s' % line)
                 return price_unit
@@ -226,6 +226,7 @@ class SaleOrderStats(models.Model):
             'stat_sale': amount_untaxed,
             # payment_fee
             # marketplace_fee
+            'stat_shippy': shippy,
             'stat_pfu': pfu,
             'stat_transport': transport,
             'stat_purchase': purchase,
@@ -244,6 +245,7 @@ class SaleOrderStats(models.Model):
     stat_sale = fields.Float('Sale net', digits=(16, 2))  
     # payment_fee
     # marketplace_fee
+    stat_shippy = fields.Float('Shippy', digits=(16, 2))  
     stat_pfu = fields.Float('PFU Total', digits=(16, 2))  
     stat_transport = fields.Float('Transport total', digits=(16, 2))  
     stat_purchase = fields.Float('Purchase total', digits=(16, 2))  

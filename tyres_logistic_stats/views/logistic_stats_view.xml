@@ -58,7 +58,6 @@
                     <field name="user_id" invisible="1" />
                     <field name="logistic_source" invisible="1" />
                     <field name="payment_term_id" string="Pagamento" />
-                    <field name="carrier_shippy" string="Shippy" />
                     
                     <field name="stat_sale" sum="total_sale" string="Vendita" />                    
                     <field name="stat_purchase" sum="total_purchase" string="Acquisto" />                    
@@ -66,6 +65,8 @@
                     <field name="mmac_marketplace_transaction_fee" sum="total_marketplace" string="Market"/>
                     <field name="stat_pfu" sum="total_pfu" string="PFU"/>
                     <field name="stat_transport" sum="total_transport" string="Trasp."/>
+                    <field name="stat_shippy" />
+                    <field name="carrier_shippy" string="" />
                     <field name="stat_margin" sum="total_margin" />
                     <field name="stat_margin_rate" string="%" />                    
 
