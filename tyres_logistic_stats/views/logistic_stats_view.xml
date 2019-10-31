@@ -46,6 +46,7 @@
             <field name="arch" type="xml">
                 <tree string="Sale order stats" decoration-success="stat_level=='positive'" decoration-it="stat_level=='unset'" decoration-danger="stat_level=='negative'">
                     <field name="name" />
+                    <field name="stat_lines" widget="html"/>
                     <field name="date_order"  />
                     <field name="validity_date"  />
                     <field name="fiscal_position_id"  />
@@ -108,9 +109,12 @@
                             <field name="payment_term_id"  readonly="1"/>
                             
                             <field name="carrier_shippy" string="Shippy" readonly="1" />
+                            <newline/>
                             
-                            <separator string="Detail:" colspan="4"/>
-                            <field name="stat_detail" colspan="4" nolabel="1" widget="html"/>
+                            <separator string="Detail:" colspan="2"/>
+                            <separator string="Order line:" colspan="2"/>
+                            <field name="stat_detail" colspan="2" nolabel="1" widget="html"/>
+                            <field name="stat_lines" colspan="2" nolabel="1" widget="html"/>
                             
                             <!--<field name="stat_sale" sum="total_sale"  />                    
                             <field name="mmac_payment_transaction_fee" sum="total_payment" />

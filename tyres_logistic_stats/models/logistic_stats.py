@@ -68,8 +68,16 @@ class SaleOrderStats(models.Model):
         def get_net(line):
             ''' Extract net price
             '''
-            # TODO
-            return line.price_unit
+            price_unit = line.price_unit 
+            try:
+                tax = line.tax_id[0]
+                if not tax.price_include:
+                    return price_unit
+                amount = tax.amount
+                return price_unit / (100 + amount)
+            except:    
+                _logger.error('Error reading tax for line: %s' % line)
+                return price_unit
 
         self.ensure_one()
         
@@ -83,16 +91,20 @@ class SaleOrderStats(models.Model):
             'pfu': '',
             'transport': '',
             'purchase': '',
+            'lines': '',
             }
         
+        service_mask = '%s x %10.2f = %10.2f<br/>'
+        product_mask = '%s x %10.2f [%s]<br/>'
         for line in self.order_line:
+            price = get_net(line)
+            subtotal = (price * line.product_uom_qty)
+            
             # -----------------------------------------------------------------
             # PFU article
             # -----------------------------------------------------------------
             if line.product_id.default_code == 'PFU':
-                price = get_net(line)
-                subtotal = (price * line.product_uom_qty)
-                detail_block['pfu'] += '%s x %s = %s<br/>' % (
+                detail_block['pfu'] += service_mask % (
                     line.product_uom_qty,
                     price,
                     subtotal,
@@ -104,9 +116,7 @@ class SaleOrderStats(models.Model):
             # Transport article
             # -----------------------------------------------------------------
             if line.product_id.default_code == 'TRASPORTO':
-                price = get_net(line)
-                subtotal = (price * line.product_uom_qty)
-                detail_block['pfu'] += '%s x %s = %s<br/>' % (
+                detail_block['transport'] += service_mask % (
                     line.product_uom_qty,
                     price,
                     subtotal,
@@ -115,12 +125,21 @@ class SaleOrderStats(models.Model):
                 continue
             
             # -----------------------------------------------------------------
+            # Product detail
+            # -----------------------------------------------------------------
+            detail_block['lines'] += product_mask % (
+                line.product_uom_qty,
+                price,
+                line.product_id.name_extended,
+                )
+            
+            # -----------------------------------------------------------------
             # Purchase cost:
             # -----------------------------------------------------------------
             for purchase_line in line.purchase_line_ids:                
                 price = purchase_line.price_unit # TODO get_net(line)?
                 subtotal = (price * purchase_line.product_qty)
-                detail_block['purchase'] += '%s x %s = %s<br/>' % (
+                detail_block['purchase'] += service_mask % (
                     purchase_line.product_qty,
                     price,
                     subtotal,
@@ -146,30 +165,30 @@ class SaleOrderStats(models.Model):
         # ---------------------------------------------------------------------
         # Log Detail:
         # ---------------------------------------------------------------------        
-        detail = _('Total sold untaxed: <b>%s</b><br/>') % amount_untaxed
+        detail = _('Total sold untaxed: <b>%10.2f</b><br/>') % amount_untaxed
         
-        detail += _('- Payment fee: <b>%s</b><br/>') % payment_fee
-        detail += _('- Marketplace fee: <b>%s</b><br/>') % marketplace_fee
+        detail += _('- Payment fee: <b>%10.2f</b><br/>') % payment_fee
+        detail += _('- Marketplace fee: <b>%10.2f</b><br/>') % marketplace_fee
 
         if detail_block['transport']: 
-            detail += _('- Transport: <b>%s</b><br/><i>%s</i><br/>') % (
+            detail += _('- Transport: <b>%10.2f</b><br/><i>%s</i><br/>') % (
                 transport,
                 detail_block['transport'],
                 )
 
         if detail_block['pfu']: 
-            detail += _('- PFU: <b>%s</b><br/><i>%s</i><br/>') % (
+            detail += _('- PFU: <b>%10.2f</b><br/><i>%s</i><br/>') % (
                 pfu,
                 detail_block['pfu'],
                 )
 
         if detail_block['purchase']: 
-            detail += _('- Purchase: <b>%s</b><br/><i>%s</i><br/>') % (
+            detail += _('- Purchase: <b>%10.2f</b><br/><i>%s</i><br/>') % (
                 purchase,
                 detail_block['purchase'],
                 )
 
-        detail += _('= Margin: <b>%s</b> >> %s %%<br/>') % (
+        detail += _('= Margin: <b>%10.2f</b> >> %10.2f %%<br/>') % (
             margin,
             margin_rate,
             )
@@ -189,6 +208,7 @@ class SaleOrderStats(models.Model):
             'stat_margin_rate': margin_rate,
             'stat_level': level,
             'stat_detail': detail,
+            'stat_lines': detail_block['lines'],
             })    
         return True
         
@@ -203,6 +223,7 @@ class SaleOrderStats(models.Model):
     stat_purchase = fields.Float('Purchase total', digits=(16, 2))  
     stat_margin = fields.Float('Margin', digits=(16, 2))  
     stat_margin_rate = fields.Float('Margin rate', digits=(16, 2))  
+    stat_lines = fields.Text('Sale lines')  
     stat_detail = fields.Text('Sale detail')  
     stat_level = fields.Selection([
         ('unset', 'Not present'),
