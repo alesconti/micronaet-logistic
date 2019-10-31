@@ -104,6 +104,7 @@ class SaleOrderStats(models.Model):
         amount_untaxed = self.amount_untaxed
         payment_fee = self.mmac_payment_transaction_fee
         marketplace_fee = self.mmac_marketplace_transaction_fee
+        shippy = self.carrier_cost
 
         transport = pfu = purchase = 0.0
         detail_block = {
@@ -167,7 +168,7 @@ class SaleOrderStats(models.Model):
                 continue
         
         margin = amount_untaxed - payment_fee - marketplace_fee - transport - \
-            pfu - purchase
+            pfu - purchase - shippy
 
         if amount_untaxed:    
             margin_rate = 100.0 * (margin / amount_untaxed)
@@ -188,6 +189,7 @@ class SaleOrderStats(models.Model):
         
         detail += _('- Payment fee: <b>%10.2f</b><br/>') % payment_fee
         detail += _('- Marketplace fee: <b>%10.2f</b><br/>') % marketplace_fee
+        detail += _('- Shippy: <b>%10.2f</b><br/>') % 
 
         if detail_block['transport']: 
             detail += _('- Transport: <b>%10.2f</b><br/><i>%s</i><br/>') % (
