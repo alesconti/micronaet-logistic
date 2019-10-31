@@ -30,8 +30,7 @@
                         <filter name="group_validity_date" string="Validity date" context="{'group_by': 'validity_date'}"/>
                         <filter name="group_fiscal_position" string="Fiscal position" context="{'group_by': 'fiscal_position_id'}"/>
                         <filter name="group_team" string="Team" context="{'group_by': 'team_id'}"/>
-                        <filter name="group_user" string="user" context="{'group_by': 'user_id'}"/>
-                        <filter name="group_team" string="Team" context="{'group_by': 'team_id'}"/>
+                        <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
                         <filter name="group_source" string="Source" context="{'group_by': 'logistic_source'}"/>
                         <filter name="group_payment_term" string="payment" context="{'group_by': 'payment_term_id'}"/>
                         <filter name="group_logistic_state" string="Logistic state" context="{'group_by': 'logistic_state'}"/>
@@ -63,10 +62,11 @@
                     <field name="stat_transport" sum="total_transport" />
                     <field name="stat_margin" sum="total_margin" />
                     <field name="stat_margin_rate"  />                    
-                    <field name="stat_level"  />
-                    
+
                     <field name="logistic_state"  />
                     <field name="state" invisible="1" />
+
+                    <field name="stat_level"  />
                     <button name="sale_order_refresh_margin_stats" string="Refresh" type="object" icon="fa-rotate-left fa-x2"/>
                 </tree>
             </field>
