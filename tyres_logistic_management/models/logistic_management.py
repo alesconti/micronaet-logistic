@@ -1741,18 +1741,19 @@ class SaleOrder(models.Model):
     #                           BUTTON EVENTS:
     # -------------------------------------------------------------------------
     @api.multi
-    def sale_order_refresh_margin_stats(self, ):    
+    def sale_order_refresh_margin_stats(self):    
         ''' Update margin data:
         '''
         def get_net(line):
             ''' Extract net price
             '''
+            # TODO
             return line.price_unit
 
         self.ensure_one()
         
         # Statistic data:
-        amount_untaxed = self.amuont_untaxed
+        amount_untaxed = self.amount_untaxed
         payment_fee = self.mmac_payment_transaction_fee
         marketplace_fee = self.mmac_marketplace_transaction_fee
 
@@ -2618,12 +2619,13 @@ class SaleOrder(models.Model):
     stat_margin_rate = fields.Float('Margin rate', digits=(16, 2))  
     stat_detail = fields.Text('Sale detail')  
     stat_level = fields.Selection([
-        ('unset', '=', 'Not precent'),
-        ('negative', '=', 'Negative'),
-        ('neutral', '=', 'Neutral'),
-        ('positive', '=', 'Positive'),
+        ('unset', 'Not precent'),
+        ('negative', 'Negative'),
+        ('neutral', 'Neutral'),
+        ('positive', 'Positive'),
         ], 'Margin level', default='unset',
         )
+    # -------------------------------------------------------------------------
     
     logistic_state = fields.Selection([
         ('draft', 'Order draft'), # Draft, new order received
