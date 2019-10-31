@@ -176,7 +176,7 @@
             <field name="view_id" ref="view_sale_order_statistics_tree"/>
             <field name="search_view_id" ref="view_sale_order_statistics_search"/>            
             <field name="context">{'graph_view_ref': 'tyres_logistic_stats.view_sale_order_stats_graph', 'form_view_ref': 'tyres_logistic_stats.view_sale_order_statistics_form'}</field>
-            <field name="domain">[('logistic_source', '=', 'web'), ('stat_exclude', '=', False)]</field>
+            <field name="domain">[('logistic_source', '=', 'web'), ('stat_excluded', '=', False)]</field>
         </record>
         <record model="ir.actions.act_window" id="action_sale_order_statistics_all">
             <field name="name">Order statistic</field>
