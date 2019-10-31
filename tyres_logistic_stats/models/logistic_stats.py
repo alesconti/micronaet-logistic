@@ -105,9 +105,9 @@ class SaleOrderStats(models.Model):
             # -----------------------------------------------------------------
             for purchase_line in line.purchase_line_ids:                
                 price = purchase_line.price_unit # TODO get_net(line)?
-                subtotal = (price * purchase_line.product_uom_qty)
+                subtotal = (price * purchase_line.product_qty)
                 detail_block['purchase'] += '%s x %s = %s<br/>' % (
-                    purchase_line.product_uom_qty,
+                    purchase_line.product_qty,
                     price,
                     subtotal,
                     )                    
@@ -131,11 +131,11 @@ class SaleOrderStats(models.Model):
 
         # ---------------------------------------------------------------------
         # Log Detail:
-        # ---------------------------------------------------------------------
-        detail += _('Total sold untaxed: <b>%s</b><br/>') % amount_untaxed
+        # ---------------------------------------------------------------------        
+        detail = _('Total sold untaxed: <b>%s</b><br/>') % amount_untaxed
         
-        detail += _('- Payment fee: <b>%s</b><br/>') % payment_fee,
-        detail += _('- Marketplace fee: <b>%s</b><br/>') % marketplace_fee,
+        detail += _('- Payment fee: <b>%s</b><br/>') % payment_fee
+        detail += _('- Marketplace fee: <b>%s</b><br/>') % marketplace_fee
 
         if detail_block['transport']: 
             detail += _('- Transport: <b>%s</b><br/><i>%s</i><br/>') % (

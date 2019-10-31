@@ -45,7 +45,7 @@
             <field name="model">sale.order</field>
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
-                <tree string="Sale order stats" editable="bottom" decoration-success="stat_level=='positive'" decoration-it="stat_level=='unset'" decoration-danger="stat_level=='negative'">
+                <tree string="Sale order stats" decoration-success="stat_level=='positive'" decoration-it="stat_level=='unset'" decoration-danger="stat_level=='negative'">
                     <field name="name" />
                     <field name="date_order"  />
                     <field name="validity_date"  />
@@ -76,7 +76,7 @@
             <field name="model">sale.order</field>
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
-                <form string="Sale order stats" editable="bottom">
+                <form string="Sale order stats">
                     <header>
                         <button name="sale_order_refresh_margin_stats" string="Refresh" type="object" icon="fa-rotate-left fa-x2"/>
                     </header>
