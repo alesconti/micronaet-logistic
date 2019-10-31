@@ -156,7 +156,11 @@ class SaleOrderStats(models.Model):
             # -----------------------------------------------------------------
             # Purchase cost:
             # -----------------------------------------------------------------
+            stat_excluded = False
             for purchase_line in line.purchase_line_ids:                
+                if purchase_line.order_id.partner_id.internal_stock:
+                    stat_excluded = True
+
                 price = purchase_line.price_unit # TODO get_net(line)?
                 subtotal = (price * purchase_line.product_qty)
                 detail_block['purchase'] += service_mask % (
@@ -230,6 +234,7 @@ class SaleOrderStats(models.Model):
             'stat_level': level,
             'stat_detail': detail,
             'stat_lines': detail_block['lines'],
+            'stat_excluded': stat_excluded,
             })    
         return True
         
@@ -244,8 +249,9 @@ class SaleOrderStats(models.Model):
     stat_purchase = fields.Float('Purchase total', digits=(16, 2))  
     stat_margin = fields.Float('Margin', digits=(16, 2))  
     stat_margin_rate = fields.Float('Margin rate', digits=(16, 2))  
-    stat_lines = fields.Text('Sale lines')  
+    stat_lines = fields.Text('Sale lines') 
     stat_detail = fields.Text('Sale detail')  
+    stat_excluded = fields.Boolean('Excluded', help='Has internal purchase') 
     stat_level = fields.Selection([
         ('unset', 'Not present'),
         ('negative', 'Negative'),

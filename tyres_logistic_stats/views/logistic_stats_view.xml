@@ -176,13 +176,30 @@
             <field name="view_id" ref="view_sale_order_statistics_tree"/>
             <field name="search_view_id" ref="view_sale_order_statistics_search"/>            
             <field name="context">{'graph_view_ref': 'tyres_logistic_stats.view_sale_order_stats_graph', 'form_view_ref': 'tyres_logistic_stats.view_sale_order_statistics_form'}</field>
+            <field name="domain">[('logistic_source', '=', 'web'), ('stat_exclude', '=', False)]</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_sale_order_statistics_all">
+            <field name="name">Order statistic</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,graph</field>
+            <field name="view_id" ref="view_sale_order_statistics_tree"/>
+            <field name="search_view_id" ref="view_sale_order_statistics_search"/>            
+            <field name="context">{'graph_view_ref': 'tyres_logistic_stats.view_sale_order_stats_graph', 'form_view_ref': 'tyres_logistic_stats.view_sale_order_statistics_form'}</field>
             <field name="domain">[]</field><!--TODO only web?-->
         </record>
         
+        
+        <menuitem 
+            id="menu_logistic_left_statistic_used"
+            parent="tyres_logistic_management.menu_logistic_left_statistic_root"
+            action="action_sale_order_statistics"
+            sequence="10"
+            />
         <menuitem 
             id="menu_logistic_left_statistic_all"
             parent="tyres_logistic_management.menu_logistic_left_statistic_root"
-            action="action_sale_order_statistics"
+            action="action_sale_order_statistics_all"
             sequence="10"
             />
 
