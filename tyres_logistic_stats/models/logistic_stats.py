@@ -45,6 +45,20 @@ class SaleOrderStats(models.Model):
     _inherit = 'sale.order'
 
     # -------------------------------------------------------------------------
+    #                           OVERRIDE FOR CALLS:
+    # -------------------------------------------------------------------------
+    @api.multi
+    def workflow_manual_order_pending(self):
+        ''' If order have all line checked make one step in pending state
+        '''
+        _logger.info('Update statistic data')
+
+        for order in self:
+            order.sale_order_refresh_margin_stats()
+        
+        return super(SaleOrderStats, self).workflow_manual_order_pending()
+            
+    # -------------------------------------------------------------------------
     #                           BUTTON EVENTS:
     # -------------------------------------------------------------------------
     @api.multi
