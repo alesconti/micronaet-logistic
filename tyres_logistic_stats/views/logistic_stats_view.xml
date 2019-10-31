@@ -61,6 +61,7 @@
                     <field name="carrier_shippy" string="Shippy" />
                     
                     <field name="stat_sale" sum="total_sale" string="Vendita" />                    
+                    <field name="stat_purchase" sum="total_purchase" string="Acquisto" />                    
                     <field name="mmac_payment_transaction_fee" sum="total_payment" string="Pag."/>
                     <field name="mmac_marketplace_transaction_fee" sum="total_marketplace" string="Market"/>
                     <field name="stat_pfu" sum="total_pfu" string="PFU"/>
