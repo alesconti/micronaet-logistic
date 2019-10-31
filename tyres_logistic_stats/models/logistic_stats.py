@@ -118,7 +118,7 @@ class SaleOrderStats(models.Model):
             pfu - purchase
 
         if amount_untaxed:    
-            margin_rate = margin * 100.0 / amount_untaxed 
+            margin_rate = 100.0 * (margin / amount_untaxed)
         else:
             margin_rate = 0.0    
         
@@ -181,7 +181,7 @@ class SaleOrderStats(models.Model):
     # -------------------------------------------------------------------------
     #                               COLUMNS:
     # -------------------------------------------------------------------------
-    stat_sale = fields.Float('Sale total (net)', digits=(16, 2))  
+    stat_sale = fields.Float('Sale net', digits=(16, 2))  
     # payment_fee
     # marketplace_fee
     stat_pfu = fields.Float('PFU Total', digits=(16, 2))  
@@ -191,7 +191,7 @@ class SaleOrderStats(models.Model):
     stat_margin_rate = fields.Float('Margin rate', digits=(16, 2))  
     stat_detail = fields.Text('Sale detail')  
     stat_level = fields.Selection([
-        ('unset', 'Not precent'),
+        ('unset', 'Not present'),
         ('negative', 'Negative'),
         ('neutral', 'Neutral'),
         ('positive', 'Positive'),
