@@ -28,7 +28,7 @@ from datetime import datetime, timedelta
 # -----------------------------------------------------------------------------
 # Read configuration parameter:
 # -----------------------------------------------------------------------------
-cfg_file = os.path.expanduser('../openerp.cfg')
+cfg_file = os.path.expanduser('../odoo.cfg')
 
 config = ConfigParser.ConfigParser()
 config.read([cfg_file])
