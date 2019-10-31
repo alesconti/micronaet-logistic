@@ -107,7 +107,10 @@
                      <button name="delivery_all" string="Arrivo" type="object" icon="fa-fast-forward fa-2x" />
                      
                      <field name="logistic_delivered_manual" string="Arrivo" readonly="1" />
-                     <button name="create_delivery_orders" string="Create delivery orders" type="object" class="oe_highlight" colspan="1" icon="fa-download fa-2x" confirm="Do you confirm the generation of all supplier delivery document (you selection)?" />
+                     <button name="create_delivery_orders" string="Create delivery orders" 
+                         type="object" icon="fa-download fa-2x" 
+                         confirm="Do you confirm the generation of all supplier delivery document (you selection)?" 
+                         />
                      <button name="dummy" string="Order not web (internal or workshop)" type="object" icon="fa-bell"  attrs="{'invisible': [('logistic_source','in',(False, 'web'))]}" />
                 </tree>
             </field>

@@ -498,13 +498,54 @@
             </field>
         </record>-->
         
+        <!--sale.order STATS-->
+        <record model="ir.ui.view" id="view_sale_order_statistics_tree">
+            <field name="name">sale.order.stats.tree</field>
+            <field name="model">sale.order</field>
+            <field name="priority" eval="40" />
+            <field name="arch" type="xml">
+                <tree string="Sale order stats" editable="bottom">
+                    <field name="name" />
+                    <field name="date_order" />
+                    <field name="validity_date" />
+                    <field name="fiscal_position_id" />
+                    <field name="team_id" />
+                    <field name="user_id" />
+                    <field name="logistic_source" />
+                    <field name="payment_term_id" />
+                    <field name="carrier_shippy" string="Shippy"/>
+                    
+                    <field name="stat_sale" sum="total_sale" />                    
+                    <!--<field name="mmac_payment_transaction_fee" sum="total_payment"/>
+                    <field name="mmac_marketplace_transaction_fee" sum="total_marketplace" />-->
+                    <field name="stat_pfu" sum="total_pfu"/>
+                    <field name="stat_transport" sum="total_transport"/>
+                    <field name="stat_margin" sum="total_margin"/>
+                    <field name="stat_margin_rate" />                    
+                    <field name="stat_level" />
+                    
+                    <field name="logistic_state" />
+                    <field name="state" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_sale_order_statistics">
+            <field name="name">Order statistic</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,graph</field>
+            <field name="view_id" ref="view_sale_order_statistics_tree"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+        
         <!--sale.order-->
         <record model="ir.ui.view" id="view_sale_order_graph">
            <field name="name">sale.order.graph</field>
            <field name="model">sale.order</field>
            <field name="priority" eval="1" />
            <field name="arch" type="xml">
-                 <graph string="Sales Order Lines" type="bar">
+                 <graph string="Sales Order" type="bar">
                       <field name="logistic_state" />
                       <field name="team_id" />
                       <field name="counter" type="measure" />
@@ -1319,6 +1360,19 @@
                      sequence="40"
                      />
 
+             <menuitem
+                 id="menu_logistic_left_statistic_root" 
+                 parent="menu_logistic_header_root"
+                 name="Statistic"
+                 sequence="80"             
+                 />
+                 <menuitem 
+                     id="menu_logistic_left_statistic_all"
+                     parent="menu_logistic_left_statistic_root"
+                     action="action_sale_order_statistics"
+                     sequence="10"
+                     />
+                 
 
              <menuitem
                  id="menu_logistic_left_report_root" 
