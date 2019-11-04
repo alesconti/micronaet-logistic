@@ -20,10 +20,22 @@
 #
 ###############################################################################
 import os
+import sys
 import erppeek
 import ConfigParser
 from datetime import datetime, timedelta
 
+
+try:
+    mode = sys.argv[1]
+except:
+    print '''
+    Error, launch as:
+    python ./setup.py [MODE]
+        mode = all (create > 10 and modify > today)
+        mode = ready    (and pending)
+        mode = done
+    '''
 
 # -----------------------------------------------------------------------------
 # Read configuration parameter:
@@ -39,10 +51,10 @@ server = config.get('dbaccess', 'server')
 port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 
 now = datetime.now()
-now_7 = now - timedelta(days=7)
+now_10 = now - timedelta(days=10)
 
 now = now.strftime('%Y-%m-%d 00:00:00')
-now_7 = now_7.strftime('%Y-%m-%d 00:00:00')
+now_10 = now_10.strftime('%Y-%m-%d 00:00:00')
 
 # -----------------------------------------------------------------------------
 # Connect to ODOO:
@@ -56,16 +68,31 @@ odoo = erppeek.Client(
     )
 order_pool = odoo.model('sale.order')
 
-order_ids = order_pool.search([
-    #('stats_level', '=', 'unset'), # Remove for ALL
-    ('write_date', '>=', now),
-    ('create_date', '>=', now_7),
-    ('logistic_state', 'not in', ('draft', 'order')),
-    ])
+if mode == 'all':
+    domain = [
+        ('write_date', '>=', now),
+        ('create_date', '>=', now_10),
+        ('logistic_state', 'not in', ('draft', 'order')),
+        #('stats_level', '=', 'unset'), # Remove for ALL
+        ]
+elif mode == 'ready':
+    domain = [
+        ('logistic_state', '=', ('pending', 'ready')),
+        ]    
+elif mode == 'done':
+    domain = [
+        ('write_date', '>=', now),
+        ('logistic_state', '=', 'done'),
+        ]    
+else:
+    print 'Mode error not found: %s' % mode    
+    sys.exit()
+
+order_ids = order_pool.search(domain)
 
 total = len(order_ids)
 print 'Connect to ODOO: Create >= %s Update >= %s [Tot. %s]' % (
-    now_7, now, total)
+    now_10, now, total)
 
 i = 0
 for order in order_pool.browse(order_ids):
