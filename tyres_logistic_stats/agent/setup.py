@@ -39,7 +39,7 @@ except:
     sys.exit()
 
 log_path = os.path.join(
-    os.path.abspath(__file__),
+    os.path.dirname(os.path.abspath(__file__)),
     'log', 
     )
 os.system('mkdir -p %s' % log_path)    
