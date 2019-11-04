@@ -81,7 +81,7 @@ elif mode == 'ready':
         ]    
 elif mode == 'done':
     domain = [
-        ('write_date', '>=', now),
+        ('create_date', '>=', now_10),
         ('logistic_state', '=', 'done'),
         ]    
 else:
