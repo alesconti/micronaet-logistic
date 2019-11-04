@@ -38,10 +38,11 @@ pwd = config.get('dbaccess', 'pwd')
 server = config.get('dbaccess', 'server')
 port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 
+now = datetime.now().strftime('%Y-%M-%D 00:00:00')
+
 # -----------------------------------------------------------------------------
 # Connect to ODOO:
 # -----------------------------------------------------------------------------
-print 'Connect to ODOO'
 odoo = erppeek.Client(
     'http://%s:%s' % (
         server, port), 
@@ -49,14 +50,17 @@ odoo = erppeek.Client(
     user=user,
     password=pwd,
     )
-
 order_pool = odoo.model('sale.order')
 
 order_ids = order_pool.search([
     #('stats_level', '=', 'unset'), # Remove for ALL
+    ('logistic_state', 'not in', ('draft', 'order')),
+    ('write_date', '>=', now),
     ])
 
 total = len(order_ids)
+print 'Connect to ODOO: Update >= %s [Tot. %s]' % (now, total)
+
 i = 0
 for order in order_pool.browse(order_ids):
     i += 1 
