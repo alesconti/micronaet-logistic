@@ -38,7 +38,7 @@ pwd = config.get('dbaccess', 'pwd')
 server = config.get('dbaccess', 'server')
 port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 
-now = datetime.now().strftime('%Y-%M-%D 00:00:00')
+now = datetime.now().strftime('%Y-%m-%d 00:00:00')
 
 # -----------------------------------------------------------------------------
 # Connect to ODOO:
