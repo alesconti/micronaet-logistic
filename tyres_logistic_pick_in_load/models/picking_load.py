@@ -487,11 +487,6 @@ class PurchaseOrderLine(models.Model):
         context = self.env.context
         uid = self.env.uid
 
-        tree_id = self.env.ref(
-            'tyres_logistic_pick_in_load.view_delivery_selection_tree').id
-        search_id = self.env.ref(
-            'tyres_logistic_pick_in_load.view_delivery_selection_search').id
-
         command_clean_before = context.get('command_clean_before', False)
         if not field_name or command_clean_before:
             # Clean previous context from search defaults:
@@ -511,6 +506,11 @@ class PurchaseOrderLine(models.Model):
             ctx['search_default_%s' % field_name] = field_value
         _logger.info(ctx)
 
+        tree_id = self.env.ref(
+            'tyres_logistic_pick_in_load.view_delivery_selection_tree').id
+        search_id = self.env.ref(
+            'tyres_logistic_pick_in_load.view_delivery_selection_search').id
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Filter applied: %s' % name),
@@ -522,7 +522,7 @@ class PurchaseOrderLine(models.Model):
             'views': [
                 (tree_id, 'tree'), 
                 (False, 'form'), 
-                (search_id, 'search'),
+                #(search_id, 'search'),
                 ],
             'domain': [
                 ('dropship_manage', '=', False),
