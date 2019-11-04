@@ -70,7 +70,7 @@ order_pool = odoo.model('sale.order')
 
 if mode == 'all':
     domain = [
-        ('write_date', '>=', now),
+        #('write_date', '>=', now),
         ('create_date', '>=', now_10),
         ('logistic_state', 'not in', ('draft', 'order')),
         #('stats_level', '=', 'unset'), # Remove for ALL
