@@ -53,7 +53,7 @@ odoo = erppeek.Client(
 order_pool = odoo.model('sale.order')
 
 order_ids = order_pool.search([
-    ('stats_level', '=', 'unset'), # Remove for ALL
+    #('stats_level', '=', 'unset'), # Remove for ALL
     ])
 
 for order in order_pool.browse(order_ids):
