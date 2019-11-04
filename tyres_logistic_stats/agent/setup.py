@@ -38,7 +38,10 @@ pwd = config.get('dbaccess', 'pwd')
 server = config.get('dbaccess', 'server')
 port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 
-now = datetime.now().strftime('%Y-%m-%d 00:00:00')
+now = datetime.now()
+now_7 = now - timedelta(days=7)
+now = now.strftime('%Y-%m-%d 00:00:00')
+now_7 = now_7.strftime('%Y-%m-%d 00:00:00')
 
 # -----------------------------------------------------------------------------
 # Connect to ODOO:
@@ -54,8 +57,9 @@ order_pool = odoo.model('sale.order')
 
 order_ids = order_pool.search([
     #('stats_level', '=', 'unset'), # Remove for ALL
-    ('logistic_state', 'not in', ('draft', 'order')),
     ('write_date', '>=', now),
+    ('create_date', '>=', now_7),
+    ('logistic_state', 'not in', ('draft', 'order')),
     ])
 
 total = len(order_ids)
