@@ -51,7 +51,7 @@ log_f = open(log_file, 'a')
 def log_event(log_f, mode, event='Start event'):
     ''' Write event
     '''
-    log_f.write('%s. Mode %s\n' % (
+    log_f.write('%s. Mode %s: %s\n' % (
         datetime.now(),
         mode, 
         event,
@@ -60,7 +60,7 @@ def log_event(log_f, mode, event='Start event'):
 # -----------------------------------------------------------------------------
 # Read configuration parameter:
 # -----------------------------------------------------------------------------
-log_event(log_f, mode, event='Start event')
+log_event(log_f, mode, 'Start update stats')
 
 cfg_file = os.path.expanduser('../odoo.cfg')
 
@@ -127,4 +127,4 @@ for order in order_pool.browse(order_ids):
         print 'Updated %s on %s' % (i, total)
     order.sale_order_refresh_margin_stats()
 
-log_event(log_f, mode, event='Stop udate # %s record' % total)    
+log_event(log_f, mode, 'Stop udate status: # %s record' % total)    
