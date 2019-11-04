@@ -43,8 +43,9 @@ log_path = os.path.join(
     'log', 
     )
 os.system('mkdir -p %s' % log_path)    
-
 log_file = os.path.join(log_path, 'activity.log')
+print 'Log file: %s' % log_file
+
 log_f = open(log_file, 'a')
 
 def log_event(log_f, mode, event='Start event'):
