@@ -38,9 +38,29 @@ except:
     '''
     sys.exit()
 
+log_path = os.path.join(
+    os.path.abspath(__file__),
+    'log', 
+    )
+os.system('mkdir -p %s' % log_path)    
+
+log_file = os.path.join(log_path, 'activity.log')
+log_f = open(log_file, 'a')
+
+def log_event(log_f, mode, event='Start event'):
+    ''' Write event
+    '''
+    log_f.write('%s. Mode %s\n' % (
+        datetime.now(),
+        mode, 
+        event,
+        ))
+
 # -----------------------------------------------------------------------------
 # Read configuration parameter:
 # -----------------------------------------------------------------------------
+log_event(log_f, mode, event='Start event')
+
 cfg_file = os.path.expanduser('../odoo.cfg')
 
 config = ConfigParser.ConfigParser()
@@ -52,10 +72,12 @@ server = config.get('dbaccess', 'server')
 port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 
 now = datetime.now()
+now_2 = now - timedelta(days=2)
 now_4 = now - timedelta(days=4)
 now_10 = now - timedelta(days=10)
 
 now = now.strftime('%Y-%m-%d 00:00:00')
+now_2 = now_2.strftime('%Y-%m-%d 00:00:00')
 now_4 = now_4.strftime('%Y-%m-%d 00:00:00')
 now_10 = now_10.strftime('%Y-%m-%d 00:00:00')
 
@@ -94,8 +116,8 @@ else:
 order_ids = order_pool.search(domain)
 
 total = len(order_ids)
-print 'Connect to ODOO: Create >= %s Update >= %s [Tot. %s]' % (
-    now_10, now, total)
+print 'Connect to ODOO: Mode %s [Tot. %s]' % (
+    mode, total)
 
 i = 0
 for order in order_pool.browse(order_ids):
@@ -103,3 +125,5 @@ for order in order_pool.browse(order_ids):
     if i % 20 == 0:
         print 'Updated %s on %s' % (i, total)
     order.sale_order_refresh_margin_stats()
+
+log_event(log_f, mode, event='Stop udate # %s record' % total)    
