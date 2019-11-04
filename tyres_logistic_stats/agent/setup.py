@@ -36,6 +36,7 @@ except:
         mode = ready    (and pending)
         mode = done
     '''
+    sys.exit()
 
 # -----------------------------------------------------------------------------
 # Read configuration parameter:
