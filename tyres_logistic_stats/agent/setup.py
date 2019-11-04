@@ -40,6 +40,7 @@ port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 
 now = datetime.now()
 now_7 = now - timedelta(days=7)
+
 now = now.strftime('%Y-%m-%d 00:00:00')
 now_7 = now_7.strftime('%Y-%m-%d 00:00:00')
 
