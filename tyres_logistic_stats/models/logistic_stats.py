@@ -45,18 +45,43 @@ class SaleOrderStats(models.Model):
     _inherit = 'sale.order'
 
     # -------------------------------------------------------------------------
+    #                           UTILITY:
+    # -------------------------------------------------------------------------
+    @api.multi
+    def refresh_all_statistic_orders(self):
+        ''' Refresh all
+        '''
+        for order in self:
+            _logger.info('Update statistic data %s: [Current: %s]' % (
+                order.name,
+                order.logistic_state,
+                ))
+            order.sale_order_refresh_margin_stats()
+
+    # -------------------------------------------------------------------------
     #                           OVERRIDE FOR CALLS:
     # -------------------------------------------------------------------------
+    # draft > order:
+    #payment_is_done(self): # Not necessary
+    
+    # order > pending:
     @api.multi
     def workflow_manual_order_pending(self):
         ''' If order have all line checked make one step in pending state
         '''
-        _logger.info('Update statistic data')
-
-        for order in self:
-            order.sale_order_refresh_margin_stats()
-        
+        self.refresh_all_statistic_orders()
         return super(SaleOrderStats, self).workflow_manual_order_pending()
+    
+    # TODO pending > ready
+    
+    #ready > (delivering) > done
+    @api.model
+    def workflow_ready_to_done_draft_picking(self, ):
+        ''' Override order WF action        
+        '''
+        self.refresh_all_statistic_orders()
+        return super(
+            SaleOrderStats, self).workflow_ready_to_done_draft_picking()
             
     # -------------------------------------------------------------------------
     #                           BUTTON EVENTS:
