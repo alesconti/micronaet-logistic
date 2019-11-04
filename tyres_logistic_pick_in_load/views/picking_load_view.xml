@@ -165,6 +165,10 @@
             <field name="model">purchase.order.line</field>
             <field name="inherit_id" ref="purchase.purchase_order_line_search"/>
             <field name="arch" type="xml">
+                <field name="order_id" position="before">
+                    <field name="misuracompleta" />
+                </field>
+
                 <field name="order_id" position="after">
                     <field name="order_supplier_id" filter_domain="[('order_supplier_id','=',self)]"/>
 

@@ -518,7 +518,7 @@ class PurchaseOrderLine(models.Model):
             'view_mode': 'tree,form',
             'res_model': 'purchase.order.line',
             'view_id': tree_id,
-            'search_view_id': search_id,
+            'search_view_id': search_id, # TODO dont' work!!!
             'views': [
                 (tree_id, 'tree'), 
                 (False, 'form'), 
