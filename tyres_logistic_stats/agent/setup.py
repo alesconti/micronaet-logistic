@@ -52,9 +52,11 @@ server = config.get('dbaccess', 'server')
 port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 
 now = datetime.now()
+now_4 = now - timedelta(days=4)
 now_10 = now - timedelta(days=10)
 
 now = now.strftime('%Y-%m-%d 00:00:00')
+now_4 = now_4.strftime('%Y-%m-%d 00:00:00')
 now_10 = now_10.strftime('%Y-%m-%d 00:00:00')
 
 # -----------------------------------------------------------------------------
@@ -82,7 +84,7 @@ elif mode == 'ready':
         ]    
 elif mode == 'done':
     domain = [
-        ('create_date', '>=', now_10),
+        ('create_date', '>=', now_4),
         ('logistic_state', '=', 'done'),
         ]    
 else:
