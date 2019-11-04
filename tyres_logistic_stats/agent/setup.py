@@ -63,7 +63,8 @@ order_ids = order_pool.search([
     ])
 
 total = len(order_ids)
-print 'Connect to ODOO: Update >= %s [Tot. %s]' % (now, total)
+print 'Connect to ODOO: Create >= %s Update >= %s [Tot. %s]' % (
+    now_7, now, total)
 
 i = 0
 for order in order_pool.browse(order_ids):
