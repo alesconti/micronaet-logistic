@@ -56,5 +56,10 @@ order_ids = order_pool.search([
     #('stats_level', '=', 'unset'), # Remove for ALL
     ])
 
+total = len(order_ids)
+i = 0
 for order in order_pool.browse(order_ids):
+    i += 1 
+    if i % 20 == 0:
+        print 'Updated %s on %s' % (i, total)
     order.sale_order_refresh_margin_stats()
