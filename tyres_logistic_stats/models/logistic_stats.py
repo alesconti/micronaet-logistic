@@ -69,8 +69,9 @@ class SaleOrderStats(models.Model):
     def workflow_manual_order_pending(self):
         ''' If order have all line checked make one step in pending state
         '''
+        res = super(SaleOrderStats, self).workflow_manual_order_pending()
         self.refresh_all_statistic_orders()
-        return super(SaleOrderStats, self).workflow_manual_order_pending()
+        return res
     
     # TODO pending > ready
     
@@ -79,9 +80,10 @@ class SaleOrderStats(models.Model):
     def workflow_ready_to_done_draft_picking(self, ):
         ''' Override order WF action        
         '''
-        self.refresh_all_statistic_orders()
-        return super(
+        res = super(
             SaleOrderStats, self).workflow_ready_to_done_draft_picking()
+        self.refresh_all_statistic_orders()
+        return res
             
     # -------------------------------------------------------------------------
     #                           BUTTON EVENTS:
