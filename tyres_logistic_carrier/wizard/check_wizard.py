@@ -104,7 +104,8 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
         # Write detail:
         # ---------------------------------------------------------------------        
         structure = {}
-        for line in line_pool.search(domain):
+        lines = line_pool.search(domain)
+        for line in lines:
             if line.product_id.is_expence:
                 continue
 
@@ -117,9 +118,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                 structure[supplier][order] = []
             structure[supplier][order].append(line)    
         
-        if structure:
-            _logger.warning('Order found: %s' % len(structure))            
-        else:
+        if not structure:
             _logger.warning('Order not found!')
             raise exceptions.Warning(_('No order found with this filters!'))
             return True    
@@ -271,6 +270,10 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                 total['qty'],
                 ), default_format=format_text['green']['number'], col=col - 4)
                     
+        _logger.warning('Supplier found: %s [Lines: %s]' % (
+            len(structure),
+            len(lines),
+            ))
         # ---------------------------------------------------------------------
         # Save file:
         # ---------------------------------------------------------------------
