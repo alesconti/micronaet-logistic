@@ -175,14 +175,12 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
             excel_pool.write_xls_line(ws_name, row, header, 
                 default_format=format_text['header'])
 
-
             total = {
                 'weight': 0.0,                
                 'parcel': 0.0,                
                 'cost': 0.0,                
                 'qty': 0.0,
-                }
-            
+                }            
             for order in sorted(structure[supplier], 
                     key=lambda x: (
                         x.carrier_mode_id.name or '',
@@ -210,7 +208,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                 else:    
                     format_color = format_text['red']
 
-                header = (
+                order_header = (
                     #order.carrier_supplier_id.name,
                     order.carrier_mode_id.name,
                     order.date_order[:10],
@@ -227,12 +225,13 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                     (parcel, format_color['number']),
                     (order.carrier_cost, format_color['number']),
                     )
-                excel_pool.write_xls_line(ws_name, row, header, 
+                excel_pool.write_xls_line(ws_name, row, order_header, 
                     default_format=format_color['text'])
                     
                 first = True    
-                col = len(header)
+                col = len(order_header)
                 for line in structure[supplier][order]:
+                    row += 1
                     
                     # Readability:
                     product = line.product_id
@@ -244,8 +243,8 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                     # ---------------------------------------------------------
                     if first:
                         first = False # Write in same line
+                        row -= 1
                     else:
-                        row += 1
                         excel_pool.write_xls_line(ws_name, row, (
                             '', '', '', '', '', '', '', '',
                             ), default_format=format_text['white']['text'])
