@@ -52,7 +52,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
     def extract_excel_report(self, ):
         ''' Extract Excel report
         '''
-        order_line_pool = self.env['sale.order.line']
+        line_pool = self.env['sale.order.line']
         excel_pool = self.env['excel.writer']
         
         from_date = self.from_date
@@ -64,6 +64,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
             # Header
             ('order_id.date_order', '>=', from_date),
             ('order_id.date_order', '>=', to_date),
+            ('order_id.logistic_state', '>=', 'done'), # only done order
             ]
 
         if carrier:
@@ -80,44 +81,38 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                 )
 
         # ---------------------------------------------------------------------
-        #                           Collect data:
-        # ---------------------------------------------------------------------
-        # A. All stock move sale
-        supplier_category_move = {}
-        for move in move_pool.search(domain):            
-            supplier = move.delivery_id.supplier_id
-            category = move.product_id.mmac_pfu.name or ''
-            if not category: # Missed category product not in report
-                continue
-            
-            if supplier not in supplier_category_move:
-                supplier_category_move[supplier] = {}
-                
-            if category not in supplier_category_move[supplier]:
-                supplier_category_move[supplier][category] = []
-
-            supplier_category_move[supplier][category].append(move)
-
-        # ---------------------------------------------------------------------
         #                          EXTRACT EXCEL:
         # ---------------------------------------------------------------------
-        # Excel file configuration:
-        header = ('RAEE', 'Cod. Articolo', 'Descrizione', u'Q.tà', 
-            'Doc Fornitore', 'Data Doc.', 'N. Fattura', 'N. Nostra fattura', 
-            'Data Doc.', 'ISO stato')
-            
+        # Excel file configuration: # TODO
+        header = (
+            'Corriere', 'Modo', 'Data', 'Ordine', 'Destinazione',
+            'Colli', 'Track ID',
+            'Q.', 'Prodotto',
+            )
         column_width = (
-            5, 15, 45, 5, 
-            15, 12, 12, 15, 
-            10, 8,
-            )    
+            15, 10, 10, 15, 35,
+            5, 10, 
+            6, 30,
+            )
 
         # ---------------------------------------------------------------------
         # Write detail:
         # ---------------------------------------------------------------------        
-        setup_complete = False # For initial setup:
-        for supplier in sorted(supplier_category_move, key=lambda x: x.name):
-            ws_name = supplier.name.strip()
+        orders = {}
+        for line in line_pool.search(domain):
+            order = line.order_id
+            if order not in orders:
+                orders[order] = []
+            orders[order].append(line)    
+        
+        setup_complete = False
+        for order in sorted(orders, 
+                key=lambda o: (
+                    o.carrier_supplier_id.name,
+                    o.carrier_mode_id.name,
+                    o.date_order,
+                    )):
+            ws_name = 'Consegne' #supplier.name.strip()
             
             # -----------------------------------------------------------------
             # Excel sheet creation:
@@ -136,15 +131,16 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                 
             # Header write:
             row = 0
+            order = line.order_id
+            partner = order.partner_shipping_id
+            
             excel_pool.write_xls_line(ws_name, row, [
-                u'Fornitore:',
-                u'',
-                supplier.name or '',
-                supplier.sql_supplier_code or '',
-                u'',
-                u'Dalla data: %s' % from_date,
-                u'',
-                u'Alla data: %s' % to_date,
+                u'Corriere: %s, Modo: %s, Data [%s, %s] %s' % (
+                    order.carrier_supplier_id.name,
+                    order.carrier_mode_id.name,                    
+                    from_date,
+                    to_date,
+                    'Solo Shippy' if only_shippy else '',
                 ], default_format=format_text['title'])
                 
             row += 2
@@ -152,69 +148,44 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                 default_format=format_text['header'])
                 
             total = 0
-            for category in sorted(supplier_category_move[supplier]):
-                subtotal = 0
-                for move in sorted(supplier_category_move[supplier][category],
-                        key=lambda x: x.date):
-                    row += 1
+            row += 1
+            excel_pool.write_xls_line(ws_name, row, (
+                order.carrier_supplier_id.name,
+                order.carrier_mode_id.name,
+                order.date_order,
+                order.name
+                partner.name,
 
-                    # Readability:
-                    order = move.logistic_load_id.order_id
-                    partner = order.partner_invoice_id
-                    product = move.product_id
-                    qty = move.product_uom_qty # Delivered qty
-                    
-                    # Get invoice reference:
-                    try:
-                        invoice = order.logistic_picking_ids[0]
-                        invoice_date = invoice.invoice_date or ''
-                        invoice_number = invoice.invoice_number or '?'
-                    except:
-                        _logger.error('No invoice for order %s' % order.name)
-                        invoice_date = ''
-                        invoice_number = '?'
-                        
-                    # TODO check more than one error
-
-                    # ---------------------------------------------------------
-                    #                    Excel writing:
-                    # ---------------------------------------------------------
-                    # Total operation:
-                    total += qty
-                    subtotal += qty
-                    
-                    # ---------------------------------------------------------
-                    # Write data line:
-                    # ---------------------------------------------------------
-                    excel_pool.write_xls_line(ws_name, row, (
-                        category, #product.mmac_pfu.name,
-                        product.default_code,
-                        product.name_extended, #name,
-                        (qty, format_text['number']), # TODO check if it's all!
-                        move.delivery_id.name, # Delivery ref.
-                        move.delivery_id.date,
-                        '', # Number supplier invoice
-                        invoice_number, # Our invoice
-                        invoice_date[:10], # Date doc,
-                        partner.country_id.code or '??', # ISO country
-                        ), default_format=format_text['text'])
+                len(order.parcel_ids),
+                order.carrier_track_id,
+                ), default_format=format_text['text'])
+            for line in orders[order]:
+                # Readability:
+                product = move.product_id
+                qty = move.product_uom_qty # Delivered qty                
+                total += qty
+                
+                # ---------------------------------------------------------
+                # Write data line:
+                # ---------------------------------------------------------
+                excel_pool.write_xls_line(ws_name, row, (                
+                    (qty, format_text['number']), # TODO check if it's all!
+                    product.name_extended,
+                    ), default_format=format_text['text'], col=7)
                 row += 1
-                excel_pool.write_xls_line(ws_name, row, (
-                    subtotal,
-                    ), default_format=format_text['number'], col=3)                    
 
             # -----------------------------------------------------------------
             # Write data line:
             # -----------------------------------------------------------------
             # Total
-            row += 1
+            #row += 1
             excel_pool.write_xls_line(ws_name, row, (
                 'Totale:', total,
-                ), default_format=format_text['number'], col=2)
+                ), default_format=format_text['number'], col=7)
                 
         # ---------------------------------------------------------------------
         # Save file:
         # ---------------------------------------------------------------------
-        return excel_pool.return_attachment('Report_Carrier')
+        return excel_pool.return_attachment('Report_Corrieri')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
