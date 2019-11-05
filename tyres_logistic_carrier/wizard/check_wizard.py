@@ -183,11 +183,13 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                 'cost': 0.0,                
                 'qty': 0.0,
                 }
+            
             for order in sorted(structure[supplier], 
                     key=lambda x: (
                         x.carrier_mode_id.name or '',
                         x.date_order or '',
                         )):
+                row += 1        
                 partner = order.partner_shipping_id                
                 
                 if order.carrier_shippy:
@@ -226,13 +228,12 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                     (parcel, format_color['number']),
                     (order.carrier_cost, format_color['number']),
                     )
-                excel_pool.write_xls_line(ws_name, row + 1, header, 
+                excel_pool.write_xls_line(ws_name, row, header, 
                     default_format=format_color['text'])
                     
                 first = True    
                 col = len(header)
                 for line in structure[supplier][order]:
-                    row += 1
                     
                     # Readability:
                     product = line.product_id
@@ -243,8 +244,9 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                     # Write data line:
                     # ---------------------------------------------------------
                     if first:
-                        first = False
+                        first = False # Write in same line
                     else:
+                        row += 1
                         excel_pool.write_xls_line(ws_name, row, (
                             '', '', '', '', '', '', '', '',
                             ), default_format=format_text['white']['text'])
