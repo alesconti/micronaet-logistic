@@ -40,6 +40,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/carrier_view.xml',
+        'wizard/check_wizard_view.xml',
         ],
     'test': [],
     'installable': True,
