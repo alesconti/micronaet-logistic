@@ -88,14 +88,14 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
         header = (
             'Modo', 'Data', 'Ordine', 'Destinazione',
             'Track ID', 'Shippy', 
-            'Colli', 'Costo',
+            'Peso', 'Colli', 'Costo',
             
             'Q.', 'Prodotto',
             )
         column_width = (
             16, 10, 20, 55,
             15, 5,
-            6, 6,
+            6, 6, 6,
             
             6, 65,
             )
@@ -178,6 +178,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
 
 
             total = {
+                'weight': 0.0,                
                 'parcel': 0.0,                
                 'cost': 0.0,                
                 'qty': 0.0,
@@ -191,12 +192,15 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                 
                 if order.carrier_shippy:
                     parcel = len(order.parcel_ids)
+                    weight = sum([item.weight for item in order.parcel_ids])
                 else:
                     parcel = order.carrier_manual_parcel
+                    weight = order.carrier_manual_weight
 
                 # -------------------------------------------------------------
                 # Total:    
                 # -------------------------------------------------------------
+                total['weight'] += weight
                 total['parcel'] += parcel
                 total['cost'] += order.carrier_cost
                 
@@ -205,7 +209,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                 else:    
                     format_color = format_text['red']
 
-                excel_pool.write_xls_line(ws_name, row + 1, (
+                header = (
                     #order.carrier_supplier_id.name,
                     order.carrier_mode_id.name,
                     order.date_order[:10],
@@ -218,11 +222,15 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
 
                     order.carrier_track_id,
                     'X' if order.carrier_shippy else '',
+                    (weight, format_color['number']),
                     (parcel, format_color['number']),
                     (order.carrier_cost, format_color['number']),
-                    ), default_format=format_color['text'])
+                    )
+                excel_pool.write_xls_line(ws_name, row + 1, header, 
+                    default_format=format_color['text'])
                     
                 first = True    
+                col = len(header)
                 for line in structure[supplier][order]:
                     row += 1
                     
@@ -242,9 +250,11 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                             ), default_format=format_text['white']['text'])
                         
                     excel_pool.write_xls_line(ws_name, row, (                
-                        (qty, format_text['white']['number']),
-                        product.name_extended,
-                        ), default_format=format_text['white']['text'], col=8)
+                            (qty, format_text['white']['number']),
+                            product.name_extended,
+                        ), 
+                        default_format=format_text['white']['text'], 
+                        col=col)
 
             # -----------------------------------------------------------------
             # Write data line:
@@ -253,10 +263,11 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
             row += 1
             excel_pool.write_xls_line(ws_name, row, (
                 u'Totale:', 
+                total['weight'],
                 total['parcel'],
                 total['cost'],
                 total['qty'],
-                ), default_format=format_text['green']['number'], col=5)
+                ), default_format=format_text['green']['number'], col=col - 4)
                     
         # ---------------------------------------------------------------------
         # Save file:
