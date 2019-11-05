@@ -148,11 +148,13 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                         },
                     'red': {
                         'text': excel_pool.get_format('bg_normal_red'),
-                        'number': excel_pool.get_format('bg_red_number'),                        
+                        'number': excel_pool.get_format(
+                            'bg_normal_red_number'),                        
                         },
                     'green': {
-                        'text': excel_pool.get_format('bg_normal_green'),
-                        'number': excel_pool.get_format('bg_green_number'),                        
+                        'text': excel_pool.get_format('bg_green'),
+                        'number': excel_pool.get_format(
+                            'bg_green_number'),                        
                         },
                     }
 
