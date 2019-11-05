@@ -97,7 +97,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
             15, 5,
             6, 6,
             
-            6, 45,
+            6, 65,
             )
 
         # ---------------------------------------------------------------------
