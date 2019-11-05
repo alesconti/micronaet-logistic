@@ -246,7 +246,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                         row -= 1
                     else:
                         excel_pool.write_xls_line(ws_name, row, (
-                            '', '', '', '', '', '', '', '',
+                            '', '', '', '', '', '', '', '', '', # XXX 
                             ), default_format=format_text['white']['text'])
                         
                     excel_pool.write_xls_line(ws_name, row, (                
