@@ -101,6 +101,9 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
         # ---------------------------------------------------------------------        
         structure = {}
         for line in line_pool.search(domain):
+            if line.product_id.is_expence:
+                continue
+
             order = line.order_id
             supplier = order.carrier_supplier_id
             
@@ -164,6 +167,12 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                         x.date_order or '',
                         )):
                 partner = order.partner_shipping_id                
+                
+                if order.carrier_shippy:
+                    parcel = len(order.parcel_ids)
+                else:
+                    parcel = order.carrier_manual_parcel
+    
                 excel_pool.write_xls_line(ws_name, row + 1, (
                     order.carrier_supplier_id.name,
                     order.carrier_mode_id.name,
@@ -171,7 +180,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                     order.name,
                     partner.name,
 
-                    len(order.parcel_ids),
+                    parcel,
                     order.carrier_track_id,
                     'X' if order.carrier_shippy else '',
                     ), default_format=format_text['text'])
