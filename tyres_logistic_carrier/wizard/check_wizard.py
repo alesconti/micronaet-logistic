@@ -59,25 +59,26 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
         to_date = self.to_date
         carrier = self.carrier_id
         mode = self.mode_id
+        only_shippy = self.only_shippy
         
         domain = [
             # Header
             ('order_id.date_order', '>=', from_date),
-            ('order_id.date_order', '>=', to_date),
+            ('order_id.date_order', '<', to_date),
             ('order_id.logistic_state', '>=', 'done'), # only done order
             ]
 
         if carrier:
             domain.append(
-                ('order.carrier_supplier_id', '=', carrier.id),
+                ('order_id.carrier_supplier_id', '=', carrier.id),
                 )
         if mode:
             domain.append(
-                ('order.carrier_mode_id', '=', mode.id),
+                ('order_id.carrier_mode_id', '=', mode.id),
                 )
         if only_shippy:
             domain.append(
-                ('order.carrier_shippy', '=', True),
+                ('order_id.carrier_shippy', '=', True),
                 )
 
         # ---------------------------------------------------------------------
@@ -86,37 +87,45 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
         # Excel file configuration: # TODO
         header = (
             'Corriere', 'Modo', 'Data', 'Ordine', 'Destinazione',
-            'Colli', 'Track ID',
+            'Colli', 'Track ID', 'Shippy',
             'Q.', 'Prodotto',
             )
         column_width = (
-            15, 10, 10, 15, 35,
-            5, 10, 
-            6, 30,
+            15, 10, 10, 18, 45,
+            5, 12, 5,
+            6, 45,
             )
 
         # ---------------------------------------------------------------------
         # Write detail:
         # ---------------------------------------------------------------------        
-        orders = {}
+        structure = {}
         for line in line_pool.search(domain):
             order = line.order_id
-            if order not in orders:
-                orders[order] = []
-            orders[order].append(line)    
-        
-        setup_complete = False
-        for order in sorted(orders, 
-                key=lambda o: (
-                    o.carrier_supplier_id.name,
-                    o.carrier_mode_id.name,
-                    o.date_order,
-                    )):
-            ws_name = 'Consegne' #supplier.name.strip()
+            supplier = order.carrier_supplier_id
             
+            if supplier not in structure:
+                structure[supplier] = {}
+            if order not in structure[supplier]:
+                structure[supplier][order] = []
+            structure[supplier][order].append(line)    
+        
+        if structure:
+            _logger.warning('Order found: %s' % len(structure))
+        else:
+            _logger.warning('Order not found!')
+            return True    
+
+        # -----------------------------------------------------------------
+        #                   Excel sheet creation:
+        # -----------------------------------------------------------------
+        setup_complete = False
+        for supplier in sorted(structure):
             # -----------------------------------------------------------------
-            # Excel sheet creation:
+            #                   Excel sheet creation:
             # -----------------------------------------------------------------
+            ws_name = (supplier.name or 'Non presente').strip()
+
             excel_pool.create_worksheet(ws_name)
             excel_pool.column_width(ws_name, column_width)
             if not setup_complete: # First page only:
@@ -128,61 +137,77 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                     'text': excel_pool.get_format('text'),
                     'number': excel_pool.get_format('number'),
                     }
-                
-            # Header write:
+
+            # -----------------------------------------------------------------
+            # Header of sheet:
+            # -----------------------------------------------------------------
             row = 0
-            order = line.order_id
-            partner = order.partner_shipping_id
-            
             excel_pool.write_xls_line(ws_name, row, [
                 u'Corriere: %s, Modo: %s, Data [%s, %s] %s' % (
-                    order.carrier_supplier_id.name,
-                    order.carrier_mode_id.name,                    
+                    order.carrier_supplier_id.name or 'Tutti',
+                    order.carrier_mode_id.name or 'Tutti',                    
                     from_date,
                     to_date,
                     'Solo Shippy' if only_shippy else '',
+                    )
                 ], default_format=format_text['title'])
                 
             row += 2
             excel_pool.write_xls_line(ws_name, row, header, 
                 default_format=format_text['header'])
-                
+
+
             total = 0
-            row += 1
-            excel_pool.write_xls_line(ws_name, row, (
-                order.carrier_supplier_id.name,
-                order.carrier_mode_id.name,
-                order.date_order,
-                order.name
-                partner.name,
+            for order in sorted(structure[supplier], 
+                    key=lambda x: (
+                        x.carrier_mode_id.name or '',
+                        x.date_order or '',
+                        )):
+                partner = order.partner_shipping_id                
+                excel_pool.write_xls_line(ws_name, row + 1, (
+                    order.carrier_supplier_id.name,
+                    order.carrier_mode_id.name,
+                    order.date_order[:10],
+                    order.name,
+                    partner.name,
 
-                len(order.parcel_ids),
-                order.carrier_track_id,
-                ), default_format=format_text['text'])
-            for line in orders[order]:
-                # Readability:
-                product = move.product_id
-                qty = move.product_uom_qty # Delivered qty                
-                total += qty
-                
-                # ---------------------------------------------------------
-                # Write data line:
-                # ---------------------------------------------------------
-                excel_pool.write_xls_line(ws_name, row, (                
-                    (qty, format_text['number']), # TODO check if it's all!
-                    product.name_extended,
-                    ), default_format=format_text['text'], col=7)
-                row += 1
+                    len(order.parcel_ids),
+                    order.carrier_track_id,
+                    'X' if order.carrier_shippy else '',
+                    ), default_format=format_text['text'])
+                first = True    
+                for line in structure[supplier][order]:
+                    row += 1
+                    
+                    # Readability:
+                    product = line.product_id
+                    qty = line.product_uom_qty # Delivered qty                
+                    total += qty
+                    
+                    # -------------------------------------------------------------
+                    # Write data line:
+                    # -------------------------------------------------------------
+                    if first:
+                        first = False
+                    else:
+                        excel_pool.write_xls_line(ws_name, row, (
+                            '', '', '', '', '', '', '', '',
+                            ), default_format=format_text['text'])
+                        
+                    excel_pool.write_xls_line(ws_name, row, (                
+                        (qty, format_text['number']), # TODO check if it's all!
+                        product.name_extended,
+                        ), default_format=format_text['text'], col=8)
 
-            # -----------------------------------------------------------------
+            # ---------------------------------------------------------------------
             # Write data line:
-            # -----------------------------------------------------------------
+            # ---------------------------------------------------------------------
             # Total
-            #row += 1
+            row += 1
             excel_pool.write_xls_line(ws_name, row, (
                 'Totale:', total,
                 ), default_format=format_text['number'], col=7)
-                
+                    
         # ---------------------------------------------------------------------
         # Save file:
         # ---------------------------------------------------------------------
