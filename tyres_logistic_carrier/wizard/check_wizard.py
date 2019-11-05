@@ -117,7 +117,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
             _logger.warning('Order found: %s' % len(structure))            
         else:
             _logger.warning('Order not found!')
-            exceptions.Warning(_('No order found with this filters!'))
+            raise exceptions.Warning(_('No order found with this filters!'))
             return True    
 
         # -----------------------------------------------------------------
