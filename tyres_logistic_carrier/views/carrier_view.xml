@@ -20,6 +20,10 @@
                      <field name="carrier_supplier_id" />
                      <field name="carrier_mode_id" />
                  </field>                 
+                 <xpath expr="/search/group/filter[2]" position="after">
+                     <filter string="Carrier supplier" domain="[]" context="{'group_by': 'carrier_supplier_id'}"/>                     
+                     <filter string="Carrier mode" domain="[]" context="{'group_by': 'carrier_mode_id'}"/>                     
+                 </xpath>
              </field>
          </record>         
         <record model="ir.ui.view" id="view_sale_order_form">
