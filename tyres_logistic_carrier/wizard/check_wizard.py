@@ -142,8 +142,18 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                 format_text = {                
                     'title': excel_pool.get_format('title'),
                     'header': excel_pool.get_format('header'),
-                    'text': excel_pool.get_format('text'),
-                    'number': excel_pool.get_format('number'),
+                    'white': {
+                        'text': excel_pool.get_format('text'),
+                        'number': excel_pool.get_format('number'),
+                        },
+                    'red': {
+                        'text': excel_pool.get_format('bg_normal_red'),
+                        'number': excel_pool.get_format('bg_red_number'),                        
+                        },
+                    'green': {
+                        'text': excel_pool.get_format('bg_normal_green'),
+                        'number': excel_pool.get_format('bg_green_number'),                        
+                        },
                     }
 
             # -----------------------------------------------------------------
@@ -187,6 +197,11 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                 # -------------------------------------------------------------
                 total['parcel'] += parcel
                 total['cost'] += order.carrier_cost
+                
+                if order.carrier_cost > 0.0:
+                    format_color = format_text['white']
+                else:    
+                    format_color = format_text['red']
 
                 excel_pool.write_xls_line(ws_name, row + 1, (
                     #order.carrier_supplier_id.name,
@@ -201,9 +216,9 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
 
                     order.carrier_track_id,
                     'X' if order.carrier_shippy else '',
-                    (parcel, format_text['number']),
-                    (order.carrier_cost, format_text['number']),
-                    ), default_format=format_text['text'])
+                    (parcel, format_color['number']),
+                    (order.carrier_cost, format_color['number']),
+                    ), default_format=format_color['text'])
                     
                 first = True    
                 for line in structure[supplier][order]:
@@ -222,12 +237,12 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                     else:
                         excel_pool.write_xls_line(ws_name, row, (
                             '', '', '', '', '', '', '', '',
-                            ), default_format=format_text['text'])
+                            ), default_format=format_text['white']['text'])
                         
                     excel_pool.write_xls_line(ws_name, row, (                
-                        (qty, format_text['number']),
+                        (qty, format_text['white']['number']),
                         product.name_extended,
-                        ), default_format=format_text['text'], col=8)
+                        ), default_format=format_text['white']['text'], col=8)
 
             # -----------------------------------------------------------------
             # Write data line:
@@ -239,7 +254,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                 total['parcel'],
                 total['cost'],
                 total['qty'],
-                ), default_format=format_text['number'], col=5)
+                ), default_format=format_text['green']['number'], col=5)
                     
         # ---------------------------------------------------------------------
         # Save file:
