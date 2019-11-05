@@ -94,7 +94,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
             )
         column_width = (
             16, 10, 20, 55,
-            12, 5,
+            15, 5,
             6, 6,
             
             6, 45,
