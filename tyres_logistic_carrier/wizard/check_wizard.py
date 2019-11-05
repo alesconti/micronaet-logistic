@@ -86,15 +86,17 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         # Excel file configuration: # TODO
         header = (
-            #'Corriere', 
             'Modo', 'Data', 'Ordine', 'Destinazione',
-            'Colli', 'Track ID', 'Shippy', 'Costo',
+            'Track ID', 'Shippy', 
+            'Colli', 'Costo',
+            
             'Q.', 'Prodotto',
             )
         column_width = (
-            #16, 
             16, 10, 20, 55,
-            5, 12, 5, 12,
+            12, 5,
+            6, 6,
+            
             6, 45,
             )
 
@@ -164,8 +166,9 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
 
 
             total = {
+                'parcel': 0.0,                
+                'cost': 0.0,                
                 'qty': 0.0,
-                'cost': 0.0
                 }
             for order in sorted(structure[supplier], 
                     key=lambda x: (
@@ -173,13 +176,16 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                         x.date_order or '',
                         )):
                 partner = order.partner_shipping_id                
-                total['cost'] += order.carrier_cost
                 
                 if order.carrier_shippy:
                     parcel = len(order.parcel_ids)
                 else:
                     parcel = order.carrier_manual_parcel
-    
+
+                # Total:    
+                total['cost'] += order.carrier_cost
+                total['parcel'] += parcel
+
                 excel_pool.write_xls_line(ws_name, row + 1, (
                     #order.carrier_supplier_id.name,
                     order.carrier_mode_id.name,
@@ -191,10 +197,10 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                         partner.country_id.name or '/',
                         ),
 
-                    parcel,
                     order.carrier_track_id,
                     'X' if order.carrier_shippy else '',
-                    order.carrier_cost,
+                    (parcel, format_text['number']),,
+                    (order.carrier_cost, format_text['number']),
                     ), default_format=format_text['text'])
                     
                 first = True    
@@ -217,7 +223,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                             ), default_format=format_text['text'])
                         
                     excel_pool.write_xls_line(ws_name, row, (                
-                        (qty, format_text['number']), # TODO check if it's all!
+                        (qty, format_text['number']),
                         product.name_extended,
                         ), default_format=format_text['text'], col=8)
 
