@@ -174,7 +174,7 @@
                 </graph>
             </field>
         </record>
-        <record model="ir.actions.act_window" id="action_sale_order_statistics">
+        <record model="ir.actions.act_window" id="action_sale_order_statistics_clean">
             <field name="name">Statistiche (puliti)</field>
             <field name="res_model">sale.order</field>
             <field name="view_type">form</field>
@@ -184,7 +184,7 @@
             <field name="context">{'graph_view_ref': 'tyres_logistic_stats.view_sale_order_stats_graph', 'form_view_ref': 'tyres_logistic_stats.view_sale_order_statistics_form'}</field>
             <field name="domain">[('stat_level', '!=', 'unset'), ('logistic_source', '=', 'web'), ('stat_excluded', '=', False)]</field>
         </record>
-        <record model="ir.actions.act_window" id="action_sale_order_statistics_all">
+        <record model="ir.actions.act_window" id="action_sale_order_statistics_all_order">
             <field name="name">Statistiche (tutti)</field>
             <field name="res_model">sale.order</field>
             <field name="view_type">form</field>
@@ -197,15 +197,15 @@
         
         
         <menuitem 
-            id="menu_logistic_left_statistic_used"
+            id="menu_logistic_left_statistic_used_clean"
             parent="tyres_logistic_management.menu_logistic_left_statistic_root"
-            action="action_sale_order_statistics"
+            action="action_sale_order_statistics_clean"
             sequence="10"
             />
         <menuitem 
-            id="menu_logistic_left_statistic_all"
+            id="menu_logistic_left_statistic_all_order"
             parent="tyres_logistic_management.menu_logistic_left_statistic_root"
-            action="action_sale_order_statistics_all"
+            action="action_sale_order_statistics_all_order"
             sequence="20"
             />
 
