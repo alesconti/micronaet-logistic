@@ -147,8 +147,8 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
             row = 0
             excel_pool.write_xls_line(ws_name, row, [
                 u'Corriere: %s, Modo: %s, Data [%s, %s] %s' % (
-                    order.carrier_supplier_id.name or 'Tutti',
-                    order.carrier_mode_id.name or 'Tutti',                    
+                    carrier.name or 'Tutti',
+                    mode.name or 'Tutti',                    
                     from_date,
                     to_date,
                     'Solo Shippy' if only_shippy else '',
