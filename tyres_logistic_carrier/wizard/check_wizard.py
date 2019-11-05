@@ -182,9 +182,11 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                 else:
                     parcel = order.carrier_manual_parcel
 
+                # -------------------------------------------------------------
                 # Total:    
-                total['cost'] += order.carrier_cost
+                # -------------------------------------------------------------
                 total['parcel'] += parcel
+                total['cost'] += order.carrier_cost
 
                 excel_pool.write_xls_line(ws_name, row + 1, (
                     #order.carrier_supplier_id.name,
@@ -199,7 +201,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
 
                     order.carrier_track_id,
                     'X' if order.carrier_shippy else '',
-                    (parcel, format_text['number']),,
+                    (parcel, format_text['number']),
                     (order.carrier_cost, format_text['number']),
                     ), default_format=format_text['text'])
                     
@@ -212,9 +214,9 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                     qty = line.product_uom_qty # Delivered qty                
                     total['qty'] += qty
                     
-                    # -------------------------------------------------------------
+                    # ---------------------------------------------------------
                     # Write data line:
-                    # -------------------------------------------------------------
+                    # ---------------------------------------------------------
                     if first:
                         first = False
                     else:
@@ -227,16 +229,17 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                         product.name_extended,
                         ), default_format=format_text['text'], col=8)
 
-            # ---------------------------------------------------------------------
+            # -----------------------------------------------------------------
             # Write data line:
-            # ---------------------------------------------------------------------
+            # -----------------------------------------------------------------
             # Total
             row += 1
             excel_pool.write_xls_line(ws_name, row, (
                 u'Totale:', 
+                total['parcel'],
                 total['cost'],
                 total['qty'],
-                ), default_format=format_text['number'], col=6)
+                ), default_format=format_text['number'], col=5)
                     
         # ---------------------------------------------------------------------
         # Save file:
