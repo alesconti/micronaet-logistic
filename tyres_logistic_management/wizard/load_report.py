@@ -66,6 +66,7 @@ class StockPickingInReportWizard(models.TransientModel):
         to_date = self.to_date
         supplier = self.supplier_id
         exclude_fiscal_id = self.exclude_fiscal_id.id
+        exclude_country_id = self.exclude_country_id.id
         sort = self.sort
         nothing = _('Nothing')
         
