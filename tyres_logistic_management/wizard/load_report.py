@@ -50,7 +50,6 @@ class StockPickingInReportWizard(models.TransientModel):
     def extract_load_report(self):
         ''' Extract Excel report
         '''        
-        company_pool = self.env['res.company']
         move_pool = self.env['stock.move']
         excel_pool = self.env['excel.writer']
         
@@ -58,15 +57,11 @@ class StockPickingInReportWizard(models.TransientModel):
         to_date = self.to_date
         supplier = self.supplier_id
 
-        company = company_pool.search([])[0]
-        logistic_pick_in_type = company.logistic_pick_in_type_id
-        logistic_pick_in_type_id = logistic_pick_in_type.id
-        
         domain = [
             # Header
             ('create_date', '>=', from_date),
             ('create_date', '<', to_date),
-            ('picking_type_id', '=', logistic_pick_in_type_id),
+            ('logistic_load_id', '!=', False), # Load stock move only
             ]
 
         if supplier:
