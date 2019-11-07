@@ -110,7 +110,7 @@ class StockPickingInReportWizard(models.TransientModel):
             # -----------------------------------------------------------------
             #                   Excel sheet creation:
             # -----------------------------------------------------------------
-            ws_name = '%s %s'(
+            ws_name = '%s %s' % (
                 (supplier.name or 'Non presente').strip(),
                 '' if not supplier else supplier.id,
                 )
