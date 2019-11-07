@@ -81,7 +81,7 @@ class StockPickingInReportWizard(models.TransientModel):
                 
         if exclude_fiscal_id:
             domain.append(
-                ('logistic_purchase_id.order_id.partner_id.property_account_position_id', '=', 
+                ('logistic_purchase_id.order_id.partner_id.property_account_position_id', '!=', 
                     exclude_fiscal_id),
                 )
             
