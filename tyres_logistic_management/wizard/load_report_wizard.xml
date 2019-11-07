@@ -13,11 +13,16 @@
                   </header>
                   <sheet>                  
                       <group colspan="4" col="4">
+                          <field name="sort" />
+                          
+                          <separator string="Filter:" colspan="4"/>
                           <field name="supplier_id" domain="[('supplier', '=', True)]"/>
-                          <newline/>
+                          <field name="exclude_fiscal_id" />
 
                           <field name="from_date" />
                           <field name="to_date" />
+
+                          
                       </group>    
                   </sheet>
               </form>
