@@ -172,7 +172,8 @@ class StockPickingInReportWizard(models.TransientModel):
                 # Total:    
                 # -------------------------------------------------------------
                 product_uom_qty = move.product_uom_qty
-                price_unit = move.price_unit
+                #price_unit = move.price_unit
+                price_unit = logistic_purchase.price_unit
                 subtotal = product_uom_qty * price_unit
                 total['subtotal'] += subtotal
                 total['quantity'] += product_uom_qty
