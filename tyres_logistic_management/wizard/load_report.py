@@ -74,12 +74,12 @@ class StockPickingInReportWizard(models.TransientModel):
         # Excel file configuration: # TODO
         header = (
             'Fornitore', 'Data', 'Documento', 'Tipo',            
-            'Codice', 'Prodotto', 
+            'Codice', 'Prodotto', 'PFU cat.',
             'Q.', 'Prezzo', 'Subtotal',
             )
         column_width = (
             30, 10, 20, 10,            
-            15, 40, 
+            15, 40, 15,
             10, 10, 15,
             )
 
@@ -194,6 +194,7 @@ class StockPickingInReportWizard(models.TransientModel):
                     order.logistic_source,
                     product.default_code,
                     product.name_extended,
+                    product.mmac_pfu.name,
                     (product_uom_qty, format_color['number']),
                     (price_unit, format_color['number']),
                     (subtotal,  format_color['number']),
@@ -209,7 +210,7 @@ class StockPickingInReportWizard(models.TransientModel):
                 total['quantity'],
                 '/',
                 total['subtotal'],
-                ), default_format=format_text['green']['number'], col=5)
+                ), default_format=format_text['green']['number'], col=6)
 
             summary[supplier] = total # save for summary report
                     
