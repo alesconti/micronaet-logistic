@@ -96,7 +96,7 @@ class StockPickingInReportWizard(models.TransientModel):
             )
         column_width = (
             30, 10, 20, 10,            
-            15, 40, 15,
+            18, 40, 15,
             10, 10, 15,
             )
 
