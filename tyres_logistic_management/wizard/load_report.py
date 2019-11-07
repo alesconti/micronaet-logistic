@@ -165,14 +165,16 @@ class StockPickingInReportWizard(models.TransientModel):
                 default_format=format_text['header'])
 
             total = {
-                'subtotal': 0.0,                
-                'quantity': 0.0,                
-                }            
+                'subtotal': {},                
+                'quantity': {},                
+                }
             for line in sorted(structure[supplier], 
                     key=lambda x: x.create_date):
                 row += 1
                 partner = line.partner_id   
                 product = line.product_id             
+                mmac_pfu = product.mmac_pfu.name or _('Nothing')
+
                 logistic_purchase = line.logistic_purchase_id
                 logistic_load = line.logistic_load_id
                 order = logistic_load.order_id
@@ -180,12 +182,17 @@ class StockPickingInReportWizard(models.TransientModel):
                 # -------------------------------------------------------------
                 # Total:    
                 # -------------------------------------------------------------
+                if mmac_pfu not in total['subtotal']:
+                    total['subtotal'][mmac_pfu] = 0.0
+                    total['quantity'][mmac_pfu] = 0.0
+                    
                 product_uom_qty = move.product_uom_qty
-                #price_unit = move.price_unit
                 price_unit = logistic_purchase.price_unit
+                # price_unit = move.price_unit
+
                 subtotal = product_uom_qty * price_unit
-                total['subtotal'] += subtotal
-                total['quantity'] += product_uom_qty
+                total['subtotal'][mmac_pfu] += subtotal
+                total['quantity'][mmac_pfu] += product_uom_qty
                 
                 if subtotal > 0.0:
                     format_color = format_text['white']
@@ -212,9 +219,9 @@ class StockPickingInReportWizard(models.TransientModel):
             row += 1
             excel_pool.write_xls_line(ws_name, row, (
                 u'Totale:', 
-                total['quantity'],
+                sum(total['quantity'].values()),
                 '/',
-                total['subtotal'],
+                sum(total['subtotal'].values()),
                 ), default_format=format_text['green']['number'], col=6)
 
             summary[supplier] = total # save for summary report
@@ -257,8 +264,8 @@ class StockPickingInReportWizard(models.TransientModel):
                 format_color = format_text['red']
 
             # Total: 
-            master_total['quantity'] += total['quantity']
-            master_total['subtotal'] += total['subtotal']
+            master_total['quantity'] += sum(total['quantity'].values())
+            master_total['subtotal'] += sum(total['subtotal'].values())
 
             excel_pool.write_xls_line(summary_name, row, [
                 supplier.name, 
