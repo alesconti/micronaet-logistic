@@ -139,7 +139,7 @@ class StockPickingInReportWizard(models.TransientModel):
             # -----------------------------------------------------------------
             #                   Excel sheet creation:
             # -----------------------------------------------------------------
-            ws_name = (supplier.name or 'Non presente').strip(),
+            ws_name = (supplier.name or 'Non presente').strip()
             excel_pool.create_worksheet(ws_name)
                 
             excel_pool.column_width(ws_name, column_width)
