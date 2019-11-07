@@ -255,7 +255,7 @@ class StockPickingInReportWizard(models.TransientModel):
             'subtotal': {},
             'quantity': {},
             }
-
+        import pdb; pdb.set_trace()
         for supplier in sorted(summary, key=lambda x: (x.name if x else '')):
             row += 1
             total = summary[supplier]
