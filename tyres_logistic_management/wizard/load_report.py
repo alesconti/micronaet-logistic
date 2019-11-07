@@ -87,6 +87,10 @@ class StockPickingInReportWizard(models.TransientModel):
         # Write detail:
         # ---------------------------------------------------------------------        
         structure = {}
+        summary = {}
+        summary_name = 'Sommario'
+        excel_pool.create_worksheet(summary_name)        
+
         moves = move_pool.search(domain)
         for move in moves:
             if move.product_id.is_expence:
@@ -206,11 +210,50 @@ class StockPickingInReportWizard(models.TransientModel):
                 '/',
                 total['subtotal'],
                 ), default_format=format_text['green']['number'], col=5)
+
+            summary[supplier] = total # save for summary report
                     
         _logger.warning('Supplier found: %s [Moves: %s]' % (
             len(structure),
             len(moves),
             ))
+
+        # -----------------------------------------------------------------
+        # Summary of sheet:
+        # -----------------------------------------------------------------
+        row = 0
+        excel_pool.write_xls_line(summary_name, row, [
+            u'Somm,ario fornitori, Data [%s, %s]' % (
+                from_date,
+                to_date,
+                )
+            ], default_format=format_text['title'])
+            
+        row += 2
+        excel_pool.write_xls_line(summary_name, row, [
+            'Fornitore', 'Nazione', 'Pezzi', 'Totale',
+            ], 
+            default_format=format_text['header'])
+        excel_pool.column_width(summary_name, [
+            35, 15, 15, 20,
+            ])
+
+        for supplier in sorted(summary, key=lambda x: x.name):
+            row += 1
+            total = summary[supplier]
+            if total['subtotal']:
+                format_color = format_text['white']
+            else:    
+                format_color = format_text['red']
+            
+            excel_pool.write_xls_line(summary_name, row, [
+                supplier.name, 
+                supplier.country_id.name,
+                (total['quantity'], format_color['number']),
+                (total['subtotal'], format_color['number']),
+                ], default_format=format_color['text'])
+            
+
         # ---------------------------------------------------------------------
         # Save file:
         # ---------------------------------------------------------------------
