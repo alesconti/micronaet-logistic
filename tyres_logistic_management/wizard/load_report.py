@@ -50,6 +50,7 @@ class StockPickingInReportWizard(models.TransientModel):
     def extract_load_report(self):
         ''' Extract Excel report
         '''        
+        company_pool = self.env['res.company']
         move_pool = self.env['stock.move']
         excel_pool = self.env['excel.writer']
         
