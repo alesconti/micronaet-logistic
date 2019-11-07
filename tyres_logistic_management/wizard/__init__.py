@@ -25,4 +25,4 @@ from . import manual_operation_wizard
 from . import status_extract
 from . import fees_report
 from . import revenue_report
-
+from . import load_report
