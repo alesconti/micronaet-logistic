@@ -68,7 +68,7 @@ class StockPickingInReportWizard(models.TransientModel):
         exclude_fiscal_id = self.exclude_fiscal_id.id
         exclude_country_id = self.exclude_country_id.id
         sort = self.sort
-        nothing = _('Nothing')
+        nothing = '/'
         
         domain = [
             # Header
