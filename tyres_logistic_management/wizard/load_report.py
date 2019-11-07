@@ -163,7 +163,7 @@ class StockPickingInReportWizard(models.TransientModel):
                 product = line.product_id             
                 logistic_purchase = line.logistic_purchase_id
                 logistic_load = line.logistic_load_id
-                order = logistic_load_id.order_id
+                order = logistic_load.order_id
                 
                 # -------------------------------------------------------------
                 # Total:    
