@@ -288,7 +288,7 @@ class StockPickingInReportWizard(models.TransientModel):
         for supplier in sorted(summary, key=lambda x: (x.name if x else '')):
             total = summary[supplier]
             
-            for mmac_pfu in total['subtotal']: # Use this key, same for q.
+            for mmac_pfu in sorted(total['subtotal']): # Use this key same x q.
                 row += 1
                 quantity = total['quantity'][mmac_pfu]
                 subtotal = total['subtotal'][mmac_pfu]
