@@ -255,11 +255,12 @@ class StockPickingInReportWizard(models.TransientModel):
             'quantity': {},
             'subtotal': {},
             }
+            
         for supplier in sorted(summary, key=lambda x: (x.name if x else '')):
-            row += 1
             total = summary[supplier]
             
             for mmac_pfu in total['subtotal']: # Use this key, same for q.
+                row += 1
                 quantity = total['quantity'][mmac_pfu]
                 subtotal = total['subtotal'][mmac_pfu]
                 
@@ -291,11 +292,10 @@ class StockPickingInReportWizard(models.TransientModel):
         # -----------------------------------------------------------------
         # Total
         for mmac_pfu in master_total['subtotal']:
+            row += 1            
+
             subtotal = master_total['subtotal'][mmac_pfu]
             quantity = master_total['quantity'][mmac_pfu]
-            
-            row += 1
-            
             excel_pool.write_xls_line(summary_name, row, (
                 'Tot. %s' % mmac_pfu,
                 quantity,
