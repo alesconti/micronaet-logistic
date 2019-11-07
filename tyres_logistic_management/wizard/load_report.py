@@ -252,37 +252,56 @@ class StockPickingInReportWizard(models.TransientModel):
             ])
 
         master_total = {
-            'subtotal': 0.0,
-            'quantity': 0.0
+            'subtotal': {},
+            'quantity': {},
             }
+
         for supplier in sorted(summary, key=lambda x: (x.name if x else '')):
             row += 1
             total = summary[supplier]
-            if total['subtotal']:
-                format_color = format_text['white']
-            else:    
-                format_color = format_text['red']
+            
+            subtotal = sum(total['subtotal'].values())
+            quantity = sum(total['quantity'].values())
+            
+            for mmac_pfu in total:
+                supplier_total = total[mmac_pfu]['subtotal']
+                supplier_quantity = total[mmac_pfu]['quantity']
+                
+                if supplier_total:
+                    format_color = format_text['white']
+                else:    
+                    format_color = format_text['red']
 
-            # Total: 
-            master_total['quantity'] += sum(total['quantity'].values())
-            master_total['subtotal'] += sum(total['subtotal'].values())
+                # Total:
+                if mmac_pfu not in master_total['subtotal']:
+                    master_total['subtotal'][mmac_pfu] = 0.0
+                    master_total['quantity'][mmac_pfu] = 0.0
+                
+                master_total['quantity'][mmac_pfu] += quantity
+                master_total['subtotal'][mmac_pfu] += subtotal
 
-            excel_pool.write_xls_line(summary_name, row, [
-                supplier.name, 
-                supplier.country_id.name,
-                (total['quantity'], format_color['number']),
-                (total['subtotal'], format_color['number']),
-                ], default_format=format_color['text'])
+                excel_pool.write_xls_line(summary_name, row, [
+                    supplier.name, 
+                    supplier.country_id.name,
+                    (supplier_quantity, format_color['number']),
+                    (supplier_subtotal, format_color['number']),
+                    ], default_format=format_color['text'])
             
         # -----------------------------------------------------------------
         # Write data line:
         # -----------------------------------------------------------------
         # Total
-        row += 1
-        excel_pool.write_xls_line(summary_name, row, (
-            master_total['quantity'],
-            master_total['subtotal'],
-            ), default_format=format_text['green']['number'], col=2)
+        for mmac_pfu in master_total:
+            subtotal = master_total[mmac_pfu]['subtotal']
+            quantity = master_total[mmac_pfu]['quantity']
+            
+            row += 1
+            
+            excel_pool.write_xls_line(summary_name, row, (
+                'Tot. %s' % mmac_pfu,
+                quantity,
+                subtotal,
+                ), default_format=format_text['green']['number'], col=1)
 
         # ---------------------------------------------------------------------
         # Save file:
