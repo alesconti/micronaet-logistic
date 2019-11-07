@@ -44,9 +44,9 @@ class StockPickingInReportWizard(models.TransientModel):
     supplier_id = fields.Many2one('res.partner', 'Supplier')
     from_date = fields.Date('From date >=', required=True)
     to_date = fields.Date('To date <', required=True)
-    exclude_fiscal_id = fields.many2one(
+    exclude_fiscal_id = fields.Many2one(
         'account.fiscal.position', 'Exclude fiscal position')
-    sort = fields.selection([
+    sort = fields.Selection([
         ('date', 'Date'),
         ('pfu', 'PFU, Date'),
         ], 'Sort mode', default='pfu', required=True)
@@ -277,7 +277,7 @@ class StockPickingInReportWizard(models.TransientModel):
             ], 
             default_format=format_text['header'])
         excel_pool.column_width(summary_name, [
-            35, 15, 15, 20,
+            35, 15, 10, 15, 20,
             ])
 
         master_total = {
