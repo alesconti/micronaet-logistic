@@ -328,7 +328,7 @@ class StockPickingInReportWizard(models.TransientModel):
         # Write data line:
         # -----------------------------------------------------------------
         # Total
-        for mmac_pfu in master_total['subtotal']:
+        for mmac_pfu in sorted(master_total['subtotal']):
             row += 1            
 
             subtotal = master_total['subtotal'][mmac_pfu]
