@@ -238,6 +238,10 @@ class StockPickingInReportWizard(models.TransientModel):
             35, 15, 15, 20,
             ])
 
+        master_total = {
+            'subtotal': 0.0,
+            'quantity': 0.0
+            }
         for supplier in sorted(summary, key=lambda x: x.name):
             row += 1
             total = summary[supplier]
@@ -245,7 +249,11 @@ class StockPickingInReportWizard(models.TransientModel):
                 format_color = format_text['white']
             else:    
                 format_color = format_text['red']
-            
+
+            # Total: 
+            master_total['quantity'] += total['quantity']
+            master_total['subtotal'] += total['subtotal']
+
             excel_pool.write_xls_line(summary_name, row, [
                 supplier.name, 
                 supplier.country_id.name,
@@ -253,6 +261,15 @@ class StockPickingInReportWizard(models.TransientModel):
                 (total['subtotal'], format_color['number']),
                 ], default_format=format_color['text'])
             
+        # -----------------------------------------------------------------
+        # Write data line:
+        # -----------------------------------------------------------------
+        # Total
+        row += 1
+        excel_pool.write_xls_line(summary_name, row, (
+            master_total['quantity'],
+            master_total['subtotal'],
+            ), default_format=format_text['green']['number'], col=2)
 
         # ---------------------------------------------------------------------
         # Save file:
