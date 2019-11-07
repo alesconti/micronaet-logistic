@@ -56,11 +56,16 @@ class StockPickingInReportWizard(models.TransientModel):
         from_date = self.from_date
         to_date = self.to_date
         supplier = self.supplier_id
+
+        company = company_pool.search([])[0]
+        logistic_pick_in_type = company.logistic_pick_in_type_id
+        logistic_pick_in_type_id = logistic_pick_in_type.id
         
         domain = [
             # Header
             ('create_date', '>=', from_date),
             ('create_date', '<', to_date),
+            ('picking_type_id', '=', logistic_pick_in_type_id),
             ]
 
         if supplier:
