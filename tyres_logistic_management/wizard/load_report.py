@@ -309,7 +309,7 @@ class StockPickingInReportWizard(models.TransientModel):
                 master_total['subtotal'][mmac_pfu] += subtotal
 
                 excel_pool.write_xls_line(summary_name, row, [
-                    supplier.name, 
+                    (supplier.name or '').strip(), 
                     supplier.country_id.name,
                     mmac_pfu,
                     (quantity, format_color['number']),
