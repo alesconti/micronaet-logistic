@@ -198,14 +198,13 @@ class StockPickingInReportWizard(models.TransientModel):
                         x.create_date,
                         ))
                     
-            for line in structure_sorted:
+            for move in structure_sorted:
                 row += 1
-                partner = line.partner_id   
-                product = line.product_id             
+                product = move.product_id             
                 mmac_pfu = product.mmac_pfu.name or nothing
 
-                logistic_purchase = line.logistic_purchase_id
-                logistic_load = line.logistic_load_id
+                logistic_purchase = move.logistic_purchase_id
+                logistic_load = move.logistic_load_id
                 order = logistic_load.order_id
                 
                 # -------------------------------------------------------------
@@ -229,7 +228,7 @@ class StockPickingInReportWizard(models.TransientModel):
                     format_color = format_text['red']
 
                 excel_pool.write_xls_line(ws_name, row, [
-                    partner.name,
+                    supplier.name,
                     move.create_date[:10],
                     order.name,
                     order.logistic_source,
