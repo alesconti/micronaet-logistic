@@ -243,7 +243,7 @@ class StockPickingInReportWizard(models.TransientModel):
             'subtotal': 0.0,
             'quantity': 0.0
             }
-        for supplier in sorted(summary, key=lambda x: x.name):
+        for supplier in sorted(summary, key=lambda x: (x.name if x else '')):
             row += 1
             total = summary[supplier]
             if total['subtotal']:
