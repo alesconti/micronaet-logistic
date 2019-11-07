@@ -195,9 +195,9 @@ class StockPickingInReportWizard(models.TransientModel):
             row += 1
             excel_pool.write_xls_line(ws_name, row, (
                 u'Totale:', 
-                total['subtotal'],
-                '/',
                 total['quantity'],
+                '/',
+                total['subtotal'],
                 ), default_format=format_text['green']['number'], col=5)
                     
         _logger.warning('Supplier found: %s [Moves: %s]' % (
