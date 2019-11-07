@@ -17,7 +17,8 @@
                           
                           <separator string="Filter:" colspan="4"/>
                           <field name="supplier_id" domain="[('supplier', '=', True)]"/>
-                          <field name="exclude_fiscal_id" />
+                          <field name="exclude_country_id" />
+                          <field name="exclude_fiscal_id" invisible="1"/>
 
                           <field name="from_date" />
                           <field name="to_date" />

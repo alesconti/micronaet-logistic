@@ -46,6 +46,8 @@ class StockPickingInReportWizard(models.TransientModel):
     to_date = fields.Date('To date <', required=True)
     exclude_fiscal_id = fields.Many2one(
         'account.fiscal.position', 'Exclude fiscal position')
+    exclude_country_id = fields.Many2one(
+        'res.country', 'Exclude country')
     sort = fields.Selection([
         ('date', 'Date'),
         ('pfu', 'PFU, Date'),
@@ -83,6 +85,12 @@ class StockPickingInReportWizard(models.TransientModel):
             domain.append(
                 ('logistic_purchase_id.order_id.partner_id.property_account_position_id', '!=', 
                     exclude_fiscal_id),
+                )
+
+        if exclude_country_id:
+            domain.append(
+                ('logistic_purchase_id.order_id.partner_id.country_id', '!=', 
+                    exclude_country_id),
                 )
             
         # ---------------------------------------------------------------------
