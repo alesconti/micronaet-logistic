@@ -33,7 +33,6 @@
             <field name="view_id" ref="view_stock_picking_in_report_wizard"/>
             <field name="target">new</field>
         </record>
-
       
         <menuitem 
             parent="tyres_logistic_management.menu_logistic_left_report_root"

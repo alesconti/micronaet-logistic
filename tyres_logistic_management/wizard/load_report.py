@@ -79,7 +79,7 @@ class StockPickingInReportWizard(models.TransientModel):
             )
         column_width = (
             30, 10, 20, 10,            
-            15, 30, 
+            15, 40, 
             10, 10, 15,
             )
 
@@ -161,6 +161,9 @@ class StockPickingInReportWizard(models.TransientModel):
                 row += 1
                 partner = line.partner_id   
                 product = line.product_id             
+                logistic_purchase = line.logistic_purchase_id
+                logistic_load = line.logistic_load_id
+                order = logistic_load_id.order_id
                 
                 # -------------------------------------------------------------
                 # Total:    
@@ -179,8 +182,8 @@ class StockPickingInReportWizard(models.TransientModel):
                 excel_pool.write_xls_line(ws_name, row, [
                     partner.name,
                     move.create_date[:10],
-                    '',# TODO
-                    '',# TODO
+                    order.name,
+                    order.logistic_source,
                     product.default_code,
                     product.name_extended,
                     (product_uom_qty, format_color['number']),
