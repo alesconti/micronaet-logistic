@@ -44,6 +44,13 @@ class StockPickingInReportWizard(models.TransientModel):
     supplier_id = fields.Many2one('res.partner', 'Supplier')
     from_date = fields.Date('From date >=', required=True)
     to_date = fields.Date('To date <', required=True)
+    exclude_fiscal_id = fields.many2one(
+        'account.fiscal.position', 'Exclude fiscal position')
+    sort = fields.selection([
+        ('date', 'Date'),
+        ('pfu', 'PFU, Date'),
+        ], 'Sort mode', default='pfu', required=True)
+        
     # -------------------------------------------------------------------------    
 
     @api.multi
@@ -56,7 +63,10 @@ class StockPickingInReportWizard(models.TransientModel):
         from_date = self.from_date
         to_date = self.to_date
         supplier = self.supplier_id
-
+        exclude_fiscal_id = self.exclude_fiscal_id.id
+        sort = self.sort
+        nothing = _('Nothing')
+        
         domain = [
             # Header
             ('create_date', '>=', from_date),
@@ -68,7 +78,13 @@ class StockPickingInReportWizard(models.TransientModel):
             domain.append(
                 ('partner_id', '=', supplier.id),
                 )
-
+                
+        if exclude_fiscal_id:
+            domain.append(
+                ('logistic_purchase_id.order_id.partner_id.property_account_position_id', '=', 
+                    exclude_fiscal_id),
+                )
+            
         # ---------------------------------------------------------------------
         #                          EXTRACT EXCEL:
         # ---------------------------------------------------------------------
@@ -168,12 +184,25 @@ class StockPickingInReportWizard(models.TransientModel):
                 'subtotal': {},                
                 'quantity': {},                
                 }
-            for line in sorted(structure[supplier], 
-                    key=lambda x: x.create_date):
+            
+            if sort == 'date':
+                structure_sorted = sorted(
+                    structure[supplier], 
+                    key=lambda x: x.create_date,
+                    )
+            else: # PFU        
+                structure_sorted = sorted(
+                    structure[supplier], 
+                    key=lambda x: (
+                        x.product_id.mmac_pfu.name or nothing, 
+                        x.create_date,
+                        ))
+                    
+            for line in structure_sorted:
                 row += 1
                 partner = line.partner_id   
                 product = line.product_id             
-                mmac_pfu = product.mmac_pfu.name or _('Nothing')
+                mmac_pfu = product.mmac_pfu.name or nothing
 
                 logistic_purchase = line.logistic_purchase_id
                 logistic_load = line.logistic_load_id
@@ -236,7 +265,7 @@ class StockPickingInReportWizard(models.TransientModel):
         # -----------------------------------------------------------------
         row = 0
         excel_pool.write_xls_line(summary_name, row, [
-            u'Somm,ario fornitori, Data [%s, %s]' % (
+            u'Sommario fornitori, Data [%s, %s]' % (
                 from_date,
                 to_date,
                 )
