@@ -171,7 +171,7 @@ class StockPickingInReportWizard(models.TransientModel):
             row = 0
             excel_pool.write_xls_line(ws_name, row, [
                 u'Fornitore: %s, Data [%s, %s]' % (
-                    supplier.name or 'Tutti',
+                    (supplier.name or 'Tutti').strip(),
                     from_date,
                     to_date,
                     )
@@ -229,7 +229,7 @@ class StockPickingInReportWizard(models.TransientModel):
                     format_color = format_text['red']
 
                 excel_pool.write_xls_line(ws_name, row, [
-                    supplier.name,
+                    (supplier.name or '').strip(),
                     move.create_date[:10],
                     order.name,
                     order.logistic_source,
