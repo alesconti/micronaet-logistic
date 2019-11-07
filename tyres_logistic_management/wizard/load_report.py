@@ -95,8 +95,7 @@ class StockPickingInReportWizard(models.TransientModel):
         for move in moves:
             if move.product_id.is_expence:
                 continue
-
-            supplier = move.partner_id
+            supplier = move.logistic_purchase_id.order_id.partner_id
             
             if supplier not in structure:
                 structure[supplier] = []
