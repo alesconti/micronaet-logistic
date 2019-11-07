@@ -21,8 +21,6 @@
 
                           <field name="from_date" />
                           <field name="to_date" />
-
-                          
                       </group>    
                   </sheet>
               </form>
