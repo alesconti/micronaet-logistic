@@ -119,7 +119,12 @@ class StockPickingInReportWizard(models.TransientModel):
                 '' if not supplier else supplier.id,
                 )
 
-            excel_pool.create_worksheet(ws_name)
+            try:
+                excel_pool.create_worksheet(ws_name)
+            except: 
+                ws_name = 'Fornitore ID %s' % supplier.id
+                excel_pool.create_worksheet(ws_name)
+                
             excel_pool.column_width(ws_name, column_width)
             if not setup_complete: # First page only:
                 setup_complete = True
