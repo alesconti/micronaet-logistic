@@ -110,7 +110,7 @@ class StockPickingInReportWizard(models.TransientModel):
         #                   Excel sheet creation:
         # -----------------------------------------------------------------
         setup_complete = False
-        for supplier in sorted(structure, key=lambda x: x.name):
+        for supplier in sorted(structure, key=lambda x: (x.name if x else '')):
             # -----------------------------------------------------------------
             #                   Excel sheet creation:
             # -----------------------------------------------------------------
