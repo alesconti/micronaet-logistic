@@ -49,9 +49,9 @@ class StockPickingInReportWizard(models.TransientModel):
     exclude_country_id = fields.Many2one(
         'res.country', 'Exclude country')
     sort = fields.Selection([
-        ('date', 'Date'),
-        ('pfu', 'PFU, Date'),
-        ], 'Sort mode', default='pfu', required=True)
+        ('date', 'Delivery report'),
+        ('pfu', 'PFU report'),
+        ], 'Report mode', default='pfu', required=True)
         
     # -------------------------------------------------------------------------    
 
@@ -287,7 +287,7 @@ class StockPickingInReportWizard(models.TransientModel):
             
         for supplier in sorted(summary, key=lambda x: (x.name if x else '')):
             total = summary[supplier]
-            
+                        
             for mmac_pfu in sorted(total['subtotal']): # Use this key same x q.
                 row += 1
                 quantity = total['quantity'][mmac_pfu]
@@ -307,11 +307,28 @@ class StockPickingInReportWizard(models.TransientModel):
 
                 master_total['quantity'][mmac_pfu] += quantity
                 master_total['subtotal'][mmac_pfu] += subtotal
-
+                
+                if sort == 'pfu': 
+                    excel_pool.write_xls_line(summary_name, row, [
+                        (supplier.name or '').strip(), 
+                        supplier.country_id.name,
+                        mmac_pfu,
+                        (quantity, format_color['number']),
+                        (subtotal, format_color['number']),
+                        ], default_format=format_color['text'])
+                        
+            if sort == 'date': 
+                quantity = [total['quantity'].values()]
+                subtotal = [total['subtotal'].values()]
+                if subtotal:
+                    format_color = format_text['white']
+                else:    
+                    format_color = format_text['red']
+                
                 excel_pool.write_xls_line(summary_name, row, [
                     (supplier.name or '').strip(), 
                     supplier.country_id.name,
-                    mmac_pfu,
+                    '/',
                     (quantity, format_color['number']),
                     (subtotal, format_color['number']),
                     ], default_format=format_color['text'])
