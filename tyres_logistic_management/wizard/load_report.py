@@ -339,13 +339,29 @@ class StockPickingInReportWizard(models.TransientModel):
         # Write data line:
         # -----------------------------------------------------------------
         # Total
-        for mmac_pfu in sorted(master_total['subtotal']):
+        if sort == 'pfu':
+            for mmac_pfu in sorted(master_total['subtotal']):
+                row += 1            
+
+                subtotal = master_total['subtotal'][mmac_pfu]
+                quantity = master_total['quantity'][mmac_pfu]
+                excel_pool.write_xls_line(summary_name, row, (
+                    'Tot. %s' % mmac_pfu,
+                    quantity,
+                    subtotal,
+                    ), default_format=format_text['green']['number'], col=2)
+        else: # date report
             row += 1            
 
-            subtotal = master_total['subtotal'][mmac_pfu]
-            quantity = master_total['quantity'][mmac_pfu]
+            quantity = sum([
+                master_total['quantity'][key] \
+                    for key in master_total['subtotal']])
+            subtotal = sum([
+                master_total['subtotal'][key] \
+                    for key in master_total['subtotal']])
+                    
             excel_pool.write_xls_line(summary_name, row, (
-                'Tot. %s' % mmac_pfu,
+                'Totale',
                 quantity,
                 subtotal,
                 ), default_format=format_text['green']['number'], col=2)
