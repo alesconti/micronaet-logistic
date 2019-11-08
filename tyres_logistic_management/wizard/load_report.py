@@ -287,7 +287,6 @@ class StockPickingInReportWizard(models.TransientModel):
             
         for supplier in sorted(summary, key=lambda x: (x.name if x else '')):
             total = summary[supplier]
-                        
             for mmac_pfu in sorted(total['subtotal']): # Use this key same x q.
                 row += 1
                 quantity = total['quantity'][mmac_pfu]
@@ -316,10 +315,13 @@ class StockPickingInReportWizard(models.TransientModel):
                         (quantity, format_color['number']),
                         (subtotal, format_color['number']),
                         ], default_format=format_color['text'])
-                        
+
             if sort == 'date': 
-                quantity = [total['quantity'].values()]
-                subtotal = [total['subtotal'].values()]
+                import pdb; pdb.set_trace()
+                quantity = sum([
+                    total['quantity'][key] for key in total['quantity']])
+                subtotal = sum([
+                    total['subtotal'][key] for key in total['subtotal']])
                 if subtotal:
                     format_color = format_text['white']
                 else:    

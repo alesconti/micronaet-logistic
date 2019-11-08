@@ -779,7 +779,7 @@ class PurchaseOrderLine(models.Model):
         ('partial', 'Partially received'), # Select partial to deliver
         ], 'Check status', default='partial')
 
-    date_order = fields.Selection(
+    date_order = fields.Datetime(
         'Logistic source', readonly=True,
         related='logistic_sale_id.order_id.date_order',
         )
