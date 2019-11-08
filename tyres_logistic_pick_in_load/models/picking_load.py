@@ -779,6 +779,11 @@ class PurchaseOrderLine(models.Model):
         ('partial', 'Partially received'), # Select partial to deliver
         ], 'Check status', default='partial')
 
+    date_order = fields.Selection(
+        'Logistic source', readonly=True,
+        related='logistic_sale_id.order_id.date_order',
+        )
+
     logistic_source = fields.Selection(
         'Logistic source', readonly=True,
         related='logistic_sale_id.order_id.logistic_source',

@@ -75,6 +75,8 @@
                      <button name="clean_fast_filter" string="Remove filters" type="object" icon="fa-home fa-2x" />
                      <field name="logistic_source" invisible="1"/>
                      <field name="order_id" readonly="1" string="Rif." invisible="1"/>
+                     <field name="date_order" readonly="1" string="Data ord." invisible="not context.get('internal_view')"/>
+                     
                      <button name="open_detail_delivery_in" string="Open detail for line" type="object" icon="fa-list-alt fa-2x"/>
                      <button name="fast_filter_product_id" string="Filter this product" type="object" icon="fa-search fa-2x"  attrs="{'invisible': [('product_id','=',False)]}" />
                      <field name="product_id" readonly="1" invisible="1"/>
@@ -272,6 +274,17 @@
             <field name="view_id" ref="view_delivery_selection_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_search"/>            
             <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
+            <field name="domain">[('dropship_manage', '=', False), ('check_status', '!=', 'done'), ('order_id.logistic_state', '=', 'confirmed'), 
+                '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('order_id.partner_id.internal_stock', '=', False)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), TODO ('delivery_id','=',False), -->
+        </record>
+        <record model="ir.actions.act_window" id="action_purchase_selection_order_internal_line">
+            <field name="name">Delivery PO internal</field>
+            <field name="res_model">purchase.order.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_delivery_selection_tree"/>
+            <field name="search_view_id" ref="view_delivery_selection_search"/>            
+            <field name="context">{'internal_view': True}</field>
             <field name="domain">[('dropship_manage', '=', False), ('check_status', '!=', 'done'), ('order_id.logistic_state', '=', 'confirmed'), 
                 '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('order_id.partner_id.internal_stock', '=', False)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), TODO ('delivery_id','=',False), -->
         </record>
@@ -511,6 +524,13 @@
                  action="action_purchase_selection_order_line"
                  sequence="5"
                  />
+             <menuitem 
+                 parent="menu_logistic_delivery_management_root" 
+                 id="menu_purchase_selection_order_internal_line" 
+                 action="action_purchase_selection_order_internal_line"
+                 sequence="6"
+                 />
+
              
              <menuitem 
                  parent="menu_logistic_delivery_management_root" 

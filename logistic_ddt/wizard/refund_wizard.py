@@ -83,7 +83,7 @@ class StockPickingRefundDocumentWizard(models.TransientModel):
         
         # Readability:
         now = fields.Datetime.now()
-        partner = from_picking.partner_id
+        partner = from_picking.partner_id # sale_order_id ref.
         order = from_picking.sale_order_id
         origin = from_picking.invoice_number or from_picking.ddt_number or \
             from_picking.name
