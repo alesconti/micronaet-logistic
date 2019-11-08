@@ -317,7 +317,6 @@ class StockPickingInReportWizard(models.TransientModel):
                         ], default_format=format_color['text'])
 
             if sort == 'date': 
-                import pdb; pdb.set_trace()
                 quantity = sum([
                     total['quantity'][key] for key in total['quantity']])
                 subtotal = sum([
