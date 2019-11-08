@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-17 16:05+0000\n"
-"PO-Revision-Date: 2019-10-17 18:10+0100\n"
+"POT-Creation-Date: 2019-11-08 15:14+0000\n"
+"PO-Revision-Date: 2019-11-08 16:16+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -40,7 +40,7 @@ msgid "All delivery"
 msgstr "Tutto consegnato"
 
 #. module: tyres_logistic_pick_in_load
-#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:660
+#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:683
 #, python-format
 msgid "All received: %s!"
 msgstr "Tutto ricevuto: %s!"
@@ -68,6 +68,11 @@ msgid "Carrier"
 msgstr "Corriere"
 
 #. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_sale_order_ready_tree
+msgid "Check"
+msgstr "Check"
+
+#. module: tyres_logistic_pick_in_load
 #: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_purchase_order_line_check_status
 msgid "Check status"
 msgstr "Controllo stato"
@@ -76,6 +81,11 @@ msgstr "Controllo stato"
 #: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_form
 msgid "Confirm load operation?"
 msgstr "Confermare l'operazione di carico?"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_stock_move_tree
+msgid "Confirm remove of pending stock movement?"
+msgstr "Confermi rimozione movimenti magazzino pendenti?"
 
 #. module: tyres_logistic_pick_in_load
 #: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_sale_order_ready_tree
@@ -90,7 +100,7 @@ msgstr "Cons."
 #. module: tyres_logistic_pick_in_load
 #: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_search
 msgid "Create"
-msgstr "Create"
+msgstr "Creato"
 
 #. module: tyres_logistic_pick_in_load
 #: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_create_date
@@ -130,6 +140,11 @@ msgid "Current selected"
 msgstr "Utente attuale"
 
 #. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
+msgid "Data ord."
+msgstr "Data ord."
+
+#. module: tyres_logistic_pick_in_load
 #: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_date
 #: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_search
 msgid "Date"
@@ -147,6 +162,14 @@ msgid "Default code"
 msgstr "Codice"
 
 #. module: tyres_logistic_pick_in_load
+#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:389
+#, python-format
+msgid "Delete stock move, Delivery: %s, wrong load: %s [%s] q %s"
+msgstr ""
+"Cancellazione movimenti di magazzino, Consegna: %s, carico erraro: %s [%s] q "
+"%s"
+
+#. module: tyres_logistic_pick_in_load
 #: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_move_delivery_id
 #: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_form
 #: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_form
@@ -155,13 +178,19 @@ msgid "Delivery"
 msgstr "Consegna"
 
 #. module: tyres_logistic_pick_in_load
+#: model:ir.actions.act_window,name:tyres_logistic_pick_in_load.action_purchase_selection_order_internal_line
+#: model:ir.ui.menu,name:tyres_logistic_pick_in_load.menu_purchase_selection_order_internal_line
+msgid "Delivery PO internal"
+msgstr "Consegne in arrivo (uff.)"
+
+#. module: tyres_logistic_pick_in_load
 #: model:ir.actions.act_window,name:tyres_logistic_pick_in_load.action_purchase_selection_order_line
 #: model:ir.ui.menu,name:tyres_logistic_pick_in_load.menu_purchase_selection_order_line
 msgid "Delivery PO pending"
 msgstr "Consegne in arrivo"
 
 #. module: tyres_logistic_pick_in_load
-#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:433
+#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:456
 #, python-format
 msgid "Delivery created:"
 msgstr "Consegne create:"
@@ -229,7 +258,7 @@ msgid "FT"
 msgstr "FT"
 
 #. module: tyres_logistic_pick_in_load
-#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:493
+#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:516
 #, python-format
 msgid "Filter applied: %s"
 msgstr "Filtro applicato: %s"
@@ -309,6 +338,11 @@ msgid "Label satus"
 msgstr "Stato etichette"
 
 #. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_sale_order_ready_tree
+msgid "Label was printed"
+msgstr "Etichetta stampata!"
+
+#. module: tyres_logistic_pick_in_load
 #: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_logistic_delivery_report_wizard___last_update
 #: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery___last_update
 #: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_quant___last_update
@@ -330,7 +364,7 @@ msgid "Last Updated on"
 msgstr "Ultima modifica il"
 
 #. module: tyres_logistic_pick_in_load
-#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:628
+#: code:addons/tyres_logistic_pick_in_load/models/picking_load.py:651
 #, python-format
 msgid "Line detail"
 msgstr "Dettaglio righe"
@@ -400,7 +434,7 @@ msgstr "Ordine"
 #. module: tyres_logistic_pick_in_load
 #: model:ir.ui.menu,name:tyres_logistic_pick_in_load.menu_logistic_ready_order_to_send_closed
 msgid "Order closed"
-msgstr "Ordini chiusi"
+msgstr "Ordine chiuso"
 
 #. module: tyres_logistic_pick_in_load
 #: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_tree
@@ -410,7 +444,12 @@ msgstr "Ordine non web (interno o officina)"
 #. module: tyres_logistic_pick_in_load
 #: model:ir.ui.menu,name:tyres_logistic_pick_in_load.menu_logistic_ready_order_to_send
 msgid "Order ready"
-msgstr "Ordini pronti"
+msgstr "Ordine pronto"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_stock_move_tree
+msgid "Orphan stock move"
+msgstr "Movimento orfano"
 
 #. module: tyres_logistic_pick_in_load
 #: selection:purchase.order.line,check_status:0
@@ -460,7 +499,7 @@ msgstr "Stampa picking"
 #. module: tyres_logistic_pick_in_load
 #: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_logistic_delivery_extract_wizard
 msgid "Print report"
-msgstr "Stampa report"
+msgstr "Stampa"
 
 #. module: tyres_logistic_pick_in_load
 #: model:ir.model.fields,field_description:tyres_logistic_pick_in_load.field_stock_picking_delivery_product_id
@@ -607,7 +646,6 @@ msgstr "Carichi a gestionale:"
 
 #. module: tyres_logistic_pick_in_load
 #: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_stock_move_search
-#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_stock_move_tree
 #: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_stock_picking_delivery_search
 msgid "String"
 msgstr "Stringa"
@@ -660,6 +698,11 @@ msgstr "Gomme"
 #: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_sale_order_ready_tree
 msgid "Undone!"
 msgstr "Riattiva!"
+
+#. module: tyres_logistic_pick_in_load
+#: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_delivery_selection_stock_move_tree
+msgid "Unlink stock move"
+msgstr "Scollega movimento di magazzino"
 
 #. module: tyres_logistic_pick_in_load
 #: model:ir.ui.view,arch_db:tyres_logistic_pick_in_load.view_sale_order_ready_tree
