@@ -1790,6 +1790,7 @@ class SaleOrder(models.Model):
                 raise exceptions.UserError(
                 _('Not all line are mapped to supplier!'))
         self.logistic_state = 'pending'
+        self.exported_date = fields.Datetime.now()
 
         # ---------------------------------------------------------------------
         #                            Generate purchase:
@@ -2431,6 +2432,7 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
+    exported_date = fields.Date('Exported date')
     undo_comment = fields.Text('Undo comment', compute=_get_undo_comment)
 
     note_invoice = fields.Text('Invoice note',
