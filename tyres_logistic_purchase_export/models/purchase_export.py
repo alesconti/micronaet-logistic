@@ -193,6 +193,7 @@ class PurchaseOrder(models.Model):
     #                       COLUMNS:
     # -------------------------------------------------------------------------
     filename = fields.Char('Filename', size=100)
+    exported_date = fields.Date('Exported date')
 
     # -------------------------------------------------------------------------
     # Override action for export:
@@ -281,6 +282,7 @@ class PurchaseOrder(models.Model):
             
         return_mode = '\n'        
         now = fields.Datetime.now()
+        self.exported_date = now
         for purchase in self:
             partner = purchase.partner_id
             if not partner.purchase_export_id or \
