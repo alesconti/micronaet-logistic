@@ -48,8 +48,8 @@ class SaleOrder(models.Model):
                 # Extra CEE for B2B market:
                 private_market = order.fiscal_position_id.private_market
                 if private_market and \
-                        private_market == order.team_id.marked_type:
-                     order.has_extra_document = True
+                        private_market == order.team_id.market_type:
+                    order.has_extra_document = True
                 # XXX OLD: order.has_extra_document = \
                 #    order.logistic_picking_ids[0].invoice_filename
             except:
