@@ -21,7 +21,7 @@
             <field name="code">
                 action = records.generate_delivery_orders_from_line()
             </field>
-       </record>    
+       </record>
 
         <!--sale.order.print.result-->
         <record model="ir.ui.view" id="view_sale_order_print_result_form">

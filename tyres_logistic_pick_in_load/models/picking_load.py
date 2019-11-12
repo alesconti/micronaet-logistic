@@ -186,6 +186,8 @@ class SaleOrder(models.Model):
 
     get_label_status = fields.Char(
         'Label satus', size=10, compute='_get_label_status')
+    exported_date = fields.fields.Datetime('Exported date', 
+        related='order_id.exported_date')
 
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document
