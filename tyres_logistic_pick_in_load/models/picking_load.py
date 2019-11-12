@@ -46,7 +46,7 @@ class SaleOrder(models.Model):
         for order in self:
             try:
                 # Extra CEE for B2B market:
-                private_market = order.fiscal_position_id
+                private_market = order.fiscal_position_id.private_market
                 if private_market and \
                         private_market == order.team_id.marked_type:
                      order.has_extra_document = True
