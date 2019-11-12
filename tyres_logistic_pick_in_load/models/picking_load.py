@@ -49,7 +49,7 @@ class SaleOrder(models.Model):
                 private_market = order.fiscal_position_id
                 if private_market and \
                         private_market == order.team_id.marked_type:
-                     return True
+                     order.has_extra_document = True
                 # XXX OLD: order.has_extra_document = \
                 #    order.logistic_picking_ids[0].invoice_filename
             except:
