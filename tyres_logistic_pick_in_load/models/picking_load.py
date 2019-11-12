@@ -168,8 +168,11 @@ class SaleOrder(models.Model):
                     order.workflow_ready_print_label()
                 log_print[order].append(_('Print #%s label') % loop_label)
         
+        if len(self) <= 1:
+            return True
+            
         # ---------------------------------------------------------------------
-        # Generate log:
+        # Generate log (for many orders):
         # ---------------------------------------------------------------------
         note = ''
         for order in sorted(log_print, key=lambda x: x.name):
