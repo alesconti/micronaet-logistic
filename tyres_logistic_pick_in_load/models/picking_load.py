@@ -125,7 +125,6 @@ class SaleOrder(models.Model):
                 loop_picking = loop_ddt = loop_invoice = loop_extra = \
                     loop_label = 1
             
-            import pdb; pdb.set_trace()
             log_print[order].append(_('Start print order: %s') % order.name)
             # -----------------------------------------------------------------            
             # Picking
