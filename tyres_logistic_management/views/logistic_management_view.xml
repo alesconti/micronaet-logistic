@@ -1036,7 +1036,7 @@
              <field name="state">code</field>
              <field name="code">action = env['sale.order'].order_ready_excel_report()</field>
          </record>
-        
+
          <!--MASTER MENU:-->
          <menuitem
              id="menu_logistic_header_root" 

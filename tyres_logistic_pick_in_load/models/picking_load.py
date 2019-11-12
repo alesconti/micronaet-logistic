@@ -37,6 +37,13 @@ class SaleOrder(models.Model):
     """
     
     _inherit = 'sale.order'
+
+    @api.multi
+    def print_all_server_action(self):
+        ''' Print all server action
+        '''
+        import pdb; pdb.set_trace()
+        return True
     
     @api.multi
     def _get_has_extra_document(self, ):
