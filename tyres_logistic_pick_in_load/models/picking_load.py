@@ -32,6 +32,15 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+class PurchaseOrderLine(models.Model):
+    """ Model name: Purchase order line
+    """
+    
+    _inherit = 'purchase.order.line'
+    
+    exported_date = fields.Date('Exported date', 
+        related='logistic_sale_id.order_id.exported_date')        
+
 class SaleOrderPrintResult(models.TransientModel):
     """ Esit printing report
     """
@@ -186,8 +195,6 @@ class SaleOrder(models.Model):
 
     get_label_status = fields.Char(
         'Label satus', size=10, compute='_get_label_status')
-    exported_date = fields.fields.Date('Exported date', 
-        related='order_id.exported_date')
 
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document
