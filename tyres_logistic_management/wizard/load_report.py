@@ -62,6 +62,7 @@ class StockPickingInReportWizard(models.TransientModel):
         move_pool = self.env['stock.move']
         excel_pool = self.env['excel.writer']
         
+        # Wizard parameters:
         from_date = self.from_date
         to_date = self.to_date
         supplier = self.supplier_id
@@ -72,8 +73,8 @@ class StockPickingInReportWizard(models.TransientModel):
         
         domain = [
             # Header
-            ('create_date', '>=', from_date),
-            ('create_date', '<', to_date),
+            ('create_date', '>=', '%s 00:00:00' % from_date),
+            ('create_date', '<', '%s 00:00:00' % to_date),
             ('logistic_load_id', '!=', False), # Load stock move only
             ]
 

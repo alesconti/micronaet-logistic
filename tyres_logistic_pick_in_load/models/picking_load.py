@@ -45,8 +45,13 @@ class SaleOrder(models.Model):
         # TODO setup correct check (filename will raise an error not hide button)
         for order in self:
             try:
-                order.has_extra_document = \
-                    order.logistic_picking_ids[0].invoice_filename
+                # Extra CEE for B2B market:
+                private_market = order.fiscal_position_id
+                if private_market and \
+                        private_market == order.team_id.marked_type:
+                     return True
+                # XXX OLD: order.has_extra_document = \
+                #    order.logistic_picking_ids[0].invoice_filename
             except:
                 order.has_extra_document = False
 

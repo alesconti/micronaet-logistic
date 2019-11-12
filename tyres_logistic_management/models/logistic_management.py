@@ -1454,6 +1454,7 @@ class AccountFiscalPosition(models.Model):
     pfu_invoice_enable = fields.Boolean('Partner PFU exported', 
         help='If setup on partner will export PFU line') 
     need_invoice = fields.Boolean('Always invoice')
+    # Note: use also for extra document:
     private_market = fields.Char('Market private code', size=20)
     partner_private = fields.Boolean('Partner private', 
         help='Enable partner private managamente (company or private '
