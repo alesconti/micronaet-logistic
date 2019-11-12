@@ -32,6 +32,14 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+class SaleOrderPrintResult(models.TransientModel):
+    """ Esit printing report
+    """
+    _name = 'sale.order.print.result'
+    _description = 'Print result'
+
+    note = fields.Text('Result printing')
+
 class SaleOrder(models.Model):
     """ Model name: Sale order
     """
@@ -42,8 +50,97 @@ class SaleOrder(models.Model):
     def print_all_server_action(self):
         ''' Print all server action
         '''
-        import pdb; pdb.set_trace()
-        return True
+        result_pool = self.env['sale.order.print.result']
+
+        log_print = {}
+        for order in sorted(self, key=lambda x: x.name):
+            log_print[order] = []
+            if order.locked_delivery or order.logistic_source == 'internal' or\
+                    order.logistic_state not in ('ready', 'done'):
+                log_print[order].append(_('Not print order: %s') % order.name)
+                continue
+                
+            # TODO Setup loop print:
+            loop_picking = 1
+            loop_ddt = 1
+            loop_invoice = 1
+            loop_extra = 1
+            loop_label = 1
+            
+            log_print[order].append(_('Start print order: %s') % order.name)
+            # -----------------------------------------------------------------            
+            # Picking
+            # -----------------------------------------------------------------
+            # TODO
+            ''' 
+            for time in range(0, loop_picking):
+                order.workflow_ready_print_picking()
+            log_print.append(_('Print #%s Picking') % loop_picking)
+            '''
+            
+            # -----------------------------------------------------------------            
+            # Invoice
+            # -----------------------------------------------------------------            
+            if order.check_need_invoice:
+                for time in range(0, loop_invoice):
+                    order.workflow_ready_print_invoice()
+                log_print[order].append(_('Print #%s Invoice') % loop_invoice)
+
+            # -----------------------------------------------------------------            
+            # DDT
+            # -----------------------------------------------------------------            
+            else:
+                for time in range(0, loop_ddt):
+                    order.workflow_ready_print_ddt()
+                log_print[order].append(_('Print #%s DDT') % loop_ddt)
+
+            # -----------------------------------------------------------------            
+            # Extra document
+            # -----------------------------------------------------------------            
+            if order.has_extra_document:
+                for time in range(0, loop_extra):
+                    order.workflow_ready_print_extra()
+                log_print[order].append(_('Print #%s Extra doc') % loop_extra)
+            
+            # -----------------------------------------------------------------            
+            # Label
+            # -----------------------------------------------------------------            
+            if order.has_label_to_print:
+                for time in range(0, loop_label):
+                    order.workflow_ready_print_label()
+                log_print[order].append(_('Print #%s label') % loop_label)
+        
+        # ---------------------------------------------------------------------
+        # Generate log:
+        # ---------------------------------------------------------------------
+        note = ''
+        for order in sorted(log_print, key=lambda x: x.name):
+            note += _('Order: <b>%s<b/><br/>Messages:<br/>')
+            
+            for message in log_print[order]:
+                note += message
+            note += _('<br/><br/>')
+        
+        result_id = result_pool.create({
+            'note': note,
+            }).id
+            
+        form_id = self.env.ref(
+            'tyres_logistic_pick_in_load.view_sale_order_print_result_form').id
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Result for view_name'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_id': result_id,
+            'res_model': 'sale.order.print.result',
+            'view_id': form_id, # False
+            'views': [(form_id, 'form')],
+            'domain': [],
+            'context': self.env.context,
+            'target': 'new',
+            'nodestroy': False,
+            }
     
     @api.multi
     def _get_has_extra_document(self, ):
