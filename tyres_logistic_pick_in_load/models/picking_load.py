@@ -32,6 +32,44 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+class AccountFiscalPositionPrint(models.Model):
+    """ Model name: Purchase order line
+    """
+    
+    _name = 'account.fiscal.position.print'
+    _description = 'Print parameter'
+    _rec_name = 'market'
+    _order = 'market'
+    
+    market = fields.Selection([
+        #('default', 'Default'),
+        ('b2b', 'B2B'),
+        ('b2c', 'B2C'),
+        ], 'Market', default='b2b', required=True)
+    position_id = fields.Many2one('account.fiscal.position', 'Position')    
+
+    report_picking = fields.Integer('Picking', default=1)
+    report_ddt = fields.Integer('DDT', default=1)
+    report_invoice = fields.Integer('Invoice', default=1)
+    report_extra = fields.Integer('Extra doc.', default=1)
+    report_label = fields.Integer('Label', default=1)
+    
+    _sql_constraints = [
+        ('name_uniq', 'unique (position_id, market)', 
+            'Market in position must be unique!'),
+        ]
+
+class AccountFiscalPosition(models.Model):
+    """ Model name: Print parameters
+    """
+    
+    _inherit = 'account.fiscal.position'
+    
+    print_ids = fields.One2many(
+        'account.fiscal.position.print', 'position_id', 
+        'Print parameters',
+        )
+
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase order line
     """
@@ -70,12 +108,24 @@ class SaleOrder(models.Model):
                 continue
                 
             # TODO Setup loop print:
-            loop_picking = 1
-            loop_ddt = 1
-            loop_invoice = 1
-            loop_extra = 1
-            loop_label = 1
+            fiscal = order.fiscal_position_id
+            market = order.team_id.market_type
+            try:
+                # Read parameter line:
+                parameter = [item for item in fiscal.print_ids \
+                    if item.market == market][0]
+
+                loop_picking = parameter.report_picking
+                loop_ddt = parameter.report_ddt
+                loop_invoice = parameter.report_invoice
+                loop_extra = parameter.report_extra
+                loop_label = parameter.report_label
+            except:
+                # Default print 1
+                loop_picking = loop_ddt = loop_invoice = loop_extra = \
+                    loop_label = 1
             
+            import pdb; pdb.set_trace()
             log_print[order].append(_('Start print order: %s') % order.name)
             # -----------------------------------------------------------------            
             # Picking

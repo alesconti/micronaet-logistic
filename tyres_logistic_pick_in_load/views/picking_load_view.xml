@@ -24,6 +24,52 @@
        </record>
 
         <!--sale.order.print.result-->
+        <record model="ir.ui.view" id="view_account_fiscal_position_tree">
+            <field name="name">account.fiscal.position.tree</field>
+            <field name="model">account.fiscal.position</field>
+            <field name="priority" eval="40" />
+            <field name="arch" type="xml">
+                <tree string="Account position">        
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_account_fiscal_position_form">
+            <field name="name">account.fiscal.position.form</field>
+            <field name="model">account.fiscal.position</field>
+            <field name="priority" eval="40" />
+            <field name="arch" type="xml">
+                <form string="Account position">    
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name" readonly="1"/>
+                            <separator string="Print parameters:" colspan="4" />
+                            <field name="print_ids" colspan="4" nolabel="1">
+                                <tree string="Print options" editable="bottom">
+                                    <field name="market" />
+                                    <field name="report_picking" />
+                                    <field name="report_ddt" />
+                                    <field name="report_invoice" />
+                                    <field name="report_extra" />
+                                    <field name="report_label" />
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_account_fiscal_position_print_form">
+            <field name="name">Fiscal print parameter</field>
+            <field name="res_model">account.fiscal.position</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_fiscal_position_tree"/>
+            <field name="context">{'form_view_ref': 'tyres_logistic_pick_in_load.view_account_fiscal_position_form'}</field>
+            <field name="domain">[]</field>
+        </record>        
+        
+        <!--sale.order.print.result-->
         <record model="ir.ui.view" id="view_sale_order_print_result_form">
             <field name="name">sale.order.print.result.form</field>
             <field name="model">sale.order.print.result</field>
@@ -596,8 +642,14 @@
                  action="action_sale_order_closed_form"
                  sequence="50"
                  />
+
              
-             
+             <menuitem 
+                 id="menu_action_res_company_parameter_print"
+                 parent="tyres_logistic_management.menu_logistic_left_configuration_root"
+                 action="action_account_fiscal_position_print_form"
+                 sequence="70"
+                 />             
              
     </data>
 </openerp>

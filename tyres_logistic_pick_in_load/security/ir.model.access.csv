@@ -1,4 +1,6 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
 access_stock_picking_delivery_user,stock.picking.delivery,model_stock_picking_delivery,base.group_user,1,1,1,1
 access_stock_picking_delivery_quant_user,stock.picking.delivery.quant,model_stock_picking_delivery_quant,base.group_user,1,1,1,1
+access_account_fiscal_position_print_user,account.fiscal.position.print,model_account_fiscal_position_print,base.group_user,1,1,1,1
+
 
