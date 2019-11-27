@@ -77,7 +77,8 @@ class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
     
     exported_date = fields.Date('Exported date', 
-        related='logistic_sale_id.order_id.exported_date')        
+        related='logistic_sale_id.order_id.exported_date')  
+    internal_note = fields.Char('Internal note', size=160)
 
 class SaleOrderPrintResult(models.TransientModel):
     """ Esit printing report
