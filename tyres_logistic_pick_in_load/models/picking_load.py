@@ -104,7 +104,6 @@ class SaleOrder(models.Model):
                     'Jump order not in ready status: %s' % order.name)
                 continue
             order.workflow_ready_to_done_current_order()
-        return True    
     
     @api.multi
     def print_all_server_action(self):

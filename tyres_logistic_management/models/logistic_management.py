@@ -2098,27 +2098,34 @@ class SaleOrder(models.Model):
         logistic_pick_out_type_id = logistic_pick_out_type.id
         location_from = logistic_pick_out_type.default_location_src_id.id
         location_to = logistic_pick_out_type.default_location_dest_id.id
+        partner = order.partner_invoice_id
 
         # ---------------------------------------------------------------------
         # Pre-Check (before document generation):
         # ---------------------------------------------------------------------
-        partner = self.partner_invoice_id
-        if not self.payment_term_id:
-            raise exceptions.Warning(
-                _('Payment not present in sale order!'))
+        if not order.payment_term_id:
+            if not raise_error:
+                return False
+            else:                    
+                raise exceptions.Warning(
+                    _('Payment not present in sale order!'))
 
         if not partner.property_account_position_id:
-            raise exceptions.Warning(
-                _('Fiscal position not present (invoice partner)!'))
+            if not raise_error:
+                return False
+            else:            
+                raise exceptions.Warning(
+                    _('Fiscal position not present (invoice partner)!'))
         
-        #if self.fiscal_position_id != partner.property_account_position_id:
+        # XXX No more used?
+        # if self.fiscal_position_id != partner.property_account_position_id:
         #    raise exceptions.Warning(
         #        _('Fiscal position different for order and fiscal partner!'))
 
         # ---------------------------------------------------------------------
         # Shippy call:
         # ---------------------------------------------------------------------
-        shippy_selected = any([True for item in order.shippy_rate_ids\
+        shippy_selected = any([True for item in order.shippy_rate_ids \
              if item.shippy_rate_selected])
         if order.carrier_shippy and not order.mmac_shippy_order_id:                    
             if order.carrier_supplier_id and \
@@ -2126,7 +2133,7 @@ class SaleOrder(models.Model):
                     shippy_selected:
                 order_ref = order.shippy_ship()
                 if order_ref:
-                    order.shippy_ship_error = 'ok'               
+                    order.shippy_ship_error = 'ok'          
                     order.write_log_chatter_message(
                         _('Launched shippy ship call now [%s]!'
                             ) % order_ref)
@@ -2145,6 +2152,7 @@ class SaleOrder(models.Model):
                         '' if shippy_selected else _(
                             ' No rates selected!'),
                     ))
+                    
         # else: order no shippy or yet assegnet mmac_shippy_order_id                
         # ---------------------------------------------------------------------
 
