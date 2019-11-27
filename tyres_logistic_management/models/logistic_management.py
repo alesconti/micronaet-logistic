@@ -76,8 +76,8 @@ class ResCompany(models.Model):
     # Utility:
     # -------------------------------------------------------------------------
     def formatLang(self, value, date=True, date_time=False):
-        ''' Fake function for format Format date passed
-        '''
+        """ Fake function for format Format date passed
+        """
         # Change italian mode:
         if not value:
             return value
@@ -95,8 +95,8 @@ class ResCompany(models.Model):
     # Get path name:
     @api.model
     def _logistic_folder(self, document, mode='default', extra=False):
-        ''' Return full path of folder request:
-        '''
+        """ Return full path of folder request:
+        """
         # Get master path:
         folder_block = self._logistic_folder_db[document][mode]
 
@@ -111,9 +111,9 @@ class ResCompany(models.Model):
 
     @api.model
     def get_subfolder_from_root(self, name):
-        ''' Get subfolder from root
+        """ Get subfolder from root
             if str only one folder, instead multipath
-        '''
+        """
         try:
             if type(name) == str:
                 name = (name, )
@@ -154,14 +154,14 @@ class ResCompany(models.Model):
 
 
 class ProductTemplate(models.Model):
-    ''' Template add fields
-    '''
+    """ Template add fields
+    """
     _inherit = 'product.template'
 
     @api.model
     def _get_root_image_folder(self):
-        ''' Use filestrore folder and subfolder images
-        '''
+        """ Use filestrore folder and subfolder images
+        """
         company_pool = self.env['res.company']
         companys = company_pool.search([])
         return companys[0]._logistic_folder('images')
@@ -176,8 +176,8 @@ class ProductTemplate(models.Model):
 
     @api.one
     def _get_name_extended_full(self):
-        ''' Generate extended name
-        '''
+        """ Generate extended name
+        """
         product = self
         try:
             product.name_extended = product.description_sale or \
@@ -204,8 +204,8 @@ class PurchaseOrder(models.Model):
     # Auto close internal order
     @api.model
     def purchase_internal_confirmed(self, purchases=None):
-        ''' Check if there's some PO internal to close
-        '''
+        """ Check if there's some PO internal to close
+        """
         # Pool used:
         company_pool = self.env['res.company']
         move_pool = self.env['stock.move']
@@ -371,8 +371,8 @@ class PurchaseOrder(models.Model):
 
     @api.model
     def return_purchase_order_list_view(self, purchase_ids):
-        ''' Return purchase order tree from ids
-        '''
+        """ Return purchase order tree from ids
+        """
         model_pool = self.env['ir.model.data']
         tree_view_id = form_view_id = False
 
@@ -400,9 +400,9 @@ class PurchaseOrder(models.Model):
 
     @api.model
     def check_order_confirmed_done(self, purchase_ids=None):
-        ''' Check passed purchase IDs passed or all confirmed order
+        """ Check passed purchase IDs passed or all confirmed order
             if not present
-        '''
+        """
         if purchase_ids:
             purchases = self.browse(purchase_ids)
         else:
@@ -425,8 +425,8 @@ class PurchaseOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def open_purchase_line(self):
-        ''' Open purchase line detail view:
-        '''
+        """ Open purchase line detail view:
+        """
         model_pool = self.env['ir.model.data']
         tree_view_id = model_pool.get_object_reference(
             'tyres_logistic_management', 'view_purchase_order_line_tree')[1]
@@ -453,8 +453,8 @@ class PurchaseOrder(models.Model):
     # Workflow button:
     @api.multi
     def set_logistic_state_confirmed(self):
-        ''' Set order as confirmed
-        '''
+        """ Set order as confirmed
+        """
         # Export if needed the purchase order:
         # TODO self.export_purchase_order()
         now = fields.Datetime.now()
@@ -546,8 +546,8 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def stock_move_from_purchase_line(self, lines, quantity_mode='manual'):
-        ''' Create stock move for load stock
-        ''' 
+        """ Create stock move for load stock
+        """ 
         # ---------------------------------------------------------------------
         # Pool used:
         # ---------------------------------------------------------------------
@@ -638,8 +638,8 @@ class PurchaseOrderLine(models.Model):
     #@api.depends('load_line_ids', )
     @api.multi
     def _get_logistic_status_field(self):
-        ''' Manage all data for logistic situation in sale order:
-        '''
+        """ Manage all data for logistic situation in sale order:
+        """
         _logger.warning('Update logistic qty fields now')
         for line in self:
             logistic_delivered_qty = 0.0
@@ -682,8 +682,8 @@ class StockPicking(models.Model):
 
     @api.multi
     def refund_confirm_state_event(self):
-        ''' Confirm operation (will be overrided)
-        '''
+        """ Confirm operation (will be overrided)
+        """
         # Confirm document and export in files:
         self.workflow_ready_to_done_done_picking()
         return True
@@ -693,17 +693,17 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def reply_csv_accounting_fees(self):
-        '''
-        '''
+        """
+        """
         # TODO
         return True
 
     @api.model
     def csv_report_extract_accounting_fees(self, evaluation_date,
             mode='extract'):
-        ''' Extract file account fees in CSV for accounting
+        """ Extract file account fees in CSV for accounting
             mode = extract for save CSV, data for return list of data
-        '''
+        """
 
         # Pool used:
         company_pool = self.env['res.company']
@@ -864,8 +864,8 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def excel_report_extract_accounting_fees(self, evaluation_date=False):
-        ''' Extract file account fees
-        '''
+        """ Extract file account fees
+        """
 
         # Pool used:
         excel_pool = self.env['excel.writer']
@@ -1076,23 +1076,23 @@ class StockPicking(models.Model):
     # Path: DDT, Invoice (module: logistic_account_report)
     @api.multi
     def get_default_folder_path(self):
-        ''' Override default extract DDT function:
-        '''
+        """ Override default extract DDT function:
+        """
         companys = self.env['res.company'].search([])
         return companys[0]._logistic_folder('ddt')
 
     @api.multi
     def get_default_folder_invoice_path(self):
-        ''' Override default extract Invoice function:
-        '''
+        """ Override default extract Invoice function:
+        """
         companys = self.env['res.company'].search([])
         return companys[0]._logistic_folder('invoice')
 
     # Path: XML Invoice
     @api.multi
     def get_default_folder_xml_invoice(self):
-        ''' Override default extract XML Invoice
-        '''
+        """ Override default extract XML Invoice
+        """
         companys = self.env['res.company'].search([])
         return companys[0]._logistic_folder('invoice', 'xml')
 
@@ -1101,8 +1101,8 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def qweb_format_float(self, value, decimal=2, length=10):
-        ''' Format float value
-        '''
+        """ Format float value
+        """
         if type(value) != float:
             return value
 
@@ -1112,8 +1112,8 @@ class StockPicking(models.Model):
     # TODO Not used, remove?!?
     @api.model
     def workflow_ready_to_done_all_done_picking(self):
-        ''' Confirm draft picking documents
-        '''
+        """ Confirm draft picking documents
+        """
         pickings = self.search([
             ('state', '=', 'draft'),
             # TODO out document! (),
@@ -1122,18 +1122,18 @@ class StockPicking(models.Model):
 
     @api.model
     def check_import_reply_erpeek(self):
-        ''' Call manual from external:
-        '''
+        """ Call manual from external:
+        """
         return self.check_import_reply()
 
     @api.multi
     def check_import_reply(self):
-        ''' Check import reply for INVOICE
-        '''
+        """ Check import reply for INVOICE
+        """
         def get_invoice_reply_part(reply):
-            ''' Extract parameter from reply
+            """ Extract parameter from reply
                 Ex.: pick_in_19.003552-CEE.2019-9-24.csv
-            '''
+            """
             reply_split = reply.split('.')
             if len(reply_split) != 4:
                 return False
@@ -1223,8 +1223,8 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def workflow_ready_to_done_done_picking(self):
-        ''' Confirm draft picking documents
-        '''
+        """ Confirm draft picking documents
+        """
         def clean_name(value):
             return value.replace('"', '').replace('\n', ' ').replace('\r', ' ')
             
@@ -1493,10 +1493,10 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def send_report_to_printer(self, fullname, printer_mode):
-        ''' Send report to printer
+        """ Send report to printer
             Report file
             Printer mode
-        '''
+        """
 
         # Parameter:
         company_pool = self.env['res.company']
@@ -1533,8 +1533,8 @@ class SaleOrder(models.Model):
         
     @api.multi
     def workflow_ready_print_picking(self):
-        ''' Print picking
-        '''
+        """ Print picking
+        """
         # TODO param in DDT report for add stock note
         #self.workflow_ready_print_ddt()
         #return send_report_to_printer(fullname, picking')
@@ -1542,16 +1542,16 @@ class SaleOrder(models.Model):
 
     @api.multi
     def workflow_ready_print_label(self):
-        ''' Print picking
-        '''
+        """ Print picking
+        """
         self.label_printed = True
         self.write_log_chatter_message(_('Shippy print label'))
         return self.shippy_print()
 
     @api.multi
     def workflow_ready_print_ddt(self):
-        ''' Print ddt
-        '''
+        """ Print ddt
+        """
         report_name = 'sale.report_saleorder'
         fullname = '/tmp/stock_picking_%s.pdf' % self.id
 
@@ -1569,8 +1569,8 @@ class SaleOrder(models.Model):
 
     @api.multi
     def workflow_ready_print_invoice(self):
-        ''' Print picking
-        '''
+        """ Print picking
+        """
         try:
             filename = self.logistic_picking_ids[0].invoice_filename
         except:
@@ -1590,8 +1590,8 @@ class SaleOrder(models.Model):
 
     @api.multi
     def workflow_ready_print_extra(self):
-        ''' Print picking
-        '''        
+        """ Print picking
+        """        
         report_name = 'tyres_free_export_report.report_free_export_lang'
         fullname = '/tmp/free_export_%s.pdf' % self.id
 
@@ -1611,8 +1611,8 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def order_ready_excel_report(self):
-        ''' Generate ready report
-        '''
+        """ Generate ready report
+        """
         # Pool used:
         excel_pool = self.env['excel.writer']
         line_pool = self.env['sale.order.line']
@@ -1701,8 +1701,8 @@ class SaleOrder(models.Model):
 
     @api.model
     def write_log_chatter_message(self, message):
-        ''' Write message for log operation in order chatter
-        '''
+        """ Write message for log operation in order chatter
+        """
         user = self.env['res.users'].browse(self.env.uid)
         body = _('%s [User: %s]') % (
             message,
@@ -1743,42 +1743,43 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def label_printed_ok(self):
-        ''' Do nothing
-        '''
+        """ Do nothing
+        """
         return True
         
     @api.multi
     def locked_delivery_on(self):
-        '''Update fields
-        '''
+        """Update fields
+        """
         self.locked_delivery = True
         self.write_log_chatter_message(_('Lock delivery'))
 
     @api.multi
     def locked_delivery_off(self):
-        '''Update fields
-        '''
+        """Update fields
+        """
         self.locked_delivery = False
         self.write_log_chatter_message(_('Unlock delivery'))
 
     @api.multi
     def dummy(self):
-        '''Do nothing'''
+        """ Do nothing
+        """
         return True
 
     # Extra operation before WF
     @api.multi
     def return_order_line_list_view(self):
-        ''' Return order line in a tree view
-        '''
+        """ Return order line in a tree view
+        """
         line_ids = self[0].order_line.mapped('id')
         return self.env['sale.order.line'].return_order_line_list_view(
             line_ids)
 
     @api.multi
     def workflow_manual_order_pending(self):
-        ''' If order have all line checked make one step in pending state
-        '''
+        """ If order have all line checked make one step in pending state
+        """
         # ---------------------------------------------------------------------
         #                             Go in pending
         # ---------------------------------------------------------------------
@@ -1819,8 +1820,8 @@ class SaleOrder(models.Model):
 
     @api.multi
     def launch_shippy_ship(self, ):
-        ''' Check and launch shippy ship function:
-        '''
+        """ Check and launch shippy ship function:
+        """
         if self.carrier_shippy:
             if self.carrier_supplier_id and self.carrier_mode_id:
                 self.shippy_ship()
@@ -1838,9 +1839,9 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def logistic_check_and_set_ready(self):
-        ''' Check if all line are in ready state (excluding unused)
+        """ Check if all line are in ready state (excluding unused)
             Create for N orders not only one
-        '''
+        """
         order_ids = []
         for order in self:
             # Only carrier confirmed order goes in ready? internal order?
@@ -1869,8 +1870,8 @@ class SaleOrder(models.Model):
 
     @api.multi
     def logistic_check_and_set_done(self):
-        ''' Check if all line are in done state (excluding unused)
-        '''
+        """ Check if all line are in done state (excluding unused)
+        """
         order = self
         line_state = set(order.order_line.mapped('logistic_state'))
         line_state.discard('unused') # remove kit line (exploded)
@@ -1883,8 +1884,8 @@ class SaleOrder(models.Model):
     # Extra operation before WF
     @api.model
     def return_order_list_view(self, order_ids):
-        ''' Utility for return selected order in tree view
-        '''
+        """ Utility for return selected order in tree view
+        """
         tree_view_id = form_view_id = False
         _logger.info('Return order tree view [# %s]' % len(order_ids))
         return {
@@ -1903,8 +1904,8 @@ class SaleOrder(models.Model):
             }
 
     def check_empty_orders(self):
-        ''' Mark empty order as unused
-        '''
+        """ Mark empty order as unused
+        """
         orders = self.search([
             ('logistic_state', '=', 'draft'), # Insert order
             ('order_line', '=', False), # Without line
@@ -1916,8 +1917,8 @@ class SaleOrder(models.Model):
             })
 
     def check_product_service(self):
-        ''' Update line with service to ready state
-        '''
+        """ Update line with service to ready state
+        """
         line_pool = self.env['sale.order.line']
         lines = line_pool.search([
             ('order_id.logistic_state', '=', 'draft'), # Draft order
@@ -1936,8 +1937,8 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def set_workflow_logistic_done(self, ):
-        ''' Order was exit
-        '''
+        """ Order was exit
+        """
         self.write_log_chatter_message(
             _('Marked as done [Previous state: %s]!') % (
                 self.logistic_state,
@@ -1946,8 +1947,8 @@ class SaleOrder(models.Model):
 
     @api.multi
     def set_workflow_logistic_undone(self, ):
-        ''' Order was restored
-        '''
+        """ Order was restored
+        """
         self.write_log_chatter_message(
             _('Marked as undone [Previous state: %s]!') % (
                 self.logistic_state,
@@ -1958,16 +1959,16 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def wk_order_cancel(self):
-        ''' Cancel order (only error state)
-        '''
+        """ Cancel order (only error state)
+        """
         self.logistic_state = 'cancel'
 
     # A. Logistic phase 1: Check secure payment:
     # -------------------------------------------------------------------------
     @api.model
     def workflow_draft_to_order(self):
-        ''' Assign logistic_state to secure order
-        '''
+        """ Assign logistic_state to secure order
+        """
         _logger.info('New order: Start analysis')
         # ---------------------------------------------------------------------
         #                               Pre operations:
@@ -2039,17 +2040,17 @@ class SaleOrder(models.Model):
     # Button call for trigger:
     @api.multi
     def workflow_ready_to_done_current_order(self):
-        ''' Button action for call all ready to done order:
-        '''
+        """ Button action for call all ready to done order:
+        """
         return self.workflow_ready_to_done_draft_picking()
 
     # TODO remove this trigger: 
     # Real trigger call:
     @api.model
     def workflow_ready_to_done_draft_picking(self, ):
-        ''' Confirm payment order (before expand kit)
+        """ Confirm payment order (before expand kit)
             NOTE: limit, current no more used!
-        '''
+        """
         self.ensure_one()
 
         # ---------------------------------------------------------------------
@@ -2078,8 +2079,8 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def wf_set_order_as_done(self):
-        ''' Set order as done (from delivering)
-        '''
+        """ Set order as done (from delivering)
+        """
         now = fields.Datetime.now()
         order = self # readability
 
@@ -2241,8 +2242,8 @@ class SaleOrder(models.Model):
     # TODO Raise error:
     @api.onchange('partner_id', 'partner_id.need_invoice')
     def onchange_partner_need_invoice(self):
-        ''' Update order status for invoice if change partner or need_invoice
-        '''
+        """ Update order status for invoice if change partner or need_invoice
+        """
         self.need_invoice = self.partner_id.need_invoice
 
     # -------------------------------------------------------------------------
@@ -2251,8 +2252,8 @@ class SaleOrder(models.Model):
     @api.depends('team_id', 'team_id.market_type')
     @api.multi # XXX necessary?
     def _get_market_type(self):
-        ''' Update when change the team market
-        '''
+        """ Update when change the team market
+        """
         for order in self:
             order.market_type = order.team_id.market_type
 
@@ -2260,9 +2261,22 @@ class SaleOrder(models.Model):
     #                               UNDO SECTION:
     # =========================================================================
     @api.multi
+    def undo_go_in_cancel_after_undo(self):
+        """ Cancel order after undo procedure
+        """
+        # Send in draft state:
+        self.undo_go_in_draft()
+        
+        # Call all line for unlink movements:
+        for line in self.order_line:
+            if line.undo_returned:
+                line.unlink_for_undo()
+        return True
+        
+    @api.multi
     def undo_go_in_draft(self):
-        ''' Return to draft
-        '''
+        """ Return to draft
+        """
         self.ensure_one()
         if self.logistic_state not in (
                 'order', 'ready', 'pending', 'delivering'):
@@ -2298,8 +2312,8 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def _get_undo_comment(self, ):
-        ''' Generate undo comment for user
-        '''
+        """ Generate undo comment for user
+        """
         self.ensure_one()
         if self.logistic_state == 'draft':
             self.undo_comment = _(
@@ -2422,8 +2436,8 @@ class SaleOrder(models.Model):
 
     @api.multi
     def _get_check_need_invoice_boolean(self, ):
-        ''' Check if need invoice this order
-        '''
+        """ Check if need invoice this order
+        """
         for order in self:
             partner = order.partner_invoice_id or order.partner_id
             order.check_need_invoice = \
@@ -2507,8 +2521,8 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def check_ordered_ready_status(self, browse_list):
-        ''' Check order ready from list browse obj passed
-        '''
+        """ Check order ready from list browse obj passed
+        """
         # A. Mark Sale Order Line ready:
         _logger.info('Update sale order line as ready:')
         for line in self.browse([item.id for item in browse_list]):
@@ -2522,9 +2536,9 @@ class SaleOrderLine(models.Model):
 
     @api.model
     def logistic_check_ready_order(self, sale_lines=None):
-        ''' Mask as done sale order with all ready lines
+        """ Mask as done sale order with all ready lines
             if not present find all order in pending state
-        '''
+        """
         order_pool = self.env['sale.order']
         if sale_lines:
             # Start from sale order line:
@@ -2545,8 +2559,8 @@ class SaleOrderLine(models.Model):
 
     @api.model
     def return_order_line_list_view(self, line_ids):
-        ''' Return order line tree view (selected)
-        '''
+        """ Return order line tree view (selected)
+        """
         # Gef view
         model_pool = self.env['ir.model.data']
         tree_view_id = model_pool.get_object_reference(
@@ -2576,8 +2590,8 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def unlink_for_undo(self):
-        ''' Undo will unlink all document linked to this line
-        '''
+        """ Undo will unlink all document linked to this line
+        """
         # TODO: Order has no pending delivery when unlink call!
         company_pool = self.env['res.company']
         header = 'SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA\r\n'
@@ -2717,17 +2731,17 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def dummy(self):
-        '''Do nothing
-        '''
+        """Do nothing
+        """
         return True
 
     @api.multi
     def workflow_manual_order_line_pending(self):
-        ''' When order are in 'order' state and all supplier will be choosen
+        """ When order are in 'order' state and all supplier will be choosen
             The operator put the order in 'pending' state to be evaluated
             and the next step create the order as setup in the line
             >> after: workflow_order_pending
-        '''
+        """
         # Create purchase order and confirm (purchase action not used)
         self.order_id.workflow_manual_order_pending()
 
@@ -2749,12 +2763,12 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def chain_broken_purchase_line(self):
-        ''' Order undo line:
+        """ Order undo line:
             If product ordered to supplier not delivered or in late:
             1. Delete purchase line so unlinked the future delivery
             2. Order line will be reset to 'draft' mode (check assign)
             3. Order will be recheck when triggered
-        '''
+        """
         self.ensure_one()
 
         # Note: now it's not possibile, evaluate if necessary to reload
@@ -2790,8 +2804,8 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def open_view_sale_order(self):
-        ''' Open order view
-        '''
+        """ Open order view
+        """
         view_id = False
 
         return {
@@ -2811,8 +2825,8 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def open_view_sale_order_product(self):
-        ''' Open subsituted product
-        '''
+        """ Open subsituted product
+        """
         view_id = False
 
         return {
@@ -2832,8 +2846,8 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def open_view_sale_order_original_product(self):
-        ''' Open original product
-        '''
+        """ Open original product
+        """
         view_id = False
 
         return {
@@ -2853,8 +2867,8 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def open_view_sale_order_kit_product(self):
-        ''' Open original product
-        '''
+        """ Open original product
+        """
         view_id = False
 
         return {
@@ -2878,10 +2892,10 @@ class SaleOrderLine(models.Model):
     # A. Assign available q.ty in stock assign a stock movement / quants
     @api.model
     def workflow_order_pending(self, lines=None):
-        ''' Logistic phase 2:
+        """ Logistic phase 2:
             Order remain uncovered qty to the default supplier
             Generate purchase order to supplier linked to product
-        '''
+        """
         now = fields.Datetime.now()
 
         # ---------------------------------------------------------------------
@@ -3014,8 +3028,8 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def _get_logistic_status_field(self):
-        ''' Manage all data for logistic situation in sale order:
-        '''
+        """ Manage all data for logistic situation in sale order:
+        """
         _logger.warning('Update logistic qty fields now')
         for line in self:
             # -------------------------------------------------------------

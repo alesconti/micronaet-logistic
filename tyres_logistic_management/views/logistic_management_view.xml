@@ -572,7 +572,14 @@
 
                      <page string="Undo" groups="tyres_logistic_management.group_undo_operator">
                          <group colspan="4" col="4">
-                             <separator string="Undo detail:" colspan="3"/>
+                             <separator string="Undo detail:" colspan="2"/>
+                             <button name="undo_go_in_cancel_after_undo" string="Cancel order" 
+                                 icon="fa-mail-reply" type="object" 
+                                 attrs="{'invisible': [('logistic_state', 'not in', ('order', 'pending', 'ready', 'delivering'))]}"
+                                 colspan="1"
+                                 confirm="Cancel will go in draft and unlink all document present goes in cancel stata, no regression! Confirm?"
+                                 />
+
                              <button name="undo_go_in_draft" string="Return in draft mode" 
                                  icon="fa-mail-reply" type="object" 
                                  attrs="{'invisible': [('logistic_state', 'not in', ('order', 'pending', 'ready', 'delivering'))]}"
