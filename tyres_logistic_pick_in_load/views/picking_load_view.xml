@@ -11,7 +11,16 @@
                  action = records.print_all_server_action()
              </field>
          </record>
-    
+         <record id="ir_confirm_all_selected_order_server_action" model="ir.actions.server">
+             <field name="name">Confirm selected ready order</field>
+             <field name="type">ir.actions.server</field>
+             <field name="model_id" ref="sale.model_sale_order" />
+             <field name="binding_model_id" ref="sale.model_sale_order" />
+             <field name="state">code</field>
+             <field name="code">
+                 action = records.confirm_all_selected_server_action()
+             </field>
+         </record>    
         <record model="ir.actions.server" id="server_acton_stock_move_load_document_generator">
             <field name="name">Document generator</field>
             <field name="model_id" ref="stock.model_stock_move"/>

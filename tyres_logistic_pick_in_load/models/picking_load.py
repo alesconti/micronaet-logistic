@@ -95,6 +95,18 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     @api.multi
+    def confirm_all_selected_server_action(self):
+        """ Confirm all selected order
+        """
+        for order in self:
+            if order.logistic_state != 'ready':
+                _logger.error(
+                    'Jump order not in ready status: %s' % order.name)
+                continue
+            order.workflow_ready_to_done_current_order()
+        return True    
+    
+    @api.multi
     def print_all_server_action(self):
         ''' Print all server action
         '''
