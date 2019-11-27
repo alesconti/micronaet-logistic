@@ -2271,6 +2271,11 @@ class SaleOrder(models.Model):
         for line in self.order_line:
             if line.undo_returned:
                 line.unlink_for_undo()
+        
+        self.logistic_state = 'cancel'        
+
+        # Log operation:
+        self.write_log_chatter_message(_('Cancel operation done'))
         return True
         
     @api.multi
