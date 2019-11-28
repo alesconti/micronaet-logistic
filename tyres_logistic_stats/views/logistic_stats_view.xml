@@ -193,7 +193,7 @@
             <field name="view_id" ref="view_sale_order_statistics_tree"/>
             <field name="search_view_id" ref="view_sale_order_statistics_search"/>            
             <field name="context">{'graph_view_ref': 'tyres_logistic_stats.view_sale_order_stats_graph', 'form_view_ref': 'tyres_logistic_stats.view_sale_order_statistics_form'}</field>
-            <field name="domain">[]</field><!--TODO only web?-->
+            <field name="domain">[('logistic_source', '=', 'web')]</field>
         </record>
         
         
