@@ -48,11 +48,6 @@
                              <field name="carrier_manual_parcel" attrs="{'required': [('carrier_shippy','=',False)]}"/>
 
                             <field name="carrier_supplier_id" />
-                            <field name="carrier_track_id" />
-
-                             <!--Double fields: mandatory insert the name of carrier for stock people-->
-                             <field name="carrier_stock_note" attrs="{'required': [('carrier_shippy','=',False)]}" colspan="4"/>
-                             <newline/>
                         </group>
                                                     
                         <!--SHIPPY:-->
@@ -102,12 +97,19 @@
                             <field name="carrier_ensurance" />
                             <field name="carrier_pay_mode" />
                             <newline/>
-                            
+                            <!--<field name="mmac_shippy_order_id" />-->
+                        </group>
+                        
+                        <!-- Common part: -->
+                        <group colspan="4" col="5">
                             <separator string="Carrier reply:" colspan="4"/>
-                            <field name="carrier_cost" readonly="1"/>
+                            <field name="carrier_cost" />
                             <field name="carrier_track_id" />                            
                             <newline/>
-                            <!--<field name="mmac_shippy_order_id" />-->
+
+                             <!--Double fields: mandatory insert the name of carrier for stock people-->
+                             <field name="carrier_stock_note" attrs="{'required': [('carrier_shippy','=',False)], 'invisible': [('carrier_shippy','=',True)]}" colspan="4" />
+                             <newline/>
                         </group>
                     </page>
                 </xpath>
