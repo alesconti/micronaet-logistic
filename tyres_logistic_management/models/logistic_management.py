@@ -747,7 +747,7 @@ class StockPicking(models.Model):
             if not order:
                 _logger.warning('No order linhed for this picking')
                 continue
-            partner = order.partner_id
+            partner = order.partner_invoice_id
             stock_mode = picking.stock_mode #in: refund, out: DDT
 
             for move in picking.move_lines:
@@ -816,12 +816,12 @@ class StockPicking(models.Model):
                     excel_row.append((                    
                         'CORR.' if picking.is_fees else 'FATT.',
                         order.team_id.market_type or '',
-                        order.partner_id.property_account_position_id.name \
+                        partner.property_account_position_id.name \
                             or '',
                         channel or '',
                         company_pool.formatLang(
                             picking.scheduled_date, date=True),
-                        order.partner_id.name or '',
+                        partner.name or '',
                         order.name or '',
                         product.default_code or '',
                         product.name_extended or '',
