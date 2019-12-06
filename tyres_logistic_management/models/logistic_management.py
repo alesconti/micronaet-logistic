@@ -2104,18 +2104,18 @@ class SaleOrder(models.Model):
         # Pre-Check (before document generation):
         # ---------------------------------------------------------------------
         if not order.payment_term_id:
-            if not raise_error:
-                return False
-            else:                    
-                raise exceptions.Warning(
-                    _('Payment not present in sale order!'))
+            #if not raise_error:
+            #    return False
+            #else:                    
+            raise exceptions.Warning(
+                _('Payment not present in sale order!'))
 
         if not partner.property_account_position_id:
-            if not raise_error:
-                return False
-            else:            
-                raise exceptions.Warning(
-                    _('Fiscal position not present (invoice partner)!'))
+            #if not raise_error:
+            #    return False
+            #else:            
+            raise exceptions.Warning(
+                _('Fiscal position not present (invoice partner)!'))
         
         # XXX No more used?
         # if self.fiscal_position_id != partner.property_account_position_id:
