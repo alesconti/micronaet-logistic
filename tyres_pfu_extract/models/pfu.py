@@ -55,19 +55,9 @@ class StockPickingPfuExtractWizard(models.TransientModel):
     to_date = fields.Date('To date <', required=True)
     # -------------------------------------------------------------------------    
 
-    @api.multi
-    def extract_excel_pfu_report(self, ):
-        ''' Extract Excel PFU report
-        '''
-        move_pool = self.env['stock.move']
-        #order_line_pool = self.env['sale.order.line']
-        excel_pool = self.env['excel.writer']
-        
-        from_date = self.from_date
-        to_date = self.to_date
-        supplier = self.partner_id
-        
-        domain = [
+    @api.model
+    def get_data_domain(self, from_date, to_date):
+        return [
             # Header
             ('delivery_id.date', '>=', from_date),
             ('delivery_id.date', '<', to_date),
@@ -75,7 +65,102 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             ('logistic_load_id', '!=', False), # Linked to order
             ('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '=', True), # Linked to order
             # TODO Order web only?
-            ]
+            ] 
+    @api.multi
+    def extract_fiscal_excel_pfu_report(self, ):
+        ''' Extract fiscal report
+        '''
+        move_pool = self.env['stock.move']
+        excel_pool = self.env['excel.writer']
+        
+        from_date = self.from_date
+        to_date = self.to_date
+
+        domain = self.get_data_domain(from_date, to_date)
+
+        # Select all supplier used:
+        # not italy
+        
+        # ---------------------------------------------------------------------
+        #                           Collect data:
+        # ---------------------------------------------------------------------
+        # A. All stock move sale
+        category_move = {}
+        for move in move_pool.search(domain):            
+            category = move.product_id.mmac_pfu.name or ''
+            if not category: # Missed category product not in report
+                continue
+            
+            if category not in supplier_category_move:
+                category_move[category] = 0
+            category_move[category] += move.product_uom_qty
+
+        
+        # Export only total grouped by RAEE mode:
+        # ---------------------------------------------------------------------
+        #                          EXTRACT EXCEL:
+        # ---------------------------------------------------------------------
+        # Excel file configuration:
+        header = ('RAEE', u'Q.tà')            
+        column_width = (5, 15)
+
+        ws_name = 'PFU forniori esteri'
+        
+        # -----------------------------------------------------------------
+        # Excel sheet creation:
+        # -----------------------------------------------------------------
+        excel_pool.create_worksheet(ws_name)
+        excel_pool.column_width(ws_name, column_width)
+        excel_pool.set_format()
+        format_text = {                
+            'title': excel_pool.get_format('title'),
+            'header': excel_pool.get_format('header'),
+            'text': excel_pool.get_format('text'),
+            'number': excel_pool.get_format('number'),
+            }
+            
+
+        # ---------------------------------------------------------------------
+        # Write detail:
+        # ---------------------------------------------------------------------        
+        row = total = 0
+
+        excel_pool.write_xls_line(ws_name, row, header, format_text['header'])
+        for category in sorted(category_move, key=lambda x: x.name):
+            row += 1
+            subtotal = category_move[category]
+            total += subtotal
+            # Header write:
+            excel_pool.write_xls_line(ws_name, row, [
+                category.name,
+                subtotal,
+                
+        # -----------------------------------------------------------------
+        # Write total line:
+        # -----------------------------------------------------------------
+        # Total
+        row += 1
+        excel_pool.write_xls_line(ws_name, row, (
+            'Totale:', total,
+            ), default_format=format_text['number'])
+                
+        # ---------------------------------------------------------------------
+        # Save file:
+        # ---------------------------------------------------------------------
+        return excel_pool.return_attachment('Report_Tax_PFU')
+        
+    @api.multi
+    def extract_excel_pfu_report(self, ):
+        ''' Extract Excel PFU report
+        '''
+        move_pool = self.env['stock.move']
+        excel_pool = self.env['excel.writer']
+        
+        from_date = self.from_date
+        to_date = self.to_date
+        supplier = self.partner_id
+        
+        domain = self.get_data_domain(from_date, to_date)
 
         if supplier:
             domain.append(
