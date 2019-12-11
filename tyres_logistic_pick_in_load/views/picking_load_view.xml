@@ -329,6 +329,7 @@
             <field name="arch" type="xml">
                 <tree string="Orphan stock move" editable="bottom" decoration-primary="dropship_manage==True">
                     <field name="picking_id" invisible="1"/>
+                    <field name="force_hide" invisible="1" />
                     <field name="date" />
                     <field name="partner_id" readonly="1"/>
                     <field name="product_id" readonly="1" invisible="1"/>
@@ -343,6 +344,11 @@
                     <button name="unlink_pending_stock_movement" string="Unlink stock move" 
                         type="object" confirm="Confirm remove of pending stock movement?" 
                         icon="fa-minus-square fa-2x" attrs="{'invisible': [('dropship_manage','=',True)]}"
+                        groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
+                        />
+                    <button name="hide_pending_stock_movement" string="Hide stock move" 
+                        type="object" confirm="This line never delivered, confirm hide stock movement?" 
+                        icon="fa-eye-slash fa-2x" attrs="{'invisible': [('force_hide','=',True)]}"
                         groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
                         />
                     <!--TODO-->
@@ -380,7 +386,17 @@
             <field name="view_id" ref="view_delivery_selection_stock_move_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_stock_move_search"/>
             <field name="context">{}</field>
-            <field name="domain">[('delivery_id', '=', False), ('picking_id', '=', False)]</field>
+            <field name="domain">[('force_hide', '=', False), ('delivery_id', '=', False), ('picking_id', '=', False)]</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_stock_move_selection_order_to_link_hided_line">
+            <field name="name">Hided lines</field>
+            <field name="res_model">stock.move</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_delivery_selection_stock_move_tree"/>
+            <field name="search_view_id" ref="view_delivery_selection_stock_move_search"/>
+            <field name="context">{}</field>
+            <field name="domain">[('force_hide', '=', True)]</field>
         </record>
 
         <record model="ir.actions.act_window" id="action_purchase_order_line">
@@ -624,6 +640,14 @@
                  sequence="10"
                  groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
                  />
+                 
+                 <menuitem 
+                     parent="menu_purchase_selection_order_link_line" 
+                     id="menu_purchase_selection_order_link_line_hided" 
+                     action="action_stock_move_selection_order_to_link_hided_line"
+                     sequence="10"
+                     groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
+                     />
                  
              <menuitem 
                  parent="menu_logistic_delivery_management_root" 

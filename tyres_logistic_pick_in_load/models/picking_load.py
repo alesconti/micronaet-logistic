@@ -557,11 +557,27 @@ class StockMove(models.Model):
         string='Extended name', related='product_id.name_extended')
     default_code = fields.Char(
         string='Default code', related='product_id.default_code')
-        
+    force_hide = fields.Boolean('Force hide')    
 
     # -------------------------------------------------------------------------
     #                                   Button event:
     # -------------------------------------------------------------------------
+    @api.multi
+    def hide_pending_stock_movement(self):
+        ''' Deactivate line (not visible)
+        '''
+        # Log hide operazion on original order:
+        order = self.logistic_load_id.order_id
+        order.write_log_chatter_message(_(
+            'Picking %s, Supplier: %s, Product %s, Q. %s, hide movement!') % (
+                self.picking_id.name,
+                self.partner_id.name,
+                self.product_id.default_code,
+                self.product_uom_qty,
+                ))
+        
+        self.force_hide = True 
+        
     @api.multi
     def unlink_pending_stock_movement(self):
         ''' Unlink stock move with log
