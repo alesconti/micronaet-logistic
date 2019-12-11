@@ -569,14 +569,28 @@ class StockMove(models.Model):
         # Log hide operazion on original order:
         order = self.logistic_load_id.order_id
         order.write_log_chatter_message(_(
-            'Picking %s, Supplier: %s, Product %s, Q. %s, hide movement!') % (
-                self.picking_id.name,
+            'Supplier: %s, Product %s, Q. %s, hide movement!') % (
                 self.partner_id.name,
                 self.product_id.default_code,
                 self.product_uom_qty,
                 ))
         
         self.force_hide = True 
+
+    @api.multi
+    def unhide_pending_stock_movement(self):
+        ''' Reactivate line (not visible)
+        '''
+        # Log hide operazion on original order:
+        order = self.logistic_load_id.order_id
+        order.write_log_chatter_message(_(
+            'Supplier: %s, Product %s, Q. %s, Restored movement!') % (
+                self.partner_id.name,
+                self.product_id.default_code,
+                self.product_uom_qty,
+                ))
+        
+        self.force_hide = False 
         
     @api.multi
     def unlink_pending_stock_movement(self):

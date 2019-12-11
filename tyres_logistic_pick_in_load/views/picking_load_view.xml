@@ -351,6 +351,11 @@
                         icon="fa-eye-slash fa-2x" attrs="{'invisible': [('force_hide','=',True)]}"
                         groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
                         />
+                    <button name="unhide_pending_stock_movement" string="Hide stock move" 
+                        type="object"
+                        icon="fa-eye fa-2x" attrs="{'invisible': [('force_hide','=',False)]}"
+                        groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
+                        />
                     <!--TODO-->
                 </tree>
             </field>
