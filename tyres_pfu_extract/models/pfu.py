@@ -61,9 +61,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             # Header
             ('delivery_id.date', '>=', from_date),
             ('delivery_id.date', '<', to_date),
-
             ('logistic_load_id', '!=', False), # Linked to order
-            ('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '=', True), # Linked to order
             # TODO Order web only?
             ] 
     @api.multi
@@ -174,6 +172,11 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         supplier = self.partner_id
         
         domain = self.get_data_domain(from_date, to_date)
+
+        # Sell Extra CEE:
+        domain.append(
+            ('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '=', True), # Linked to order
+            )
 
         if supplier:
             domain.append(
