@@ -80,9 +80,9 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         to_date = self.to_date
 
         domain = self.get_data_domain(from_date, to_date)
-        domain.append(
-            ('delivery_id.supplier_id.country_id', '!=', country_id),
-            )
+        #domain.append(
+        #    ('delivery_id.supplier_id.country_id', '!=', country_id),
+        #    )
 
         # Select all supplier used:
         # not italy
@@ -140,7 +140,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         for supplier in sorted(supplier_category_move, key=lambda x: x.name):            
             for category in supplier_category_move[supplier]:
                 row += 1
-                subtotal = int(supplier_category_move[supplier][category])
+                subtotal = supplier_category_move[supplier][category]
                 total += subtotal
                 # Header write:
                 excel_pool.write_xls_line(ws_name, row, [
