@@ -79,11 +79,11 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         company = company_pool.search([])[0]
         country_id = company.partner_id.country_id.id
         domain = self.get_data_domain(from_date, to_date)
-        domain.append(
+        domain.extend([
             '|',
             ('delivery_id.supplier_id.country_id', '=', False),
             ('delivery_id.supplier_id.country_id', '!=', country_id),
-            )
+            ])
         
         # ---------------------------------------------------------------------
         #                           Collect data:
