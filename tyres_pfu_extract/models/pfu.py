@@ -80,6 +80,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         country_id = company.partner_id.country_id.id
         domain = self.get_data_domain(from_date, to_date)
         domain.append(
+            '|',
+            ('delivery_id.supplier_id.country_id', '=', False),
             ('delivery_id.supplier_id.country_id', '!=', country_id),
             )
         
