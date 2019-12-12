@@ -73,19 +73,17 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         move_pool = self.env['stock.move']
         excel_pool = self.env['excel.writer']
         company_pool = self.env['res.company']
-        company = company_pool.search([])[0]
-        country_id = company.partner_id.country_id.id
         
         from_date = self.from_date
         to_date = self.to_date
 
-        domain = self.get_data_domain(from_date, to_date)
-        #domain.append(
-        #    ('delivery_id.supplier_id.country_id', '!=', country_id),
-        #    )
-
         # Select all supplier used:
-        # not italy
+        company = company_pool.search([])[0]
+        country_id = company.partner_id.country_id.id
+        domain = self.get_data_domain(from_date, to_date)
+        domain.append(
+            ('delivery_id.supplier_id.country_id', '!=', country_id),
+            )
         
         # ---------------------------------------------------------------------
         #                           Collect data:
