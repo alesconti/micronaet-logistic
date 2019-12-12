@@ -140,14 +140,14 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         for supplier in sorted(supplier_category_move, key=lambda x: x.name):            
             for category in supplier_category_move[supplier]:
                 row += 1
-                subtotal = supplier_category_move[supplier][category]
+                subtotal = int(supplier_category_move[supplier][category])
                 total += subtotal
                 # Header write:
                 excel_pool.write_xls_line(ws_name, row, [
                     category,
                     supplier.name,
                     supplier.country_id.name or '',
-                    subtotal,
+                    (subtotal, format_text['number']),
                     ], default_format=format_text['text'])
                 
         # -----------------------------------------------------------------
