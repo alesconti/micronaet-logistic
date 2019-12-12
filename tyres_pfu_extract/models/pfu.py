@@ -72,7 +72,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         '''
         move_pool = self.env['stock.move']
         excel_pool = self.env['excel.writer']
-        company_pool = self.pool.get('res.company')
+        company_pool = self.env['res.company']
         company = company_pool.search([])[0]
         country_id = company.partner_id.country_id.id
         
@@ -148,7 +148,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     supplier.name,
                     supplier.country_id.name or '',
                     subtotal,
-                    )
+                    ], default_format=format_text['text'])
                 
         # -----------------------------------------------------------------
         # Write total line:
@@ -157,7 +157,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         row += 1
         excel_pool.write_xls_line(ws_name, row, (
             'Totale:', total,
-            ), default_format=format_text['number'], col=1)
+            ), default_format=format_text['number'], col=2)
                 
         # ---------------------------------------------------------------------
         # Save file:
