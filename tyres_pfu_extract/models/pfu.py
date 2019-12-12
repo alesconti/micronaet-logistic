@@ -144,7 +144,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 total += subtotal
                 # Header write:
                 excel_pool.write_xls_line(ws_name, row, [
-                    category.name,
+                    category,
                     supplier.name,
                     supplier.country_id.name or '',
                     subtotal,
