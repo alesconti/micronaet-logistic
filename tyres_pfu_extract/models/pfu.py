@@ -82,7 +82,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         domain.extend([
             #('logistic_load_id.order_id.partner_invoice_id.country_id', '=', 
             #    country_id), # Only sold in Italy
-            ('dropship_manage', '=', False),
+            #('dropship_manage', '=', False),
             '|',
             ('delivery_id.supplier_id.country_id', '=', False),
             ('delivery_id.supplier_id.country_id', '!=', country_id),
