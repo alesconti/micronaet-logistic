@@ -80,8 +80,9 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         country_id = company.partner_id.country_id.id
         domain = self.get_data_domain(from_date, to_date)
         domain.extend([
-            ('logistic_load_id.order_id.partner_invoice_id.country_id', '=', 
-                country_id), # Only sold in Italy
+            #('logistic_load_id.order_id.partner_invoice_id.country_id', '=', 
+            #    country_id), # Only sold in Italy
+            ('dropship_manage', '=', False),
             '|',
             ('delivery_id.supplier_id.country_id', '=', False),
             ('delivery_id.supplier_id.country_id', '!=', country_id),
