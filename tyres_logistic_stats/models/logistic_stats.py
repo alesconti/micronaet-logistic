@@ -179,8 +179,8 @@ class SaleOrderStats(models.Model):
             # Purchase cost:
             # -----------------------------------------------------------------
             for purchase_line in line.purchase_line_ids:                
-                if purchase_line.order_id.partner_id.internal_stock:
-                    stat_excluded = True
+                #if purchase_line.order_id.partner_id.internal_stock:
+                #    stat_excluded = True
 
                 price = purchase_line.price_unit # TODO get_net(line)?
                 subtotal = (price * purchase_line.product_qty)
