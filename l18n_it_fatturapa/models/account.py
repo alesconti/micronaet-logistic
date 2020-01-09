@@ -424,10 +424,11 @@ class StockPicking(models.Model):
         res = ''
         remain = int(sequence.next_by_id())
         while remain >= base:
-            division = remain // base # INT division
-            remain = remain % base # Rest of division
-            res += seed[division]
-        res += seed[remain] # Lasst
+            position = remain % base # Rest of division
+            res = seed[position] + res
+            remain = remain // base # INT division
+        if remain:    
+            res = seed[remain] + res # Last if present use remain 
         res = '0' * (5 - len(res)) + res            
         return res
         
