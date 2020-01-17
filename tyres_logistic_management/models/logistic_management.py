@@ -2081,6 +2081,12 @@ class SaleOrder(models.Model):
     def wf_set_order_as_done(self):
         """ Set order as done (from delivering)
         """
+        # Manage simultaneous click:
+        if self.go_purchase_pressed:
+            raise exceptions.Warning(
+                _('Button yet pressed! Please refresh the view'))
+        self.go_purchase_pressed = True
+
         now = fields.Datetime.now()
         order = self # readability
 
@@ -2460,6 +2466,8 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
+    go_purchase_pressed = fields.Boolean('Go purchase pressed')
+    
     exported_date = fields.Date('Exported date')
     undo_comment = fields.Text('Undo comment', compute=_get_undo_comment)
 
