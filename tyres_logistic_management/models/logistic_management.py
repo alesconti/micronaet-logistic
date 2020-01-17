@@ -2501,6 +2501,7 @@ class SaleOrder(models.Model):
         ('resell', 'Customer resell order'),
         ('workshop', 'Workshop order'),
         ('internal', 'Internal provisioning order'),
+        ('refund', 'Refund'),
         ], 'Logistic source', default='web',
         )
 
@@ -3141,6 +3142,11 @@ class SaleOrderLine(models.Model):
         help='Deliver movement in pick out documents',
         )
 
+    # -------------------------------------------------------------------------
+    # Refund management:
+    # -------------------------------------------------------------------------
+    refund_product_id = fields.Many2one('product.product', 'Refund product')
+    
     # -------------------------------------------------------------------------
     #                               FUNCTION FIELDS:
     # -------------------------------------------------------------------------
