@@ -157,7 +157,7 @@
                      <button name="clean_fast_filter" string="Remove filters" type="object" icon="fa-home fa-2x" />
                      <field name="logistic_source" invisible="1"/>
                      <field name="order_id" readonly="1" string="Rif." invisible="1"/>
-                     <field name="customer_order_date" readonly="1" invisible="not context.get('internal_view')"/>
+                     <!--<field name="customer_order_date" readonly="1" invisible="not context.get('internal_view')"/>-->
                      <field name="purchase_order_date" readonly="1" invisible="not context.get('internal_view')"/>
                      <field name="internal_note" string="Note" invisible="not context.get('internal_view')"/> 
                      
