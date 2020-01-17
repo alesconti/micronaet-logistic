@@ -87,14 +87,14 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
         # Excel file configuration: # TODO
         header = (
             'Modo', 'Data', 'Ordine', 'Destinazione',
-            'Track ID', 'Shippy', 
+            'Track ID', 'Shippy', 'Stampa',
             'Peso', 'Colli', 'Costo',
             
             'Q.', 'Prodotto',
             )
         column_width = (
             16, 10, 20, 55,
-            15, 5,
+            15, 5, 15,
             6, 6, 6,
             
             6, 65,
@@ -221,6 +221,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
 
                     order.carrier_track_id,
                     'X' if order.carrier_shippy else '',
+                    order.mmac_shippy_print_labels_date,
                     (weight, format_color['number']),
                     (parcel, format_color['number']),
                     (order.carrier_cost, format_color['number']),

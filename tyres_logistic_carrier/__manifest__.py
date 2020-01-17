@@ -34,7 +34,7 @@
         'stock',
         'sale',
         'product',
-        #'mmac_odoo4', # Extra Fields
+        #'mmac_odoo4', # Extra Fields (theres' one fields but loop reference)
         #'tyres_logistic_management',
         ],
     'data': [
