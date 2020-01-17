@@ -146,6 +146,9 @@ class StockPicking(models.Model):
             # Load partner sequence (depend on fiscal position)
             partner = picking.partner_id
             position = partner.property_account_position_id
+            if picking.invoice_number:
+                _logger.error('Invoice number yet present')
+                continue
             
             if not position:
                 _logger.error(
