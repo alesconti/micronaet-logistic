@@ -2469,6 +2469,8 @@ class SaleOrder(models.Model):
         help='Note for DDT document')
     note_picking = fields.Text('Stock note',
         help='Note for Picking document and stock operator')
+    note_delay = fields.Text('Delay note',
+        help='Note for problem have on this order')
 
     market_type = fields.Selection((
         ('b2b', 'B2B'),
