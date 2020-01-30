@@ -258,7 +258,7 @@ class SaleOrder(models.Model):
     real_parcel_total = fields.Integer(
         string='Colli', compute='_get_carrier_parcel_total')
     destination_country_id = fields.Many2one(
-        'res.country', 'Paese destinazione',
+        'res.country', 'Destinazione',
         related='partner_shipping_id.country_id',
     )
 
