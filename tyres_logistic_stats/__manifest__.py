@@ -2,7 +2,7 @@
 #!/usr/bin/python
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2018 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -33,8 +33,9 @@
         'sale',
         'sale_management',
         'sales_team',
-        'excel_export', # Export in Excel
-        'mmac_odoo4', # Extra fields (loop reference)
+        'excel_export',  # Export in Excel
+        'mmac_odoo4',  # Extra fields (loop reference)
+        'tyres_logistic_carrier',  # For extra columns
         ],
     'data': [
         'views/logistic_stats_view.xml',

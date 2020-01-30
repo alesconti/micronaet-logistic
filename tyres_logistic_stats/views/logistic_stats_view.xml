@@ -8,7 +8,7 @@
             <field name="priority" eval="40"/>
             <field name="arch" type="xml">
                 <search string="Sale order search">
-                    <field name="name" />                    
+                    <field name="name" />
                     <field name="partner_id" filter_domain="[('partner_id','=',self)]"/>
                     <field name="fiscal_position_id"  />
                     <field name="team_id"  />
@@ -16,18 +16,18 @@
                     <field name="logistic_source" />
                     <field name="payment_term_id" />
                     <field name="product_id"/>
-                    
+
                     <filter name="shippy_yes" string="Shippy" domain="[('carrier_shippy','=',True)]"/>
                     <filter name="shippy_no" string="No Shippy" domain="[('carrier_shippy','=',False)]"/>
 
                     <filter name="stat_excluded_yes" string="Excluded" domain="[('stat_excluded','=',True)]"/>
                     <filter name="stat_excluded_no" string="Not excluded" domain="[('stat_excluded','=',False)]"/>
-                    
+
                     <filter name="level_positive" string="Level positive" domain="[('stat_level','=','positive')]"/>
                     <filter name="level_negative" string="Level negative" domain="[('stat_level','=','negative')]"/>
                     <filter name="level_neutral" string="Level neutral" domain="[('stat_level','=','neutral')]"/>
                     <filter name="level_unset" string="Level unsed" domain="[('stat_level','=','unset')]"/>
-                    
+
                     <group expand="0" string="Group By...">
                         <filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
                         <filter name="group_date_order" string="Date" context="{'group_by': 'date_order'}"/>
@@ -39,7 +39,7 @@
                         <filter name="group_payment_term" string="payment" context="{'group_by': 'payment_term_id'}"/>
                         <filter name="group_logistic_state" string="Logistic state" context="{'group_by': 'logistic_state'}"/>
                         <filter name="group_level" string="Stat level" context="{'group_by': 'stat_level'}"/>
-                    </group>                
+                    </group>
                 </search>
             </field>
         </record>
@@ -59,9 +59,13 @@
                     <field name="user_id" invisible="1" />
                     <field name="logistic_source" invisible="1" />
                     <field name="payment_term_id" string="Pagamento" />
-                    
-                    <field name="stat_sale" sum="total_sale" string="Vendita" />                    
-                    <field name="stat_purchase" sum="total_purchase" string="Acquisto" />                    
+
+                    <field name="carrier_supplier_id"/>
+                    <field name="destination_country_id"/>
+                    <field name="real_parcel_total"/>
+
+                    <field name="stat_sale" sum="total_sale" string="Vendita" />
+                    <field name="stat_purchase" sum="total_purchase" string="Acquisto" />
                     <field name="mmac_payment_transaction_fee" sum="total_payment" string="Pag."/>
                     <field name="mmac_marketplace_transaction_fee" sum="total_marketplace" string="Market"/>
                     <field name="stat_pfu" sum="total_pfu" string="PFU"/>
@@ -69,7 +73,7 @@
                     <field name="stat_shippy" />
                     <field name="carrier_shippy" string="Sh." />
                     <field name="stat_margin" sum="total_margin" />
-                    <field name="stat_margin_rate" string="%" />                    
+                    <field name="stat_margin_rate" string="%" />
 
                     <field name="logistic_state" />
                     <field name="state" invisible="1" />
@@ -104,36 +108,36 @@
                                 <field name="stat_level" nolabel="1"  readonly="1" colspan="4" attrs="{'invisible': [('stat_level','!=','neutral')]}"/>
                             </div>
                             <newline/>
-                            
+
                             <field name="name" readonly="1"/>
                             <field name="date_order" readonly="1" />
-                            
+
                             <field name="validity_date" readonly="1" />
                             <field name="fiscal_position_id" readonly="1" />
-                            
+
                             <field name="team_id" readonly="1" />
                             <field name="user_id" readonly="1" />
-                            
+
                             <field name="logistic_source" readonly="1" />
                             <field name="payment_term_id"  readonly="1"/>
-                            
+
                             <field name="carrier_shippy" string="Shippy" readonly="1" />
                             <newline/>
-                            
+
                             <separator string="Detail:" colspan="2"/>
                             <separator string="Order line:" colspan="2"/>
                             <field name="stat_detail" colspan="2" nolabel="1" widget="html"/>
                             <field name="stat_lines" colspan="2" nolabel="1" widget="html"/>
-                            
-                            <!--<field name="stat_sale" sum="total_sale"  />                    
+
+                            <!--<field name="stat_sale" sum="total_sale"  />
                             <field name="mmac_payment_transaction_fee" sum="total_payment" />
                             <field name="mmac_marketplace_transaction_fee" sum="total_marketplace"  />
                             <field name="stat_pfu" sum="total_pfu" />
                             <field name="stat_transport" sum="total_transport" />
                             <field name="stat_margin" sum="total_margin" />
-                            <field name="stat_margin_rate"  />                    
+                            <field name="stat_margin_rate"  />
                             <field name="stat_level"  />
-                            
+
                             <field name="logistic_state"  />
                             <field name="state" invisible="1" />-->
                         </group>
@@ -162,8 +166,8 @@
                             <newline/>
                  </field>
              </field>
-         </record>             
-        
+         </record>
+
         <record model="ir.ui.view" id="view_sale_order_stats_graph">
            <field name="name">sale.order.stats.graph</field>
            <field name="model">sale.order</field>
@@ -181,7 +185,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,graph,pivot</field>
             <field name="view_id" ref="view_sale_order_statistics_tree"/>
-            <field name="search_view_id" ref="view_sale_order_statistics_search"/>            
+            <field name="search_view_id" ref="view_sale_order_statistics_search"/>
             <field name="context">{'graph_view_ref': 'tyres_logistic_stats.view_sale_order_stats_graph', 'form_view_ref': 'tyres_logistic_stats.view_sale_order_statistics_form'}</field>
             <field name="domain">[('logistic_state', '!=', 'cancel'), ('stat_level', '!=', 'unset'), ('logistic_source', '=', 'web'), ('stat_excluded', '=', False)]</field>
         </record>
@@ -191,19 +195,19 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,graph,pivot</field>
             <field name="view_id" ref="view_sale_order_statistics_tree"/>
-            <field name="search_view_id" ref="view_sale_order_statistics_search"/>            
+            <field name="search_view_id" ref="view_sale_order_statistics_search"/>
             <field name="context">{'graph_view_ref': 'tyres_logistic_stats.view_sale_order_stats_graph', 'form_view_ref': 'tyres_logistic_stats.view_sale_order_statistics_form'}</field>
             <field name="domain">[('logistic_source', '=', 'web')]</field>
         </record>
-        
-        
-        <menuitem 
+
+
+        <menuitem
             id="menu_logistic_left_statistic_used_clean"
             parent="tyres_logistic_management.menu_logistic_left_statistic_root"
             action="action_sale_order_statistics_clean"
             sequence="10"
             />
-        <menuitem 
+        <menuitem
             id="menu_logistic_left_statistic_all_order"
             parent="tyres_logistic_management.menu_logistic_left_statistic_root"
             action="action_sale_order_statistics_all_order"
