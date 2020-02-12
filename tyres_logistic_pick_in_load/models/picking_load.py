@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -35,56 +35,56 @@ _logger = logging.getLogger(__name__)
 class AccountFiscalPositionPrint(models.Model):
     """ Model name: Purchase order line
     """
-    
+
     _name = 'account.fiscal.position.print'
     _description = 'Print parameter'
     _rec_name = 'market'
     _order = 'market'
-    
+
     market = fields.Selection([
         #('default', 'Default'),
         ('b2b', 'B2B'),
         ('b2c', 'B2C'),
         ], 'Market', default='b2b', required=True)
-    position_id = fields.Many2one('account.fiscal.position', 'Position')    
+    position_id = fields.Many2one('account.fiscal.position', 'Position')
 
     report_picking = fields.Integer('Picking', default=1)
     report_ddt = fields.Integer('DDT', default=1)
     report_invoice = fields.Integer('Invoice', default=1)
     report_extra = fields.Integer('Extra doc.', default=1)
     report_label = fields.Integer('Label', default=1)
-    
+
     _sql_constraints = [
-        ('name_uniq', 'unique (position_id, market)', 
+        ('name_uniq', 'unique (position_id, market)',
             'Market in position must be unique!'),
         ]
 
 class AccountFiscalPosition(models.Model):
     """ Model name: Print parameters
     """
-    
+
     _inherit = 'account.fiscal.position'
-    
+
     print_ids = fields.One2many(
-        'account.fiscal.position.print', 'position_id', 
+        'account.fiscal.position.print', 'position_id',
         'Print parameters',
         )
 
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase order line
     """
-    
+
     _inherit = 'purchase.order.line'
-    
+
     # Used?:
-    exported_date = fields.Date('Exported date', 
-        related='logistic_sale_id.order_id.exported_date') 
-         
+    exported_date = fields.Date('Exported date',
+        related='logistic_sale_id.order_id.exported_date')
+
     internal_note = fields.Char('Internal note', size=160)
     purchase_order_date = fields.Datetime(
         'Ord. forn.', related='order_id.date_order')
-    customer_order_date = fields.Datetime('Ord. cl.', 
-        related='logistic_sale_id.order_id.date_order')  
+    customer_order_date = fields.Datetime('Ord. cl.',
+        related='logistic_sale_id.order_id.date_order')
 
 class SaleOrderPrintResult(models.TransientModel):
     """ Esit printing report
@@ -97,7 +97,7 @@ class SaleOrderPrintResult(models.TransientModel):
 class SaleOrder(models.Model):
     """ Model name: Sale order
     """
-    
+
     _inherit = 'sale.order'
 
     @api.multi
@@ -110,11 +110,11 @@ class SaleOrder(models.Model):
                     'Jump order not in ready status: %s' % order.name)
                 continue
             order.workflow_ready_to_done_current_order()
-    
+
     @api.multi
     def print_all_server_action(self):
-        ''' Print all server action
-        '''
+        """ Print all server action
+        """
         result_pool = self.env['sale.order.print.result']
 
         log_print = {}
@@ -124,7 +124,7 @@ class SaleOrder(models.Model):
                     order.logistic_state not in ('ready', 'done'):
                 log_print[order].append(_('Not print order: %s') % order.name)
                 continue
-                
+
             # TODO Setup loop print:
             fiscal = order.fiscal_position_id
             market = order.team_id.market_type
@@ -142,9 +142,9 @@ class SaleOrder(models.Model):
                 # Default print 1
                 loop_picking = loop_ddt = loop_invoice = loop_extra = \
                     loop_label = 1
-            
+
             log_print[order].append(_('Start print order: %s') % order.name)
-            # -----------------------------------------------------------------            
+            # -----------------------------------------------------------------
             # Picking
             # -----------------------------------------------------------------
             # TODO
@@ -153,57 +153,57 @@ class SaleOrder(models.Model):
                 order.workflow_ready_print_picking()
             log_print.append(_('Print #%s Picking') % loop_picking)
             '''
-            
-            # -----------------------------------------------------------------            
+
+            # -----------------------------------------------------------------
             # Invoice
-            # -----------------------------------------------------------------            
+            # -----------------------------------------------------------------
             if order.check_need_invoice:
                 for time in range(0, loop_invoice):
                     order.workflow_ready_print_invoice()
                 log_print[order].append(_('Print #%s Invoice') % loop_invoice)
 
-            # -----------------------------------------------------------------            
+            # -----------------------------------------------------------------
             # DDT
-            # -----------------------------------------------------------------            
+            # -----------------------------------------------------------------
             else:
                 for time in range(0, loop_ddt):
                     order.workflow_ready_print_ddt()
                 log_print[order].append(_('Print #%s DDT') % loop_ddt)
 
-            # -----------------------------------------------------------------            
+            # -----------------------------------------------------------------
             # Extra document
-            # -----------------------------------------------------------------            
+            # -----------------------------------------------------------------
             if order.has_extra_document:
                 for time in range(0, loop_extra):
                     order.workflow_ready_print_extra()
                 log_print[order].append(_('Print #%s Extra doc') % loop_extra)
-            
-            # -----------------------------------------------------------------            
+
+            # -----------------------------------------------------------------
             # Label
-            # -----------------------------------------------------------------            
+            # -----------------------------------------------------------------
             if order.has_label_to_print:
                 for time in range(0, loop_label):
                     order.workflow_ready_print_label()
                 log_print[order].append(_('Print #%s label') % loop_label)
-        
+
         if len(self) <= 1:
             return True
-            
+
         # ---------------------------------------------------------------------
         # Generate log (for many orders):
         # ---------------------------------------------------------------------
         note = ''
         for order in sorted(log_print, key=lambda x: x.name):
             note += _('Order: <b>%s<b/><br/>Messages:<br/>')
-            
+
             for message in log_print[order]:
                 note += message
             note += _('<br/><br/>')
-        
+
         result_id = result_pool.create({
             'note': note,
             }).id
-            
+
         form_id = self.env.ref(
             'tyres_logistic_pick_in_load.view_sale_order_print_result_form').id
         return {
@@ -220,11 +220,11 @@ class SaleOrder(models.Model):
             'target': 'new',
             'nodestroy': False,
             }
-    
+
     @api.multi
     def _get_has_extra_document(self, ):
-        ''' Check if needed
-        '''
+        """ Check if needed
+        """
         # TODO setup correct check (filename will raise an error not hide button)
         for order in self:
             try:
@@ -240,15 +240,15 @@ class SaleOrder(models.Model):
 
     @api.multi
     def _get_has_label_to_print(self, ):
-        ''' Check if needed label
-        '''        
+        """ Check if needed label
+        """
         for order in self:
             order.has_label_to_print = order.mmac_shippy_order_id > 0
 
     @api.multi
     def _get_label_status(self, ):
-        ''' Check if needed label
-        '''        
+        """ Check if needed label
+        """
         for order in self:
             if order.carrier_shippy:
                 if order.mmac_shippy_order_id > 0: # has the code
@@ -269,15 +269,15 @@ class SaleOrder(models.Model):
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document
     """
-    
+
     _name = 'stock.picking.delivery'
     _description = 'Generator of delivery'
     _rec_name = 'create_date'
 
     @api.multi
     def check_import_reply(self):
-        ''' Check import reply for get confirmation EXTRA BF
-        '''
+        """ Check import reply for get confirmation EXTRA BF
+        """
         # TODO schedule action?
         # Pool used:
         quant_pool = self.env['stock.picking.delivery.quant']
@@ -290,14 +290,14 @@ class StockPickingDelivery(models.Model):
             logistic_root_folder, 'delivery', 'reply')
         history_path = os.path.join(
             logistic_root_folder, 'delivery', 'history')
-            
+
         move_list = []
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
                 f_split = f[:-4].split('_')
                 try:
-                    pick_id = int(f_split[-1]) # pick_in_ID.csv                
-                    if f_split[1] == 'in': 
+                    pick_id = int(f_split[-1]) # pick_in_ID.csv
+                    if f_split[1] == 'in':
                         quants = quant_pool.search([
                             ('order_id', '=', pick_id)])
                         quants.write({'account_sync': True, })
@@ -315,7 +315,7 @@ class StockPickingDelivery(models.Model):
 
         # Move files after all:
         for origin, destination in move_list:
-            shutil.move(origin, destination)            
+            shutil.move(origin, destination)
         return True
 
     # -------------------------------------------------------------------------
@@ -323,8 +323,8 @@ class StockPickingDelivery(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def confirm_stock_load(self):
-        ''' Create new picking unloading the selected material
-        '''
+        """ Create new picking unloading the selected material
+        """
         # ---------------------------------------------------------------------
         # Pool used:
         # ---------------------------------------------------------------------
@@ -335,13 +335,13 @@ class StockPickingDelivery(models.Model):
 
         # Sale order detail:
         sale_line_pool = self.env['sale.order.line']
-       
+
         # Purchase order detail:
         purchase_pool = self.env['purchase.order']
-        
+
         # Partner:
         company_pool = self.env['res.company']
-        
+
         # ---------------------------------------------------------------------
         #                          Load parameters
         # ---------------------------------------------------------------------
@@ -351,7 +351,7 @@ class StockPickingDelivery(models.Model):
         logistic_pick_in_type_id = logistic_pick_in_type.id
         location_from = logistic_pick_in_type.default_location_src_id.id
         location_to = logistic_pick_in_type.default_location_dest_id.id
-        
+
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
 
         # ---------------------------------------------------------------------
@@ -362,47 +362,47 @@ class StockPickingDelivery(models.Model):
         name = self.name # mandatory Doc ID
         origin = _('%s [%s]') % (name, scheduled_date)
 
-        picking = picking_pool.create({       
+        picking = picking_pool.create({
             'partner_id': partner.id,
             'scheduled_date': scheduled_date,
             'origin': origin,
-            #'move_type': 'direct',
+            # 'move_type': 'direct',
             'picking_type_id': logistic_pick_in_type_id,
             'group_id': False,
             'location_id': location_from,
             'location_dest_id': location_to,
-            #'priority': 1,                
+            # 'priority': 1,
             'state': 'done', # immediately!
             })
         self.picking_id = picking.id
 
         # ---------------------------------------------------------------------
         # Append stock.move detail (or quants if in stock)
-        # ---------------------------------------------------------------------           
-        sale_line_check_ready = [] # ready line after assign load qty to purchase
-        purchase_ids = [] # purchase order to chech state
-        for line in self.move_line_ids: # Stock move to assign to picking                    
+        # ---------------------------------------------------------------------
+        sale_line_check_ready = []  # ready line after assign load qty to purchase
+        purchase_ids = []  # purchase order to check state
+        for line in self.move_line_ids:  # Stock move to assign to picking
             # Extract purchase order (for final check closing state)
             purchase_id = line.logistic_purchase_id.order_id.id
             if purchase_id not in purchase_ids:
                 purchase_ids.append(purchase_id)
-                
+
             sale_line = line.logistic_load_id
             product = line.product_id
-            product_qty = line.product_uom_qty # This move qty
-    
+            product_qty = line.product_uom_qty  # This move qty
+
             # -----------------------------------------------------------------
-            # Order that load account stock status:            
+            # Order that load account stock status:
             # -----------------------------------------------------------------
             # Duplicate row to load stock:
             if sale_line.order_id.logistic_source in (
-                    'internal', 'workshop', 'resell'):
+                    'internal', 'workshop', 'resell', 'refund'):
                 quant_pool.create({
                     # date and uid are default
                     'order_id': self.id,
-                    'product_id': product.id, 
+                    'product_id': product.id,
                     'product_qty': product_qty,
-                    'price': line.price_unit,                    
+                    'price': line.price_unit,
                     })
 
             # -----------------------------------------------------------------
@@ -411,12 +411,12 @@ class StockPickingDelivery(models.Model):
             # Link stock movement to delivery:
             line.write({
                 'picking_id': picking.id,
-                'origin': origin,                
+                'origin': origin,
                 })
-            
+
             if sale_line not in sale_line_check_ready:
                 sale_line_check_ready.append(sale_line)
-                    
+
         # ---------------------------------------------------------------------
         #                         Manage extra delivery:
         # ---------------------------------------------------------------------
@@ -452,7 +452,7 @@ class StockPickingDelivery(models.Model):
 
         # Check if procedure if fast to confirm reply (instead scheduled!):
         self.check_import_reply()
-        
+
         # ---------------------------------------------------------------------
         # Sale order: Update Logistic status:
         # ---------------------------------------------------------------------
@@ -470,24 +470,24 @@ class StockPickingDelivery(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def open_purchase_line(self):
-        ''' Open current opened line
-        '''
+        """ Open current opened line
+        """
         tree_view_id = self.env.ref(
             'tyres_logistic_pick_in_load.view_delivery_selection_tree').id
         search_view_id = self.env.ref(
             'tyres_logistic_pick_in_load.view_delivery_selection_search').id
-            
-        # Select record to show 
+
+        # Select record to show
         # TODO filter active!
         purchase_pool = self.env['purchase.order.line']
         purchases = purchase_pool.search([
             ('order_id.partner_id', '=', self.supplier_id.id),
-            #('logistic_undelivered_qty', '>', 0.0), 
+            #('logistic_undelivered_qty', '>', 0.0),
             # TODO change with logistic_status:
             # logistic_state = done!!!
             ])
 
-        purchase_ids = []    
+        purchase_ids = []
         for purchase in purchases:
             if purchase.logistic_undelivered_qty:
                 purchase_ids.append(purchase.id)
@@ -507,7 +507,7 @@ class StockPickingDelivery(models.Model):
             'target': 'current', # 'new'
             'nodestroy': False,
             }
-    
+
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
@@ -517,10 +517,10 @@ class StockPickingDelivery(models.Model):
     create_date = fields.Datetime(
         'Create date', required=True, default=fields.Datetime.now())
     create_uid = fields.Many2one(
-        'res.users', 'Create user', required=True, 
+        'res.users', 'Create user', required=True,
         default=lambda s: s.env.user)
     supplier_id = fields.Many2one(
-        'res.partner', 'Supplier', required=True, 
+        'res.partner', 'Supplier', required=True,
         domain='[("supplier", "=", True)]',
         )
     carrier_id = fields.Many2one('carrier.supplier', 'Carrier')
@@ -529,11 +529,11 @@ class StockPickingDelivery(models.Model):
 class StockPickingDeliveryQuant(models.Model):
     """ Model name: Stock line that create real load of stock
     """
-    
+
     _name = 'stock.picking.delivery.quant'
     _description = 'Extra purchase line'
     _rec_name = 'product_id'
-    
+
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
@@ -557,21 +557,21 @@ class StockMove(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery', 
+    delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery',
         ondelete='set null')
     name_extended = fields.Char(
         string='Extended name', related='product_id.name_extended')
     default_code = fields.Char(
         string='Default code', related='product_id.default_code')
-    force_hide = fields.Boolean('Force hide')    
+    force_hide = fields.Boolean('Force hide')
 
     # -------------------------------------------------------------------------
     #                                   Button event:
     # -------------------------------------------------------------------------
     @api.multi
     def hide_pending_stock_movement(self):
-        ''' Deactivate line (not visible)
-        '''
+        """ Deactivate line (not visible)
+        """
         # Log hide operazion on original order:
         order = self.logistic_load_id.order_id
         order.write_log_chatter_message(_(
@@ -580,13 +580,13 @@ class StockMove(models.Model):
                 self.product_id.default_code,
                 self.product_uom_qty,
                 ))
-        
-        self.force_hide = True 
+
+        self.force_hide = True
 
     @api.multi
     def unhide_pending_stock_movement(self):
-        ''' Reactivate line (not visible)
-        '''
+        """ Reactivate line (not visible)
+        """
         # Log hide operazion on original order:
         order = self.logistic_load_id.order_id
         order.write_log_chatter_message(_(
@@ -595,13 +595,13 @@ class StockMove(models.Model):
                 self.product_id.default_code,
                 self.product_uom_qty,
                 ))
-        
-        self.force_hide = False 
-        
+
+        self.force_hide = False
+
     @api.multi
     def unlink_pending_stock_movement(self):
-        ''' Unlink stock move with log
-        '''
+        """ Unlink stock move with log
+        """
         # Log deletion on original order:
         order = self.logistic_load_id.order_id
         order.write_log_chatter_message(_(
@@ -617,15 +617,15 @@ class StockMove(models.Model):
             'logistic_delivered_manual': 0.0,
             'check_status': 'partial',
             })
-        
+
         self.state = 'draft'
         self.unlink()
-        
+
     @api.multi
     def generate_delivery_orders_from_line(self):
-        ''' Delivery order creation:
-            Create the list of all order received splitted for supplier        
-        '''
+        """ Delivery order creation:
+            Create the list of all order received splitted for supplier
+        """
         delivery_pool = self.env['stock.picking.delivery']
 
         # ---------------------------------------------------------------------
@@ -635,12 +635,12 @@ class StockMove(models.Model):
         for line in self:
             sale_order = line.logistic_load_id.order_id
             purchase_order = line.logistic_purchase_id.order_id
-            
+
             supplier = purchase_order.partner_id
             if supplier not in suppliers:
                 suppliers[supplier] = []
             suppliers[supplier].append(line)
-        
+
         # ---------------------------------------------------------------------
         # Create purchase order:
         # ---------------------------------------------------------------------
@@ -652,12 +652,12 @@ class StockMove(models.Model):
             delivery_id = delivery_pool.create({
                 'supplier_id': supplier.id,
                 #'carrier_id': carrier.id,
-                #'create_uid': self.env.uid,                
+                #'create_uid': self.env.uid,
                 }).id
             delivery_ids.append(delivery_id)
             for line in suppliers[supplier]:
                 line.delivery_id = delivery_id # Link to delivery order
-                
+
         # ---------------------------------------------------------------------
         # Return created order:
         # ---------------------------------------------------------------------
@@ -666,9 +666,9 @@ class StockMove(models.Model):
             res_id = delivery_ids[0]
             views = [(tree_view_id, 'form'), (tree_view_id, 'tree')]
         else:
-            res_id = False    
+            res_id = False
             views = [(tree_view_id, 'tree'), (tree_view_id, 'form')]
-            
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Delivery created:'),
@@ -692,15 +692,15 @@ class PurchaseOrderLine(models.Model):
 
     @api.multi
     def dummy(self):
-        ''' Dummy button (do nothing)
-        '''
+        """ Dummy button (do nothing)
+        """
         return True
 
     # Fast filter:
     @api.model
     def return_fast_filter_view(self, field_name, field_value, name):
-        ''' Return view filtered for field
-        '''
+        """ Return view filtered for field
+        """
         # Readability:
         context = self.env.context
         uid = self.env.uid
@@ -709,18 +709,18 @@ class PurchaseOrderLine(models.Model):
         if not field_name or command_clean_before:
             # Clean previous context from search defaults:
             ctx = {}
-            for key in context:           
+            for key in context:
                 # Remove all previous search default:
                 if key.startswith('search_default_'):
                     continue # Cannot remove!
-                ctx[key] = context[key]    
+                ctx[key] = context[key]
             if command_clean_before: # clean yet now!
                 ctx['command_next_clean'] = False # yet clean
-            else:    
+            else:
                 ctx['command_next_clean'] = True # clean all next filter
 
         if field_name:
-            ctx = context.copy()    
+            ctx = context.copy()
             ctx['search_default_%s' % field_name] = field_value
         _logger.info(ctx)
 
@@ -738,18 +738,18 @@ class PurchaseOrderLine(models.Model):
             'view_id': tree_id,
             'search_view_id': search_id, # TODO dont' work!!!
             'views': [
-                (tree_id, 'tree'), 
-                (False, 'form'), 
+                (tree_id, 'tree'),
+                (False, 'form'),
                 #(search_id, 'search'),
                 ],
             'domain': [
                 ('dropship_manage', '=', False),
-                ('check_status', '!=', 'done'), 
+                ('check_status', '!=', 'done'),
                 #('delivery_id', '=', False),  # TODO change or remove?!?
-                ('order_id.logistic_state', '=', 'confirmed'), 
-                '|', 
-                ('user_select_id', '=', uid), 
-                ('user_select_id', '=', False), 
+                ('order_id.logistic_state', '=', 'confirmed'),
+                '|',
+                ('user_select_id', '=', uid),
+                ('user_select_id', '=', False),
                 ('order_id.partner_id.internal_stock', '=', False),
                 ],
             'context': ctx,
@@ -759,74 +759,74 @@ class PurchaseOrderLine(models.Model):
 
     @api.multi
     def clean_fast_filter(self):
-        ''' Remove fast filter:
-        '''
+        """ Remove fast filter:
+        """
         return self.return_fast_filter_view(False, False, False)
-            
+
     @api.multi
     def fast_filter_product_id(self):
-        ''' Filter this product_id
-        '''
+        """ Filter this product_id
+        """
         return self.return_fast_filter_view(
-            'product_id', 
-            self.product_id.id, 
+            'product_id',
+            self.product_id.id,
             self.product_id.default_code,
             )
 
     @api.multi
     def fast_filter_supplier(self):
-        ''' Filter this supplier
-        '''
+        """ Filter this supplier
+        """
         return self.return_fast_filter_view(
-            'order_supplier_id', 
-            self.order_supplier_id.id, 
+            'order_supplier_id',
+            self.order_supplier_id.id,
             self.order_supplier_id.name,
             )
 
     @api.multi
     def fast_filter_larghezza(self):
-        ''' Filter this larghezza
-        '''
+        """ Filter this larghezza
+        """
         return self.return_fast_filter_view(
-            'larghezza', 
-            self.larghezza, 
+            'larghezza',
+            self.larghezza,
             self.larghezza,
             )
 
     @api.multi
     def fast_filter_spalla(self):
-        ''' Filter this spalla
-        '''
+        """ Filter this spalla
+        """
         return self.return_fast_filter_view(
-            'spalla', 
-            self.spalla, 
+            'spalla',
+            self.spalla,
             self.spalla,
             )
 
     @api.multi
     def fast_filter_raggio(self):
-        ''' Filter this raggio
-        '''
+        """ Filter this raggio
+        """
         return self.return_fast_filter_view(
-            'raggio', 
-            self.raggio, 
+            'raggio',
+            self.raggio,
             self.raggio,
             )
 
     # On change not used!
     @api.onchange('logistic_delivered_manual')
     def onchange_logistic_delivered_manual(self, ):
-        ''' Write check state depend on partial or done
-        '''
+        """ Write check state depend on partial or done
+        """
         if self.logistic_delivered_manual < self.logistic_undelivered_qty:
             self.check_status = 'partial'
-        else:    
+        else:
             self.check_status = 'total'
 
-    @api.multi    
+    @api.multi
     def create_delivery_orders(self):
-        ''' Create the list of all order received splitted for supplier        
-        '''
+        """ Create the list of all order received splitted for supplier
+        """
         # ---------------------------------------------------------------------
         # Search selection line for this user:
         # ---------------------------------------------------------------------
@@ -838,7 +838,7 @@ class PurchaseOrderLine(models.Model):
             ])
 
         if not lines:
-            raise exceptions.Warning('No selection for current user!') 
+            raise exceptions.Warning('No selection for current user!')
 
         # Create stock movements:
         self.stock_move_from_purchase_line(lines)
@@ -848,7 +848,7 @@ class PurchaseOrderLine(models.Model):
             # Partial not touched! # TODO correct?
             check_status = line.check_status
             if check_status == 'total':
-                check_status = 'done'            
+                check_status = 'done'
             line.write({
                 'user_select_id': False,
                 'logistic_delivered_manual': 0.0,
@@ -860,8 +860,8 @@ class PurchaseOrderLine(models.Model):
 
     @api.multi
     def open_detail_delivery_in(self):
-        ''' Return detail view for stock operator
-        '''
+        """ Return detail view for stock operator
+        """
         form_view_id = self.env.ref(
             'tyres_logistic_pick_in_load.view_delivery_selection_form').id
         return {
@@ -878,65 +878,65 @@ class PurchaseOrderLine(models.Model):
             'target': 'new',
             'nodestroy': False,
             }
-    
+
     @api.multi
     def delivery_0(self):
-        ''' Add +1 to manual arrived qty
-        '''
+        """ Add +1 to manual arrived qty
+        """
         self.write({
             'logistic_delivered_manual': 0,
             'user_select_id': False, # no need to save user
-            })        
+            })
         return self.onchange_logistic_delivered_manual()
 
     @api.multi
     def delivery_more_1(self):
-        ''' Add +1 to manual arrived qty
-        '''
+        """ Add +1 to manual arrived qty
+        """
         logistic_undelivered_qty = self.logistic_undelivered_qty
         logistic_delivered_manual = self.logistic_delivered_manual
-        
+
         if logistic_delivered_manual >= logistic_undelivered_qty:
             raise exceptions.Warning(
                 _('All received: %s!') % logistic_undelivered_qty)
-        
+
         self.write({
             'logistic_delivered_manual': logistic_delivered_manual + 1.0,
             'user_select_id': self.env.uid,
-            })        
+            })
         return self.onchange_logistic_delivered_manual()
 
     @api.multi
     def delivery_less_1(self):
-        ''' Add +1 to manual arrived qty
-        '''
+        """ Add +1 to manual arrived qty
+        """
         logistic_delivered_manual = self.logistic_delivered_manual
 
         # TODO check also logistic_undeliveret_qty for remain?
         if logistic_delivered_manual < 1.0:
-            raise exceptions.Warning('Nothing to remove!') 
-            
+            raise exceptions.Warning('Nothing to remove!')
+
         if logistic_delivered_manual <= 1.0:
             active_id = False # XXX need?
         self.write({
             'logistic_delivered_manual': logistic_delivered_manual - 1.0,
             'user_select_id': self.env.uid,
-            })        
+            })
         return self.onchange_logistic_delivered_manual()
 
     @api.multi
     def delivery_all(self):
-        ''' Add +1 to manual arrived qty
-        '''
+        """ Add +1 to manual arrived qty
+        """
         logistic_undelivered_qty = self.logistic_undelivered_qty
 
         if logistic_undelivered_qty <= 0.0:
-            raise exceptions.Warning('No more q. to deliver!') 
-        
+            raise exceptions.Warning('No more q. to deliver!')
+
         self.write({
             'logistic_delivered_manual': logistic_undelivered_qty,
             'user_select_id': self.env.uid,
-            })        
+            })
         return self.onchange_logistic_delivered_manual()
 
     # -------------------------------------------------------------------------
@@ -944,8 +944,8 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def _get_stock_extended_name(self):
-        ''' Add stock note from order
-        '''
+        """ Add stock note from order
+        """
         for line in self:
             try:
                 order_note = line.logistic_sale_id.order_id.note_picking or ''
@@ -955,9 +955,9 @@ class PurchaseOrderLine(models.Model):
             line.name_extended_stock = '%s %s%s%s' % (
                 line.product_id.name_extended,
                 '<font color="red">[' if order_note else '',
-                order_note,                
+                order_note,
                 ']</font>' if order_note else '',
-                )            
+                )
 
     # -------------------------------------------------------------------------
     # Columns:
@@ -968,7 +968,7 @@ class PurchaseOrderLine(models.Model):
     # TODO remove:
     name_extended = fields.Char(
         string='Extended name', related='product_id.name_extended')
-        
+
     logistic_delivered_manual = fields.Float('Manual', digits=(16, 2))
     user_select_id = fields.Many2one('res.users', 'Selected user')
 
@@ -979,20 +979,20 @@ class PurchaseOrderLine(models.Model):
         'Width', related='product_id.larghezza', store=True)
     spalla = fields.Char(
         'Spalla', related='product_id.spalla', store=True)
-        
+
     order_supplier_id = fields.Many2one(
         'res.partner', 'Supplier', domain="[('supplier', '=', True)]",
         related='order_id.partner_id', store=True)
-        
+
     order_supplier_name = fields.Char(
         'Supplier name', related='order_supplier_id.name')
-    
+
     product_name = fields.Char('Product name', related='product_id.name')
-    
+
     check_status = fields.Selection([
         #('none', 'Not touched'), # Not selected
         ('done', 'Load in stock'), # Selected all remain to deliver
-        
+
         ('total', 'Total received'), # Selected all to deliver
         ('partial', 'Partially received'), # Select partial to deliver
         ], 'Check status', default='partial')
@@ -1006,11 +1006,11 @@ class PurchaseOrderLine(models.Model):
         'Logistic source', readonly=True,
         related='logistic_sale_id.order_id.logistic_source',
         )
-    
+
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document: add relations
     """
-    
+
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
@@ -1020,10 +1020,10 @@ class StockPickingDelivery(models.Model):
         'stock.move', 'delivery_id', 'Load move')
     quant_ids = fields.One2many(
         'stock.picking.delivery.quant', 'order_id', 'Stock quant:')
-    product_id = fields.Many2one('product.product', 
-        related='move_line_ids.product_id', 
+    product_id = fields.Many2one('product.product',
+        related='move_line_ids.product_id',
         string='Product')
-    quant_id = fields.Many2one('product.product', 
-        related='quant_ids.product_id', 
+    quant_id = fields.Many2one('product.product',
+        related='quant_ids.product_id',
         string='Product in stock')
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
