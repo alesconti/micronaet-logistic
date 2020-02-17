@@ -158,7 +158,7 @@
                         decoration-danger="logistic_undelivered_qty==0" 
                         decoration-warning="check_status=='partial' and logistic_delivered_manual&gt;0" 
                         decoration-bf="logistic_source=='refund'">
-                        <!--user_select_id!=uid and user_select_id != False-->
+
                      <button name="clean_fast_filter" string="Remove filters" type="object" icon="fa-home fa-2x" />
                      <field name="logistic_source" invisible="1"/>
                      <field name="order_id" readonly="1" string="Rif." invisible="1"/>
