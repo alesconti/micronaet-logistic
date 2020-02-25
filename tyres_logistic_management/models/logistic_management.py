@@ -1174,7 +1174,6 @@ class StockPicking(models.Model):
             logistic_root_folder, 'invoice', 'notfound') # TODO create folder
 
         move_list = []
-        import pdb; pdb.set_trace()
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
                 res = get_invoice_reply_part(f)
@@ -1194,13 +1193,6 @@ class StockPicking(models.Model):
                         'invoice_date': invoice_date,
                         })
                     destination_path = history_path
-                    
-                    # Close refund:
-                    import pdb; pdb.set_trace()
-                    order = invoice_pick.sale_order_id
-                    if order.logistic_source == 'refund':
-                        _logger.warning('Set refund order as done!')
-                        order.logistic_state == 'done'
                 else:   
                     destination_path = notfound_path                                
                     _logger.error('Pick ID: %s not found!' % f)

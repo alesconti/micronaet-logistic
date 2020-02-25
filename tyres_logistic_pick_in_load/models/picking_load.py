@@ -302,6 +302,16 @@ class StockPickingDelivery(models.Model):
                             ('order_id', '=', pick_id)])
                         quants.write({'account_sync': True, })
                     # else: # 'undo' # not checked!
+
+                    # ---------------------------------------------------------
+                    # Close refund:
+                    # ---------------------------------------------------------
+                    import pdb; pdb.set_trace()
+                    order = invoice_pick.sale_order_id
+                    if order.logistic_source == 'refund':
+                        _logger.warning('Set refund order as done!')
+                        order.logistic_state == 'done'
+                    
                 except:
                     _logger.error('Cannot read pick ID: %s' % f)
 
