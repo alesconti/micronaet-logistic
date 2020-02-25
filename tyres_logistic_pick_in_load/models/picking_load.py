@@ -308,7 +308,6 @@ class StockPickingDelivery(models.Model):
                     # ---------------------------------------------------------
                     # Check if refund order:
                     # ---------------------------------------------------------
-                    import pdb; pdb.set_trace()
                     for move in self.browse(pick_id).move_line_ids:
                         order = move.logistic_load_id.order_id
                         if order.logistic_source == 'refund':
@@ -328,7 +327,6 @@ class StockPickingDelivery(models.Model):
         # ---------------------------------------------------------------------
         # Close refund order:
         # ---------------------------------------------------------------------
-        import pdb; pdb.set_trace()
         for refund_order in refund_order_check:
             close = True
             for line in refund_order.order_line:
