@@ -1193,6 +1193,12 @@ class StockPicking(models.Model):
                         'invoice_date': invoice_date,
                         })
                     destination_path = history_path
+                    
+                    # Close refund:
+                    order = invoice_pick.sale_order_id
+                    if order.logistic_source == 'refund':
+                        _logger.warning('Set refund order as done!')
+                        order.logistic_state == 'done'
                 else:   
                     destination_path = notfound_path                                
                     _logger.error('Pick ID: %s not found!' % f)
