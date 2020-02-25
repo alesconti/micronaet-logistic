@@ -155,7 +155,7 @@
             <field name="arch" type="xml">
                 <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" 
                         decoration-success="check_status in ('total', 'done') and logistic_delivered_manual&gt;0" 
-                        decoration-mute="logistic_undelivered_qty==0" 
+                        decoration-muted="logistic_undelivered_qty==0" 
                         decoration-warning="check_status=='partial' and logistic_delivered_manual&gt;0" 
                         decoration-danger="logistic_source=='refund'">
 
