@@ -1174,8 +1174,8 @@ class StockPicking(models.Model):
             logistic_root_folder, 'invoice', 'notfound') # TODO create folder
 
         move_list = []
+        import pdb; pdb.set_trace()
         for root, subfolders, files in os.walk(reply_path):
-            import pdb; pdb.set_trace()
             for f in files:
                 res = get_invoice_reply_part(f)
                 if not res:
