@@ -292,6 +292,7 @@ class StockPickingDelivery(models.Model):
         history_path = os.path.join(
             logistic_root_folder, 'delivery', 'history')
 
+        refund_order_check = []
         move_list = []
         for root, subfolders, files in os.walk(reply_path):
             for f in files:
@@ -305,14 +306,13 @@ class StockPickingDelivery(models.Model):
                     # else: # 'undo' # not checked!
 
                     # ---------------------------------------------------------
-                    # Close refund:
+                    # Check if refund order:
                     # ---------------------------------------------------------
                     import pdb; pdb.set_trace()
-                    picking = picking_pool.browse(pick_id)
-                    order = picking.sale_order_id
-                    if order.logistic_source == 'refund':
-                        _logger.warning('Set refund order as done!')
-                        order.logistic_state == 'done'
+                    for move in self.browse(pick_id):
+                        order = move.logistic_load_id.order_id
+                        if order.logistic_source == 'refund':
+                            refund_order_check.append(order)
                     
                 except:
                     _logger.error('Cannot read pick ID: %s' % f)
@@ -325,7 +325,24 @@ class StockPickingDelivery(models.Model):
                 _logger.info('Pick ID: %s correct!' % f)
             break # only first folder
 
-        # Move files after all:
+        # ---------------------------------------------------------------------
+        # Close refund order:
+        # ---------------------------------------------------------------------
+        import pdb; pdb.set_trace()
+        for refund_order in refund_order_check:
+            close = True
+            for line in refund_order.order_line:
+                if line.product_uom_qty != logistic_received_qty:
+                    close = False
+                    break
+                    
+            if close:
+                refund_order.logistic_state == 'done'
+                _logger.info('Refund all complete: %s' % refund_order.name
+            else:    
+                _logger.info('Refund not complete: %s' % refund_order.name
+
+        # Move files after all:        
         for origin, destination in move_list:
             shutil.move(origin, destination)
         return True
