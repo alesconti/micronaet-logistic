@@ -337,7 +337,9 @@ class StockPickingDelivery(models.Model):
                     break
                     
             if close:
-                refund_order.logistic_state == 'done'
+                refund_order.write({
+                    'logistic_state': 'done',
+                    })
                 _logger.info('Refund all complete: %s' % refund_order.name)
             else:    
                 _logger.info('Refund not complete: %s' % refund_order.name)
