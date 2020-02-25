@@ -1195,6 +1195,7 @@ class StockPicking(models.Model):
                     destination_path = history_path
                     
                     # Close refund:
+                    import pdb; pdb.set_trace()
                     order = invoice_pick.sale_order_id
                     if order.logistic_source == 'refund':
                         _logger.warning('Set refund order as done!')
