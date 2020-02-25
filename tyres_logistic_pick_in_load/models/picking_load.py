@@ -338,9 +338,9 @@ class StockPickingDelivery(models.Model):
                     
             if close:
                 refund_order.logistic_state == 'done'
-                _logger.info('Refund all complete: %s' % refund_order.name
+                _logger.info('Refund all complete: %s' % refund_order.name)
             else:    
-                _logger.info('Refund not complete: %s' % refund_order.name
+                _logger.info('Refund not complete: %s' % refund_order.name)
 
         # Move files after all:        
         for origin, destination in move_list:
