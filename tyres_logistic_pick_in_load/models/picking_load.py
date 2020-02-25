@@ -310,7 +310,8 @@ class StockPickingDelivery(models.Model):
                     # ---------------------------------------------------------
                     for move in self.browse(pick_id).move_line_ids:
                         order = move.logistic_load_id.order_id
-                        if order.logistic_source == 'refund':
+                        if order.logistic_source == 'refund' and \
+                                order not in refund_order_check:
                             refund_order_check.append(order)
                     
                 except:
