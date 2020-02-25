@@ -282,6 +282,7 @@ class StockPickingDelivery(models.Model):
         # Pool used:
         quant_pool = self.env['stock.picking.delivery.quant']
         company_pool = self.env['res.company']
+        picking_pool = self.env['stock.picking']
 
         # Parameter:
         company = company_pool.search([])[0]
@@ -307,6 +308,7 @@ class StockPickingDelivery(models.Model):
                     # Close refund:
                     # ---------------------------------------------------------
                     import pdb; pdb.set_trace()
+                    picking = picking_pool.browse(pick_id)
                     order = invoice_pick.sale_order_id
                     if order.logistic_source == 'refund':
                         _logger.warning('Set refund order as done!')
