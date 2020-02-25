@@ -332,7 +332,9 @@ class StockPickingDelivery(models.Model):
         for refund_order in refund_order_check:
             close = True
             for line in refund_order.order_line:
-                if line.product_uom_qty != logistic_received_qty:
+                # XXX INT check:
+                if int(line.product_uom_qty) != \
+                        int(line.logistic_received_qty):
                     close = False
                     break
                     
