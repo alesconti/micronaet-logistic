@@ -309,7 +309,7 @@ class StockPickingDelivery(models.Model):
                     # ---------------------------------------------------------
                     import pdb; pdb.set_trace()
                     picking = picking_pool.browse(pick_id)
-                    order = invoice_pick.sale_order_id
+                    order = picking.sale_order_id
                     if order.logistic_source == 'refund':
                         _logger.warning('Set refund order as done!')
                         order.logistic_state == 'done'
