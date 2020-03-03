@@ -891,7 +891,7 @@
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{'problem_mode': True}</field>
-             <field name="domain">[('logistic_state', 'in', ('order', 'pending', 'ready', 'delivering')),('date_order', '&lt;', (datetime.datetime.now() - datetime.timedelta(days=3)).strftime('%Y-%m-%d 00:00:00'))]</field>
+             <field name="domain">[('logistic_source', 'not in', ('refund', )), ('logistic_state', 'in', ('order', 'pending', 'ready', 'delivering')),('date_order', '&lt;', (datetime.datetime.now() - datetime.timedelta(days=3)).strftime('%Y-%m-%d 00:00:00'))]</field>
          </record>
          
          <record model="ir.actions.act_window" id="action_sale_order_draft_form">
@@ -900,7 +900,7 @@
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('logistic_state', '=', 'draft')]</field>
+             <field name="domain">[('logistic_state', '=', 'draft'), ('logistic_source', 'not in', ('refund', ))]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_order_form">
              <field name="name">Sale order order</field>
@@ -908,7 +908,7 @@
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('logistic_state', '=', 'order')]</field>
+             <field name="domain">[('logistic_state', '=', 'order'), ('logistic_source', 'not in', ('refund', ))]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_pending_form">
              <field name="name">Sale order pending</field>
@@ -916,7 +916,7 @@
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('logistic_state', '=', 'pending')]</field>
+             <field name="domain">[('logistic_state', '=', 'pending'), ('logistic_source', 'not in', ('refund', ))]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_locked_delivery_form">
              <field name="name">Sale order locked</field>
@@ -924,7 +924,7 @@
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('locked_delivery', '=', True)]</field>
+             <field name="domain">[('locked_delivery', '=', True), ('logistic_source', 'not in', ('refund', ))]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_ready_form">
              <field name="name">Sale order ready</field>
@@ -932,7 +932,7 @@
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('logistic_state', '=', 'ready'),('locked_delivery', '=', False)]</field>
+             <field name="domain">[('logistic_state', '=', 'ready'),('locked_delivery', '=', False), ('logistic_source', 'not in', ('refund', ))]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_delivering_form">
              <field name="name">Sale order delivering</field>
@@ -940,7 +940,7 @@
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('logistic_state', '=', 'delivering')]</field>
+             <field name="domain">[('logistic_state', '=', 'delivering'), ('logistic_source', 'not in', ('refund', ))]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_done_form">
              <field name="name">Sale order done</field>
@@ -948,7 +948,7 @@
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('logistic_state', '=', 'done')]</field>
+             <field name="domain">[('logistic_state', '=', 'done'), ('logistic_source', 'not in', ('refund', ))]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_cancel_form">
              <field name="name">Sale order cancel</field>
@@ -956,7 +956,7 @@
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('logistic_state', '=', 'cancel')]</field>
+             <field name="domain">[('logistic_state', '=', 'cancel'), ('logistic_source', 'not in', ('refund', ))]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_error_form">
              <field name="name">Sale order error</field>
@@ -964,7 +964,7 @@
              <field name="view_type">form</field>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('logistic_state', '=', 'error')]</field>
+             <field name="domain">[('logistic_state', '=', 'error'), ('logistic_source', 'not in', ('refund', ))]</field>
          </record>
 
          <!--purchase.order action:-->
