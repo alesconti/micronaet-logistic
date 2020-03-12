@@ -599,7 +599,7 @@ class StockPickingDelivery(models.Model):
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
-    name = fields.Char('Ref.', size=64)
+    name = fields.Char('Ref.', size=64, default=' ')
     date = fields.Date(
         'Date', default=fields.Datetime.now())
     create_date = fields.Datetime(
