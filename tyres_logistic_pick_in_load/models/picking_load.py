@@ -473,17 +473,18 @@ class StockPickingDelivery(models.Model):
                 item_path = os.path.join(logistic_root_folder, item)
                 folder_path[item] = item_path
                 try:
-                    os.system('mkdir -p %s' % os.path.join(item_path, 'reply'))
+                    os.system(
+                        'mkdir -p %s' % os.path.join(item_path, 'reply'))
                     os.system(
                         'mkdir -p %s' % os.path.join(item_path, 'history'))
                 except:
                     _logger.error('Cannot create %s' % item_path)
 
             # Note: every refund order il linked to one delivery in document!
-
             sale_order = quants[0].sale_order_id
             if sale_order.logistic_source == 'refund':
                 load_mode = 'refund'
+                refund_source = sale_order.refund_source_id
             else:
                 load_mode = 'delivery'
             order_file = open(
@@ -522,7 +523,7 @@ class StockPickingDelivery(models.Model):
                         quant.price,
                         # delivery_order.supplier_id.sql_supplier_code or '',
                         delivery_order.supplier_id.id or '', # Use ODOO ID
-                        sale_order.team_id.channel_ref or '',
+                        refund_source.team_id.channel_ref or '',
                         # delivery_order.name,
                         company_pool.formatLang(
                             delivery_order.date, date=True),
