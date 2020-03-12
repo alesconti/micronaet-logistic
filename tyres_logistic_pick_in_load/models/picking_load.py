@@ -489,7 +489,8 @@ class StockPickingDelivery(models.Model):
                     _logger.error('Cannot create %s' % item_path)
 
             # Note: every refund order il linked to one delivery in document!
-            sale_order = quants[0].order_id
+
+            sale_order = quants[0].sale_order_id
             if sale_order.logistic_source == 'refund':
                 load_mode = 'refund'
             else:
