@@ -20,7 +20,7 @@
              <field name="code">
                  action = records.confirm_all_selected_server_action()
              </field>
-         </record>    
+         </record>
         <record model="ir.actions.server" id="server_acton_stock_move_load_document_generator">
             <field name="name">Document generator</field>
             <field name="model_id" ref="stock.model_stock_move"/>
@@ -38,7 +38,7 @@
             <field name="model">account.fiscal.position</field>
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
-                <tree string="Account position">        
+                <tree string="Account position">
                     <field name="name" />
                 </tree>
             </field>
@@ -48,7 +48,7 @@
             <field name="model">account.fiscal.position</field>
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
-                <form string="Account position">    
+                <form string="Account position">
                     <sheet>
                         <group col="4" colspan="4">
                             <field name="name" readonly="1"/>
@@ -76,8 +76,8 @@
             <field name="view_id" ref="view_account_fiscal_position_tree"/>
             <field name="context">{'form_view_ref': 'tyres_logistic_pick_in_load.view_account_fiscal_position_form'}</field>
             <field name="domain">[]</field>
-        </record>        
-        
+        </record>
+
         <!--sale.order.print.result-->
         <record model="ir.ui.view" id="view_sale_order_print_result_form">
             <field name="name">sale.order.print.result.form</field>
@@ -89,11 +89,11 @@
                             <separator string="Print result:" colspan="4"/>
                             <field name="note" colspan="4" nolabel="1" widget="html" readonly="1"/>
                         </group>
-                    </sheet>        
+                    </sheet>
                 </form>
             </field>
         </record>
-    
+
         <record model="ir.ui.view" id="view_purchase_order_line_tree">
             <field name="name">purchase.order.line.tree</field>
             <field name="model">purchase.order.line</field>
@@ -105,14 +105,14 @@
                      <field name="name" />
                      <field name="product_qty" />
                      <field name="date_planned" />
-                     
+
                      <!--Total: -->
                      <field name="logistic_delivered_qty" />
                      <field name="logistic_undelivered_qty" />
 
                      <!--Sale reference:-->
                      <field name="logistic_sale_id" />
-                     <field name="load_line_ids" />                     
+                     <field name="load_line_ids" />
                 </tree>
             </field>
         </record>
@@ -129,10 +129,10 @@
 
                              <field name="product_id" />
                              <field name="name" />
-                             
+
                              <field name="product_qty" />
                              <field name="date_planned" />
-                             
+
                              <!--Total: -->
                              <field name="logistic_delivered_qty" />
                              <field name="logistic_undelivered_qty" />
@@ -141,22 +141,22 @@
                              <field name="logistic_sale_id" />
                              <separator string="Stock move loads:" colspan="4"/>
                              <field name="load_line_ids" colspan="4" nolabel="1"/>
-                        </group>     
+                        </group>
                     </sheet>
                 </form>
             </field>
         </record>
-        
+
         <!--PURCHASE STOCK MANAGEMENT:-->
         <record model="ir.ui.view" id="view_delivery_selection_tree">
             <field name="name">purchase.order.line.tree</field>
             <field name="model">purchase.order.line</field>
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
-                <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false" 
-                        decoration-success="check_status in ('total', 'done') and logistic_delivered_manual&gt;0" 
-                        decoration-muted="logistic_undelivered_qty==0" 
-                        decoration-warning="check_status=='partial' and logistic_delivered_manual&gt;0" 
+                <tree string="Purchase line" default_order="create_date,product_id" editable="bottom" create="false"
+                        decoration-success="check_status in ('total', 'done') and logistic_delivered_manual&gt;0"
+                        decoration-muted="logistic_undelivered_qty==0"
+                        decoration-warning="check_status=='partial' and logistic_delivered_manual&gt;0"
                         decoration-danger="logistic_source=='refund'">
 
                      <button name="clean_fast_filter" string="Remove filters" type="object" icon="fa-home fa-2x" />
@@ -164,8 +164,8 @@
                      <field name="order_id" readonly="1" string="Rif." invisible="1"/>
                      <!--<field name="customer_order_date" readonly="1" invisible="not context.get('internal_view')"/>-->
                      <field name="purchase_order_date" readonly="1" invisible="not context.get('internal_view')"/>
-                     <field name="internal_note" string="Note" invisible="not context.get('internal_view')"/> 
-                     
+                     <field name="internal_note" string="Note" invisible="not context.get('internal_view')"/>
+
                      <button name="open_detail_delivery_in" string="Open detail for line" type="object" icon="fa-list-alt fa-2x"/>
                      <button name="fast_filter_product_id" string="Filter this product" type="object" icon="fa-search fa-2x"  attrs="{'invisible': [('product_id','=',False)]}" />
                      <field name="product_id" readonly="1" invisible="1"/>
@@ -173,7 +173,7 @@
                      <field name="name_extended_stock" readonly="1" widget="html"/>
                      <!--<field name="name" readonly="1" />-->
                      <field name="date_planned" readonly="1" invisible="1"/>
-                     
+
                      <button name="fast_filter_supplier" string="Filter this supplier" type="object" icon="fa-search fa-2x" attrs="{'invisible': [('order_supplier_id','=',False)]}" />
                      <field name="order_supplier_id" readonly="1" string="Fornitore" invisible="1"/>
                      <field name="order_supplier_name" readonly="1" string="Fornitore"/>
@@ -191,16 +191,16 @@
                      <field name="product_qty" readonly="1" string="Ord." invisible="1"/>
                      <field name="logistic_delivered_qty" readonly="1" string="Cons." invisible="1"/>
                      <field name="logistic_undelivered_qty" readonly="1" string="Rim."/>
-                     
+
                      <button name="delivery_0" string="0" type="object" icon="fa-bitbucket fa-2x" />
                      <button name="delivery_less_1" string="-" type="object" icon="fa-minus-square fa-2x" />
                      <button name="delivery_more_1" string="+" type="object"  icon="fa-plus-square fa-2x" />
                      <button name="delivery_all" string="Arrivo" type="object" icon="fa-fast-forward fa-2x" />
-                     
+
                      <field name="logistic_delivered_manual" string="Arrivo" readonly="1" />
-                     <button name="create_delivery_orders" string="Create delivery orders" 
-                         type="object" icon="fa-download fa-2x" 
-                         confirm="Do you confirm the generation of all supplier delivery document (you selection)?" 
+                     <button name="create_delivery_orders" string="Create delivery orders"
+                         type="object" icon="fa-download fa-2x"
+                         confirm="Do you confirm the generation of all supplier delivery document (you selection)?"
                          />
                      <button name="dummy" string="Order not web (internal or workshop)" type="object" icon="fa-bell"  attrs="{'invisible': [('logistic_source','in',(False, 'web'))]}" />
                 </tree>
@@ -214,7 +214,7 @@
             <field name="arch" type="xml">
                 <form string="Purchase line">
                     <header>
-                    </header>                    
+                    </header>
                     <sheet>
                         <group colspan="4" col="4" >
                              <field name="order_id" readonly="1"/>
@@ -222,10 +222,10 @@
 
                              <field name="order_supplier_id" readonly="1"/>
                              <field name="logistic_sale_id" readonly="1"/>
-                             
+
                              <field name="product_id" readonly="1"/>
                              <field name="name" readonly="1"/>
-                             
+
                              <field name="product_qty" readonly="1"/>
                              <notebook colspan="4">
                                  <page string="Tyres">
@@ -233,7 +233,7 @@
                                          <field name="larghezza" readonly="1"/>
                                          <field name="spalla" readonly="1"/>
                                          <field name="raggio" readonly="1"/>
-                                     </group>    
+                                     </group>
                                  </page>
                                  <page string="Delivery">
                                      <group colspan="4" col="4">
@@ -241,10 +241,10 @@
                                          <!--Total: -->
                                          <field name="logistic_delivered_qty" readonly="1"/>
                                          <field name="logistic_undelivered_qty" readonly="1" />
-                                     </group>    
+                                     </group>
                                  </page>
                              </notebook>
-                        </group>     
+                        </group>
                     </sheet>
                 </form>
             </field>
@@ -280,7 +280,7 @@
                     <field name="name" />
                     <field name="product_id" filter_domain="[('product_id','=',self)]"/>
                     <field name="order_id" filter_domain="[('order_id.name','ilike',self)]"/>
-                    
+
                     <field name="order_supplier_id" filter_domain="[('order_supplier_id','=',self)]"/>
 
                     <field name="larghezza" />
@@ -291,7 +291,7 @@
 
                     <!--<filter name="state_draft" string="Draft state" domain="[('state','=','draft')]"/>-->
                     <group expand="0" string="Group By...">
-                    
+
                         <filter name="group_larghezza" string="Width" context="{'group_by': 'larghezza'}"/>
                         <filter name="group_spalla" string="Shoulder" context="{'group_by': 'spalla'}"/>
                         <filter name="group_raggio" string="Ray" context="{'group_by': 'raggio'}"/>
@@ -301,23 +301,23 @@
                         <filter name="group_supplier" string="Supplier" context="{'group_by': 'order_supplier_id'}"/>
 
                         <filter name="group_create" string="Create" context="{'group_by': 'create_date:day'}"/>
-                        
+
                         <!--<filter string="Status" context="{'group_by': 'state'}" />-->
-                    </group>                
+                    </group>
                 </search>
             </field>
         </record>
-        
+
         <record model="ir.ui.view" id="view_delivery_selection_stock_move_search">
             <field name="name">stock.move.search</field>
             <field name="model">stock.move</field>
             <field name="arch" type="xml">
-                <search string="String">        
+                <search string="String">
                     <field name="name" />
                     <!--TODO-->
                     <field name="partner_id" filter_domain="[('partner_id.name','=',self)]"/>
                     <field name="product_id" filter_domain="[('product_id','=',self)]"/>
-                    
+
                     <filter name="dropship_manage_selected" string="Dropship line" domain="[('dropship_manage','=',True)]"/>
                     <group expand="0" string="Group By...">
                         <filter name="group_date_day" string="Day" context="{'group_by': 'date:day'}"/>
@@ -347,17 +347,17 @@
                     <field name="product_uom_qty" readonly="1" />
                     <field name="dropship_manage" invisible="1"/>
                     <field name="state" invisible="1" />
-                    <button name="unlink_pending_stock_movement" string="Unlink stock move" 
-                        type="object" confirm="Confirm remove of pending stock movement?" 
+                    <button name="unlink_pending_stock_movement" string="Unlink stock move"
+                        type="object" confirm="Confirm remove of pending stock movement?"
                         icon="fa-minus-square fa-2x" attrs="{'invisible': [('dropship_manage','=',True)]}"
                         groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
                         />
-                    <button name="hide_pending_stock_movement" string="Hide stock move" 
-                        type="object" confirm="This line never delivered, confirm hide stock movement?" 
+                    <button name="hide_pending_stock_movement" string="Hide stock move"
+                        type="object" confirm="This line never delivered, confirm hide stock movement?"
                         icon="fa-eye-slash fa-2x" attrs="{'invisible': [('force_hide','=',True)]}"
                         groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
                         />
-                    <button name="unhide_pending_stock_movement" string="Hide stock move" 
+                    <button name="unhide_pending_stock_movement" string="Hide stock move"
                         type="object"
                         icon="fa-eye fa-2x" attrs="{'invisible': [('force_hide','=',False)]}"
                         groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
@@ -372,9 +372,9 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree</field>
             <field name="view_id" ref="view_delivery_selection_tree"/>
-            <field name="search_view_id" ref="view_delivery_selection_search"/>            
+            <field name="search_view_id" ref="view_delivery_selection_search"/>
             <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
-            <field name="domain">[('dropship_manage', '=', False), ('check_status', '!=', 'done'), ('order_id.logistic_state', '=', 'confirmed'), 
+            <field name="domain">[('dropship_manage', '=', False), ('check_status', '!=', 'done'), ('order_id.logistic_state', '=', 'confirmed'),
                 '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('order_id.partner_id.internal_stock', '=', False)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), TODO ('delivery_id','=',False), -->
         </record>
         <record model="ir.actions.act_window" id="action_purchase_selection_order_internal_line">
@@ -383,9 +383,9 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree</field>
             <field name="view_id" ref="view_delivery_selection_tree"/>
-            <field name="search_view_id" ref="view_delivery_selection_search"/>            
+            <field name="search_view_id" ref="view_delivery_selection_search"/>
             <field name="context">{'internal_view': True}</field>
-            <field name="domain">[('dropship_manage', '=', False), ('check_status', '!=', 'done'), ('order_id.logistic_state', '=', 'confirmed'), 
+            <field name="domain">[('dropship_manage', '=', False), ('check_status', '!=', 'done'), ('order_id.logistic_state', '=', 'confirmed'),
                 '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('order_id.partner_id.internal_stock', '=', False)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), TODO ('delivery_id','=',False), -->
         </record>
 
@@ -419,28 +419,28 @@
             <field name="context">{'form_view_ref': 'logistic_pick_in_load.view_purchase_order_line_form'}</field>
             <field name="domain">[]</field>
         </record>
-        
-        <!--stock.picking.delivery-->    
+
+        <!--stock.picking.delivery-->
         <record model="ir.ui.view" id="view_stock_picking_delivery_search">
             <field name="name">stock.picking.delivery.search</field>
             <field name="model">stock.picking.delivery</field>
             <field name="arch" type="xml">
-                <search string="String"> 
-                    <field name="name" />                    
+                <search string="String">
+                    <field name="name" />
                     <field name="supplier_id" filter_domain="[('supplier_id.name','=',self)]"/>
                     <field name="product_id" />
                     <field name="quant_id" />
                     <field name="picking_id" />
                     <field name="date" />
                     <field name="create_uid" />
-                    
+
                     <!--<filter name="my_order" string="My" domain="[('create_uid','=',user.id)]"/>-->
                     <group expand="0" string="Group By...">
                         <filter name="group_supplier" string="Supplier" context="{'group_by': 'supplier_id'}"/>
                         <filter name="group_date" string="Date" context="{'group_by': 'date'}"/>
                         <filter name="group_date_week" string="Week" context="{'group_by': 'date:week'}"/>
                         <filter name="group_date_day" string="Day" context="{'group_by': 'date:day'}"/>
-                    </group>                
+                    </group>
                 </search>
             </field>
         </record>
@@ -466,24 +466,24 @@
                 <form string="Delivery">
                     <header>
                         <button name="confirm_stock_load" string="Load stock" type="object" attrs="{'invisible': [('picking_id','!=',False)]}" class="oe_highlight" confirm="Confirm load operation?"/>
-                        <button name="assign_refund_counter_sequence" string="Assegna numbero reso" type="object" />
-                        
+                        <button name="assign_refund_counter_sequence" string="Assegna numbero reso" type="object" attrs="{'invisible': [('name','!=',False)]}" />
+
                     </header>
                     <sheet>
-                        <group colspan="4" col="4"> 
+                        <group colspan="4" col="4">
                             <field name="name" required="1"/>
                             <field name="create_uid" readonly="1"/>
 
                             <field name="supplier_id" required="1"/>
                             <field name="carrier_id" />
-                            
+
                             <field name="create_date" readonly="1"/>
                             <field name="date" required="1" />
                             <field name="picking_id" attrs="{'invisible': [('picking_id','=',False)]}" readonly="1"/>
-                            
+
                             <notebook colspan="4">
                                 <page string="Stock move:">
-                                    <group colspan="4" col="4"> 
+                                    <group colspan="4" col="4">
                                         <separator string="Stock move:" colspan="4"/>
                                         <field name="move_line_ids" colspan="4" nolabel="1" >
                                             <tree string="Load move" editable="bottom" create="false" delete="false" >
@@ -495,23 +495,23 @@
                                                  <field name="dropship_manage" invisible="1"/>
                                             </tree>
                                         </field>
-                                    </group>    
+                                    </group>
                                 </page>
                                 <page string="Extra stock:">
-                                    <group colspan="4" col="4"> 
+                                    <group colspan="4" col="4">
                                         <separator string="Account extra stock:" colspan="4"/>
                                         <field name="quant_ids" colspan="4" nolabel="1">
                                             <tree string="Stock quant:" editable="bottom" decoration-success="account_sync==True">
                                                 <field name="product_id" />
                                                 <field name="product_qty" />
-                                                <field name="price" />                                                
+                                                <field name="price" />
                                                 <field name="account_sync" invisible="1"/>
                                             </tree>
                                         </field>
-                                    </group>    
+                                    </group>
                                 </page>
-                            </notebook> 
-                        </group>    
+                            </notebook>
+                        </group>
                     </sheet>
                 </form>
             </field>
@@ -543,7 +543,7 @@
             <field name="context">{}</field>
             <field name="domain">[]</field>
         </record>
-        
+
         <record model="ir.ui.view" id="view_sale_order_ready_tree">
             <field name="name">sale.order.tree</field>
             <field name="model">sale.order</field>
@@ -558,9 +558,9 @@
 	                <field name="team_id" />
 	                <field name="carrier_ok" invisible="1"/>
 	                <field name="carrier_stock_note" />
-	                <field name="logistic_state" invisible="1"/>	                
+	                <field name="logistic_state" invisible="1"/>
 	                <field name="mmac_shippy_order_id" invisible="1" />
-	                <field name="check_need_invoice" invisible="1" />	                
+	                <field name="check_need_invoice" invisible="1" />
 
                     <field name="mmac_tracking_inviato" invisible='1'/>
                     <button name="mmac_tracking_inviato" string='TR' icon="fa-truck text-danger" attrs="{'invisible': [('mmac_tracking_inviato','=',False)]}" />
@@ -568,35 +568,35 @@
                     <button name="mmac_fattura_inviata" string='FT' icon="fa-dollar text-danger" attrs="{'invisible': [('mmac_fattura_inviata','=',False)]}" />
 
 	                <field name="shippy_ship_error" string="Check" invisible="1"/><!--TODO hide-->
-	                <!--<button name="launch_shippy_ship" string="Relaunch shippy ship call, missing data: carrier or mode, insert and press this button, if done confirm?" 
+	                <!--<button name="launch_shippy_ship" string="Relaunch shippy ship call, missing data: carrier or mode, insert and press this button, if done confirm?"
 	                    type="object" icon="fa-ban fa-2x" attrs="{'invisible': [('shippy_ship_error','!=','error')]}"
 	                    confirm="Relaunch shippy ship call?" />-->
 	                <field name="carrier_shippy" string="Shippy"/>
 	                <field name="carrier_supplier_id" string="Carrier"/>
 	                <field name="carrier_track_id" />
-	                
+
                     <field name="state" invisible="1" />
 	                <field name="logistic_done" invisible="1" />
-	                
+
 	                <field name="has_extra_document" invisible="1" />
 	                <field name="has_label_to_print" invisible="1" />
 	                <field name="get_label_status" invisible="1"/>
 	                <field name="label_printed" invisible="1" />
-	                
+
 	                <button name="workflow_ready_to_done_current_order" string="Vai in consegna" type="object" icon="fa-caret-square-o-right fa-2x" attrs="{'invisible': [('logistic_state','!=','ready')]}"/>
 	                <button name="workflow_ready_print_picking" string="Print picking" type="object" icon="fa-file-o fa-2x" />
 	                <button name="workflow_ready_print_ddt" string="Print DDT" type="object" icon="fa-file-text-o fa-2x" attrs="{'invisible': [('check_need_invoice','=',True)]}"/>
 	                <button name="workflow_ready_print_invoice" string="Print invoice" type="object" icon="fa-qrcode fa-2x" attrs="{'invisible': [('check_need_invoice','=',False)]}"/>
 	                <button name="workflow_ready_print_label" string="Print label" type="object" icon="fa-film fa-2x" attrs="{'invisible': [('has_label_to_print', '=', False)]}"/>
 	                <button name="label_printed_ok" string="Label was printed" type="object" icon="fa-check fa-2x" attrs="{'invisible': [('label_printed', '=', False)]}"/>
-	                
+
 	                <button name="workflow_ready_print_extra" string="Print extra doc." type="object" icon="fa-list-alt fa-2x" attrs="{'invisible': [('has_extra_document','=',False)]}"/>
 
 	                <button name="print_all_server_action" string="Print all" type="object" icon="fa-files-o fa-2x" />
-	                
+
 	                <button name="set_workflow_logistic_done" string="Done!" type="object" icon="fa-thumbs-up fa-2x" confirm="Confirm? (cannot print document after mark as done!)" attrs="{'invisible': [('logistic_done','=',True)]}"/>
 	                <button name="set_workflow_logistic_undone" string="Undone!" type="object" icon="fa-thumbs-down fa-2x" confirm="Confirm? (cannot print document after mark as done!)" attrs="{'invisible': [('logistic_done','=',False)]}"/>
-	                
+
                 </tree>
             </field>
         </record>
@@ -608,7 +608,7 @@
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_source', 'not in', ('refund', )), ('logistic_state', 'in', ('ready', 'done')), ('locked_delivery', '=', False), ('logistic_done', '=', False), ('logistic_source', '!=', 'internal')]</field>
-         </record>                 
+         </record>
          <record model="ir.actions.act_window" id="action_sale_order_closed_form">
              <field name="name">Sale order ready</field>
              <field name="res_model">sale.order</field>
@@ -617,87 +617,87 @@
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
              <field name="domain">[('logistic_source', 'not in', ('refund', )), ('locked_delivery', '=', False), ('logistic_done', '=', True), ('logistic_source', '!=', 'internal')]</field>
-         </record>                 
-        <menuitem 
-             id="menu_purchase_order_line" 
+         </record>
+        <menuitem
+             id="menu_purchase_order_line"
              parent="tyres_logistic_management.menu_logistic_management_root"
              action="action_purchase_order_line"
              sequence="30"
              />
 
         <menuitem
-             id="menu_logistic_delivery_management_root" 
+             id="menu_logistic_delivery_management_root"
              parent="tyres_logistic_management.menu_logistic_header_root"
              name="Manage supplier delivery"
              sequence="29"
              />
-             
-             <menuitem 
-                 parent="menu_logistic_delivery_management_root" 
-                 id="menu_purchase_selection_order_line" 
+
+             <menuitem
+                 parent="menu_logistic_delivery_management_root"
+                 id="menu_purchase_selection_order_line"
                  action="action_purchase_selection_order_line"
                  sequence="5"
                  />
-             <menuitem 
-                 parent="menu_logistic_delivery_management_root" 
-                 id="menu_purchase_selection_order_internal_line" 
+             <menuitem
+                 parent="menu_logistic_delivery_management_root"
+                 id="menu_purchase_selection_order_internal_line"
                  action="action_purchase_selection_order_internal_line"
                  sequence="6"
                  />
 
-             
-             <menuitem 
-                 parent="menu_logistic_delivery_management_root" 
-                 id="menu_purchase_selection_order_link_line" 
+
+             <menuitem
+                 parent="menu_logistic_delivery_management_root"
+                 id="menu_purchase_selection_order_link_line"
                  action="action_stock_move_selection_order_to_link_line"
                  sequence="10"
                  groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
                  />
-                 
-                 <menuitem 
-                     parent="menu_purchase_selection_order_link_line" 
-                     id="menu_purchase_selection_order_link_line_hided" 
+
+                 <menuitem
+                     parent="menu_purchase_selection_order_link_line"
+                     id="menu_purchase_selection_order_link_line_hided"
                      action="action_stock_move_selection_order_to_link_hided_line"
                      sequence="10"
                      groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
                      />
-                 
-             <menuitem 
-                 parent="menu_logistic_delivery_management_root" 
-                 id="menu_my_stock_picking_delivery_tree" 
+
+             <menuitem
+                 parent="menu_logistic_delivery_management_root"
+                 id="menu_my_stock_picking_delivery_tree"
                  action="action_my_stock_picking_delivery_tree"
                  sequence="20"
                  groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
                  />
-             <menuitem 
-                 parent="menu_logistic_delivery_management_root" 
-                 id="menu_stock_picking_delivery_tree" 
+             <menuitem
+                 parent="menu_logistic_delivery_management_root"
+                 id="menu_stock_picking_delivery_tree"
                  action="action_stock_picking_delivery_tree"
                  sequence="30"
                  groups="tyres_logistic_management.group_logistic_account_manager,tyres_logistic_management.group_logistic_manager"
                  />
 
              <menuitem
-                 id="menu_logistic_ready_order_to_send" 
+                 id="menu_logistic_ready_order_to_send"
                  parent="menu_logistic_delivery_management_root"
                  name="Order ready"
                  action="action_sale_order_ready_form"
                  sequence="40"
                  />
              <menuitem
-                 id="menu_logistic_ready_order_to_send_closed" 
+                 id="menu_logistic_ready_order_to_send_closed"
                  parent="menu_logistic_delivery_management_root"
                  name="Order closed"
                  action="action_sale_order_closed_form"
                  sequence="50"
                  />
-             
-             <menuitem 
+
+             <menuitem
                  id="menu_action_res_company_parameter_print"
                  parent="tyres_logistic_management.menu_logistic_left_configuration_root"
                  action="action_account_fiscal_position_print_form"
                  sequence="70"
-                 />             
-             
+                 />
+
     </data>
 </openerp>
