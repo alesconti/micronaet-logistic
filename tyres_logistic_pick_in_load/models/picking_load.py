@@ -282,48 +282,51 @@ class StockPickingDelivery(models.Model):
         # Pool used:
         quant_pool = self.env['stock.picking.delivery.quant']
         company_pool = self.env['res.company']
-        picking_pool = self.env['stock.picking']
 
         # Parameter:
         company = company_pool.search([])[0]
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
-        reply_path = os.path.join(
-            logistic_root_folder, 'delivery', 'reply')
-        history_path = os.path.join(
-            logistic_root_folder, 'delivery', 'history')
 
         refund_order_check = []
         move_list = []
-        for root, subfolders, files in os.walk(reply_path):
-            for f in files:
-                f_split = f[:-4].split('_')
-                try:
-                    pick_id = int(f_split[-1])  # pick_in_ID.csv
-                    if f_split[1] == 'in':
-                        quants = quant_pool.search([
-                            ('order_id', '=', pick_id)])
-                        quants.write({'account_sync': True, })
-                    # else: # 'undo' # not checked!
 
-                    # ---------------------------------------------------------
-                    # Check if refund order:
-                    # ---------------------------------------------------------
-                    for move in self.browse(pick_id).move_line_ids:
-                        order = move.logistic_load_id.order_id
-                        if order.logistic_source == 'refund' and \
-                                order not in refund_order_check:
-                            refund_order_check.append(order)
+        # Use same procedure to check delivery in product and refunds:
+        for folder_mode in ('delivery', 'refund'):
+            reply_path = os.path.join(
+                logistic_root_folder, folder_mode, 'reply')
+            history_path = os.path.join(
+                logistic_root_folder, folder_mode, 'history')
 
-                except:
-                    _logger.error('Cannot read pick ID: %s' % f)
+            for root, subfolders, files in os.walk(reply_path):
+                for f in files:
+                    f_split = f[:-4].split('_')
+                    try:
+                        pick_id = int(f_split[-1])  # pick_in_ID.csv
+                        if f_split[1] == 'in':
+                            quants = quant_pool.search([
+                                ('order_id', '=', pick_id)])
+                            quants.write({'account_sync': True, })
+                        # else: # 'undo' # not checked!
 
-                # XXX Move when all is done after?
-                move_list.append((
-                    os.path.join(reply_path, f),
-                    os.path.join(history_path, f),
-                    ))
-                _logger.info('Pick ID: %s correct!' % f)
-            break # only first folder
+                        # -----------------------------------------------------
+                        # Check if refund order:
+                        # -----------------------------------------------------
+                        for move in self.browse(pick_id).move_line_ids:
+                            order = move.logistic_load_id.order_id
+                            if order.logistic_source == 'refund' and \
+                                    order not in refund_order_check:
+                                refund_order_check.append(order)
+
+                    except:
+                        _logger.error('Cannot read pick ID: %s' % f)
+
+                    # XXX Move when all is done after?
+                    move_list.append((
+                        os.path.join(reply_path, f),
+                        os.path.join(history_path, f),
+                        ))
+                    _logger.info('Pick ID: %s correct!' % f)
+                break  # only first folder
 
         # ---------------------------------------------------------------------
         # Close refund order:
