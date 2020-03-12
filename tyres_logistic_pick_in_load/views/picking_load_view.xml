@@ -466,6 +466,8 @@
                 <form string="Delivery">
                     <header>
                         <button name="confirm_stock_load" string="Load stock" type="object" attrs="{'invisible': [('picking_id','!=',False)]}" class="oe_highlight" confirm="Confirm load operation?"/>
+                        <button name="assign_refund_counter_sequence" string="Assegna numbero reso" type="object" />
+                        
                     </header>
                     <sheet>
                         <group colspan="4" col="4"> 

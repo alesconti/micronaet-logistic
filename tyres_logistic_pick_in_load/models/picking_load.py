@@ -280,6 +280,13 @@ class StockPickingDelivery(models.Model):
     _rec_name = 'create_date'
 
     @api.multi
+    def assign_refund_counter_sequence(self):
+        """ Assign counter number
+        """
+        self.name = self.env['ir.sequence'].next_by_code(
+            'stock.picking.refund.generic.sequence')
+
+    @api.multi
     def check_import_reply(self):
         """ Check import reply for get confirmation EXTRA BF
         """

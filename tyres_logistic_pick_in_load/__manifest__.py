@@ -45,6 +45,8 @@
         
         'views/picking_load_view.xml',
         'wizard/delivery_report_view.xml',
+
+        'data/counter_data.xml', # Refunt counter
         ],
     'demo': [],
     'css': [],
