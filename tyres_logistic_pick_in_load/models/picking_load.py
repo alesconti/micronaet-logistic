@@ -511,7 +511,7 @@ class StockPickingDelivery(models.Model):
                     )
             order_file.write(header)
 
-             for quant in quants:
+            for quant in quants:
                 delivery_order = quant.order_id
                 if load_mode == 'delivery':
                     order_file.write('%s|%s|%s|%s|%s|%s\r\n' % (
