@@ -32,6 +32,16 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+
+class StockQuant(models.Model):
+    """ Extend stock.quant
+    """
+    _inherit = 'stock.quant'
+
+    sale_order_id = fields.Many2one(
+        'sale.order', 'Origin order', help='Used for refund purposes')
+
+
 class AccountFiscalPositionPrint(models.Model):
     """ Model name: Purchase order line
     """
@@ -42,7 +52,6 @@ class AccountFiscalPositionPrint(models.Model):
     _order = 'market'
 
     market = fields.Selection([
-        #('default', 'Default'),
         ('b2b', 'B2B'),
         ('b2c', 'B2C'),
         ], 'Market', default='b2b', required=True)
@@ -59,6 +68,7 @@ class AccountFiscalPositionPrint(models.Model):
             'Market in position must be unique!'),
         ]
 
+
 class AccountFiscalPosition(models.Model):
     """ Model name: Print parameters
     """
@@ -70,6 +80,7 @@ class AccountFiscalPosition(models.Model):
         'Print parameters',
         )
 
+
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase order line
     """
@@ -77,14 +88,15 @@ class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
     # Used?:
-    exported_date = fields.Date('Exported date',
-        related='logistic_sale_id.order_id.exported_date')
+    exported_date = fields.Date(
+        'Exported date', related='logistic_sale_id.order_id.exported_date')
 
     internal_note = fields.Char('Internal note', size=160)
     purchase_order_date = fields.Datetime(
         'Ord. forn.', related='order_id.date_order')
-    customer_order_date = fields.Datetime('Ord. cl.',
-        related='logistic_sale_id.order_id.date_order')
+    customer_order_date = fields.Datetime(
+        'Ord. cl.', related='logistic_sale_id.order_id.date_order')
+
 
 class SaleOrderPrintResult(models.TransientModel):
     """ Esit printing report
@@ -93,6 +105,7 @@ class SaleOrderPrintResult(models.TransientModel):
     _description = 'Print result'
 
     note = fields.Text('Result printing')
+
 
 class SaleOrder(models.Model):
     """ Model name: Sale order
@@ -225,7 +238,7 @@ class SaleOrder(models.Model):
     def _get_has_extra_document(self, ):
         """ Check if needed
         """
-        # TODO setup correct check (filename will raise an error not hide button)
+        # TODO setup correct check (filename will raise error not hide button)
         for order in self:
             try:
                 # Extra CEE for B2B market:
@@ -265,6 +278,7 @@ class SaleOrder(models.Model):
 
     get_label_status = fields.Char(
         'Label satus', size=10, compute='_get_label_status')
+
 
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document
@@ -407,14 +421,15 @@ class StockPickingDelivery(models.Model):
             'location_id': location_from,
             'location_dest_id': location_to,
             # 'priority': 1,
-            'state': 'done', # immediately!
+            'state': 'done',  # immediately!
             })
         self.picking_id = picking.id
 
         # ---------------------------------------------------------------------
         # Append stock.move detail (or quants if in stock)
         # ---------------------------------------------------------------------
-        sale_line_check_ready = []  # ready line after assign load qty to purchase
+        # ready line after assign load qty to purchase:
+        sale_line_check_ready = []
         purchase_ids = []  # purchase order to check state
         for line in self.move_line_ids:  # Stock move to assign to picking
             # Extract purchase order (for final check closing state)
@@ -423,6 +438,7 @@ class StockPickingDelivery(models.Model):
                 purchase_ids.append(purchase_id)
 
             sale_line = line.logistic_load_id
+            sale_order = sale_line.order_id
             product = line.product_id
             product_qty = line.product_uom_qty  # This move qty
 
@@ -430,14 +446,15 @@ class StockPickingDelivery(models.Model):
             # Order that load account stock status:
             # -----------------------------------------------------------------
             # Duplicate row to load stock:
-            if sale_line.order_id.logistic_source in (
+            if sale_order.logistic_source in (
                     'internal', 'workshop', 'resell', 'refund'):
                 quant_pool.create({
                     # date and uid are default
-                    'order_id': self.id,
+                    'order_id': self.id,  # Delivery order reference
                     'product_id': product.id,
                     'product_qty': product_qty,
                     'price': line.price_unit,
+                    'sale_order_id': sale_order.id,  # Used for refund
                     })
 
             # -----------------------------------------------------------------
@@ -448,31 +465,41 @@ class StockPickingDelivery(models.Model):
                 'picking_id': picking.id,
                 'origin': origin,
                 })
-
             if sale_line not in sale_line_check_ready:
                 sale_line_check_ready.append(sale_line)
 
         # ---------------------------------------------------------------------
-        #                         Manage extra delivery:
+        #                   Manage extra delivery / refund:
         # ---------------------------------------------------------------------
         quants = quant_pool.search([('order_id', '=', self.id)])
-        path = os.path.join(logistic_root_folder, 'delivery')
-
-        try:
-            os.system('mkdir -p %s' % path)
-            os.system('mkdir -p %s' % os.path.join(path, 'reply'))
-            os.system('mkdir -p %s' % os.path.join(path, 'history'))
-        except:
-            _logger.error('Cannot create %s' % path)
+        folder_path = {}
+        for item in ('delivery', 'refund'):
+            item_path = os.path.join(logistic_root_folder, item)
+            folder_path[item] = item_path
+            try:
+                os.system('mkdir -p %s' % os.path.join(item_path, 'reply'))
+                os.system('mkdir -p %s' % os.path.join(item_path, 'history'))
+            except:
+                _logger.error('Cannot create %s' % item_path)
 
         # ---------------------------------------------------------------------
         # Create Extra order file:
         # ---------------------------------------------------------------------
         if quants:
-            order_file = os.path.join(path, 'pick_in_%s.csv' % self.id)
-            order_file = open(order_file, 'w')
-            order_file.write('SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA'
-                '\r\n')
+            # Note: every refund order il linked to one delivery in document!
+            refund_order = quants[0].order_id
+            if refund_order.logistic_source == 'refund':
+                load_mode = 'refund'
+            else:
+                load_mode = 'delivery'
+            order_file = open(
+                os.path.join(
+                    folder_path[load_mode],
+                    'pick_in_%s.csv' % self.id),
+                'w')
+
+            order_file.write(
+                'SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA\r\n')
             for quant in quants:
                 order = quant.order_id
                 order_file.write('%s|%s|%s|%s|%s|%s\r\n' % (
@@ -560,6 +587,7 @@ class StockPickingDelivery(models.Model):
         )
     carrier_id = fields.Many2one('carrier.supplier', 'Carrier')
     picking_id = fields.Many2one('stock.picking', 'Picking')
+
 
 class StockPickingDeliveryQuant(models.Model):
     """ Model name: Stock line that create real load of stock
