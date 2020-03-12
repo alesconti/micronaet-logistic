@@ -298,7 +298,7 @@ class StockPickingDelivery(models.Model):
             for f in files:
                 f_split = f[:-4].split('_')
                 try:
-                    pick_id = int(f_split[-1]) # pick_in_ID.csv
+                    pick_id = int(f_split[-1])  # pick_in_ID.csv
                     if f_split[1] == 'in':
                         quants = quant_pool.search([
                             ('order_id', '=', pick_id)])
@@ -313,7 +313,7 @@ class StockPickingDelivery(models.Model):
                         if order.logistic_source == 'refund' and \
                                 order not in refund_order_check:
                             refund_order_check.append(order)
-                    
+
                 except:
                     _logger.error('Cannot read pick ID: %s' % f)
 
@@ -336,16 +336,16 @@ class StockPickingDelivery(models.Model):
                         int(line.logistic_received_qty):
                     close = False
                     break
-                    
+
             if close:
                 refund_order.write({
                     'logistic_state': 'done',
                     })
                 _logger.info('Refund all complete: %s' % refund_order.name)
-            else:    
+            else:
                 _logger.info('Refund not complete: %s' % refund_order.name)
 
-        # Move files after all:        
+        # Move files after all:
         for origin, destination in move_list:
             shutil.move(origin, destination)
         return True
