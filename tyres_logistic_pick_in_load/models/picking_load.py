@@ -471,45 +471,71 @@ class StockPickingDelivery(models.Model):
         # ---------------------------------------------------------------------
         #                   Manage extra delivery / refund:
         # ---------------------------------------------------------------------
+        # This delivery order quants:
         quants = quant_pool.search([('order_id', '=', self.id)])
-        folder_path = {}
-        for item in ('delivery', 'refund'):
-            item_path = os.path.join(logistic_root_folder, item)
-            folder_path[item] = item_path
-            try:
-                os.system('mkdir -p %s' % os.path.join(item_path, 'reply'))
-                os.system('mkdir -p %s' % os.path.join(item_path, 'history'))
-            except:
-                _logger.error('Cannot create %s' % item_path)
 
-        # ---------------------------------------------------------------------
-        # Create Extra order file:
-        # ---------------------------------------------------------------------
+        # Create extra delivery order in exchange file:
         if quants:
+            folder_path = {}
+            # Create folder if not present:
+            for item in ('delivery', 'refund'):
+                item_path = os.path.join(logistic_root_folder, item)
+                folder_path[item] = item_path
+                try:
+                    os.system('mkdir -p %s' % os.path.join(item_path, 'reply'))
+                    os.system(
+                        'mkdir -p %s' % os.path.join(item_path, 'history'))
+                except:
+                    _logger.error('Cannot create %s' % item_path)
+
             # Note: every refund order il linked to one delivery in document!
-            refund_order = quants[0].order_id
-            if refund_order.logistic_source == 'refund':
+            sale_order = quants[0].order_id
+            if sale_order.logistic_source == 'refund':
                 load_mode = 'refund'
             else:
                 load_mode = 'delivery'
             order_file = open(
                 os.path.join(
                     folder_path[load_mode],
-                    'pick_in_%s.csv' % self.id),
+                    'pick_in_%s.csv' % self.id),  # Delivery ID reference here!
                 'w')
 
-            order_file.write(
-                'SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA\r\n')
-            for quant in quants:
-                order = quant.order_id
-                order_file.write('%s|%s|%s|%s|%s|%s\r\n' % (
-                    quant.product_id.default_code,
-                    quant.product_qty,
-                    quant.price,
-                    order.supplier_id.sql_supplier_code or '',
-                    order.name,
-                    company_pool.formatLang(order.date, date=True),
-                    ))
+            if load_mode == 'delivery':
+                header = 'SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA\r\n'
+            else:  # 'refund':
+                # Title:
+                header = 'TIPO|SKU|QTA|PREZZO|CODICE CLIENTE|AGENTE|DATA\r\n'
+                # Comment line reference:  # TODO corresponding reference!?!
+                header += 'C|%s\r\n' % (
+                    'Fattura numero XX del XX',  # TODO reference (sale_order)
+                    )
+            order_file.write(header)
+
+             for quant in quants:
+                delivery_order = quant.order_id
+                if load_mode == 'delivery':
+                    order_file.write('%s|%s|%s|%s|%s|%s\r\n' % (
+                        quant.product_id.default_code,
+                        quant.product_qty,
+                        quant.price,
+                        delivery_order.supplier_id.sql_supplier_code or '',
+                        delivery_order.name,
+                        company_pool.formatLang(
+                            delivery_order.date, date=True),
+                        ))
+                else:  # 'refund' mode
+                    order_file.write('A|%s|%s|%s|%s|%s|%s\r\n' % (
+                        quant.product_id.default_code,
+                        quant.product_qty,
+                        quant.price,
+                        # delivery_order.supplier_id.sql_supplier_code or '',
+                        delivery_order.supplier_id.id or '', # Use ODOO ID
+                        sale_order.team_id.channel_ref or '',
+                        # delivery_order.name,
+                        company_pool.formatLang(
+                            delivery_order.date, date=True),
+                        ))
+
             order_file.close()
 
         # Check if procedure if fast to confirm reply (instead scheduled!):
