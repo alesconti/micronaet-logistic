@@ -33,15 +33,6 @@ from odoo.tools.translate import _
 _logger = logging.getLogger(__name__)
 
 
-class StockQuant(models.Model):
-    """ Extend stock.quant
-    """
-    _inherit = 'stock.quant'
-
-    sale_order_id = fields.Many2one(
-        'sale.order', 'Origin order', help='Used for refund purposes')
-
-
 class AccountFiscalPositionPrint(models.Model):
     """ Model name: Purchase order line
     """
@@ -629,6 +620,8 @@ class StockPickingDeliveryQuant(models.Model):
     # -------------------------------------------------------------------------
     order_id = fields.Many2one(
         'stock.picking.delivery', 'Order')
+    sale_order_id = fields.Many2one(
+        'sale.order', 'Origin order', help='Used for refund purposes')
     create_date = fields.Datetime(
         'Create date', default=fields.Datetime.now())
     create_uid = fields.Many2one(
