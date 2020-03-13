@@ -226,7 +226,7 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
                     format_color = format_text['red']
 
                 order_header = (
-                    #order.carrier_supplier_id.name,
+                    # order.carrier_supplier_id.name,
                     order.carrier_mode_id.name,
                     order.date_order[:10],
                     order.name,
