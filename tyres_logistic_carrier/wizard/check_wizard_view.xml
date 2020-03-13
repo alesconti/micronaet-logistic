@@ -19,6 +19,9 @@
                           <field name="from_date" />
                           <field name="to_date" />
                           
+                          <field name="from_print_date" />
+                          <field name="to_print_date" />
+
                           <field name="only_shippy" />
                       </group>    
                   </sheet>
