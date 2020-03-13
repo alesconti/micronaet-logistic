@@ -44,8 +44,8 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
     # -------------------------------------------------------------------------
     carrier_id = fields.Many2one('carrier.supplier', 'Carrier Supplier')
     mode_id = fields.Many2one('carrier.supplier.mode', 'Mode')
-    from_date = fields.Date('From date >=', required=True)
-    to_date = fields.Date('To date <', required=True)
+    from_date = fields.Date('From date >=')
+    to_date = fields.Date('To date <')
     from_print_date = fields.Date('From print date >=')
     to_print_date = fields.Date('To print date <')
     only_shippy = fields.Boolean('Shippy only', default=True)
@@ -68,10 +68,13 @@ class SaleOrderCarrierCheckWizard(models.TransientModel):
 
         domain = [
             # Header
-            ('order_id.date_order', '>=', from_date),
-            ('order_id.date_order', '<', to_date),
             ('order_id.logistic_state', '>=', 'done'),  # only done order
             ]
+
+        if from_date:
+            domain.append(('order_id.date_order', '>=', from_date))
+        if to_date:
+            domain.append(('order_id.date_order', '<', to_date))
 
         if from_print_date:
             domain.append(
