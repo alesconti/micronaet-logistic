@@ -123,7 +123,6 @@ class StockPickingInReportWizard(models.TransientModel):
             if move.product_id.is_expence:
                 continue
             supplier = move.logistic_purchase_id.order_id.partner_id
-            #supplier = supplier.lower()
             if supplier not in structure:
                 structure[supplier] = []
             structure[supplier].append(move)    
@@ -141,7 +140,10 @@ class StockPickingInReportWizard(models.TransientModel):
             #                   Excel sheet creation:
             # -----------------------------------------------------------------
             ws_name = (supplier.name or 'Non presente').strip().lower()
-            excel_pool.create_worksheet(ws_name)
+            try:
+                excel_pool.create_worksheet(ws_name)
+            except:
+                _logger.error('Sheet %s yet present!' % ws_name)
                 
             excel_pool.column_width(ws_name, column_width)
             if not setup_complete: # First page only:
