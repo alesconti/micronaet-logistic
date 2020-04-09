@@ -228,6 +228,7 @@ class ProductTemplateSupplierStock(models.Model):
         'Price', digits=dp.get_precision('Product Price'))
     best_price = fields.Boolean('Best price')    
     ipcode = fields.Char('Supplier code', size=24)
+    promo = fields.Boolean('Promo')
 
 class ProductTemplate(models.Model):
     """ Model name: ProductTemplate

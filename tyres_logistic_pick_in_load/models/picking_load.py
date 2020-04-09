@@ -529,7 +529,7 @@ class StockPickingDelivery(models.Model):
                         quant.product_qty,
                         quant.price,
                         # delivery_order.supplier_id.sql_supplier_code or '',
-                        delivery_order.supplier_id.id or '', # Use ODOO ID
+                        delivery_order.supplier_id.id or '',  # Use ODOO ID
                         refund_source.team_id.channel_ref or '',
                         # delivery_order.name,
                         company_pool.formatLang(

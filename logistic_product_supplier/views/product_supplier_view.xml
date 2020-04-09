@@ -146,6 +146,8 @@
                                     <field name="supplier_id" context="{'default_supplier': True}" />
                                     <field name="ipcode" />
                                     <field name="quotation" />
+                                    <field name="promo" />
+                                    <button name="dummy" string="Promo" type="object" icon="fa-thumbs-up" attrs="{'invisible': [('promo','=',False)]}"/>
 
                                     <field name="stock_qty" />
                                     <button name="assign_to_purchase_this" string="this" type="object" context="{'sale_order_id': parent.id}" icon="fa-backward" /><!--class="oe_highlight"-->
