@@ -543,7 +543,10 @@ class StockPickingDelivery(models.Model):
                         # -----------------------------------------------------
                         comment_line = 'C|Fattura numero %s del %s\r\n' % (
                             delivery_picking.invoice_number,
-                            delivery_picking.invoice_date[:10],
+                            company_pool.formatLang(
+                                delivery_picking.invoice_date[:10],
+                                date=True,
+                            ),
                         )
                         supplier_code = '#%s' % (
                             generator_order.partner_id.id or '')
