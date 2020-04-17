@@ -514,7 +514,7 @@ class StockPickingDelivery(models.Model):
                 try:
                     import pdb; pdb.set_trace()
                     # Get generator sale order:
-                    generator_orders = self.env['mmac_reso'].search([
+                    generator_orders = self.env['mmac.reso'].search([
                         ('reso_order_id', '=', sale_order.id)])
                     if not generator_orders:
                         raise exceptions.Warning(
