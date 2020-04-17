@@ -514,7 +514,7 @@ class StockPickingDelivery(models.Model):
                 try:
                     # Get generato sale order:
                     generator_orders = self.env['mmac_reso'].search([
-                        ('reso_order_id', '=', sale_order.id)])\
+                        ('reso_order_id', '=', sale_order.id)])
                     if not generator_orders:
                         raise exceptions.Warning(
                             _('Cannot find sale order generator '
