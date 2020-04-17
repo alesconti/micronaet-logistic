@@ -533,7 +533,10 @@ class StockPickingDelivery(models.Model):
                         # -----------------------------------------------------
                         comment_line = 'C|Corrispettivo %s del %s:\r\n' % (
                             generator_order.team_id.name or '',  # Team name
-                            delivery_picking.scheduled_date[:10],
+                            company_pool.formatLang(
+                                delivery_picking.scheduled_date[:10],
+                                date=True,
+                            ),
                         )
                         supplier_code = \
                             generator_order.team_id.team_code_ref or ''  # XXX or refund_source
