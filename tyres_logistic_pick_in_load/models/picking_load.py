@@ -503,12 +503,26 @@ class StockPickingDelivery(models.Model):
             if load_mode == 'delivery':
                 header = 'SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA\r\n'
             else:  # 'refund':
+                # Extract data from invoice or fees:
+                try:
+                    import pdb; pdb.set_trace()
+                    delivery_picking = sale_order.order_line[
+                        0].delivered_line_ids[0].picking_id
+                    if delivery_picking.is_fees:
+                        comment_line = 'C|Corrispettivo:\r\n'
+                    else:
+                        comment_line = 'C|Fattura numero %s del %s\r\n' % (
+                            delivery_picking.invoice_number,
+                            delivery_picking.invoice_date,
+                        )
+                except:
+                    raise exceptions.Warning(
+                        _('Cannot locate delivery picking'))
+
                 # Title:
                 header = 'TIPO|SKU|QTA|PREZZO|CODICE CLIENTE|AGENTE|DATA\r\n'
-                # Comment line reference:  # TODO corresponding reference!?!
-                header += 'C|%s\r\n' % (
-                    'Fattura numero XX del XX',  # TODO reference (sale_order)
-                    )
+                # Comment line reference:
+                header += comment_line
             order_file.write(header)
 
             for quant in quants:
@@ -570,7 +584,7 @@ class StockPickingDelivery(models.Model):
         purchase_pool = self.env['purchase.order.line']
         purchases = purchase_pool.search([
             ('order_id.partner_id', '=', self.supplier_id.id),
-            #('logistic_undelivered_qty', '>', 0.0),
+            # ('logistic_undelivered_qty', '>', 0.0),
             # TODO change with logistic_status:
             # logistic_state = done!!!
             ])
@@ -585,14 +599,14 @@ class StockPickingDelivery(models.Model):
             'name': _('Purcase line:'),
             'view_type': 'form',
             'view_mode': 'tree',
-            #'res_id': 1,
+            # 'res_id': 1,
             'res_model': 'purchase.order.line',
             'view_id': tree_view_id,
             'search_view_id': search_view_id,
             'views': [(tree_view_id, 'tree')],
             'domain': [('id', 'in', purchase_ids)],
             'context': self.env.context,
-            'target': 'current', # 'new'
+            'target': 'current',  # 'new'
             'nodestroy': False,
             }
 
@@ -640,6 +654,7 @@ class StockPickingDeliveryQuant(models.Model):
     price = fields.Float('Price', digits=(16, 2))
     account_sync = fields.Boolean('Account sync')
 
+
 class StockMove(models.Model):
     """ Model name: Stock Move
     """
@@ -648,7 +663,8 @@ class StockMove(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    delivery_id = fields.Many2one('stock.picking.delivery', 'Delivery',
+    delivery_id = fields.Many2one(
+        'stock.picking.delivery', 'Delivery',
         ondelete='set null')
     name_extended = fields.Char(
         string='Extended name', related='product_id.name_extended')
@@ -663,7 +679,7 @@ class StockMove(models.Model):
     def hide_pending_stock_movement(self):
         """ Deactivate line (not visible)
         """
-        # Log hide operazion on original order:
+        # Log hide operation on original order:
         order = self.logistic_load_id.order_id
         order.write_log_chatter_message(_(
             'Supplier: %s, Product %s, Q. %s, hide movement!') % (
@@ -678,7 +694,7 @@ class StockMove(models.Model):
     def unhide_pending_stock_movement(self):
         """ Reactivate line (not visible)
         """
-        # Log hide operazion on original order:
+        # Log hide operation on original order:
         order = self.logistic_load_id.order_id
         order.write_log_chatter_message(_(
             'Supplier: %s, Product %s, Q. %s, Restored movement!') % (
