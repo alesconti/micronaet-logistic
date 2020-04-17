@@ -512,7 +512,6 @@ class StockPickingDelivery(models.Model):
                 # -------------------------------------------------------------
                 # Extract data from invoice or fees:
                 try:
-                    import pdb; pdb.set_trace()
                     # Get generator sale order:
                     generator_orders = self.env['mmac.reso'].search([
                         ('reso_order_id', '=', sale_order.id)])
