@@ -539,7 +539,7 @@ class StockPickingDelivery(models.Model):
                             ),
                         )
                         supplier_code = \
-                            generator_order.team_id.team_code_ref or ''  # XXX or refund_source
+                            generator_order.team_id.team_code_ref or ''
                     else:
                         # -----------------------------------------------------
                         # INVOICE:
