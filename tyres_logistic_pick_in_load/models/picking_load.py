@@ -512,7 +512,8 @@ class StockPickingDelivery(models.Model):
                 # -------------------------------------------------------------
                 # Extract data from invoice or fees:
                 try:
-                    # Get generato sale order:
+                    import pdb; pdb.set_trace()
+                    # Get generator sale order:
                     generator_orders = self.env['mmac_reso'].search([
                         ('reso_order_id', '=', sale_order.id)])
                     if not generator_orders:
@@ -524,7 +525,6 @@ class StockPickingDelivery(models.Model):
                             _('Found more than one sale order generator'))
 
                     generator_order = generator_orders[0].order_id
-                    import pdb; pdb.set_trace()
                     delivery_picking = generator_order.order_line[
                         0].delivered_line_ids[0].picking_id
                     if delivery_picking.is_fees:
