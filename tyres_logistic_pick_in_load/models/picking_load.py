@@ -546,7 +546,7 @@ class StockPickingDelivery(models.Model):
                             delivery_picking.invoice_date[:10],
                         )
                         supplier_code = '#%s' % (
-                            sale_order.supplier_id.id or '')
+                            generator_order.partner_id.id or '')
                 except:
                     raise exceptions.Warning(
                         _('Cannot locate delivery picking'))
