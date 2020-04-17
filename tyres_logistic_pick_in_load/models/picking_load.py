@@ -501,27 +501,46 @@ class StockPickingDelivery(models.Model):
                 'w')
 
             if load_mode == 'delivery':
+                # -------------------------------------------------------------
+                # NORMAL DELIVERY:
+                # -------------------------------------------------------------
                 header = 'SKU|QTA|PREZZO|CODICE FORNITORE|RIF. DOC.|DATA\r\n'
-            else:  # 'refund':
+
+            else:
+                # -------------------------------------------------------------
+                # REFUND DOCUMENT:
+                # -------------------------------------------------------------
                 # Extract data from invoice or fees:
                 try:
                     import pdb; pdb.set_trace()
                     delivery_picking = sale_order.order_line[
                         0].delivered_line_ids[0].picking_id
                     if delivery_picking.is_fees:
-                        comment_line = 'C|Corrispettivo:\r\n'
+                        # -----------------------------------------------------
+                        # FEES:
+                        # -----------------------------------------------------
+                        comment_line = 'C|Corrispettivo %s del %s:\r\n' % (
+                            sale_order.team_id.name or '',  # Team name
+                            delivery_picking.scheduled_date[:10],
+                        )
+                        supplier_code = \
+                            sale_order.team_id.team_code_ref or ''  # XXX or refund_source
                     else:
+                        # -----------------------------------------------------
+                        # INVOICE:
+                        # -----------------------------------------------------
                         comment_line = 'C|Fattura numero %s del %s\r\n' % (
                             delivery_picking.invoice_number,
-                            delivery_picking.invoice_date,
+                            delivery_picking.invoice_date[:10],
                         )
+                        supplier_code = '#%s' % (
+                            sale_order.supplier_id.id or '')
                 except:
                     raise exceptions.Warning(
                         _('Cannot locate delivery picking'))
 
-                # Title:
+                # Header title + comment:
                 header = 'TIPO|SKU|QTA|PREZZO|CODICE CLIENTE|AGENTE|DATA\r\n'
-                # Comment line reference:
                 header += comment_line
             order_file.write(header)
 
@@ -543,7 +562,7 @@ class StockPickingDelivery(models.Model):
                         quant.product_qty,
                         quant.price,
                         # delivery_order.supplier_id.sql_supplier_code or '',
-                        delivery_order.supplier_id.id or '',  # Use ODOO ID
+                        supplier_code,
                         refund_source.team_id.channel_ref or '',
                         # delivery_order.name,
                         company_pool.formatLang(
