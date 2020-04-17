@@ -512,19 +512,31 @@ class StockPickingDelivery(models.Model):
                 # -------------------------------------------------------------
                 # Extract data from invoice or fees:
                 try:
+                    # Get generato sale order:
+                    generator_orders = self.env['mmac_reso'].search([
+                        ('reso_order_id', '=', sale_order.id)])\
+                    if not generator_orders:
+                        raise exceptions.Warning(
+                            _('Cannot find sale order generator '
+                              'for this refund'))
+                    if len(generator_orders) > 1:
+                        raise exceptions.Warning(
+                            _('Found more than one sale order generator'))
+
+                    generator_order = generator_orders[0].order_id
                     import pdb; pdb.set_trace()
-                    delivery_picking = sale_order.order_line[
+                    delivery_picking = generator_order.order_line[
                         0].delivered_line_ids[0].picking_id
                     if delivery_picking.is_fees:
                         # -----------------------------------------------------
                         # FEES:
                         # -----------------------------------------------------
                         comment_line = 'C|Corrispettivo %s del %s:\r\n' % (
-                            sale_order.team_id.name or '',  # Team name
+                            generator_order.team_id.name or '',  # Team name
                             delivery_picking.scheduled_date[:10],
                         )
                         supplier_code = \
-                            sale_order.team_id.team_code_ref or ''  # XXX or refund_source
+                            generator_order.team_id.team_code_ref or ''  # XXX or refund_source
                     else:
                         # -----------------------------------------------------
                         # INVOICE:
