@@ -44,6 +44,10 @@ class SaleOrder(models.Model):
     def explode_kit_in_order_line(self):
         ''' Explode kit in order line
         '''
+        log_kit_f = open(os.path.expanduser('~/kit.log'), 'a')
+        log_kit_f.write('\nCheck order: %s\n' % self.id)
+        log_kit_f.flush()  
+        
         product_pool = self.env['product.product']
         line_pool = self.env['sale.order.line']
         delete_line = []
@@ -64,11 +68,15 @@ class SaleOrder(models.Model):
         # Post: Delete line of component:
         for line in delete_line:
             line.unlink()    
+        log_kit_f.write('Delete line: %s\n' % (delete_line, ))
+        log_kit_f.flush()  
         
         # Post: Create Extra line for kit
         order_id = self.id
         template_done = []
         for line in component_new:
+            log_kit_f.write('Explode line: %s\n' % (line, ))
+            log_kit_f.flush()  
             product = component_new[line]
             product_qty = line.product_uom_qty
             
@@ -95,7 +103,10 @@ class SaleOrder(models.Model):
                     'tax_id': False, # No Tax (not used in delivery)                    
                     'kit_line_id': line.id, # back reference to kit line        
                     })
-                    
+            log_kit_f.write('Exploded component: %s\n' % (
+                product.component_ids, ))
+            log_kit_f.flush()  
+        log_kit_f.close()                          
         return True            
 
 class SaleOrderLine(models.Model):
