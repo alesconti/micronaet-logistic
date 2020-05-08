@@ -62,6 +62,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             ('delivery_id.date', '>=', from_date),
             ('delivery_id.date', '<', to_date),
             ('logistic_load_id', '!=', False), # Linked to order
+            ('logistic_load_id.order_id.logistic_source', 'not in', (
+                'refund', )), # Not refund
             # TODO Order web only?
             ] 
     @api.multi
@@ -83,6 +85,11 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             #('logistic_load_id.order_id.partner_invoice_id.country_id', '=', 
             #    country_id), # Only sold in Italy
             #('dropship_manage', '=', False),
+            
+            # TODO on order:
+            #'&',
+            #('logistic_source', 'not in', ('refund', )),            
+
             '|',
             ('delivery_id.supplier_id.country_id', '=', False),
             ('delivery_id.supplier_id.country_id', '!=', country_id),
