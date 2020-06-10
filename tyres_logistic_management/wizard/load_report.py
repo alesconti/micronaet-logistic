@@ -77,9 +77,9 @@ class StockPickingInReportWizard(models.TransientModel):
             ('create_date', '>=', '%s 00:00:00' % from_date),
             ('create_date', '<', '%s 00:00:00' % to_date),
             ('logistic_load_id', '!=', False),  # Load stock move only
-            ]
-        # ('logistic_load_id.order_id.logistic_source', 'not in', (
-        #                    'refund',)),  # Not refund
+            ('logistic_load_id.order_id.logistic_source', 'not in', (
+                'refund', )),  # Not refund
+        ]
         if supplier:
             domain.append(
                 ('partner_id', '=', supplier.id),
