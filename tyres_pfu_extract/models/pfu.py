@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -32,28 +32,30 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+
 class AccountFiscalPosition(models.Model):
     """ Model name: AccountFiscalPosition
     """
     _inherit = 'account.fiscal.position'
-    
-    is_pfu = fields.Boolean('PFU refund', 
+
+    is_pfu = fields.Boolean('PFU refund',
         help='If checked all sale with this position go in report')
+
 
 class StockPickingPfuExtractWizard(models.TransientModel):
     """ Model name: StockPicking
     """
     _name = 'stock.picking.pfu.extract.wizard'
     _description = 'Logistic manual operation'
-    
+
     # -------------------------------------------------------------------------
     #                            COLUMNS:
-    # -------------------------------------------------------------------------    
-    partner_id = fields.Many2one('res.partner', 'Supplier',# required=True,
+    # -------------------------------------------------------------------------
+    partner_id = fields.Many2one('res.partner', 'Supplier', # required=True,
         domain="[('supplier', '=', True)]")
     from_date = fields.Date('From date >=', required=True)
     to_date = fields.Date('To date <', required=True)
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
 
     @api.model
     def get_data_domain(self, from_date, to_date):
@@ -63,9 +65,9 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             ('delivery_id.date', '<', to_date),
             ('logistic_load_id', '!=', False), # Linked to order
             ('logistic_load_id.order_id.logistic_source', 'not in', (
-                'refund', )), # Not refund
+                'refund', )),  # Not refund
             # TODO Order web only?
-            ] 
+            ]
     @api.multi
     def extract_fiscal_excel_pfu_report(self, ):
         ''' Extract fiscal report
@@ -73,7 +75,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         move_pool = self.env['stock.move']
         excel_pool = self.env['excel.writer']
         company_pool = self.env['res.company']
-        
+
         from_date = self.from_date
         to_date = self.to_date
 
@@ -82,70 +84,70 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         country_id = company.partner_id.country_id.id
         domain = self.get_data_domain(from_date, to_date)
         domain.extend([
-            #('logistic_load_id.order_id.partner_invoice_id.country_id', '=', 
+            # ('logistic_load_id.order_id.partner_invoice_id.country_id', '=',
             #    country_id), # Only sold in Italy
-            #('dropship_manage', '=', False),
-            
+            # ('dropship_manage', '=', False),
+
             # TODO on order:
-            #'&',
-            #('logistic_source', 'not in', ('refund', )),            
+            # '&',
+            # ('logistic_source', 'not in', ('refund', )),
 
             '|',
             ('delivery_id.supplier_id.country_id', '=', False),
             ('delivery_id.supplier_id.country_id', '!=', country_id),
             ])
-        
+
         # ---------------------------------------------------------------------
         #                           Collect data:
         # ---------------------------------------------------------------------
         # A. All stock move sale
         supplier_category_move = {}
-        for move in move_pool.search(domain):            
+        for move in move_pool.search(domain):
             supplier = move.delivery_id.supplier_id
             category = move.product_id.mmac_pfu.name or ''
             if not category: # Missed category product not in report
                 continue
-            
+
             if supplier not in supplier_category_move:
                 supplier_category_move[supplier] = {}
-                
+
             if category not in supplier_category_move[supplier]:
                 supplier_category_move[supplier][category] = 0
 
             supplier_category_move[supplier][category] += move.product_uom_qty
 
-        
+
         # Export only total grouped by RAEE mode:
         # ---------------------------------------------------------------------
         #                          EXTRACT EXCEL:
         # ---------------------------------------------------------------------
         # Excel file configuration:
-        header = ('RAEE', 'Fornitore', 'Nazione', u'Q.tà')            
+        header = ('RAEE', 'Fornitore', 'Nazione', u'Q.tà')
         column_width = (5, 40, 25, 15)
 
         ws_name = 'PFU forniori esteri'
-        
+
         # -----------------------------------------------------------------
         # Excel sheet creation:
         # -----------------------------------------------------------------
         excel_pool.create_worksheet(ws_name)
         excel_pool.column_width(ws_name, column_width)
         excel_pool.set_format()
-        format_text = {                
+        format_text = {
             'title': excel_pool.get_format('title'),
             'header': excel_pool.get_format('header'),
             'text': excel_pool.get_format('text'),
             'number': excel_pool.get_format('number'),
             }
-            
+
 
         # ---------------------------------------------------------------------
         # Write detail:
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         row = total = 0
 
         excel_pool.write_xls_line(ws_name, row, header, format_text['header'])
-        for supplier in sorted(supplier_category_move, key=lambda x: x.name):            
+        for supplier in sorted(supplier_category_move, key=lambda x: x.name):
             for category in supplier_category_move[supplier]:
                 row += 1
                 subtotal = supplier_category_move[supplier][category]
@@ -157,7 +159,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     supplier.country_id.name or '',
                     (subtotal, format_text['number']),
                     ], default_format=format_text['text'])
-                
+
         # -----------------------------------------------------------------
         # Write total line:
         # -----------------------------------------------------------------
@@ -166,23 +168,23 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         excel_pool.write_xls_line(ws_name, row, (
             'Totale:', total,
             ), default_format=format_text['number'], col=2)
-                
+
         # ---------------------------------------------------------------------
         # Save file:
         # ---------------------------------------------------------------------
         return excel_pool.return_attachment('Report_Tax_PFU')
-        
+
     @api.multi
     def extract_excel_pfu_report(self, ):
         ''' Extract Excel PFU report
         '''
         move_pool = self.env['stock.move']
         excel_pool = self.env['excel.writer']
-        
+
         from_date = self.from_date
         to_date = self.to_date
         supplier = self.partner_id
-        
+
         domain = self.get_data_domain(from_date, to_date)
 
         # Sell Extra CEE:
@@ -200,15 +202,15 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         # A. All stock move sale
         supplier_category_move = {}
-        for move in move_pool.search(domain):            
+        for move in move_pool.search(domain):
             supplier = move.delivery_id.supplier_id
             category = move.product_id.mmac_pfu.name or ''
             if not category: # Missed category product not in report
                 continue
-            
+
             if supplier not in supplier_category_move:
                 supplier_category_move[supplier] = {}
-                
+
             if category not in supplier_category_move[supplier]:
                 supplier_category_move[supplier][category] = []
 
@@ -218,23 +220,23 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         #                          EXTRACT EXCEL:
         # ---------------------------------------------------------------------
         # Excel file configuration:
-        header = ('RAEE', 'Cod. Articolo', 'Descrizione', u'Q.tà', 
-            'Doc Fornitore', 'Data Doc.', 'N. Fattura', 'N. Nostra fattura', 
+        header = ('RAEE', 'Cod. Articolo', 'Descrizione', u'Q.tà',
+            'Doc Fornitore', 'Data Doc.', 'N. Fattura', 'N. Nostra fattura',
             'Data Doc.', 'ISO stato')
-            
+
         column_width = (
-            5, 15, 45, 5, 
-            15, 12, 12, 15, 
+            5, 15, 45, 5,
+            15, 12, 12, 15,
             10, 8,
-            )    
+            )
 
         # ---------------------------------------------------------------------
         # Write detail:
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         setup_complete = False # For initial setup:
         for supplier in sorted(supplier_category_move, key=lambda x: x.name):
             ws_name = supplier.name.strip()
-            
+
             # -----------------------------------------------------------------
             # Excel sheet creation:
             # -----------------------------------------------------------------
@@ -243,13 +245,13 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             if not setup_complete: # First page only:
                 setup_complete = True
                 excel_pool.set_format()
-                format_text = {                
+                format_text = {
                     'title': excel_pool.get_format('title'),
                     'header': excel_pool.get_format('header'),
                     'text': excel_pool.get_format('text'),
                     'number': excel_pool.get_format('number'),
                     }
-                
+
             # Header write:
             row = 0
             excel_pool.write_xls_line(ws_name, row, [
@@ -262,11 +264,11 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 u'',
                 u'Alla data: %s' % to_date,
                 ], default_format=format_text['title'])
-                
+
             row += 2
-            excel_pool.write_xls_line(ws_name, row, header, 
+            excel_pool.write_xls_line(ws_name, row, header,
                 default_format=format_text['header'])
-                
+
             total = 0
             for category in sorted(supplier_category_move[supplier]):
                 subtotal = 0
@@ -279,7 +281,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     partner = order.partner_invoice_id
                     product = move.product_id
                     qty = move.product_uom_qty # Delivered qty
-                    
+
                     # Get invoice reference:
                     try:
                         invoice = order.logistic_picking_ids[0]
@@ -289,7 +291,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                         _logger.error('No invoice for order %s' % order.name)
                         invoice_date = ''
                         invoice_number = '?'
-                        
+
                     # TODO check more than one error
 
                     # ---------------------------------------------------------
@@ -298,7 +300,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     # Total operation:
                     total += qty
                     subtotal += qty
-                    
+
                     # ---------------------------------------------------------
                     # Write data line:
                     # ---------------------------------------------------------
@@ -317,7 +319,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 row += 1
                 excel_pool.write_xls_line(ws_name, row, (
                     subtotal,
-                    ), default_format=format_text['number'], col=3)                    
+                    ), default_format=format_text['number'], col=3)
 
             # -----------------------------------------------------------------
             # Write data line:
@@ -327,7 +329,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             excel_pool.write_xls_line(ws_name, row, (
                 'Totale:', total,
                 ), default_format=format_text['number'], col=2)
-                
+
         # ---------------------------------------------------------------------
         # Save file:
         # ---------------------------------------------------------------------
