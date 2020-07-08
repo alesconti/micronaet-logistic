@@ -16,6 +16,17 @@
             <field name="name">CUPS Printer</field>
             <field name="model">cups.printer</field>
             <field name="arch" type="xml">
+              <tree string="CUPS Printer:">
+                  <field name="code" />
+                  <field name="name" />
+                  <field name="note" colspan="4" nolabel="1"/>
+              </tree>
+            </field>            
+        </record>
+        <record id="view_cups_printer_form" model="ir.ui.view">
+            <field name="name">CUPS Printer</field>
+            <field name="model">cups.printer</field>
+            <field name="arch" type="xml">
               <form string="CUPS Printer:">
                   <sheet>                  
                       <group colspan="4" col="4">
