@@ -265,7 +265,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 ], default_format=format_text['title'])
 
             row += 2
-            excel_pool.write_xls_line(ws_name, row, header,
+            excel_pool.write_xls_line(
+                ws_name, row, header,
                 default_format=format_text['header'])
 
             total = 0
@@ -280,19 +281,16 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     order = move.logistic_load_id.order_id
                     partner = order.partner_invoice_id
                     product = move.product_id
-                    qty = move.product_uom_qty # Delivered qty
+                    qty = move.product_uom_qty  # Delivered qty
 
                     # Get invoice reference:
-                    try:
-                        invoice = order.logistic_picking_ids[0]
+                    invoice_date = ''
+                    invoice_number = ''
+                    for invoice in order.logistic_picking_ids:
                         invoice_date = invoice.invoice_date or ''
-                        invoice_number = invoice.invoice_number or '?'
-                    except:
-                        _logger.error('No invoice for order %s' % order.name)
-                        invoice_date = ''
-                        invoice_number = '?'
-
-                    # TODO check more than one error
+                        invoice_number = invoice.invoice_number or ''
+                        if invoice_number:
+                            break  # Stop when find one invoice!
 
                     # ---------------------------------------------------------
                     #                    Excel writing:
