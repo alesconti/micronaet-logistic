@@ -290,8 +290,9 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                         invoice_date = invoice.invoice_date or ''
                         invoice_number = invoice.invoice_number or ''
                         if invoice_number:
-                            invoice_number = 'No fatt. ordine: %s' % order.name
                             break  # Stop when find one invoice!
+                        else:
+                            invoice_number = 'No fatt. ordine: %s' % order.name
 
                     # ---------------------------------------------------------
                     #                    Excel writing:
