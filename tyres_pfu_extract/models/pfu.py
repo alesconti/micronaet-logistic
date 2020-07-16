@@ -140,7 +140,6 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             'number': excel_pool.get_format('number'),
             }
 
-
         # ---------------------------------------------------------------------
         # Write detail:
         # ---------------------------------------------------------------------
@@ -272,7 +271,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             total = 0
             for category in sorted(supplier_category_move[supplier]):
                 subtotal = 0
-                for move in sorted(supplier_category_move[supplier][category],
+                for move in sorted(
+                        supplier_category_move[supplier][category],
                         key=lambda x: x.date):
                     row += 1
 
@@ -305,16 +305,16 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     # Write data line:
                     # ---------------------------------------------------------
                     excel_pool.write_xls_line(ws_name, row, (
-                        category, #product.mmac_pfu.name,
+                        category,  # product.mmac_pfu.name,
                         product.default_code,
-                        product.name_extended, #name,
+                        product.name_extended,  # name,
                         (qty, format_text['number']), # TODO check if it's all!
-                        move.delivery_id.name, # Delivery ref.
+                        move.delivery_id.name,  # Delivery ref.
                         move.delivery_id.date,
-                        '', # Number supplier invoice
-                        invoice_number, # Our invoice
-                        invoice_date[:10], # Date doc,
-                        partner.country_id.code or '??', # ISO country
+                        '',  # Number supplier invoice
+                        invoice_number,  # Our invoice
+                        invoice_date[:10],  # Date doc,
+                        partner.country_id.code or '??',  # ISO country
                         ), default_format=format_text['text'])
                 row += 1
                 excel_pool.write_xls_line(ws_name, row, (
