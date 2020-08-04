@@ -86,10 +86,11 @@ class LogisticFeesExtractWizard(models.TransientModel):
             'Tipo',
             'Agente',
             'IVA',
+            'Triang.',
             ]
 
         width = [
-            6, 6, 20, 10, 15, 30, 25, 15, 40, 10, 10, 15, 10, 10, 10, 5,
+            6, 6, 20, 10, 15, 30, 25, 15, 40, 10, 10, 15, 10, 10, 10, 5, 10,
             ]
 
         excel_pool.column_width(ws_name, width)
@@ -252,11 +253,13 @@ class LogisticFeesExtractWizard(models.TransientModel):
             'Agente',
             'Ordine',
             'Pagamento',
+            'Triangol.',
             'Totale',
+            'Totale trian.'
         ]
 
         width = [
-            6, 15, 10, 15, 30, 10, 25, 10, 10,
+            6, 25, 10, 15, 35, 10, 25, 10, 10, 10, 10,
         ]
 
         excel_pool.create_worksheet(ws_name)
@@ -265,7 +268,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
         excel_pool.write_xls_line(
             ws_name, row, header,
             default_format=format_text['header'])
-        master_total = 0.0  # final total
+        triangle_total = master_total = 0.0  # final total
         for line in sorted(
                 check_page['lines'],
                 # key=lambda x: (check_page['lines'][x][1], x),
@@ -273,11 +276,14 @@ class LogisticFeesExtractWizard(models.TransientModel):
             row += 1
             (mode, market, fiscal_position, channel, date, partner, order,
              default_code, name, payment, account, qty, total, expense,
-             agent, vat) = line
+             agent, vat, triangle) = line
 
             order_total = check_page['total'][order]
             if vat:
                 order_total += order_total * vat / 100.0
+            if triangle:
+                triangle_total += order_total
+
             master_total += order_total
             excel_pool.write_xls_line(ws_name, row, [
                 mode,
@@ -288,14 +294,17 @@ class LogisticFeesExtractWizard(models.TransientModel):
                 agent,
                 order,
                 payment,
+                triangle,
                 (order_total, format_text['number']),
-                ], default_format=format_text['text'])
+                (order_total, format_text['number']) if triangle,
+
+            ], default_format=format_text['text'])
         # Total line:
         if check_page['lines']:
             row += 1
             excel_pool.write_xls_line(
-                ws_name, row, ['Totale', master_total], format_text['total'],
-                col=7)
+                ws_name, row, ['Totale', master_total, triangle],
+                format_text['total'], col=8)
         return excel_pool.return_attachment(filename)
 
     @api.multi
@@ -308,5 +317,6 @@ class LogisticFeesExtractWizard(models.TransientModel):
     # -------------------------------------------------------------------------
     #                               COLUMNS:
     # -------------------------------------------------------------------------
-    evaluation_date = fields.Date('Date', required=True,
+    evaluation_date = fields.Date(
+        'Date', required=True,
         default=fields.Datetime.now())

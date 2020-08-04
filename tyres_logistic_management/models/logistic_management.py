@@ -813,12 +813,22 @@ class StockPicking(models.Model):
                         channel,
                         ]
                 else:
+                    # VAT rate:
                     vat_excluded_rate = 0.0
                     try:
                         tax = order_line.tax_id[0]
                         vat_excluded_rate = tax.amount
                     except:
                         _logger.error('Error calculation VAT tax (use 0)!')
+
+                    # Different country:
+                    shipping_code = order.partner_shipping_id.country_id.code
+                    invoice_code = order.partner_invoice_id.country_id.code
+                    if shipping_code != invoice_code:
+                        triangle_invoice = '%s >> %s' % (
+                            invoice_code, shipping_code)
+                    else:
+                        triangle_invoice = ''
 
                     excel_row.append((
                         'CORR.' if picking.is_fees else 'FATT.',
@@ -838,6 +848,7 @@ class StockPicking(models.Model):
                         'S' if product.is_expence else 'M',
                         code_ref or '',  # Agent code
                         vat_excluded_rate,
+                        triangle_invoice,
                         ))
 
         if mode == 'extract':
