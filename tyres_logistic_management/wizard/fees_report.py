@@ -266,7 +266,8 @@ class LogisticFeesExtractWizard(models.TransientModel):
         master_total = 0.0  # final total
         for line in sorted(
                 check_page['lines'],
-                key=lambda x: (check_page['lines'][x][1], x)):
+                # key=lambda x: (check_page['lines'][x][1], x),
+                ):
             row += 1
             (mode, market, fiscal_position, channel, date, partner, order,
              default_code, name, payment, account, qty, total, expense,
@@ -285,10 +286,10 @@ class LogisticFeesExtractWizard(models.TransientModel):
                 total,
                 ], default_format=format_text['text'])
             row += 1
-
-        excel_pool.write_xls_line(
-            ws_name, row, ['Totale', master_total], format_text['total'],
-            col=8)
+        if check_page['lines']:
+            excel_pool.write_xls_line(
+                ws_name, row, ['Totale', master_total], format_text['total'],
+                col=8)
         return excel_pool.return_attachment(filename)
 
     @api.multi
