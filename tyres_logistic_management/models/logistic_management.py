@@ -816,8 +816,10 @@ class StockPicking(models.Model):
                     # VAT rate:
                     vat_excluded_rate = 0.0
                     try:
-                        tax = order_line.tax_id[0]
-                        vat_excluded_rate = tax.amount
+                        # Use a check that is not the correct named field:
+                        if partner.property_account_position_id.\
+                                pfu_invoice_enable:
+                            vat_excluded_rate = order_line.tax_id[0].amount
                     except:
                         _logger.error('Error calculation VAT tax (use 0)!')
 
