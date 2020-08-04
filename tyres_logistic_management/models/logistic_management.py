@@ -813,6 +813,13 @@ class StockPicking(models.Model):
                         channel,
                         ]
                 else:
+                    vat_excluded_rate = 0.0
+                    try:
+                        tax = order_line.tax_id[0]
+                        vat_excluded_rate = tax.amount
+                    except:
+                        _logger.error('Error calculation VAT tax (use 0)!')
+
                     excel_row.append((
                         'CORR.' if picking.is_fees else 'FATT.',
                         order.team_id.market_type or '',
@@ -830,6 +837,7 @@ class StockPicking(models.Model):
                         total or 0.0,
                         'S' if product.is_expence else 'M',
                         code_ref or '',  # Agent code
+                        vat_excluded_rate,
                         ))
 
         if mode == 'extract':
