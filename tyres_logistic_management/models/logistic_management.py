@@ -699,8 +699,8 @@ class StockPicking(models.Model):
         return True
 
     @api.model
-    def csv_report_extract_accounting_fees(self, evaluation_date,
-            mode='extract'):
+    def csv_report_extract_accounting_fees(
+            self, evaluation_date, mode='extract'):
         """ Extract file account fees in CSV for accounting
             mode = extract for save CSV, data for return list of data
         """
@@ -735,20 +735,20 @@ class StockPicking(models.Model):
             domain.append(
                 ('is_fees', '=', True),
                 )
-        #else: in Excel mode see all
+        # else: in Excel mode see all
         pickings = self.search(domain)
 
         channel_row = {}
         excel_row = []
-        pfu_db = [] # to be added in product (for extract)
+        pfu_db = []  # to be added in product (for extract)
         for picking in pickings:
             # Readability:
             order = picking.sale_order_id
             if not order:
-                _logger.warning('No order linhed for this picking')
+                _logger.warning('No order linked for this picking')
                 continue
             partner = order.partner_invoice_id
-            stock_mode = picking.stock_mode #in: refund, out: DDT
+            stock_mode = picking.stock_mode  # in: refund, out: DDT
 
             for move in picking.move_lines:
                 qty = move.product_uom_qty
@@ -759,7 +759,7 @@ class StockPicking(models.Model):
                             picking.name,
                             order.name,
                             ))
-                    #raise exceptions.Warning(_(
+                    # raise exceptions.Warning(_(
                     #    'Found empty picking %s in order %s') % (
                     #        picking.name,
                     #        order.name,
@@ -816,8 +816,7 @@ class StockPicking(models.Model):
                     excel_row.append((
                         'CORR.' if picking.is_fees else 'FATT.',
                         order.team_id.market_type or '',
-                        partner.property_account_position_id.name \
-                            or '',
+                        partner.property_account_position_id.name or '',
                         channel or '',
                         company_pool.formatLang(
                             picking.scheduled_date, date=True),
@@ -830,7 +829,7 @@ class StockPicking(models.Model):
                         qty or 0.0,
                         total or 0.0,
                         'S' if product.is_expence else 'M',
-                        code_ref or '', # Agent code
+                        code_ref or '',  # Agent code
                         ))
 
         if mode == 'extract':

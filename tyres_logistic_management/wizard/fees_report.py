@@ -94,14 +94,21 @@ class LogisticFeesExtractWizard(models.TransientModel):
         excel_pool.column_width(ws_name, width)
 
         row = 0
-        excel_pool.write_xls_line(ws_name, row, [
-            'Corrispettivi e fatture del giorno: %s' % date,
+        excel_pool.write_xls_line(
+            ws_name, row,
+            [
+               'Corrispettivi e fatture del giorno: %s' % date,
             ], default_format=format_text['title'])
 
         row += 2
-        excel_pool.write_xls_line(ws_name, row, header,
+        excel_pool.write_xls_line(
+            ws_name, row, header,
             default_format=format_text['header'])
         pages = {}
+        check_page = {
+            'lines': [],
+            'total': {},
+        }
         for line in sorted(excel_row):
             row += 1
 
@@ -111,10 +118,18 @@ class LogisticFeesExtractWizard(models.TransientModel):
             order = line[6]
             total = line[12]
 
+            # -----------------------------------------------------------------
+            # Page management:
+            # -----------------------------------------------------------------
+            if order not in check_page['total']:
+                check_page['total'][order] = 0.0
+                check_page['lines'].append(line)  # only once!
+            check_page['total'][order] += total
+
             if mode == 'CORR.':
                 page = 'Corrispettivo'
-            else: # invoice:
-                page = fiscal # Fiscal position
+            else:  # invoice:
+                page = fiscal  # Fiscal position
 
             if page not in pages:
                 pages[page] = {}
@@ -129,7 +144,8 @@ class LogisticFeesExtractWizard(models.TransientModel):
             else:
                 format_color = format_text['red']
             # Write formatted with color
-            excel_pool.write_xls_line(ws_name, row, line,
+            excel_pool.write_xls_line(
+                ws_name, row, line,
                 default_format=format_color)
 
         # ---------------------------------------------------------------------
@@ -155,14 +171,16 @@ class LogisticFeesExtractWizard(models.TransientModel):
             excel_pool.create_worksheet(ws_name)
             excel_pool.column_width(ws_name, width)
             row = 0
-            excel_pool.write_xls_line(ws_name, row, header,
+            excel_pool.write_xls_line(
+                ws_name, row, header,
                 default_format=format_text['header'])
-            total = 0.0 # final total
+            total = 0.0  # final total
 
             # Partial management:
             partial = 0.0
             previous_mode = False
-            for order in sorted(pages[ws_name],
+            for order in sorted(
+                    pages[ws_name],
                     key=lambda x: (pages[ws_name][x][1][1], x)):
                 row += 1
                 subtotal, line = pages[ws_name][order]
@@ -193,15 +211,15 @@ class LogisticFeesExtractWizard(models.TransientModel):
                     format_color = format_text['red']
 
                 excel_pool.write_xls_line(ws_name, row, [
-                    mode, # Mode
-                    line[3], # Channel
-                    line[4], # Date
-                    line[5], # Customer
+                    mode,  # Mode
+                    line[3],  # Channel
+                    line[4],  # Date
+                    line[5],  # Customer
                     order,
-                    line[9], # Payment
+                    line[9],  # Payment
                     subtotal,
-                    line[13], # Type
-                    line[14], # Agent
+                    line[13],  # Type
+                    line[14],  # Agent
                     ], default_format=format_color)
             row += 1
 
@@ -219,6 +237,58 @@ class LogisticFeesExtractWizard(models.TransientModel):
             excel_pool.write_xls_line(
                 ws_name, row, ['Totale', total], format_text['total'], col=5)
 
+        # ---------------------------------------------------------------------
+        # Extra pages:
+        # ---------------------------------------------------------------------
+        ws_name = 'Controllo fatturato'
+        header = [
+            'Modo',
+            'Posizione fiscale',
+            'Canale',
+            'Data',
+            'Cliente',
+            'Agente',
+            'Ordine',
+            'Pagamento',
+            'Totale',
+        ]
+
+        width = [
+            6, 15, 10, 15, 30, 10, 25, 10, 10,
+        ]
+
+        excel_pool.create_worksheet(ws_name)
+        excel_pool.column_width(ws_name, width)
+        row = 0
+        excel_pool.write_xls_line(
+            ws_name, row, header,
+            default_format=format_text['header'])
+        master_total = 0.0  # final total
+        for line in sorted(
+                check_page['lines'],
+                key=lambda x: (check_page['lines'][x][1], x)):
+            row += 1
+            (mode, market, fiscal_position, channel, date, partner, order,
+             default_code, name, payment, account, qty, total, expense,
+             agent) = line
+
+            master_total += total
+            excel_pool.write_xls_line(ws_name, row, [
+                mode,
+                fiscal_position,
+                channel,
+                date,
+                partner,
+                agent,
+                order,
+                payment,
+                total,
+                ], default_format=format_text['text'])
+            row += 1
+
+        excel_pool.write_xls_line(
+            ws_name, row, ['Totale', master_total], format_text['total'],
+            col=8)
         return excel_pool.return_attachment(filename)
 
     @api.multi
@@ -233,5 +303,3 @@ class LogisticFeesExtractWizard(models.TransientModel):
     # -------------------------------------------------------------------------
     evaluation_date = fields.Date('Date', required=True,
         default=fields.Datetime.now())
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
