@@ -273,8 +273,8 @@ class LogisticFeesExtractWizard(models.TransientModel):
             (mode, market, fiscal_position, channel, date, partner, order,
              default_code, name, payment, account, qty, total, expense,
              agent) = line
-
-            master_total += total
+            order_total = check_page['total'][order]
+            master_total += order_total
             excel_pool.write_xls_line(ws_name, row, [
                 mode,
                 fiscal_position,
@@ -282,7 +282,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
                 date,
                 partner,
                 agent,
-                order,
+                order_total,
                 payment,
                 total,
                 ], default_format=format_text['text'])
