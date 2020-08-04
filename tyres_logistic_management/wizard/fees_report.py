@@ -273,7 +273,10 @@ class LogisticFeesExtractWizard(models.TransientModel):
             (mode, market, fiscal_position, channel, date, partner, order,
              default_code, name, payment, account, qty, total, expense,
              agent, vat) = line
+
             order_total = check_page['total'][order]
+            if vat:
+                order_total += order_total * vat
             master_total += order_total
             excel_pool.write_xls_line(ws_name, row, [
                 mode,
