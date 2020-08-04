@@ -121,15 +121,16 @@ class LogisticFeesExtractWizard(models.TransientModel):
             # -----------------------------------------------------------------
             # Page management:
             # -----------------------------------------------------------------
-            if order not in check_page['total']:
-                check_page['total'][order] = 0.0
-                check_page['lines'].append(line)  # only once!
-            check_page['total'][order] += total
 
             if mode == 'CORR.':
                 page = 'Corrispettivo'
             else:  # invoice:
                 page = fiscal  # Fiscal position
+                # Check page only for invoice:
+                if order not in check_page['total']:
+                    check_page['total'][order] = 0.0
+                    check_page['lines'].append(line)  # only once!
+                check_page['total'][order] += total
 
             if page not in pages:
                 pages[page] = {}
@@ -285,11 +286,12 @@ class LogisticFeesExtractWizard(models.TransientModel):
                 payment,
                 total,
                 ], default_format=format_text['text'])
-            row += 1
+        # Total line:
         if check_page['lines']:
+            row += 1
             excel_pool.write_xls_line(
                 ws_name, row, ['Totale', master_total], format_text['total'],
-                col=8)
+                col=7)
         return excel_pool.return_attachment(filename)
 
     @api.multi
