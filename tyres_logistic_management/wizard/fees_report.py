@@ -296,7 +296,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
                 payment,
                 triangle,
                 (order_total, format_text['number']),
-                (order_total, format_text['number']) if triangle,
+                (order_total, format_text['number']) if triangle else '',
 
             ], default_format=format_text['text'])
         # Total line:
