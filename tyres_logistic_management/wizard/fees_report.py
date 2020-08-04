@@ -303,7 +303,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
         if check_page['lines']:
             row += 1
             excel_pool.write_xls_line(
-                ws_name, row, ['Totale', master_total, triangle],
+                ws_name, row, ['Totale', master_total, triangle_total],
                 format_text['total'], col=8)
         return excel_pool.return_attachment(filename)
 
