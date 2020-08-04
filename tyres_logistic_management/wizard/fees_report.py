@@ -288,7 +288,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
                 agent,
                 order,
                 payment,
-                (order_total, format_text['total'],
+                (order_total, format_text['total']),
                 ], default_format=format_text['text'])
         # Total line:
         if check_page['lines']:
