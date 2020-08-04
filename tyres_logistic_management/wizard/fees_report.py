@@ -85,10 +85,11 @@ class LogisticFeesExtractWizard(models.TransientModel):
             'Totale',
             'Tipo',
             'Agente',
+            'IVA',
             ]
 
         width = [
-            6, 6, 20, 10, 15, 30, 25, 15, 40, 10, 10, 15, 10, 10, 10,
+            6, 6, 20, 10, 15, 30, 25, 15, 40, 10, 10, 15, 10, 10, 10, 5,
             ]
 
         excel_pool.column_width(ws_name, width)
@@ -276,7 +277,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
 
             order_total = check_page['total'][order]
             if vat:
-                order_total += order_total * vat
+                order_total += order_total * vat / 100.0
             master_total += order_total
             excel_pool.write_xls_line(ws_name, row, [
                 mode,
