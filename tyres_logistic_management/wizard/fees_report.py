@@ -239,7 +239,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
                 ws_name, row, ['Totale', total], format_text['total'], col=5)
 
         # ---------------------------------------------------------------------
-        # Extra pages:
+        #                         Extra page:
         # ---------------------------------------------------------------------
         ws_name = 'Controllo fatturato'
         header = [
@@ -282,9 +282,9 @@ class LogisticFeesExtractWizard(models.TransientModel):
                 date,
                 partner,
                 agent,
-                order_total,
+                order,
                 payment,
-                total,
+                order_total,
                 ], default_format=format_text['text'])
         # Total line:
         if check_page['lines']:
