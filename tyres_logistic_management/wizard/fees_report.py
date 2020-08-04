@@ -90,7 +90,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
             ]
 
         width = [
-            6, 6, 20, 10, 15, 30, 25, 15, 40, 10, 10, 15, 10, 10, 10, 5, 10,
+            6, 6, 20, 10, 15, 30, 25, 15, 40, 10, 11, 5, 12, 5, 10, 5, 10,
             ]
 
         excel_pool.column_width(ws_name, width)
