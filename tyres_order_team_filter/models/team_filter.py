@@ -125,14 +125,17 @@ class ResUsers(models.Model):
             domain = str(domain)
         else:
             domain = '%s, %s'  % (action[:-1], domain[1:])
-
+        try:    
+            view_id = origin_action.view_id.id
+        except:
+            import pdb; pdb.set_trace()
         return action_pool.create({
             'name': name,
             'type': origin_action.type,
             'help': origin_action.help,
             'binding_model_id': origin_action.binding_model_id.id,
             'binding_type': origin_action.binding_type,
-            'view_id': origin_action.view_id.id,
+            'view_id': view_id,
             'domain': domain,
             'context': origin_action.context,
             'res_id': origin_action.res_id,

@@ -913,7 +913,7 @@ class StockPicking(models.Model):
 
             # Not invoiced (only DDT):
             ('ddt_number', '!=', False),
-            #('invoice_number', '=', False),
+            # ('invoice_number', '=', False),
             ])
 
         ws_name = 'Registro corrispettivi'
@@ -932,10 +932,10 @@ class StockPicking(models.Model):
         f_text_red = excel_pool.get_format('text_red')
         f_number_black = excel_pool.get_format('number')
         f_number_red = excel_pool.get_format('number_red')
-        #f_green_text = excel_pool.get_format('bg_green')
-        #f_yellow_text = excel_pool.get_format('bg_yellow')
-        #f_green_number = excel_pool.get_format('bg_green_number')
-        #f_yellow_number = excel_pool.get_format('bg_yellow_number')
+        # f_green_text = excel_pool.get_format('bg_green')
+        # f_yellow_text = excel_pool.get_format('bg_yellow')
+        # f_green_number = excel_pool.get_format('bg_green_number')
+        # f_yellow_number = excel_pool.get_format('bg_yellow_number')
 
         # ---------------------------------------------------------------------
         # Setup page: Corrispettivo
