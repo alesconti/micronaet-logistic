@@ -132,13 +132,7 @@ class ResUsers(models.Model):
             view_id = origin_action.view_id.id
         except:
             _logger.error('Cannot found view for action: %s' % origin_action.name)
-            view_id =  False
-            import pdb; pdb.set_trace()
-        try:    
-            ctx = origin_action.context
-        except:
-            _logger.error('Cannot found view for action: %s' % origin_action.name)
-            ctx = {}
+            return False
             
         return action_pool.create({
             'name': name,
@@ -148,7 +142,7 @@ class ResUsers(models.Model):
             'binding_type': origin_action.binding_type,
             'view_id': view_id,
             'domain': domain,
-            'context': ctx,
+            'context': origin_action.context,
             'res_id': origin_action.res_id,
             'res_model': origin_action.res_model,
             'src_model': origin_action.src_model,
@@ -253,6 +247,10 @@ class ResUsers(models.Model):
             my_action_id = self.create_my_action(
                 domain, menu.action, 'My action: %s' % name)
             
+            if not my_action_id:
+                _logger.error('Menu non created!')
+                continue
+                
             # Create menu:
             my_menu_id = self.create_my_menu(
                 my_action_id, my_group_id, name, template.sequence)
