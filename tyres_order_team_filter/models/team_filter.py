@@ -128,7 +128,9 @@ class ResUsers(models.Model):
         try:    
             view_id = origin_action.view_id.id
         except:
-            import pdb; pdb.set_trace()
+            _logger.error('Cannot found view for action: %s' origin_action.name
+            return False
+            
         return action_pool.create({
             'name': name,
             'type': origin_action.type,
