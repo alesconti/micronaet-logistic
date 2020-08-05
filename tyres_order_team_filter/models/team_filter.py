@@ -132,7 +132,7 @@ class ResUsers(models.Model):
             view_id = origin_action.view_id.id
         except:
             _logger.error('Cannot found view for action: %s' % origin_action.name)
-            return False
+            view_id =  False
             
         return action_pool.create({
             'name': name,
