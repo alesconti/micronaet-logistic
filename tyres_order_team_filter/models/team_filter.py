@@ -133,6 +133,11 @@ class ResUsers(models.Model):
         except:
             _logger.error('Cannot found view for action: %s' % origin_action.name)
             view_id =  False
+        try:    
+            ctx = origin_action.context
+        except:
+            _logger.error('Cannot found view for action: %s' % origin_action.name)
+            ctx = {}
             
         return action_pool.create({
             'name': name,
@@ -142,7 +147,7 @@ class ResUsers(models.Model):
             'binding_type': origin_action.binding_type,
             'view_id': view_id,
             'domain': domain,
-            'context': origin_action.context,
+            'context': ctx,
             'res_id': origin_action.res_id,
             'res_model': origin_action.res_model,
             'src_model': origin_action.src_model,
