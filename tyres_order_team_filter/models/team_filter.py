@@ -29,6 +29,9 @@ from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
 
+_logger = logging.getLogger(__name__)
+
+
 class CrmTeam(models.Model):
     """ Team setup (force default function)
     """
