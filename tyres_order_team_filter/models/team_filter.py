@@ -133,6 +133,7 @@ class ResUsers(models.Model):
         except:
             _logger.error('Cannot found view for action: %s' % origin_action.name)
             view_id =  False
+            import pdb; pdb.set_trace()
         try:    
             ctx = origin_action.context
         except:
