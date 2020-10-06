@@ -273,13 +273,13 @@ class LogisticFeesExtractWizard(models.TransientModel):
                 check_page['lines'],
                 # key=lambda x: (check_page['lines'][x][1], x),
                 ):
+            (mode, market, fiscal_position, channel, date, partner, order,
+             default_code, name, payment, account, qty, total, expense,
+             agent, vat, triangle) = line
             if fiscal_position.partner_private:
                 # Remove B2C fiscal position
                 continue
             row += 1
-            (mode, market, fiscal_position, channel, date, partner, order,
-             default_code, name, payment, account, qty, total, expense,
-             agent, vat, triangle) = line
 
             order_total = check_page['total'][order]
             if vat:
