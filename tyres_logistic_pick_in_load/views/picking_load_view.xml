@@ -289,6 +289,9 @@
 
                     <filter name="my_selection" string="Current selected" domain="[('user_select_id', '=', uid), ('logistic_delivered_manual','&gt;',0)]"/><!--TODO Change ('delivery_id','=',False), -->
 
+                    <filter name="refund_selection" string="Solo resi" domain="[('logistic_source', '=', 'refund')]"/>
+                    <filter name="no_refund_selection" string="Senza resi" domain="[('logistic_source', '!=', 'refund')]"/>
+
                     <!--<filter name="state_draft" string="Draft state" domain="[('state','=','draft')]"/>-->
                     <group expand="0" string="Group By...">
 
@@ -385,7 +388,7 @@
             <field name="view_mode">tree</field>
             <field name="view_id" ref="view_delivery_selection_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_search"/>
-            <field name="context">{'internal_view': True}</field>
+            <field name="context">{'internal_view': True, 'search_default_no_refund_selection': True}</field>
             <field name="domain">[('dropship_manage', '=', False), ('check_status', '!=', 'done'), ('order_id.logistic_state', '=', 'confirmed'),
                 '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('order_id.partner_id.internal_stock', '=', False)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), TODO ('delivery_id','=',False), -->
         </record>
