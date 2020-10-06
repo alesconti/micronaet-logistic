@@ -707,6 +707,7 @@ class StockMove(models.Model):
     default_code = fields.Char(
         string='Default code', related='product_id.default_code')
     force_hide = fields.Boolean('Force hide')
+    internal_note = fields.Char('Note interne', size=160)
 
     # -------------------------------------------------------------------------
     #                                   Button event:
