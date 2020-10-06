@@ -333,7 +333,7 @@
             <field name="name">stock.move.tree</field>
             <field name="model">stock.move</field>
             <field name="arch" type="xml">
-                <tree string="Orphan stock move" editable="bottom" decoration-primary="dropship_manage==True">
+                <tree string="Orphan stock move" default_order="partner_id" editable="bottom" decoration-primary="dropship_manage==True">
                     <field name="picking_id" invisible="1"/>
                     <field name="force_hide" invisible="1" />
                     <field name="date" />
@@ -582,6 +582,9 @@
 	                <field name="has_label_to_print" invisible="1" />
 	                <field name="get_label_status" invisible="1"/>
 	                <field name="label_printed" invisible="1" />
+	                <field name="mmac_fattura_generata" invisible="1"/>
+	                <field name="mmac_print_status" invisible="1"/>
+	                <field name="mmac_controllo_fattura" invisible="1"/>
 
 	                <button name="workflow_ready_to_done_current_order" string="Vai in consegna" type="object" icon="fa-caret-square-o-right fa-2x" attrs="{'invisible': [('logistic_state','!=','ready')]}"/>
 	                <button name="workflow_ready_print_picking" string="Print picking" type="object" icon="fa-file-o fa-2x" />
@@ -592,7 +595,9 @@
 
 	                <button name="workflow_ready_print_extra" string="Print extra doc." type="object" icon="fa-list-alt fa-2x" attrs="{'invisible': [('has_extra_document','=',False)]}"/>
 
-	                <button name="print_all_server_action" string="Print all" type="object" icon="fa-files-o fa-2x" />
+        					<button name="dummy" string="Attendere" icon="fa fa-spinner fa-spin fa-2x" type="object" attrs="{'invisible': ['|',('check_need_invoice','=', False),('mmac_controllo_fattura','=', True)]}"/>
+        					<button name="print_all_server_action" string="Print all" type="object" icon="fa-files-o fa-2x" attrs="{'invisible': ['|',('mmac_print_status','=', 'all'),('check_need_invoice','=', True),('mmac_controllo_fattura','=', False)]}"/>
+        					<button name="dummy" string="Stampato" type="object" icon="fa fa-file fa-2x" attrs="{'invisible': [('mmac_print_status','!=', 'all')]}"/>
 
 	                <button name="set_workflow_logistic_done" string="Done!" type="object" icon="fa-thumbs-up fa-2x" confirm="Confirm? (cannot print document after mark as done!)" attrs="{'invisible': [('logistic_done','=',True)]}"/>
 	                <button name="set_workflow_logistic_undone" string="Undone!" type="object" icon="fa-thumbs-down fa-2x" confirm="Confirm? (cannot print document after mark as done!)" attrs="{'invisible': [('logistic_done','=',False)]}"/>

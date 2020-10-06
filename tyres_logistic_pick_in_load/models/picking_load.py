@@ -152,11 +152,11 @@ class SaleOrder(models.Model):
             # Picking
             # -----------------------------------------------------------------
             # TODO
-            ''' 
+             
             for time in range(0, loop_picking):
                 order.workflow_ready_print_picking()
-            log_print.append(_('Print #%s Picking') % loop_picking)
-            '''
+            log_print[order].append(_('Print #%s Picking') % loop_picking)
+            
 
             # -----------------------------------------------------------------
             # Invoice
@@ -189,7 +189,7 @@ class SaleOrder(models.Model):
                 for time in range(0, loop_label):
                     order.workflow_ready_print_label()
                 log_print[order].append(_('Print #%s label') % loop_label)
-
+            order.mmac_print_status = 'all'
         if len(self) <= 1:
             return True
 
