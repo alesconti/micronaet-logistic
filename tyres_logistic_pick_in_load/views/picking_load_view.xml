@@ -337,6 +337,7 @@
                     <field name="picking_id" invisible="1"/>
                     <field name="force_hide" invisible="1" />
                     <field name="date" />
+                    <field name="internal_note" />
                     <field name="partner_id" readonly="1"/>
                     <field name="product_id" readonly="1" invisible="1"/>
                     <field name="name" readonly="1" invisible="1"/>
