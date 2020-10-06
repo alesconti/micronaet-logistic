@@ -229,7 +229,7 @@ class LogisticFeesExtractWizard(models.TransientModel):
             # -----------------------------------------------------------------
             # check last partial:
             # -----------------------------------------------------------------
-            if previous_mode: # always present
+            if previous_mode:  # always present
                 # Write partial
                 excel_pool.write_xls_line(ws_name, row, [
                     'Parziale %s:' % previous_mode,
