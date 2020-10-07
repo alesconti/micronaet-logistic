@@ -681,6 +681,7 @@
              <field name="inherit_id" ref="sale.view_sales_order_filter"/>
              <field name="arch" type="xml">
                  <field name="user_id" position="after">
+                     <field name="partner_shipping_id" filter_domain="[('partner_shipping_id.name','ilike',self)]"/>
                      <field name="logistic_state" />
                      <field name="team_id" />
                      <field name="logistic_source" />
@@ -702,6 +703,7 @@
                  </field>
 
                  <xpath expr="/search/group/filter[2]" position="after">
+                     <filter string="Destinazione" domain="[]" context="{'group_by': 'partner_shipping_id'}"/>
                      <filter string="Team ID" domain="[]" context="{'group_by': 'team_id'}"/>
                      <filter string="Market type" domain="[]" context="{'group_by': 'market_type'}"/>
                      <filter string="Logistic state" domain="[]" context="{'group_by': 'logistic_state'}"/>
