@@ -137,11 +137,12 @@ class ReportDdtLangParser(models.AbstractModel):
         return {
             # Standard data:
             'doc_ids': docids,#self.ids,
-            'doc_model': 'stock.picking',#picking_pool.model,#holidays_report.model,
+            'doc_model': 'stock.picking',
+            # picking_pool.model,#holidays_report.model,
             'docs': self.env['stock.picking'].search([('id', 'in', docids)]),
 
             # Extra function:
-            #'get_partner_extra_info': self.get_partner_extra_info,
+            # 'get_partner_extra_info': self.get_partner_extra_info,
             }
 
         '''picking_pool = self.env['stock.picking']    
@@ -179,5 +180,3 @@ class ReportInvoiceLangParser(models.AbstractModel):
             'doc_model': 'stock.picking',
             'docs': self.env['stock.picking'].search([('id', 'in', docids)]),
             }
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
