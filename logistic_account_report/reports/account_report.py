@@ -123,6 +123,7 @@ class ResPartner(models.Model):
 
     contact_info = fields.Text('Extra info', compute='get_partner_extra_info')
 
+
 class ReportDdtLangParser(models.AbstractModel):
     """ Load move report:
     """
@@ -130,9 +131,9 @@ class ReportDdtLangParser(models.AbstractModel):
 
     @api.model
     def get_report_values(self, docids, data=None):
-    # EX: def render_html(self, docids, data=None):
-    """ Render report parser:
-    """
+        # EX: def render_html(self, docids, data=None):
+        """ Render report parser:
+        """
         return {
             # Standard data:
             'doc_ids': docids,#self.ids,
@@ -162,6 +163,7 @@ class ReportDdtLangParser(models.AbstractModel):
             'docs': pickings,
             }
         '''
+
 
 class ReportInvoiceLangParser(models.AbstractModel):
     """ Load move report:
