@@ -1159,7 +1159,7 @@ class StockPicking(models.Model):
                 return False
 
             # TODO Mark as sync: quants.write({'account_sync': True, })
-            pick_id = int(reply_split[0].split('_')[-1]) # pick_in_ID.csv
+            pick_id = int(reply_split[0].split('_')[-1])  # pick_in_ID.csv
 
             invoice_year = reply_split[2][:4]
             invoice_number = reply_split[1]
@@ -1191,7 +1191,7 @@ class StockPicking(models.Model):
         history_path = os.path.join(
             logistic_root_folder, 'invoice', 'history')
         notfound_path = os.path.join(
-            logistic_root_folder, 'invoice', 'notfound') # TODO create folder
+            logistic_root_folder, 'invoice', 'notfound')  # TODO create folder
 
         move_list = []
         for root, subfolders, files in os.walk(reply_path):
@@ -1208,7 +1208,7 @@ class StockPicking(models.Model):
                 if check_ids:
                     invoice_pick = self.browse(pick_id)
                     invoice_pick.write({
-                        'invoice_filename': invoice_filename, # PDF name
+                        'invoice_filename': invoice_filename,  # PDF name
                         'invoice_number': invoice_number,
                         'invoice_date': invoice_date,
                         })
@@ -1226,7 +1226,7 @@ class StockPicking(models.Model):
                     ))
                 _logger.info('Pick ID: %s correct!' % f)
 
-            break # Only first folder
+            break  # Only first folder
 
         # ---------------------------------------------------------------------
         # Move files after database operation:

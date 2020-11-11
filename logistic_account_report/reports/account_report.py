@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -32,40 +32,40 @@ _logger = logging.getLogger(__name__)
 
 
 class StockPicking(models.AbstractModel):
-    ''' Stock picking extract
-    '''
+    """ Stock picking extract
+    """
     _inherit = 'stock.picking'
-    
+
     @api.multi
     def get_default_folder_path(self):
-        '''
-        '''
+        """
+        """
         path = os.path.expanduser('~/Account/DDT')
         os.system('mkdir -p %s' % path)
         return path
 
     @api.multi
     def get_default_folder_invoice_path(self):
-        '''
-        '''
+        """
+        """
         path = os.path.expanduser('~/Account/Invoice')
         os.system('mkdir -p %s' % path)
         return path
 
     @api.multi
     def extract_account_ddt_report(self):
-        ''' Extract PDF report
-        '''
+        """ Extract PDF report
+        """
         folder = self.get_default_folder_path()
-        
+
         # TODO Sanitize file name:
         filename = (
             self.ddt_number or 'document_no_name').replace('/', '_')
-        filename = filename + '.pdf'        
-            
+        filename = filename + '.pdf'
+
         fullname = os.path.join(folder, filename)
-        
-        REPORT_ID = 'logistic_account_report.action_report_ddt_lang'        
+
+        REPORT_ID = 'logistic_account_report.action_report_ddt_lang'
         pdf = self.env.ref(REPORT_ID).render_qweb_pdf(self.ids)
         f_pdf = open(fullname, 'wb')
         f_pdf.write(pdf[0])
@@ -75,17 +75,17 @@ class StockPicking(models.AbstractModel):
 
     @api.multi
     def extract_account_invoice_report(self):
-        ''' Extract PDF report
-        '''
+        """ Extract PDF report
+        """
         folder = self.get_default_folder_invoice_path()
-        
+
         # TODO Sanitize file name:
         # Different name from NC and Invoice
         filename = (
             self.invoice_number or 'not_confirmed').replace('/', '_')
         fullname = os.path.join(folder, '%s.pdf' % filename)
-        
-        REPORT_ID = 'logistic_account_report.action_report_invoice_lang'        
+
+        REPORT_ID = 'logistic_account_report.action_report_invoice_lang'
         pdf = self.env.ref(REPORT_ID).render_qweb_pdf(self.ids)
         f_pdf = open(fullname, 'wb')
         f_pdf.write(pdf[0])
@@ -94,15 +94,15 @@ class StockPicking(models.AbstractModel):
         return fullname
 
 class ResPartner(models.Model):
-    ''' Add extra function
-    '''
+    """ Add extra function
+    """
     _inherit = 'res.partner'
-    
+
     @api.multi
     def get_partner_extra_info(self, ):
-        ''' Get partner extra info data (for address print)
+        """ Get partner extra info data (for address print)
             self: res.partner obj
-        '''
+        """
         for o in self:
             if o:
                 mask = '%s\n%s%s\n%s - %s (%s)\n%s\nTel.: %s  Mobile: %s\nEmail: %s'
@@ -110,7 +110,7 @@ class ResPartner(models.Model):
                     o.name or '',
                     o.street or '',
                     o.street2 or '',
-                    o.zip or '', 
+                    o.zip or '',
                     o.city or '',
                     o.state_id.name if o.state_id else '',
                     o.country_id.name if o.country_id else '',
@@ -118,31 +118,31 @@ class ResPartner(models.Model):
                     o.mobile or '',
                     o.email or '',
                     )
-            else:    
+            else:
                 o.contact_info = '/'
-    
-    contact_info = fields.Text('Extra info', compute='get_partner_extra_info')        
-    
+
+    contact_info = fields.Text('Extra info', compute='get_partner_extra_info')
+
 class ReportDdtLangParser(models.AbstractModel):
-    ''' Load move report:
-    '''
+    """ Load move report:
+    """
     _name = 'report.logistic_account_report.report_ddt_lang'
-    
+
     @api.model
     def get_report_values(self, docids, data=None):
     # EX: def render_html(self, docids, data=None):
-        ''' Render report parser:
-        '''
+    """ Render report parser:
+    """
         return {
             # Standard data:
             'doc_ids': docids,#self.ids,
             'doc_model': 'stock.picking',#picking_pool.model,#holidays_report.model,
             'docs': self.env['stock.picking'].search([('id', 'in', docids)]),
-            
+
             # Extra function:
             #'get_partner_extra_info': self.get_partner_extra_info,
             }
-        
+
         '''picking_pool = self.env['stock.picking']    
         pickings = picking_pool.search([]) # TODO Change filter here
         
@@ -164,18 +164,18 @@ class ReportDdtLangParser(models.AbstractModel):
         '''
 
 class ReportInvoiceLangParser(models.AbstractModel):
-    ''' Load move report:
-    '''
+    """ Load move report:
+    """
     _name = 'report.logistic_account_report.report_invoice_lang'
-    
+
     @api.model
     def get_report_values(self, docids, data=None):
-        ''' Render report invoice parser:
-        '''
+        """ Render report invoice parser:
+        """
         return {
             'doc_ids': docids,
             'doc_model': 'stock.picking',
             'docs': self.env['stock.picking'].search([('id', 'in', docids)]),
             }
-        
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
