@@ -28,7 +28,6 @@ from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
 
-
 _logger = logging.getLogger(__name__)
 
 
@@ -179,7 +178,7 @@ class LogisticDeliveryReportWizard(models.TransientModel):
                     (quant.product_qty, format_text['number']),
                     (quant.price, format_text['number']),
                     (subtotal, format_text['number']),
-                    '', # never for internal
+                    '',  # never for internal
                     internal,
                     ]
                 excel_pool.write_xls_line(ws_name, row, line,
@@ -200,5 +199,3 @@ class LogisticDeliveryReportWizard(models.TransientModel):
     to_date = fields.Date('To date <', required=True)
     supplier_id = fields.Many2one(
         'res.partner', 'Supplier', domain="[('supplier', '=', True)]")
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
