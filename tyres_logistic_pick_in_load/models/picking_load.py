@@ -152,11 +152,11 @@ class SaleOrder(models.Model):
             # Picking
             # -----------------------------------------------------------------
             # TODO
-             
+
             for time in range(0, loop_picking):
                 order.workflow_ready_print_picking()
             log_print[order].append(_('Print #%s Picking') % loop_picking)
-            
+
 
             # -----------------------------------------------------------------
             # Invoice
@@ -829,6 +829,7 @@ class StockMove(models.Model):
             'nodestroy': False,
             }
 
+
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
     """
@@ -884,12 +885,12 @@ class PurchaseOrderLine(models.Model):
             'views': [
                 (tree_id, 'tree'),
                 (False, 'form'),
-                #(search_id, 'search'),
+                # (search_id, 'search'),
                 ],
             'domain': [
                 ('dropship_manage', '=', False),
                 ('check_status', '!=', 'done'),
-                #('delivery_id', '=', False),  # TODO change or remove?!?
+                # ('delivery_id', '=', False),  # TODO change or remove?!?
                 ('order_id.logistic_state', '=', 'confirmed'),
                 '|',
                 ('user_select_id', '=', uid),
@@ -897,7 +898,7 @@ class PurchaseOrderLine(models.Model):
                 ('order_id.partner_id.internal_stock', '=', False),
                 ],
             'context': ctx,
-            'target': 'main',# 'target': 'current', # 'new'
+            'target': 'main',  # 'target': 'current', # 'new'
             'nodestroy': False,
             }
 
