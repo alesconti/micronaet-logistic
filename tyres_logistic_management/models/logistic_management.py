@@ -2394,6 +2394,8 @@ class SaleOrder(models.Model):
             comment = 'Order in <b>ready</b> status:<br/>'
         elif self.logistic_state == 'delivering':
             comment = 'Order in <b>delivering</b> status:<br/>'
+        else:
+            comment = 'Order in status: %s <br/>'
 
         comment_part = {'purchase': '', 'bf': '', 'bc': ''}
         for sol in self.order_line:

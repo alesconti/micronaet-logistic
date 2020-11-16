@@ -860,9 +860,9 @@ class PurchaseOrderLine(models.Model):
                     continue # Cannot remove!
                 ctx[key] = context[key]
             if command_clean_before: # clean yet now!
-                ctx['command_next_clean'] = False # yet clean
+                ctx['command_next_clean'] = False  # yet clean
             else:
-                ctx['command_next_clean'] = True # clean all next filter
+                ctx['command_next_clean'] = True  # clean all next filter
 
         if field_name:
             ctx = context.copy()
@@ -881,7 +881,7 @@ class PurchaseOrderLine(models.Model):
             'view_mode': 'tree,form',
             'res_model': 'purchase.order.line',
             'view_id': tree_id,
-            'search_view_id': search_id, # TODO dont' work!!!
+            'search_view_id': search_id,  # TODO dont' work!!!
             'views': [
                 (tree_id, 'tree'),
                 (False, 'form'),
