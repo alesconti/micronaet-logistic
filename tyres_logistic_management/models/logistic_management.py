@@ -2485,6 +2485,16 @@ class SaleOrder(models.Model):
                 partner.property_account_position_id.need_invoice or \
                     partner.need_invoice or order.need_invoice
 
+    @api.multi
+    def _get_invoice_detail(self, ):
+        """ Extract invoice detail from picking
+        """
+        for order in self:
+            invoice_detail = ''
+            for picking in order.logistic_picking_ids:
+                invoice_detail += '%s ' % picking.invoice_number
+            order.invoice_detail = invoice_detail
+
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
@@ -2519,9 +2529,14 @@ class SaleOrder(models.Model):
     need_invoice = fields.Boolean(
         'Order need invoice invoice',
         default=lambda s: s.partner_id.need_invoice)
-    check_need_invoice = fields.Boolean('Check need invoice',
-        compute = '_get_check_need_invoice_boolean',
+    check_need_invoice = fields.Boolean(
+        'Check need invoice',
+        compute='_get_check_need_invoice_boolean',
         help='Used for show / hide print button')
+    invoice_detail = fields.Char(
+        'Dettaglio fattura',
+        compute='_get_invoice_detail',
+        help='Dettaglio picking di consegna fatturati')
 
     logistic_picking_ids = fields.One2many(
         'stock.picking', 'sale_order_id', 'Picking')
@@ -2539,16 +2554,16 @@ class SaleOrder(models.Model):
     label_printed = fields.Boolean('Label printed')
 
     logistic_state = fields.Selection([
-        ('draft', 'Order draft'), # Draft, new order received
+        ('draft', 'Order draft'),  # Draft, new order received
 
         # Start automation:
-        ('order', 'Order confirmed'), # Quotation transformed in order
-        ('pending', 'Pending delivery'), # Waiting for delivery
-        ('ready', 'Ready'), # Ready for transfer
-        ('delivering', 'Delivering'), # In delivering phase
-        ('done', 'Done'), # Delivered or closed XXX manage partial delivery
-        ('dropshipped', 'Dropshipped'), # Order dropshipped
-        ('unificated', 'Unificated'), # Unificated with another
+        ('order', 'Order confirmed'),  # Quotation transformed in order
+        ('pending', 'Pending delivery'),  # Waiting for delivery
+        ('ready', 'Ready'),  # Ready for transfer
+        ('delivering', 'Delivering'),  # In delivering phase
+        ('done', 'Done'),  # Delivered or closed XXX manage partial delivery
+        ('dropshipped', 'Dropshipped'),  # Order dropshipped
+        ('unificated', 'Unificated'),  # Unificated with another
 
         ('error', 'Error order'), # Order without line
         ('cancel', 'Cancel'), # Removed order

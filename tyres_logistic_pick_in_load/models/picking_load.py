@@ -66,6 +66,11 @@ class AccountFiscalPosition(models.Model):
 
     _inherit = 'account.fiscal.position'
 
+    sequential_print = fields.Boolean(
+        string='Stampa sequenziale',
+        help='La fattura viene stampata solo in modalità stampa sequenziale '
+             '(ovvero selezionando dalla apposita videata gli ordini e'
+             'lanciando la stampa)')
     print_ids = fields.One2many(
         'account.fiscal.position.print', 'position_id',
         'Print parameters',
@@ -116,6 +121,89 @@ class SaleOrder(models.Model):
             order.workflow_ready_to_done_current_order()
 
     @api.multi
+    def sequential_print_all_server_action(self):
+        """ Print all server action
+        """
+        result_pool = self.env['sale.order.print.result']
+        note = ''
+        printed_order_invoice_ids = []
+        for order in sorted(self, key=lambda x: x.name):
+            order_name = order.name
+            if not order.fiscal_position_id.sequential_print or \
+                    order.sequential_printed:
+                note += \
+                    'Ordine %s non in sequenziale (o già stampato)\n' % \
+                    order_name
+                _logger.warning('Order not for sequential print '
+                                '(no fiscal position or yet printed)')
+                continue
+            if not order.invoice_detail:
+                note += \
+                    'Ordine %s senza la fattura\n' % order_name
+                _logger.error('Order without invoice detail')
+                continue
+            if order.locked_delivery or order.logistic_source == 'internal' or\
+                    order.logistic_state not in ('ready', 'done'):
+                note += \
+                    'Ordine %s non in pronto o fatto\n' % order_name
+                _logger.error('Order not for printing '
+                              '(not ready / done, locked or internal)')
+                continue
+
+            # TODO Setup loop print:
+            fiscal = order.fiscal_position_id
+            market = order.team_id.market_type
+            try:
+                # Read parameter line:
+                parameter = [item for item in fiscal.print_ids
+                             if item.market == market][0]
+                loop_invoice = parameter.report_invoice
+            except:
+                note += \
+                    'Ordine %s problemi coi parametri\n' % order_name
+                _logger.error('Error reading print parameters')
+                continue
+
+            # -----------------------------------------------------------------
+            # Invoice
+            # -----------------------------------------------------------------
+            try:
+                for time in range(0, loop_invoice):
+                    order.workflow_ready_print_invoice()
+            except:
+                note += \
+                    'Ordine %s errore in stampa\n' % order_name
+                _logger.error('Error reading print invoice PDF')
+                continue
+            printed_order_invoice_ids.append(order.id)
+        if printed_order_invoice_ids:
+            self.browse(printed_order_invoice_ids).write({
+                'sequential_printed': True,
+            })
+
+        # Log error
+        result_id = result_pool.create({
+            'note': note,
+            }).id
+
+        form_id = self.env.ref(
+            'tyres_logistic_pick_in_load.view_sale_order_print_result_form').id
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Result for view_name'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_id': result_id,
+            'res_model': 'sale.order.print.result',
+            'view_id': form_id,  # False
+            'views': [(form_id, 'form')],
+            'domain': [],
+            'context': self.env.context,
+            'target': 'new',
+            'nodestroy': False,
+            }
+
+    @api.multi
     def print_all_server_action(self):
         """ Print all server action
         """
@@ -137,9 +225,13 @@ class SaleOrder(models.Model):
                 parameter = [item for item in fiscal.print_ids
                              if item.market == market][0]
 
+                # Invoice sequential print only:
+                sequential_print = parameter.position_id.sequential_print
+
                 loop_picking = parameter.report_picking
                 loop_ddt = parameter.report_ddt
-                loop_invoice = parameter.report_invoice
+                loop_invoice = \
+                    0 if sequential_print else parameter.report_invoice
                 loop_extra = parameter.report_extra
                 loop_label = parameter.report_label
             except:
@@ -263,6 +355,10 @@ class SaleOrder(models.Model):
 
     has_extra_document = fields.Boolean(
         'Has extra document', compute='_get_has_extra_document')
+    sequential_printed = fields.Boolean(
+        'Sequential printed',
+        help='Sequential printed check for clean order list')
+
     has_label_to_print = fields.Boolean(
         'Has label', compute='_get_has_label_to_print')
 

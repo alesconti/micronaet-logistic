@@ -2,7 +2,7 @@
 #!/usr/bin/python
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2018 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -27,7 +27,7 @@
     'category': 'Purchase',
     'sequence': 5,
     'summary': 'Picking, load delivered material',
-    #'description': '',
+    # 'description': '',
     'website': 'https://micronaet.com',
     'depends': [
         'base',
@@ -37,16 +37,16 @@
         'account',
         'tyres_logistic_carrier',
         'tyres_logistic_management',
-        'tyres_free_export_report', # Report
-        'mmac_odoo4', # product tyres extra data 
+        'tyres_free_export_report',  # Report
+        'mmac_odoo4',  # product tyres extra data
         ],
     'data': [
         'security/ir.model.access.csv',
-        
+
         'views/picking_load_view.xml',
         'wizard/delivery_report_view.xml',
 
-        'data/counter_data.xml', # Refunt counter
+        'data/counter_data.xml',  # Refund counter
         ],
     'demo': [],
     'css': [],
