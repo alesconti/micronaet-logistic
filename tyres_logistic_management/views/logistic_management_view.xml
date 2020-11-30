@@ -684,6 +684,7 @@
                      <field name="partner_shipping_id" filter_domain="[('partner_shipping_id.name','ilike',self)]"/>
                      <field name="logistic_state" />
                      <field name="team_id" />
+                     <field name="fiscal_position_id" />
                      <field name="logistic_source" />
                      <field name="market_type" />
 
@@ -705,6 +706,7 @@
                  <xpath expr="/search/group/filter[2]" position="after">
                      <filter string="Destinazione" domain="[]" context="{'group_by': 'partner_shipping_id'}"/>
                      <filter string="Team ID" domain="[]" context="{'group_by': 'team_id'}"/>
+                     <filter string="Pos.fiscale" domain="[]" context="{'group_by': 'fiscal_position_id'}"/>
                      <filter string="Market type" domain="[]" context="{'group_by': 'market_type'}"/>
                      <filter string="Logistic state" domain="[]" context="{'group_by': 'logistic_state'}"/>
                      <filter string="Logistic source" domain="[]" context="{'group_by': 'logistic_source'}"/>
