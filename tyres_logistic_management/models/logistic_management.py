@@ -2492,7 +2492,7 @@ class SaleOrder(models.Model):
         for order in self:
             invoice_detail = ''
             for picking in order.logistic_picking_ids:
-                invoice_detail += '%s ' % picking.invoice_number
+                invoice_detail += '%s ' % (picking.invoice_number or '')
             order.invoice_detail = invoice_detail
 
     # -------------------------------------------------------------------------
