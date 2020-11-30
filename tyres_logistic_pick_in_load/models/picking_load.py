@@ -125,7 +125,6 @@ class SaleOrder(models.Model):
     def sequential_print_all_server_action(self):
         """ Print all server action
         """
-        pdb.set_trace()
         result_pool = self.env['sale.order.print.result']
         note = ''
         printed_order_invoice_ids = []
