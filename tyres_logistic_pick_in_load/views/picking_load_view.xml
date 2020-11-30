@@ -781,7 +781,7 @@
              <menuitem
                  id="menu_logistic_ready_order_to_send_sequential_print"
                  parent="menu_logistic_delivery_management_root"
-                 name="Print invoice (seq.)"
+                 name="Stampa fatture (seq.)"
                  action="action_sale_order_ready_sequential_print_form"
                  sequence="41"
                  />
