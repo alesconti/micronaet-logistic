@@ -129,15 +129,21 @@ class SaleOrder(models.Model):
         result_pool = self.env['sale.order.print.result']
         note = ''
         printed_order_invoice_ids = []
-        for order in sorted(self, key=lambda x: x.name):
+        for order in sorted(self, key=lambda x: (x.invoice_detail, x.name)):
             order_name = order.name
-            if not order.fiscal_position_id.sequential_print or \
-                    order.sequential_printed:
+            fiscal = order.fiscal_position_id
+
+            if not fiscal.sequential_print:
                 note += \
-                    'Ordine %s non in sequenziale (o già stampato)\n' % \
+                    'Ordine %s non con pos. fisc. sequenziale\n' % \
                     order_name
-                _logger.warning('Order not for sequential print '
-                                '(no fiscal position or yet printed)')
+                _logger.warning('Order not for sequential print')
+                continue
+            if order.sequential_printed:
+                note += \
+                    'Ordine %s: fattura già stampata!\n' % \
+                    order_name
+                _logger.warning('Order with invoice yet printed)')
                 continue
             if not order.invoice_detail:
                 note += \
@@ -152,8 +158,7 @@ class SaleOrder(models.Model):
                               '(not ready / done, locked or internal)')
                 continue
 
-            # TODO Setup loop print:
-            fiscal = order.fiscal_position_id
+            # Setup loop print:
             market = order.team_id.market_type
             try:
                 # Read parameter line:
@@ -185,7 +190,7 @@ class SaleOrder(models.Model):
 
         # Log error
         result_id = result_pool.create({
-            'note': note,
+            'note': note.replace('\n', '<br/>'),
             }).id
 
         form_id = self.env.ref(
