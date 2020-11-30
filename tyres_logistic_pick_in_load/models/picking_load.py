@@ -133,9 +133,10 @@ class SaleOrder(models.Model):
             order_name = order.name
             fiscal = order.fiscal_position_id
 
+            # Error check:
             if not fiscal.sequential_print:
                 note += \
-                    'Ordine %s non con pos. fisc. sequenziale\n' % \
+                    'Ordine %s: Pos. fisc. not per stampa sequenziale\n' % \
                     order_name
                 _logger.warning('Order not for sequential print')
                 continue
@@ -153,12 +154,15 @@ class SaleOrder(models.Model):
             if order.locked_delivery or order.logistic_source == 'internal' or\
                     order.logistic_state not in ('ready', 'done'):
                 note += \
-                    'Ordine %s non in pronto o fatto\n' % order_name
+                    'Ordine %s: bloccato, non pronto o non fatto\n' % \
+                    order_name
                 _logger.error('Order not for printing '
                               '(not ready / done, locked or internal)')
                 continue
 
-            # Setup loop print:
+            # -----------------------------------------------------------------
+            # Read print parameters:
+            # -----------------------------------------------------------------
             market = order.team_id.market_type
             try:
                 # Read parameter line:
@@ -167,7 +171,7 @@ class SaleOrder(models.Model):
                 loop_invoice = parameter.report_invoice
             except:
                 note += \
-                    'Ordine %s problemi coi parametri\n' % order_name
+                    'Ordine %s: Problemi coi lettura parametri\n' % order_name
                 _logger.error('Error reading print parameters')
                 continue
 
@@ -179,16 +183,21 @@ class SaleOrder(models.Model):
                     order.workflow_ready_print_invoice()
             except:
                 note += \
-                    'Ordine %s errore in stampa\n' % order_name
+                    'Ordine %s: errore stampa fattura\n' % order_name
                 _logger.error('Error reading print invoice PDF')
                 continue
-            printed_order_invoice_ids.append(order.id)
+            printed_order_invoice_ids.append(order.id)  # Printed
+
         if printed_order_invoice_ids:
             self.browse(printed_order_invoice_ids).write({
                 'sequential_printed': True,
             })
+            _logger.warning('Updated as printed # %s order' % len(
+                printed_order_invoice_ids))
 
+        # ---------------------------------------------------------------------
         # Log error
+        # ---------------------------------------------------------------------
         result_id = result_pool.create({
             'note': note.replace('\n', '<br/>'),
             }).id
@@ -202,7 +211,7 @@ class SaleOrder(models.Model):
             'view_mode': 'form',
             'res_id': result_id,
             'res_model': 'sale.order.print.result',
-            'view_id': form_id,  # False
+            'view_id': form_id,
             'views': [(form_id, 'form')],
             'domain': [],
             'context': self.env.context,
