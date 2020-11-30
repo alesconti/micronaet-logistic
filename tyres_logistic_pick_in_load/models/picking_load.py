@@ -127,7 +127,7 @@ class SaleOrder(models.Model):
         """
         result_pool = self.env['sale.order.print.result']
         note = ''
-        printed_order_invoice_ids = []
+        printed_order_invoice = []
         for order in sorted(self, key=lambda x: (x.invoice_detail, x.name)):
             order_name = order.name
             fiscal = order.fiscal_position_id
@@ -170,7 +170,7 @@ class SaleOrder(models.Model):
                 loop_invoice = parameter.report_invoice
             except:
                 note += \
-                    'Ordine %s: Problemi coi lettura parametri\n' % order_name
+                    'Ordine %s: Problemi con lettura parametri\n' % order_name
                 _logger.error('Error reading print parameters')
                 continue
 
@@ -185,14 +185,14 @@ class SaleOrder(models.Model):
                     'Ordine %s: errore stampa fattura\n' % order_name
                 _logger.error('Error reading print invoice PDF')
                 continue
-            printed_order_invoice_ids.append(order.id)  # Printed
+            printed_order_invoice.append(order)  # Printed
 
-        if printed_order_invoice_ids:
-            self.browse(printed_order_invoice_ids).write({
+        for order in printed_order_invoice:
+            order.write({
                 'sequential_printed': True,
             })
-            _logger.warning('Updated as printed # %s order' % len(
-                printed_order_invoice_ids))
+        _logger.warning('Updated as printed # %s order' % len(
+            printed_order_invoice))
 
         # ---------------------------------------------------------------------
         # Log error
