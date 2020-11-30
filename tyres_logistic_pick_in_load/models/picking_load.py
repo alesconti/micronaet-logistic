@@ -134,8 +134,8 @@ class SaleOrder(models.Model):
             market = order.team_id.market_type
             try:
                 # Read parameter line:
-                parameter = [item for item in fiscal.print_ids \
-                    if item.market == market][0]
+                parameter = [item for item in fiscal.print_ids
+                             if item.market == market][0]
 
                 loop_picking = parameter.report_picking
                 loop_ddt = parameter.report_ddt
@@ -156,7 +156,6 @@ class SaleOrder(models.Model):
             for time in range(0, loop_picking):
                 order.workflow_ready_print_picking()
             log_print[order].append(_('Print #%s Picking') % loop_picking)
-
 
             # -----------------------------------------------------------------
             # Invoice
@@ -217,7 +216,7 @@ class SaleOrder(models.Model):
             'view_mode': 'form',
             'res_id': result_id,
             'res_model': 'sale.order.print.result',
-            'view_id': form_id, # False
+            'view_id': form_id,  # False
             'views': [(form_id, 'form')],
             'domain': [],
             'context': self.env.context,
