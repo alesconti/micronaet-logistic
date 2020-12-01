@@ -135,6 +135,10 @@ class SaleOrder(models.Model):
         result_pool = self.env['sale.order.print.result']
         note = ''
         printed_order_invoice = []
+        # _logger.info(
+        #    [item.invoice_detail for item in sorted(self, key=lambda x: (
+        #        x.invoice_detail, x.name))])
+        # return True
         for order in sorted(self, key=lambda x: (x.invoice_detail, x.name)):
             order_name = order.name
             fiscal = order.fiscal_position_id
@@ -194,6 +198,7 @@ class SaleOrder(models.Model):
 
                 _logger.error('Error reading print invoice PDF')
                 continue
+            _logger.info('Printed invoice: %s' % order.invoice_detail)
             printed_order_invoice.append(order)  # Printed
 
         for order in printed_order_invoice:
