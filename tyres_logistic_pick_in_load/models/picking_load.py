@@ -139,7 +139,8 @@ class SaleOrder(models.Model):
         #    [item.invoice_detail for item in sorted(self, key=lambda x: (
         #        x.invoice_detail, x.name))])
         # return True
-        for order in sorted(self, key=lambda x: (x.invoice_detail, x.name)):
+        for order in sorted(self, key=lambda x: (
+                x.fiscal_position_id.name, x.invoice_detail, x.name)):
             order_name = order.name
             fiscal = order.fiscal_position_id
 
