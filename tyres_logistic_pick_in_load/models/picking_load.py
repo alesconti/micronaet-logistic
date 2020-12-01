@@ -122,6 +122,13 @@ class SaleOrder(models.Model):
             order.workflow_ready_to_done_current_order()
 
     @api.multi
+    def yet_sequential_printed(self):
+        """ Yet printed """
+        return self.write({
+            'sequential_printed': True,
+        })
+
+    @api.multi
     def sequential_print_all_server_action(self):
         """ Print all server action
         """
@@ -182,7 +189,9 @@ class SaleOrder(models.Model):
                     order.workflow_ready_print_invoice()
             except:
                 note += \
-                    'Ordine %s: errore stampa fattura\n' % order_name
+                    'Ordine %s: errore stampa fattura: %s\n' % (
+                        order_name, sys.exc_info())
+
                 _logger.error('Error reading print invoice PDF')
                 continue
             printed_order_invoice.append(order)  # Printed

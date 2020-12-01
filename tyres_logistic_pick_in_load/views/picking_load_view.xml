@@ -662,7 +662,7 @@
 	                <field name="mmac_print_status" invisible="1"/>
 	                <field name="mmac_controllo_fattura" invisible="1"/>
 	                <field name="invoice_detail" />
-
+                    <button name="yet_sequential_printed" string="Già stampata" type="object" icon="fa-caret-square-o-right fa-2x" attrs="{'invisible': [('sequential_printed','=',True)]}"/>
 	                <!--<button name="workflow_ready_to_done_current_order" string="Vai in consegna" type="object" icon="fa-caret-square-o-right fa-2x" attrs="{'invisible': [('logistic_state','!=','ready')]}"/>
 	                <button name="workflow_ready_print_picking" string="Print picking" type="object" icon="fa-file-o fa-2x" />
 	                <button name="workflow_ready_print_ddt" string="Print DDT" type="object" icon="fa-file-text-o fa-2x" attrs="{'invisible': [('check_need_invoice','=',True)]}"/>
