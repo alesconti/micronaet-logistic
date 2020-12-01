@@ -51,6 +51,7 @@
             <field name="arch" type="xml">
                 <tree string="Account position">
                     <field name="name" />
+                    <field name="print_group" />
                     <field name="sequential_print" />
                 </tree>
             </field>
@@ -64,6 +65,8 @@
                     <sheet>
                         <group col="4" colspan="4">
                             <field name="name" readonly="1"/>
+                            <newline/>
+                            <field name="print_group" />
                             <field name="sequential_print" />
                             <separator string="Print parameters:" colspan="4" />
                             <field name="print_ids" colspan="4" nolabel="1">
