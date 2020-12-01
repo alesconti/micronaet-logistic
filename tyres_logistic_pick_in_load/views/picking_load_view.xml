@@ -576,7 +576,7 @@
 	                <field name="carrier_ok" invisible="1"/>
 	                <field name="carrier_stock_note" />
 	                <field name="logistic_state" invisible="1"/>
-	                <field name="mmac_shippy_order_id" invisible="1" />
+	                <!--<field name="mmac_shippy_order_id" invisible="1" />-->
 	                <field name="check_need_invoice" invisible="1" />
 
                     <field name="mmac_tracking_inviato" invisible='1'/>
@@ -638,7 +638,7 @@
 	                <field name="carrier_ok" invisible="1"/>
 	                <field name="carrier_stock_note" />
 	                <field name="logistic_state" invisible="1"/>
-	                <field name="mmac_shippy_order_id" invisible="1" />
+	                <!--<field name="mmac_shippy_order_id" invisible="1" />-->
 	                <field name="check_need_invoice" invisible="1" />
 
                     <field name="mmac_tracking_inviato" invisible='1'/>

@@ -135,10 +135,13 @@ class SaleOrder(models.Model):
         result_pool = self.env['sale.order.print.result']
         note = ''
         printed_order_invoice = []
+        # pdb.set_trace()
         # _logger.info(
-        #    [item.invoice_detail for item in sorted(self, key=lambda x: (
-        #        x.invoice_detail, x.name))])
+        #     [item.invoice_detail for item in sorted(self, key=lambda x: (
+        #         x.fiscal_position_id.name, x.invoice_detail, x.name))])
+        # pdb.set_trace()
         # return True
+
         for order in sorted(self, key=lambda x: (
                 x.fiscal_position_id.name, x.invoice_detail, x.name)):
             order_name = order.name
@@ -210,8 +213,10 @@ class SaleOrder(models.Model):
             order.write({
                 'sequential_printed': True,
             })
-        _logger.warning('Updated as printed # %s order' % len(
-            printed_order_invoice))
+        _logger.warning('Updated as printed [%s] # %s order' % (
+            order.fiscal_position_id.name,
+            len(printed_order_invoice),
+        ))
 
         # ---------------------------------------------------------------------
         # Log error
