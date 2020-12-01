@@ -661,6 +661,7 @@
 	                <field name="mmac_fattura_generata" invisible="1"/>
 	                <field name="mmac_print_status" invisible="1"/>
 	                <field name="mmac_controllo_fattura" invisible="1"/>
+	                <field name="sequential_printed" invisible="1"/>
 	                <field name="invoice_detail" />
                     <button name="yet_sequential_printed" string="Già stampata" type="object" icon="fa-folder-open-o fa-2x" attrs="{'invisible': [('sequential_printed','=',True)]}"/>
 	                <!--<button name="workflow_ready_to_done_current_order" string="Vai in consegna" type="object" icon="fa-caret-square-o-right fa-2x" attrs="{'invisible': [('logistic_state','!=','ready')]}"/>
