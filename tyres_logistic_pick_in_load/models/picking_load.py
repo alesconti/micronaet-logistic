@@ -203,20 +203,19 @@ class SaleOrder(models.Model):
                 _logger.error('Error reading print invoice PDF')
                 continue
             try:
-                _logger.info('Printed invoice: %s' % order.invoice_detail)
+                _logger.warning('Updated as printed [%s] # %s' % (
+                    order.fiscal_position_id.name,
+                    order.invoice_detail,
+                ))
             except:
                 pass
-
             printed_order_invoice.append(order)  # Printed
 
         for order in printed_order_invoice:
             order.write({
                 'sequential_printed': True,
             })
-        _logger.warning('Updated as printed [%s] # %s order' % (
-            order.fiscal_position_id.name,
-            len(printed_order_invoice),
-        ))
+        _logger.warning('Updated as printed # %s' % len(printed_order_invoice))
 
         # ---------------------------------------------------------------------
         # Log error
