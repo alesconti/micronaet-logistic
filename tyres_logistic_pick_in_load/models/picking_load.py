@@ -198,7 +198,11 @@ class SaleOrder(models.Model):
 
                 _logger.error('Error reading print invoice PDF')
                 continue
-            _logger.info('Printed invoice: %s' % order.invoice_detail)
+            try:
+                _logger.info('Printed invoice: %s' % order.invoice_detail)
+            except:
+                pass
+
             printed_order_invoice.append(order)  # Printed
 
         for order in printed_order_invoice:
