@@ -137,12 +137,13 @@ class SaleOrder(models.Model):
         printed_order_invoice = []
         # pdb.set_trace()
         # _logger.info(
-        #     [item.invoice_detail for item in sorted(self, key=lambda x: (
+        #     [item.invoice_detail for item in sorted(
+        #         self, reverse=True, key=lambda x: (
         #         x.fiscal_position_id.name, x.invoice_detail, x.name))])
         # pdb.set_trace()
         # return True
 
-        for order in sorted(self, key=lambda x: (
+        for order in sorted(self, reverse=True, key=lambda x: (
                 x.fiscal_position_id.name, x.invoice_detail, x.name)):
             order_name = order.name
             fiscal = order.fiscal_position_id
