@@ -165,12 +165,12 @@ class SaleOrderStatusExtractWizard(models.TransientModel):
     #                             COLUMNS DATA:
     # -------------------------------------------------------------------------
     logistic_state = fields.Selection([
-        ('unused', 'Unused'), # Line not managed
-        ('draft', 'Custom order'), # Draft, customer order
-        ('uncovered', 'Uncovered'), # Not covered with stock
-        ('ordered', 'Ordered'), # Supplier order uncovered
-        ('ready', 'Ready'), # Order to be picked out (all in stock)
-        ('done', 'Done'), # Delivered qty (order will be closed)
+        ('unused', 'Unused'),  # Line not managed
+        ('draft', 'Custom order'),  # Draft, customer order
+        ('uncovered', 'Uncovered'),  # Not covered with stock
+        ('ordered', 'Ordered'),  # Supplier order uncovered
+        ('ready', 'Ready'),  # Order to be picked out (all in stock)
+        ('done', 'Done'),  # Delivered qty (order will be closed)
         ], 'Line Logistic state')
 
     order_logistic_state = fields.Selection([
