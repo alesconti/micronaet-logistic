@@ -302,7 +302,7 @@ class PurchaseOrder(models.Model):
                     product = line.product_id
                     product_qty = line.product_qty
                     logistic_sale_id = line.logistic_sale_id
-                    #remain_qty = line.logistic_undelivered_qty # XXX ERROR!
+                    # remain_qty = line.logistic_undelivered_qty # XXX ERROR!
                     remain_qty = logistic_sale_id.logistic_remain_qty
                     if product_qty >= remain_qty:
                         sale_line_ready.append(logistic_sale_id)
@@ -721,7 +721,7 @@ class StockPicking(models.Model):
             _logger.error('Cannot create %s' % path)
 
         # Period current date:
-        _logger.warning('Account Fees evalutation: %s' % evaluation_date)
+        _logger.warning('Account Fees evaluation: %s' % evaluation_date)
 
         # Picking not invoiced (DDT and Refund):
         domain = [
@@ -2698,11 +2698,11 @@ class SaleOrderLine(models.Model):
                     os.remove(fullname)
                     comment = \
                         _('Delete pending internal order %s file: %s<br/>') % (
-                        purchase.name, fullname)
+                          purchase.name, fullname)
                 except:
                     raise exceptions.Warning(
-                        'Cannot delete %s maybe account is importing...' % \
-                            fullname)
+                        'Cannot delete %s maybe account is importing...' %
+                        fullname)
 
         # ---------------------------------------------------------------------
         # Purchase pre-selection:
