@@ -2660,8 +2660,6 @@ class SaleOrderLine(models.Model):
         now = fields.Datetime.now()
 
         # Parameter:
-        import pdb
-        pdb.set_trace()
         company = company_pool.search([])[0]
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
         path = os.path.join(logistic_root_folder, 'delivery')
