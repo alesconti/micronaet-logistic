@@ -2660,6 +2660,8 @@ class SaleOrderLine(models.Model):
         now = fields.Datetime.now()
 
         # Parameter:
+        import pdb
+        pdb.set_trace()
         company = company_pool.search([])[0]
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
         path = os.path.join(logistic_root_folder, 'delivery')
@@ -2735,15 +2737,15 @@ class SaleOrderLine(models.Model):
             # -----------------------------------------------------------------
             for picking_id in pickings:
                 order_file = os.path.join(
-                    path, 'pick_undo_%s.csv' % picking_id) # XXX Name with undo
+                    path, 'pick_undo_%s.csv' % picking_id)  # XX Name with undo
 
                 comment += _(
                     'Reload account file: %s<br/>'
                         ) % order_file
 
-                if os.path.isfile(order_file): # XXX File yet present
+                if os.path.isfile(order_file):  # XXX File yet present
                     order_file = open(order_file, 'a')
-                else: # New file:
+                else:  # New file:
                     order_file = open(order_file, 'w')
                     order_file.write(header)
 
