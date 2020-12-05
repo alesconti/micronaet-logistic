@@ -42,8 +42,8 @@ class SaleOrderStatusExtractWizard(models.TransientModel):
     # Order phase:
     @api.multi
     def excel_extract(self):
-        ''' Extract excel movement for selected order
-        '''
+        """ Extract excel movement for selected order
+        """
         line_pool = self.env['sale.order.line']
         excel_pool = self.env['excel.writer']
 
@@ -124,8 +124,8 @@ class SaleOrderStatusExtractWizard(models.TransientModel):
         lines = line_pool.search(domain)
         _logger.warning('Report status filter with: %s [Tot. %s]' % (
             domain, len(lines)))
-        for line in lines: # TODO sort?
-            row +=1
+        for line in lines:  # TODO sort?
+            row += 1
             order = line.order_id
             template = line.product_id.product_tmpl_id
             origin = line.origin_product_id.product_tmpl_id
@@ -139,7 +139,7 @@ class SaleOrderStatusExtractWizard(models.TransientModel):
                 'x' if template.type == 'service' else '',
                 origin.default_code if origin else '',
                 line.linked_mode,
-                #template.name,
+                # template.name,
 
                 # Q. block:
                 line.product_uom_qty,
@@ -174,20 +174,18 @@ class SaleOrderStatusExtractWizard(models.TransientModel):
         ], 'Line Logistic state')
 
     order_logistic_state = fields.Selection([
-        ('draft', 'Order draft'), # Draft, new order received
-        ('payment', 'Payment confirmed'), # Payment confirmed
+        ('draft', 'Order draft'),  # Draft, new order received
+        ('payment', 'Payment confirmed'),  # Payment confirmed
         # Start automation:
-        ('order', 'Order confirmed'), # Quotation transformed in order
-        ('pending', 'Pending delivery'), # Waiting for delivery
-        ('ready', 'Ready'), # Ready for transfer
-        ('delivering', 'Delivering'), # In delivering phase
-        ('done', 'Done'), # Delivered or closed XXX manage partial delivery
-        ('dropshipped', 'Dropshipped'), # Order dropshipped
-        ('unificated', 'Unificated'), # Unificated with another
-        ('error', 'Error order'), # Order without line
+        ('order', 'Order confirmed'),  # Quotation transformed in order
+        ('pending', 'Pending delivery'),  # Waiting for delivery
+        ('ready', 'Ready'),  # Ready for transfer
+        ('delivering', 'Delivering'),  # In delivering phase
+        ('done', 'Done'),  # Delivered or closed XXX manage partial delivery
+        ('dropshipped', 'Dropshipped'),  # Order dropshipped
+        ('unificated', 'Unificated'),  # Unificated with another
+        ('error', 'Error order'),  # Order without line
         ], 'Order Logistic state')
 
     from_date = fields.Date('From date')
     to_date = fields.Date('To date')
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
