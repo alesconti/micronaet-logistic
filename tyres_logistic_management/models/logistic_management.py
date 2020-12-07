@@ -2063,9 +2063,11 @@ class SaleOrder(models.Model):
         """ Button action for call all ready to done order:
         """
         self.ensure_one()
+
         # If sequential print: print all:
         if self.fiscal_position_id.sequential_print:
             self.print_all_server_action()
+
         # Normal call:
         return self.workflow_ready_to_done_draft_picking()
 
