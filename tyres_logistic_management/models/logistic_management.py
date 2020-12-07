@@ -2062,6 +2062,11 @@ class SaleOrder(models.Model):
     def workflow_ready_to_done_current_order(self):
         """ Button action for call all ready to done order:
         """
+        self.ensure_one()
+        # If sequential print: print all:
+        if self.fiscal_position_id.sequential_print:
+            self.print_all_server_action()
+        # Normal call:
         return self.workflow_ready_to_done_draft_picking()
 
     # TODO remove this trigger:
@@ -2089,7 +2094,7 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Update Workflow:
         # ---------------------------------------------------------------------
-        #self.logistic_state = 'delivering' # XXX no more used
+        # self.logistic_state = 'delivering' # XXX no more used
 
         # No delivering step so close the order:
         return self.wf_set_order_as_done()
