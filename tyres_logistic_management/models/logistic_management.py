@@ -2065,11 +2065,12 @@ class SaleOrder(models.Model):
         self.ensure_one()
 
         # If sequential print: print all:
+        res = self.workflow_ready_to_done_draft_picking()
         if self.fiscal_position_id.sequential_print:
             self.print_all_server_action()
 
         # Normal call:
-        return self.workflow_ready_to_done_draft_picking()
+        return res
 
     # TODO remove this trigger:
     # Real trigger call:
