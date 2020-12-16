@@ -178,14 +178,24 @@ class SaleOrder(models.Model):
         def format_error(field):
             return '<font color="red"><b> [%s] </b></font>' % field
 
-        def get_partner_data(partner):
+        def get_partner_data(partner, check_dimension=False):
             """ Embedded function to check partner data
             """
+            name = partner.name or ''
+            street = partner.street or ''
+            street2 = partner.street2 or ''
+            if check_dimension:
+                if len(name) > check_dimension:
+                    name = format_error(name)
+                if len(street) > check_dimension:
+                    street = format_error(street)
+                if len(street2) > check_dimension:
+                    street2 = format_error(street2)
 
             return '%s %s %s - %s %s [%s %s] %s - %s<br/>' % (
-                partner.name or '',
-                partner.street or format_error(_('Address')),
-                partner.street2 or '',
+                name,
+                street or format_error(_('Address')),
+                street2,
                 partner.zip or format_error(_('ZIP')),
                 partner.city or format_error(_('City')),
                 partner.state_id.name or format_error(_('State')),
@@ -210,7 +220,7 @@ class SaleOrder(models.Model):
             check_fiscal,
             get_partner_data(self.partner_id),
             get_partner_data(partner),
-            get_partner_data(self.partner_shipping_id),
+            get_partner_data(self.partner_shipping_id, check_dimension=34),
             )
 
     @api.multi
