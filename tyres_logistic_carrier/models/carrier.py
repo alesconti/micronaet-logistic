@@ -185,7 +185,7 @@ class SaleOrder(models.Model):
             street = partner.street or ''
             street2 = partner.street2 or ''
             if check_dimension:
-                if len(name) > check_dimension:
+                if len(name) > 70:  # check_dimension:
                     name = format_error(name)
                 if len(street) > check_dimension:
                     street = format_error(street)
