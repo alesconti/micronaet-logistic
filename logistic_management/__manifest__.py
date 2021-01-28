@@ -2,7 +2,7 @@
 #!/usr/bin/python
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2018 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -27,7 +27,7 @@
     'category': 'Logistic',
     'sequence': 5,
     'summary': 'Logistic Management, Sale, Supplier order and delivery',
-    #'description': '',
+    # 'description': '',
     'website': 'https://micronaet.com',
     'depends': [
         'base',
@@ -37,34 +37,37 @@
         'account',
         'stock',
         'purchase',
-        'logistic_stock_position', # Stock position
-        'order_line_explode_kit', # Sale kit explode
-        'order_line_change_product', # Replaced link product
-        'product_default_supplier', # First supplier management
-        'product_folder_image', # For image management
-        'excel_export', # Export in Excel
-        'logistic_account_report', # DDT Report
-        'logistic_ddt', # DDT Extra data
-        #'logistic_purchase_export', # Export files
+        'logistic_stock_position',  # Stock position
+        'order_line_explode_kit',  # Sale kit explode
+        'order_line_change_product',  # Replaced link product
+        'product_default_supplier',  # First supplier management
+        'product_folder_image',  # For image management
+        'excel_export',  # Export in Excel
+        'logistic_account_report',  # DDT Report
+        'logistic_ddt',  # DDT Extra data
+        # 'logistic_purchase_export', # Export files
         'logistic_order_unification', # Order unification
         'l18n_it_fatturapa', # Fattura PA Management
         ],
     'data': [
-        #'security/crm_security.xml',
-        #'security/ir.model.access.csv',
+        # 'security/crm_security.xml',
+        # 'security/ir.model.access.csv',
+
+        # Data:
+        'data/office_data.xml',
 
         # Views:
         'views/logistic_management_view.xml',
         'views/fatturapa_view.xml',
         'wizard/manual_operation_view.xml', # Test events
         'wizard/status_extract_view.xml', # Extract operation
-        #'views/account_parameter_view.xml', # XXX move in logistic_ddt
-        
+        # 'views/account_parameter_view.xml', # XXX move in logistic_ddt
+
         # Report:
         'reports/load_position_report.xml',
-        
+
         # Data:
-        #'data/sequence_data.xml', # XXX moved in logistic_ddt
+        # 'data/sequence_data.xml', # XXX moved in logistic_ddt
         ],
     'demo': [],
     'css': [],

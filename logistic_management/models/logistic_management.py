@@ -2370,7 +2370,7 @@ class SaleOrderLine(models.Model):
         if lines:
             # Access company parameter from first line
             company = lines[0].order_id.company_id
-        else: # No lines found:
+        else:  # No lines found:
             return True
 
         # ---------------------------------------------------------------------
@@ -2382,7 +2382,7 @@ class SaleOrderLine(models.Model):
                 ]):
             supplier_id = purchase.partner_id.id
             if supplier_id not in purchase_pending:
-                purchase_pending[supplier_id] = purchase.id # link ID
+                purchase_pending[supplier_id] = purchase.id  # link ID
 
         # ---------------------------------------------------------------------
         #                 Collect data for purchase order:
@@ -2406,21 +2406,21 @@ class SaleOrderLine(models.Model):
         selected_ids = [] # ID: to return view list
 
         # 15 gen 2019: Cause a strange case there's some uncovered line
-        # but covered with stock, change here the availabilty
+        # but covered with stock, change here the availability
         for supplier in purchase_db:
             # -----------------------------------------------------------------
             # Create details:
             # -----------------------------------------------------------------
             purchase_id = False
-            is_company_parner = supplier == company.partner_id
+            is_company_partner = supplier == company.partner_id
             for line in purchase_db[supplier]:
                 product = line.product_id
 
                 # -------------------------------------------------------------
                 # Lavoration order
                 # -------------------------------------------------------------
-                if is_company_parner and product.type == 'service':
-                    line.mrp_state = 'draft' # put in lavoration state
+                if is_company_partner and product.type == 'service':
+                    line.mrp_state = 'draft'  # put in lavoration state
                     continue
 
                 # -------------------------------------------------------------
@@ -2438,14 +2438,14 @@ class SaleOrderLine(models.Model):
                         line.logistic_state = 'ready'
                         _logger.error(
                             'Covered line marked as uncovered, correct!')
-                    continue # no order negative uncoveder (XXX needed)
+                    continue  # no order negative uncovered (XXX needed)
 
                 # -------------------------------------------------------------
                 # Create/Get header purchase.order (only if line was created):
                 # -------------------------------------------------------------
                 # TODO if order was deleted restore logistic_state to uncovered
                 if not purchase_id:
-                    partner = supplier or company.partner_id # Use company
+                    partner = supplier or company.partner_id  # Use company
                     if partner.id in purchase_pending:
                         purchase_id = purchase_pending[partner.id]
                     else:
@@ -2453,9 +2453,9 @@ class SaleOrderLine(models.Model):
                             'partner_id': partner.id,
                             'date_order': now,
                             'date_planned': now,
-                            #'name': # TODO counter?
-                            #'partner_ref': '',
-                            #'logistic_state': 'draft',
+                            # 'name': # TODO counter?
+                            # 'partner_ref': '',
+                            # 'logistic_state': 'draft',
                             }).id
                     selected_ids.append(purchase_id)
 
@@ -2494,7 +2494,7 @@ class SaleOrderLine(models.Model):
     #                            COMPUTE FIELDS FUNCTION:
     # -------------------------------------------------------------------------
     @api.multi
-    #@api.depends('assigned_line_ids', 'purchase_line_ids', 'load_line_ids',
+    # @api.depends('assigned_line_ids', 'purchase_line_ids', 'load_line_ids',
     #    'delivered_line_ids', 'mrp_state')
     def _get_logistic_status_field(self):
         """ Manage all data for logistic situation in sale order:
@@ -2513,13 +2513,13 @@ class SaleOrderLine(models.Model):
                 line.logistic_remain_qty = 0.0
                 line.logistic_delivered_qty = 0.0
                 line.logistic_undelivered_qty = 0.0
-                #line.logistic_state = 'unused'
-                line.logistic_position = '' # TODO explode component?
+                # line.logistic_state = 'unused'
+                line.logistic_position = ''  # TODO explode component?
             else:
                 # -------------------------------------------------------------
                 #                       NORMAL PRODUCT:
                 # -------------------------------------------------------------
-                #state = 'draft'
+                # state = 'draft'
                 product = line.product_id
                 logistic_position = ''
 
@@ -2541,9 +2541,9 @@ class SaleOrderLine(models.Model):
                 line.logistic_covered_qty = logistic_covered_qty
 
                 # State valuation:
-                #if logistic_order_qty == logistic_covered_qty:
+                # if logistic_order_qty == logistic_covered_qty:
                 #    state = 'ready' # All in stock
-                #else:
+                # else:
                 #    state = 'uncovered' # To order
 
                 # -------------------------------------------------------------
@@ -2569,7 +2569,7 @@ class SaleOrderLine(models.Model):
                 line.logistic_uncovered_qty = logistic_uncovered_qty
 
                 # State valuation:
-                #if state != 'ready' and not logistic_uncovered_qty: # XXX
+                # if state != 'ready' and not logistic_uncovered_qty: # XXX
                 #    state = 'ordered' # A part (or all) is order
 
                 # -------------------------------------------------------------
@@ -2577,7 +2577,7 @@ class SaleOrderLine(models.Model):
                 # -------------------------------------------------------------
                 logistic_received_qty = 0.0
                 if line.mrp_state == 'done':
-                    # Lavoration product (internal):
+                    # Job product (internal):
                     logistic_received_qty = logistic_order_qty
                     logistic_position += _('[PROD] Q. %s > %s\n') % (
                         logistic_order_qty,
@@ -2586,7 +2586,8 @@ class SaleOrderLine(models.Model):
                 else:
                     # Purchase product:
                     for move in line.load_line_ids:
-                        logistic_received_qty += move.product_uom_qty # TODO verify
+                        # TODO verify
+                        logistic_received_qty += move.product_uom_qty
                         logistic_position += _('[TAV] Q. %s > %s\n') % (
                             move.product_uom_qty,
                             move.slot_id.name or ''
@@ -2602,7 +2603,7 @@ class SaleOrderLine(models.Model):
                 line.logistic_remain_qty = logistic_remain_qty
 
                 # State valuation:
-                #if state != 'ready' and not logistic_remain_qty: # XXX
+                # if state != 'ready' and not logistic_remain_qty: # XXX
                 #    state = 'ready' # All present coveder or in purchase
 
                 # -------------------------------------------------------------
@@ -2610,7 +2611,8 @@ class SaleOrderLine(models.Model):
                 # -------------------------------------------------------------
                 logistic_delivered_qty = 0.0
                 for move in line.delivered_line_ids:
-                    logistic_delivered_qty += move.product_uom_qty #TODO verify
+                    # TODO verify
+                    logistic_delivered_qty += move.product_uom_qty
                 line.logistic_delivered_qty = logistic_delivered_qty
 
                 # -------------------------------------------------------------
@@ -2621,13 +2623,13 @@ class SaleOrderLine(models.Model):
                 line.logistic_undelivered_qty = logistic_undelivered_qty
 
                 # State valuation:
-                #if not logistic_undelivered_qty: # XXX
+                # if not logistic_undelivered_qty: # XXX
                 #    state = 'done' # All delivered to customer
 
                 # -------------------------------------------------------------
                 # Write data:
                 # -------------------------------------------------------------
-                #line.logistic_state = state
+                # line.logistic_state = state
                 line.logistic_position = logistic_position
 
     # -------------------------------------------------------------------------
