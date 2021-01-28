@@ -1,6 +1,27 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <!--sale.order.manage.office-->
+        <record model="ir.ui.view" id="view_crm_team_view_tree">
+            <field name="name">sale.order.manage.office.tree</field>
+            <field name="model">sale.order.manage.office</field>
+            <field name="arch" type="xml">
+                <tree string="Manage office" editable="bottom">
+                    <field name="name" readonly="1"/>
+                    <field name="code" invisible="1"/>
+                    <field name="cups_printer"/>
+                    <field name="note" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_sale_order_manage_office">
+            <field name="name">Manage office</field>
+            <field name="res_model">sale.order.manage.office</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
         <!--crm.team-->
         <record model="ir.ui.view" id="view_crm_team_view_form">
             <field name="name">crm.team.form</field>
@@ -1403,6 +1424,12 @@
                      parent="menu_res_company_parameter_configuration"
                      action="action_res_company_parameter"
                      sequence="10"
+                     />
+                 <menuitem
+                     id="menu_sale_order_manage_office_config"
+                     parent="menu_res_company_parameter_configuration"
+                     action="action_sale_order_manage_office"
+                     sequence="20"
                      />
 
     </data>
