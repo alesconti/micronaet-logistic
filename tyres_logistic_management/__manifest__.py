@@ -2,7 +2,7 @@
 #!/usr/bin/python
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2018 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -37,11 +37,11 @@
         'account',
         'stock',
         'purchase',
-        
+
         # Report:
         'web',
         'web_editor',
-        
+
         'product_folder_image', # For image management
         'excel_export', # Export in Excel
         'tyres_logistic_ddt',
@@ -49,7 +49,7 @@
         'logistic_secure_payment', # For auto go ahead when confirmed payment
         'tyres_logistic_carrier', # Carrier management
         #'mmac_odoo4', # Extra fields (loop reference)
-        
+
         #'logistic_stock_position', # Stock position
         #'order_line_explode_kit', # Sale kit explode
         #'order_line_change_product', # Replaced link product
@@ -61,14 +61,17 @@
         ],
     'data': [
         'security/logistic_group.xml',
-        #'security/ir.model.access.csv',
+        # 'security/ir.model.access.csv',
+
+        # Data:
+        'data/office_data.xml',
 
         # Views:
         'views/logistic_management_view.xml',
         'views/dropship_view.xml',
         'wizard/manual_operation_view.xml', # Test events
         'wizard/status_extract_view.xml', # Extract operation
-        'wizard/fees_report_view.xml', # Extract feed        
+        'wizard/fees_report_view.xml', # Extract feed
         'wizard/revenue_report_view.xml', # Statistic report
         'wizard/load_report_wizard.xml', # Delivery report
         #'views/fatturapa_view.xml',

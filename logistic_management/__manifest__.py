@@ -53,9 +53,6 @@
         # 'security/crm_security.xml',
         # 'security/ir.model.access.csv',
 
-        # Data:
-        'data/office_data.xml',
-
         # Views:
         'views/logistic_management_view.xml',
         'views/fatturapa_view.xml',
