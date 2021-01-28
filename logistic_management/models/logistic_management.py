@@ -75,8 +75,8 @@ class ResCompany(models.Model):
     # Get path name:
     @api.model
     def _logistic_folder(self, document, mode='default', extra=False):
-        ''' Return full path of folder request:
-        '''
+        """ Return full path of folder request:
+        """
         # Get master path:
         folder_block = self._logistic_folder_db[document][mode]
 
@@ -91,9 +91,9 @@ class ResCompany(models.Model):
 
     @api.model
     def get_subfolder_from_root(self, name):
-        ''' Get subfolder from root
+        """ Get subfolder from root
             if str only one folder, instead multipath
-        '''
+        """
         try:
             if type(name) == str:
                 name = (name, )
@@ -154,14 +154,14 @@ class ResCompany(models.Model):
         )
 
 class ProductTemplate(models.Model):
-    ''' Template add fields
-    '''
+    """ Template add fields
+    """
     _inherit = 'product.template'
 
     @api.model
     def _get_root_image_folder(self):
-        ''' Use filestrore folder and subfolder images
-        '''
+        """ Use filestrore folder and subfolder images
+        """
         company_pool = self.env['res.company']
         companys = company_pool.search([])
         return companys[0]._logistic_folder('images')
@@ -185,8 +185,8 @@ class PurchaseOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def return_purchase_order_list_view(self, purchase_ids):
-        ''' Return purchase order tree from ids
-        '''
+        """ Return purchase order tree from ids
+        """
         model_pool = self.env['ir.model.data']
         tree_view_id = form_view_id = False
 
@@ -207,9 +207,9 @@ class PurchaseOrder(models.Model):
 
     @api.model
     def check_order_confirmed_done(self, purchase_ids=None):
-        ''' Check passed purchase IDs passed or all confirmed order
+        """ Check passed purchase IDs passed or all confirmed order
             if not present
-        '''
+        """
         if purchase_ids:
             purchases = self.browse(purchase_ids)
         else:
@@ -232,8 +232,8 @@ class PurchaseOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def open_purchase_line(self):
-        ''' Open purchase line detail view:
-        '''
+        """ Open purchase line detail view:
+        """
         model_pool = self.env['ir.model.data']
         tree_view_id = model_pool.get_object_reference(
             'logistic_management', 'view_purchase_order_line_tree')[1]
@@ -260,8 +260,8 @@ class PurchaseOrder(models.Model):
     # Workflow button:
     @api.multi
     def set_logistic_state_confirmed(self):
-        ''' Set order as confirmed
-        '''
+        """ Set order as confirmed
+        """
         # Export if needed the purchase order:
         self.export_purchase_order()
         now = fields.Datetime.now()
@@ -362,8 +362,8 @@ class PurchaseOrderLine(models.Model):
     #@api.depends('load_line_ids', )
     @api.multi
     def _get_logistic_status_field(self):
-        ''' Manage all data for logistic situation in sale order:
-        '''
+        """ Manage all data for logistic situation in sale order:
+        """
         _logger.warning('Update logistic qty fields now')
         for line in self:
             logistic_delivered_qty = 0.0
@@ -411,8 +411,8 @@ class StockPicking(models.Model):
     # XXX Override original procedure un l18n_it_fatturapa:
     @api.multi
     def fatturapa_get_details(self):
-        ''' Extract line detail sumary
-        '''
+        """ Extract line detail sumary
+        """
         self.ensure_one()
 
         picking = self[0]
@@ -487,8 +487,8 @@ class StockPicking(models.Model):
 
     @api.multi
     def refund_confirm_state_event(self):
-        ''' Confirm operation (will be overrided)
-        '''
+        """ Confirm operation (will be overrided)
+        """
         # Confirm document and export in files:
         self.workflow_ready_to_done_done_picking()
         return True
@@ -498,8 +498,8 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def excel_report_extract_accounting_fees(self, evaluation_date=False):
-        ''' Extract file account fees
-        '''
+        """ Extract file account fees
+        """
         # Pool used:
         excel_pool = self.env['excel.writer']
         company_pool = self.env['res.company']
@@ -709,23 +709,23 @@ class StockPicking(models.Model):
     # Path: DDT, Invoice (module: logistic_account_report)
     @api.multi
     def get_default_folder_path(self):
-        ''' Override default extract DDT function:
-        '''
+        """ Override default extract DDT function:
+        """
         companys = self.env['res.company'].search([])
         return companys[0]._logistic_folder('ddt')
 
     @api.multi
     def get_default_folder_invoice_path(self):
-        ''' Override default extract Invoice function:
-        '''
+        """ Override default extract Invoice function:
+        """
         companys = self.env['res.company'].search([])
         return companys[0]._logistic_folder('invoice')
 
     # Path: XML Invoice
     @api.multi
     def get_default_folder_xml_invoice(self):
-        ''' Override default extract XML Invoice
-        '''
+        """ Override default extract XML Invoice
+        """
         companys = self.env['res.company'].search([])
         return companys[0]._logistic_folder('invoice', 'xml')
 
@@ -734,8 +734,8 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def qweb_format_float(self, value, decimal=2, length=10):
-        ''' Format float value
-        '''
+        """ Format float value
+        """
         if type(value) != float:
             return value
 
@@ -745,8 +745,8 @@ class StockPicking(models.Model):
     # TODO Not used, remove?!?
     @api.model
     def workflow_ready_to_done_all_done_picking(self):
-        ''' Confirm draft picking documents
-        '''
+        """ Confirm draft picking documents
+        """
         pickings = self.search([
             ('state', '=', 'draft'),
             # TODO out document! (),
@@ -863,8 +863,8 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def workflow_ready_to_done_done_picking(self):
-        ''' Confirm draft picking documents
-        '''
+        """ Confirm draft picking documents
+        """
         # ---------------------------------------------------------------------
         # Confirm pickign for DDT and Invoice:
         # ---------------------------------------------------------------------
@@ -990,8 +990,8 @@ class StockPicking(models.Model):
 
     @api.model
     def move_lines_for_report_total(self):
-        ''' Generate Total collect data for report purposes
-        '''
+        """ Generate Total collect data for report purposes
+        """
         self.ensure_one()
 
         res = {
@@ -1020,9 +1020,9 @@ class StockPicking(models.Model):
 
     @api.model
     def get_refund_product_price(self, line):
-        ''' Generate 3 use data:
+        """ Generate 3 use data:
             Tax, Unit net, Net, VAT, Total for product refund passed in line
-        '''
+        """
         product = line.product_id
         partner = self.partner_id
         position = partner.property_account_position_id
@@ -1044,9 +1044,9 @@ class StockPicking(models.Model):
 
     @api.model
     def move_lines_for_report(self):
-        ''' Generate a list of record depend on OC, KIT and 2 substitution mode
+        """ Generate a list of record depend on OC, KIT and 2 substitution mode
             Return list of: product, line
-        '''
+        """
         self.ensure_one()
 
         refund_line = {} # Move line with refund product
@@ -1226,8 +1226,9 @@ class StockQuant(models.Model):
     logistic_assigned_id = fields.Many2one(
         'sale.order.line', 'Link covered to generator',
         help='Link to sale line the assigned qty',
-        index=True, ondelete='cascade', # remove stock move when delete order
+        index=True, ondelete='cascade',  # remove stock move when delete order
         )
+
 
 class SaleOrder(models.Model):
     """ Model name: Sale Order
@@ -1241,8 +1242,8 @@ class SaleOrder(models.Model):
     # Extra operation before WF
     @api.multi
     def return_order_line_list_view(self):
-        ''' Return order line in a tree view
-        '''
+        """ Return order line in a tree view
+        """
         line_ids = self[0].order_line.mapped('id')
         return self.env['sale.order.line'].return_order_line_list_view(
             line_ids)
@@ -1252,8 +1253,8 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.multi # XXX not api.one?!?
     def logistic_check_and_set_ready(self):
-        ''' Check if all line are in ready state (excluding unused)
-        '''
+        """ Check if all line are in ready state (excluding unused)
+        """
         order_ids = []
         for order in self:
             line_state = set(order.order_line.mapped('logistic_state'))
@@ -1269,8 +1270,8 @@ class SaleOrder(models.Model):
 
     @api.multi
     def logistic_check_and_set_delivering(self):
-        ''' Check if all line are in done state (excluding unused)
-        '''
+        """ Check if all line are in done state (excluding unused)
+        """
         for order in self:
             line_state = set(order.order_line.mapped('logistic_state'))
             line_state.discard('unused') # remove kit line (exploded)
@@ -1283,8 +1284,8 @@ class SaleOrder(models.Model):
     # Extra operation before WF
     @api.model
     def return_order_list_view(self, order_ids):
-        ''' Utility for return selected order in tree view
-        '''
+        """ Utility for return selected order in tree view
+        """
         tree_view_id = form_view_id = False
         _logger.info('Return order tree view [# %s]' % len(order_ids))
         return {
@@ -1304,8 +1305,8 @@ class SaleOrder(models.Model):
 
     @api.model
     def check_exploded_product_kit(self):
-        ''' Check if there's kit in product, launch explode operation
-        '''
+        """ Check if there's kit in product, launch explode operation
+        """
         log_message = True # TODO change
         line_pool = self.env['sale.order.line']
         template_pool = self.env['product.template']
@@ -1366,8 +1367,8 @@ class SaleOrder(models.Model):
 
     @api.model
     def check_product_first_supplier(self):
-        ''' Update product without first supplier:
-        '''
+        """ Update product without first supplier:
+        """
         log_message = True # TODO change
         line_pool = self.env['sale.order.line']
         template_pool = self.env['product.template']
@@ -1417,8 +1418,8 @@ class SaleOrder(models.Model):
         return True
 
     def check_empty_orders(self):
-        ''' Mark empty order as unused
-        '''
+        """ Mark empty order as unused
+        """
         orders = self.search([
             ('logistic_state', '=', 'draft'), # Insert order
             ('order_line', '=', False), # Without line
@@ -1430,8 +1431,8 @@ class SaleOrder(models.Model):
             })
 
     def check_product_service(self):
-        ''' Update line with service to ready state
-        '''
+        """ Update line with service to ready state
+        """
         line_pool = self.env['sale.order.line']
         lines = line_pool.search([
             ('order_id.logistic_state', '=', 'draft'), # Draft order
@@ -1448,8 +1449,8 @@ class SaleOrder(models.Model):
     # Sale order mark default supplier:
     @api.model
     def mark_default_supplier_order(self, order_ids):
-        ''' Mark default supplier
-        '''
+        """ Mark default supplier
+        """
         for order in self.browse(order_ids):
             supplier_total = {}
             for line in order.order_line:
@@ -1491,8 +1492,8 @@ class SaleOrder(models.Model):
 
     @api.model
     def sale_order_unificate_same_partner(self, order_touched_ids):
-        ''' Unifcate procedure if order has yet present order for same partner
-        '''
+        """ Unifcate procedure if order has yet present order for same partner
+        """
         from datetime import datetime, timedelta
 
         company_pool = self.env['res.company']
@@ -1542,8 +1543,8 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def workflow_draft_to_payment(self):
-        ''' Assign logistic_state to secure order
-        '''
+        """ Assign logistic_state to secure order
+        """
         _logger.info('New order: Start analysis')
         # ---------------------------------------------------------------------
         #                               Pre operations:
@@ -1622,8 +1623,8 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def workflow_payment_to_order(self):
-        ''' Confirm payment order (before expand kit)
-        '''
+        """ Confirm payment order (before expand kit)
+        """
         orders = self.search([
             ('logistic_state', '=', 'payment'),
             ])
@@ -1651,8 +1652,8 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def workflow_ready_to_done_draft_picking(self, limit=False):
-        ''' Confirm payment order (before expand kit)
-        '''
+        """ Confirm payment order (before expand kit)
+        """
         now = fields.Datetime.now()
 
         # Pool used:
@@ -1787,8 +1788,8 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def wf_set_order_as_done(self):
-        ''' Set order as done (from delivering)
-        '''
+        """ Set order as done (from delivering)
+        """
         self.ensure_one()
         self.logistic_state = 'done'
 
@@ -1829,9 +1830,9 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def logistic_check_ready_order(self, sale_lines=None):
-        ''' Mask as done sale order with all ready lines
+        """ Mask as done sale order with all ready lines
             if not present find all order in pending state
-        '''
+        """
         order_pool = self.env['sale.order']
         if sale_lines:
             # Start from sale order line:
@@ -1851,8 +1852,8 @@ class SaleOrderLine(models.Model):
 
     @api.model
     def return_order_line_list_view(self, line_ids):
-        ''' Return order line tree view (selected)
-        '''
+        """ Return order line tree view (selected)
+        """
         # Gef view
         model_pool = self.env['ir.model.data']
         tree_view_id = model_pool.get_object_reference(
@@ -1880,12 +1881,12 @@ class SaleOrderLine(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def chain_broken_purchase_line(self):
-        ''' Order undo line:
+        """ Order undo line:
             If product ordered to supplier not delivered or in late:
             1. Delete purchase line so unlinked the future delivery
             2. Order line will be reset to 'draft' mode (check assign)
             3. Order will be recheck when triggered
-        '''
+        """
         self.ensure_one()
 
         # Note: now it's not possibile, evaluate if necessary to reload
@@ -1924,8 +1925,8 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def open_view_sale_order(self):
-        ''' Open order view
-        '''
+        """ Open order view
+        """
         #model_pool = self.env['ir.model.data']
         #view_id = model_pool.get_object_reference(
         #    'module_name', 'view_name')[1]
@@ -1948,8 +1949,8 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def open_view_sale_order_product(self):
-        ''' Open subsituted product
-        '''
+        """ Open subsituted product
+        """
         #model_pool = self.env['ir.model.data']
         #view_id = model_pool.get_object_reference(
         #    'module_name', 'view_name')[1]
@@ -1972,8 +1973,8 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def open_view_sale_order_original_product(self):
-        ''' Open original product
-        '''
+        """ Open original product
+        """
         #model_pool = self.env['ir.model.data']
         #view_id = model_pool.get_object_reference(
         #    'module_name', 'view_name')[1]
@@ -1996,8 +1997,8 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def open_view_sale_order_kit_product(self):
-        ''' Open original product
-        '''
+        """ Open original product
+        """
         view_id = False
 
         return {
@@ -2021,15 +2022,15 @@ class SaleOrderLine(models.Model):
     # A. Draft > Progress
     @api.multi
     def workflow_mrp_draft_to_progress(self):
-        ''' Update mrp_state
-        '''
+        """ Update mrp_state
+        """
         for line in self:
             self.mrp_state = 'progress'
 
     # B. Progress > Done
     def workflow_mrp_progress_to_done(self):
-        ''' Update mrp_state
-        '''
+        """ Update mrp_state
+        """
         line_pool = self.env['sale.order.line']
 
         #line_ids = []
@@ -2052,11 +2053,11 @@ class SaleOrderLine(models.Model):
     # A. Assign available q.ty in stock assign a stock movement / quants
     @api.model
     def workflow_order_to_uncovered(self):
-        ''' Logistic phase 3:
+        """ Logistic phase 3:
             Assign stock q. available to order product creating a
             stock.move or stock.quant movement
             Evaluate also if we can use alternative product
-        '''
+        """
         now = fields.Datetime.now()
 
         product_pool = self.env['product.product']
@@ -2303,10 +2304,10 @@ class SaleOrderLine(models.Model):
     # A. Assign available q.ty in stock assign a stock movement / quants
     @api.model
     def workflow_uncovered_pending(self):
-        ''' Logistic phase 2:
+        """ Logistic phase 2:
             Order remain uncovered qty to the default supplier
             Generate purchase order to supplier linked to product
-        '''
+        """
         now = fields.Datetime.now()
 
         # ---------------------------------------------------------------------
@@ -2461,8 +2462,8 @@ class SaleOrderLine(models.Model):
     #@api.depends('assigned_line_ids', 'purchase_line_ids', 'load_line_ids',
     #    'delivered_line_ids', 'mrp_state')
     def _get_logistic_status_field(self):
-        ''' Manage all data for logistic situation in sale order:
-        '''
+        """ Manage all data for logistic situation in sale order:
+        """
         _logger.warning('Update logistic qty fields now')
         for line in self:
             if line.product_id.is_kit:
