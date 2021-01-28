@@ -268,7 +268,7 @@ class PurchaseOrder(models.Model):
             'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
             'domain': [('id', 'in', line_ids)],
             'context': self.env.context,
-            'target': 'current', # 'new'
+            'target': 'current',  # 'new'
             'nodestroy': False,
             }
 
@@ -290,9 +290,9 @@ class PurchaseOrder(models.Model):
     #                                COLUMNS:
     # -------------------------------------------------------------------------
     logistic_state = fields.Selection([
-        ('draft', 'Order draft'), # Draft purchase
-        ('confirmed', 'Confirmed'), # Purchase confirmed
-        ('done', 'Done'), # All loaded in stock
+        ('draft', 'Order draft'),  # Draft purchase
+        ('confirmed', 'Confirmed'),  # Purchase confirmed
+        ('done', 'Done'),  # All loaded in stock
         ], 'Logistic state', default='draft',
         )
 
@@ -329,7 +329,7 @@ class StockMoveIn(models.Model):
     #logistic_assigned_id = fields.Many2one(
     #    'sale.order.line', 'Link covered to generator',
     #    help='Link to sale line the assigned qty',
-    #    index=True, ondelete='cascade', # remove stock move when delete order
+    #    index=True, ondelete='cascade',  # remove stock move when delete order
     #    )
 
     # Direct link to sale order line (generated from purchase order):
@@ -462,15 +462,15 @@ class StockPicking(models.Model):
             i += 1
             # TODO remove from here: self.qweb_format_float(
             detail_table[str(i)] = {
-                'mode': '', # No mode = product line (else SC, PR, AB, AC)
-                'discount': '', # No discount
-                'nature': '', # No nature (always 22)
-                'product': move[0], # Browse
+                'mode': '',  # No mode = product line (else SC, PR, AB, AC)
+                'discount': '',  # No discount
+                'nature': '',  # No nature (always 22)
+                'product': move[0],  # Browse
                 'price': self.qweb_format_float(price, decimal=6),
                 'qty': self.qweb_format_float(qty),
-                'vat': self.qweb_format_float(vat), # %
-                'retention': '', # No retention
-                'subtotal': self.qweb_format_float(subtotal), # VAT excluded
+                'vat': self.qweb_format_float(vat),  # %
+                'retention': '',  # No retention
+                'subtotal': self.qweb_format_float(subtotal),  # VAT excluded
                 'name': name,
                 }
 
@@ -482,11 +482,11 @@ class StockPicking(models.Model):
                 vat_table[vat][1] += subtotal_vat
             else:
                 vat_table[vat] = [
-                    subtotal, # Subtotal
-                    subtotal_vat, # VAT total
-                    '', # Nature
-                    '', # Extra expense
-                    '', # Round
+                    subtotal,  # Subtotal
+                    subtotal_vat,  # VAT total
+                    '',  # Nature
+                    '',  # Extra expense
+                    '',  # Round
                     ]
 
             # -----------------------------------------------------------------
@@ -687,7 +687,7 @@ class StockPicking(models.Model):
                     picking.name,
                     '' if stock_mode == 'in' else order.logistic_state,
                     partner.name,
-                    partner.property_account_position_id.name, # Fiscal position
+                    partner.property_account_position_id.name,  # Fiscal position
                     (subtotal['amount'], f_number),
                     (subtotal['vat'], f_number),
                     (subtotal['total'], f_number),
@@ -909,7 +909,7 @@ class StockPicking(models.Model):
                 invoice_ids.append(picking.id)
 
             picking.write({
-                'state': 'done', # TODO needed?
+                'state': 'done',  # TODO needed?
                 })
 
         # ---------------------------------------------------------------------
@@ -1018,7 +1018,7 @@ class StockPicking(models.Model):
             'net': 0.0,
             'vat': 0.0,
 
-            'vat_text': '', # VAT description
+            'vat_text': '',  # VAT description
             }
 
         for line in self.move_lines_for_report():
@@ -1148,54 +1148,57 @@ class StockPicking(models.Model):
                 ) = refund_line.get(line, (False, False, False, False, False))
 
             res.append((
-                original_product, # 0. Product browse
-                quantity, # 1. XXX Note: Not stock.move q
-                replaced_product, # 2. Replaced product
+                original_product,  # 0. Product browse
+                quantity,  # 1. XXX Note: Not stock.move q
+                replaced_product,  # 2. Replaced product
 
                 # TODO price_subtotal (use stock.move or sale.order.line?
-                refund_tax or sale_line.tax_id, # XXX 3. Sale tax
+                refund_tax or sale_line.tax_id,  # XXX 3. Sale tax
 
                 # -------------------------------------------------------------
                 # Unit:
                 # -------------------------------------------------------------
                 self.qweb_format_float(
-                    sale_line.price_unit), # 4. Unit no discount
+                    sale_line.price_unit),  # 4. Unit no discount
                 self.qweb_format_float(
-                    sale_line.price_reduce), # 5. Unit discounted
+                    sale_line.price_reduce),  # 5. Unit discounted
                 refund_vat or self.qweb_format_float(
-                    sale_line.price_tax), # XXX 6. VAT Total
+                    sale_line.price_tax),  # XXX 6. VAT Total
 
                 # -------------------------------------------------------------
                 # Price net price:
                 # -------------------------------------------------------------
-                refund_unit_net or self.qweb_format_float(# XXX 7. Unit no VAT
+                # XXX 7. Unit no VAT
+                refund_unit_net or self.qweb_format_float(
                     sale_line.price_reduce_taxexcl, decimal=6),
+                # 8. Unit+VAT=price_unit-red
                 self.qweb_format_float(
-                    sale_line.price_reduce_taxinc, decimal=6), # 8. Unit+VAT=price_unit-red
+                    sale_line.price_reduce_taxinc, decimal=6),
+
 
                 # -------------------------------------------------------------
                 # Total:
                 # -------------------------------------------------------------
                 refund_net or self.qweb_format_float(
-                    sale_line.price_subtotal), # XXX 9. Tot without VAT
+                    sale_line.price_subtotal),  # XXX 9. Tot without VAT
                 refund_total or self.qweb_format_float(
-                    sale_line.price_total), # XXX 10. Tot With VAT
+                    sale_line.price_total),  # XXX 10. Tot With VAT
 
                 # -------------------------------------------------------------
                 # Amount invoiced:
                 # -------------------------------------------------------------
                 self.qweb_format_float(
-                    sale_line.amt_to_invoice), # 11. Not used
+                    sale_line.amt_to_invoice),  # 11. Not used
                 self.qweb_format_float(
-                    sale_line.amt_invoiced), # 12. Not used
+                    sale_line.amt_invoiced),  # 12. Not used
 
                 # Discount (XXX not used):
                 self.qweb_format_float(
-                    sale_line.discount), # 13. not used for now
+                    sale_line.discount),  # 13. not used for now
 
-                write_order, # 14
-                ddt_reference, # 15
-                sale_line, # 16 For every extra reference
+                write_order,  # 14
+                ddt_reference,  # 15
+                sale_line,  # 16 For every extra reference
                 ))
             ddt_reference = '' # only first line print DDT reference
         _logger.warning('>>> Picking line: %s ' % (res, ))
@@ -1236,6 +1239,7 @@ class AccountFiscalPosition(models.Model):
     manage_office_id = fields.Many2one(
         comodel_name='sale.order.manage.office',
         string='Manage office',
+        required=True,
     )
 
 
@@ -1399,10 +1403,10 @@ class SaleOrder(models.Model):
         template_pool = self.env['product.template']
 
         lines = line_pool.search([
-            ('order_id.logistic_state', '=', 'draft'), # Draft order
-            ('product_id.default_supplier_id', '=', False), # No first supplier
-            ('product_id.is_kit', '=', False), # No kit line
-            ('product_id.type', '!=', 'service'), # No service product
+            ('order_id.logistic_state', '=', 'draft'),  # Draft order
+            ('product_id.default_supplier_id', '=', False),  # No first supplier
+            ('product_id.is_kit', '=', False),  # No kit line
+            ('product_id.type', '!=', 'service'),  # No service product
             ])
         _logger.info('New order: generate first supplier [# %s]' % len(lines))
         template_ids = []
@@ -1420,8 +1424,8 @@ class SaleOrder(models.Model):
 
         # Check updated record:
         templates = template_pool.search([
-            ('id', 'in', update_ids), # Updated lines:
-            ('default_supplier_id', '=', False), # Not updated
+            ('id', 'in', update_ids),  # Updated lines:
+            ('default_supplier_id', '=', False),  # Not updated
             ])
         res = ''
         for template in templates:
@@ -1446,8 +1450,8 @@ class SaleOrder(models.Model):
         """ Mark empty order as unused
         """
         orders = self.search([
-            ('logistic_state', '=', 'draft'), # Insert order
-            ('order_line', '=', False), # Without line
+            ('logistic_state', '=', 'draft'),  # Insert order
+            ('order_line', '=', False),  # Without line
             ])
         _logger.info('New order: Empty order [# %s]' % len(orders))
 
@@ -1460,15 +1464,15 @@ class SaleOrder(models.Model):
         """
         line_pool = self.env['sale.order.line']
         lines = line_pool.search([
-            ('order_id.logistic_state', '=', 'draft'), # Draft order
-            ('logistic_state', '=', 'draft'), # Draft line
-            ('product_id.type', '=', 'service'), # Direct ready
-            ('product_id.is_expence', '=', True), # Direct ready
-            # ('kit_line_id', '=', False), # Not the kit line (service = mrp)
+            ('order_id.logistic_state', '=', 'draft'),  # Draft order
+            ('logistic_state', '=', 'draft'),  # Draft line
+            ('product_id.type', '=', 'service'),  # Direct ready
+            ('product_id.is_expence', '=', True),  # Direct ready
+            # ('kit_line_id', '=', False),  # Not the kit line (service = mrp)
             ])
         _logger.info('New order: Check product-service [# %s]' % len(lines))
         return lines.write({
-            'logistic_state': 'ready', # immediately ready
+            'logistic_state': 'ready',  # immediately ready
             })
 
     # Sale order mark default supplier:
@@ -1531,12 +1535,12 @@ class SaleOrder(models.Model):
         moved_ids = []
         for order in self.browse(order_touched_ids):
             order_destination = self.search([
-                ('partner_id', '=', order.partner_id.id), # This partner
-                ('payment_term_id', '=', order.payment_term_id.id), # Payment
-                ('date_order', '>=', from_period), # In period range
-                ('logistic_state', 'in', ('pending', )), # TODO other selection?
-                ('id', '!=', order.id), # Not this
-                ('order_destination_id', '=', False), # Not unificated
+                ('partner_id', '=', order.partner_id.id),  # This partner
+                ('payment_term_id', '=', order.payment_term_id.id),  # Payment
+                ('date_order', '>=', from_period),  # In period range
+                ('logistic_state', 'in', ('pending', )),  # TODO other selection?
+                ('id', '!=', order.id),  # Not this
+                ('order_destination_id', '=', False),  # Not unificated
                 ])
 
             if not order_destination:
@@ -1726,7 +1730,7 @@ class SaleOrder(models.Model):
             origin = _('%s [%s]') % (order.name, order.create_date[:10])
 
             picking = picking_pool.create({
-                'sale_order_id': order.id, # Link to order
+                'sale_order_id': order.id,  # Link to order
                 'partner_id': partner.id,
                 'scheduled_date': now,
                 'origin': origin,
@@ -1736,7 +1740,7 @@ class SaleOrder(models.Model):
                 'location_id': location_from,
                 'location_dest_id': location_to,
                 #'priority': 1,
-                'state': 'draft', # XXX To do manage done phase (for invoice)!!
+                'state': 'draft',  # XXX To do manage done phase (for invoice)!!
                 })
             picking_ids.append(picking.id)
 
@@ -1833,7 +1837,7 @@ class SaleOrder(models.Model):
         # Start automation:
         ('order', 'Order confirmed'),  # Quotation transformed in order
         ('pending', 'Pending delivery'),  # Waiting for delivery
-        ('ready', 'Ready'), # Ready for transfer
+        ('ready', 'Ready'),  # Ready for transfer
         ('delivering', 'Delivering'),  # In delivering phase
         ('done', 'Done'),  # Delivered or closed XXX manage partial delivery
         ('dropshipped', 'Dropshipped'),  # Order dropshipped
@@ -1903,7 +1907,7 @@ class SaleOrderLine(models.Model):
             'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
             'domain': [('id', 'in', line_ids)],
             'context': self.env.context,
-            'target': 'current', # 'new'
+            'target': 'current',  # 'new'
             'nodestroy': False,
             }
 
@@ -1941,7 +1945,7 @@ class SaleOrderLine(models.Model):
                         self.order_id.name,
                         self.product_id.product_tmpl_id.default_code,
                         self.product_id.name,
-                        line.product_qty, # Q in order!
+                        line.product_qty,  # Q in order!
                         )
                 )
             line.order_id.message_post(
@@ -1970,11 +1974,11 @@ class SaleOrderLine(models.Model):
             'view_mode': 'form,tree',
             'res_id': self.order_id.id,
             'res_model': 'sale.order',
-            # 'view_id': view_id, # False
+            # 'view_id': view_id,  # False
             'views': [(False, 'form'), (False, 'tree')],
             'domain': [('id', '=', self.order_id.id)],
             # 'context': self.env.context,
-            'target': 'current', # 'new'
+            'target': 'current',  # 'new'
             'nodestroy': False,
             }
 
@@ -1994,7 +1998,7 @@ class SaleOrderLine(models.Model):
             'view_mode': 'form,tree',
             'res_id': self.product_id.id,
             'res_model': 'product.product',
-            # 'view_id': view_id, # False
+            # 'view_id': view_id,  # False
             'views': [(False, 'form'), (False, 'tree')],
             'domain': [('id', '=', self.product_id.id)],
             # 'context': self.env.context,
@@ -2018,11 +2022,11 @@ class SaleOrderLine(models.Model):
             'view_mode': 'form,tree',
             'res_id': self.origin_product_id.id,
             'res_model': 'product.product',
-            # 'view_id': view_id, # False
+            # 'view_id': view_id,  # False
             'views': [(False, 'form'), (False, 'tree')],
             'domain': [('id', '=', self.origin_product_id.id)],
             # 'context': self.env.context,
-            'target': 'current', # 'new'
+            'target': 'current',  # 'new'
             'nodestroy': False,
             }
 
@@ -2039,11 +2043,11 @@ class SaleOrderLine(models.Model):
             'view_mode': 'form,tree',
             'res_id': self.kit_product_id.id,
             'res_model': 'product.product',
-            #'view_id': view_id, # False
+            #'view_id': view_id,  # False
             'views': [(False, 'form'), (False, 'tree')],
             'domain': [('id', '=', self.kit_product_id.id)],
             #'context': self.env.context,
-            'target': 'current', # 'new'
+            'target': 'current',  # 'new'
             'nodestroy': False,
             }
 
@@ -2095,7 +2099,7 @@ class SaleOrderLine(models.Model):
         quant_pool = self.env['stock.quant']
         sale_pool = self.env['sale.order']
         lines = self.search([
-            ('order_id.logistic_state', '=', 'order'), # Logistic state
+            ('order_id.logistic_state', '=', 'order'),  # Logistic state
             ('logistic_state', '=', 'draft'),
             ])
 
@@ -2462,7 +2466,7 @@ class SaleOrderLine(models.Model):
                     'product_qty': purchase_qty,
                     'date_planned': now,
                     'product_uom': product.uom_id.id,
-                    'price_unit': 1.0, # TODO change product.0.0,
+                    'price_unit': 1.0,  # TODO change product.0.0,
 
                     # Link to sale:
                     'logistic_sale_id': line.id,
@@ -2717,16 +2721,15 @@ class SaleOrderLine(models.Model):
 
     # State (sort of workflow):
     logistic_state = fields.Selection([
-        ('unused', 'Unused'), # Line not managed
+        ('unused', 'Unused'),  # Line not managed
 
-        ('draft', 'Custom order'), # Draft, customer order
-        ('uncovered', 'Uncovered'), # Not covered with stock
-        ('ordered', 'Ordered'), # Supplier order uncovered
-        ('ready', 'Ready'), # Order to be picked out (all in stock)
-        ('done', 'Done'), # Delivered qty (order will be closed)
+        ('draft', 'Custom order'),  # Draft, customer order
+        ('uncovered', 'Uncovered'),  # Not covered with stock
+        ('ordered', 'Ordered'),  # Supplier order uncovered
+        ('ready', 'Ready'),  # Order to be picked out (all in stock)
+        ('done', 'Done'),  # Delivered qty (order will be closed)
         ], 'Logistic state', default='draft',
-        #readonly=True,
-        #compute='_get_logistic_status_field', multi=True,
-        #store=True, # TODO store True # for create columns
-        )
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+        # readonly=True,
+        # compute='_get_logistic_status_field', multi=True,
+        # store=True,  # TODO store True # for create columns
+    )
