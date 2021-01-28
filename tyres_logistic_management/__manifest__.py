@@ -42,22 +42,22 @@
         'web',
         'web_editor',
 
-        'product_folder_image', # For image management
-        'excel_export', # Export in Excel
+        'product_folder_image',  # For image management
+        'excel_export',  # Export in Excel
         'tyres_logistic_ddt',
-        'logistic_product_supplier', # Supplier purchase management
-        'logistic_secure_payment', # For auto go ahead when confirmed payment
-        'tyres_logistic_carrier', # Carrier management
-        #'mmac_odoo4', # Extra fields (loop reference)
+        'logistic_product_supplier',  # Supplier purchase management
+        'logistic_secure_payment',  # For auto go ahead when confirmed payment
+        'tyres_logistic_carrier',  # Carrier management
+        # 'mmac_odoo4', # Extra fields (loop reference)
 
-        #'logistic_stock_position', # Stock position
-        #'order_line_explode_kit', # Sale kit explode
-        #'order_line_change_product', # Replaced link product
-        #'product_default_supplier', # First supplier management
-        #'logistic_account_report', # DDT Report
-        #'logistic_purchase_export', # Export files
-        #'logistic_order_unification', # Order unification
-        #'l18n_it_fatturapa', # Fattura PA Management
+        # 'logistic_stock_position', # Stock position
+        # 'order_line_explode_kit', # Sale kit explode
+        # 'order_line_change_product', # Replaced link product
+        # 'product_default_supplier', # First supplier management
+        # 'logistic_account_report', # DDT Report
+        # 'logistic_purchase_export', # Export files
+        # 'logistic_order_unification', # Order unification
+        # 'l18n_it_fatturapa', # Fattura PA Management
         ],
     'data': [
         'security/logistic_group.xml',

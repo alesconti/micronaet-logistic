@@ -38,6 +38,19 @@ from dateutil.relativedelta import relativedelta
 
 _logger = logging.getLogger(__name__)
 
+
+class SaleOrderManageOffice(models.Model):
+    """ Manage office
+    """
+    _name = 'sale.order.manage.office'
+    _description = 'Manage ice'
+    _order = 'name'
+
+    name = fields.Char('Name', size=60)
+    cups_printer = fields.Char('CUPS printer name', size=40)
+    note = fields.Text('Note')
+
+
 class CrmTeam(models.Model):
     """ Model name: CRM Team
     """
@@ -50,6 +63,7 @@ class CrmTeam(models.Model):
         ('b2b', 'B2B'),
         ('b2c', 'B2C'),
         ), 'Market type')
+
 
 class ResCompany(models.Model):
     """ Model name: Res Company
@@ -191,6 +205,7 @@ class ProductTemplate(models.Model):
     name_extended = fields.Char(
         compute='_get_name_extended_full', string='Extended name')
     not_in_invoice = fields.Boolean('Not in invoice')
+
 
 class PurchaseOrder(models.Model):
     """ Model name: Sale Order
@@ -474,6 +489,7 @@ class PurchaseOrder(models.Model):
         ], 'Logistic state', default='draft',
         )
 
+
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
     """
@@ -489,6 +505,7 @@ class PurchaseOrderLine(models.Model):
         help='Link generator sale order line: one customer line=one purchase',
         index=True, ondelete='set null',
         )
+
 
 class StockMoveIn(models.Model):
     """ Model name: Stock Move
@@ -534,6 +551,7 @@ class StockMoveIn(models.Model):
         help='Link to stock quant generated (load / unoad data).',
         index=True, ondelete='cascade',
         )
+
 
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
@@ -673,6 +691,7 @@ class PurchaseOrderLine(models.Model):
         'stock.move', 'logistic_purchase_id', 'Linked load to purchase',
         help='Load linked to this purchase line',
         )
+
 
 class StockPicking(models.Model):
     """ Model name: Stock picking
@@ -1445,6 +1464,7 @@ class StockPicking(models.Model):
         'sale.order', 'Sale order', help='Sale order generator')
     is_fees = fields.Boolean('Is fees', help='Picking not invoiced for sale')
 
+
 class ResPartner(models.Model):
     """ Model name: Res Partner
     """
@@ -1461,6 +1481,7 @@ class ResPartner(models.Model):
     sql_supplier_code = fields.Char('SQL supplier code', size=20)
     pfu_invoice_fiscal = fields.Boolean('PFU fiscal',
         help='PFU inserti if required in fiscal position')
+
 
 class AccountFiscalPosition(models.Model):
     """ Model name: Account Fiscal Position
@@ -1480,6 +1501,7 @@ class AccountFiscalPosition(models.Model):
         help='Enable partner private managamente (company or private '
             'for invoice)')
 
+
 class AccountPaymentTerm(models.Model):
     """ Model name: Account Payment term
     """
@@ -1491,6 +1513,7 @@ class AccountPaymentTerm(models.Model):
     # -------------------------------------------------------------------------
     account_ref = fields.Char('Account ref.', size=20)
 
+
 class AccountTax(models.Model):
     """ Model name: Account Payment term
     """
@@ -1501,6 +1524,7 @@ class AccountTax(models.Model):
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     account_ref = fields.Char('Account ref.', size=20)
+
 
 class SaleOrder(models.Model):
     """ Model name: Sale Order

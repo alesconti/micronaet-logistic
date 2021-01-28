@@ -36,18 +36,6 @@ from dateutil.relativedelta import relativedelta
 _logger = logging.getLogger(__name__)
 
 
-class SaleOrderManageOffice(models.Model):
-    """ Manage office
-    """
-    _name = 'sale.order.manage.office'
-    _description = 'Manage ice'
-    _order = 'name'
-
-    name = fields.Char('Name', size=60)
-    cups_printer = fields.Char('CUPS printer name', size=40)
-    note = fields.Text('Note')
-
-
 class ResCompany(models.Model):
     """ Model name: Res Company
     """
