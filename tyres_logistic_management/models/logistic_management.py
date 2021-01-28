@@ -47,6 +47,7 @@ class SaleOrderManageOffice(models.Model):
     _order = 'name'
 
     name = fields.Char('Name', size=60)
+    code = fields.Char('Code', size=20)
     cups_printer = fields.Char('CUPS printer name', size=40)
     note = fields.Text('Note')
 

@@ -705,7 +705,7 @@
              <field name="view_id" ref="view_sale_order_ready_tree"/>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('manage_office_id', '=', ref('tyres_logistic_management.sale_order_manage_office_workshop'), ('logistic_source', 'not in', ('refund', )), ('logistic_state', 'in', ('ready', 'done')), ('locked_delivery', '=', False), ('logistic_done', '=', False), ('logistic_source', '!=', 'internal')]</field>
+             <field name="domain">[('manage_office_id.code', '=', 'workshop'), ('logistic_source', 'not in', ('refund', )), ('logistic_state', 'in', ('ready', 'done')), ('locked_delivery', '=', False), ('logistic_done', '=', False), ('logistic_source', '!=', 'internal')]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_ready_office_form">
              <field name="name">Sale order ready office</field>
@@ -714,7 +714,7 @@
              <field name="view_id" ref="view_sale_order_ready_tree"/>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('manage_office_id', '=', ref('tyres_logistic_management.sale_order_manage_office_office')), ('logistic_source', 'not in', ('refund', )), ('logistic_state', 'in', ('ready', 'done')), ('locked_delivery', '=', False), ('logistic_done', '=', False), ('logistic_source', '!=', 'internal')]</field>
+             <field name="domain">[('manage_office_id.code', '=', 'office'), ('logistic_source', 'not in', ('refund', )), ('logistic_state', 'in', ('ready', 'done')), ('locked_delivery', '=', False), ('logistic_done', '=', False), ('logistic_source', '!=', 'internal')]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_ready_sequential_print_form">
              <field name="name">Sale order sequential print</field>
