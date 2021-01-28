@@ -79,6 +79,7 @@
                     <field name="private_market" />
                     <field name="partner_private" />
                     <field name="pfu_invoice_enable" />
+                    <field name="manage_office_id" />
                 </field>
             </field>
         </record>
@@ -92,6 +93,7 @@
                     <field name="private_market" />
                     <field name="partner_private" />
                     <field name="pfu_invoice_enable" />
+                    <field name="manage_office_id" />
                 </field>
             </field>
         </record>
@@ -537,6 +539,7 @@
                      <button name="wk_order_cancel" type="object" attrs="{'invisible': [('logistic_state','!=','error')]}" string="Cancel order" confirm="Order will go in cancel order and end the process, confirm?"/>
                  </xpath>
                  <field name="payment_term_id" position="before">
+                     <field name="manage_office_id" />
                      <field name="partner_need_invoice" />
                      <field name="need_invoice" />
                      <field name="logistic_source" />

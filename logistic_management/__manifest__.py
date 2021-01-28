@@ -46,8 +46,8 @@
         'logistic_account_report',  # DDT Report
         'logistic_ddt',  # DDT Extra data
         # 'logistic_purchase_export', # Export files
-        'logistic_order_unification', # Order unification
-        'l18n_it_fatturapa', # Fattura PA Management
+        'logistic_order_unification',  # Order unification
+        'l18n_it_fatturapa',  # Fattura PA Management
         ],
     'data': [
         # 'security/crm_security.xml',
@@ -59,9 +59,9 @@
         # Views:
         'views/logistic_management_view.xml',
         'views/fatturapa_view.xml',
-        'wizard/manual_operation_view.xml', # Test events
-        'wizard/status_extract_view.xml', # Extract operation
-        # 'views/account_parameter_view.xml', # XXX move in logistic_ddt
+        'wizard/manual_operation_view.xml',  # Test events
+        'wizard/status_extract_view.xml',  # Extract operation
+        # 'views/account_parameter_view.xml',  # XXX move in logistic_ddt
 
         # Report:
         'reports/load_position_report.xml',

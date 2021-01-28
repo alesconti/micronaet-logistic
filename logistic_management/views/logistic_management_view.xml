@@ -9,7 +9,6 @@
             <field name="arch" type="xml">
                 <field name="company_id" position="after">
                     <field name="need_invoice" />
-                    <field name="manage_office_id" />
                 </field>
             </field>
         </record>
@@ -20,7 +19,6 @@
             <field name="arch" type="xml">
                 <field name="company_id" position="before">
                     <field name="need_invoice" />
-                    <field name="manage_office_id" />
                 </field>
             </field>
         </record>
@@ -356,7 +354,6 @@
              <field name="arch" type="xml">
                  <field name="payment_term_id" position="after">
                      <field name="default_supplier_id" />
-                     <field name="manage_office_id" />
                  </field>
                  <xpath expr="//page[1]" position="after">
                      <page string="Picking">
