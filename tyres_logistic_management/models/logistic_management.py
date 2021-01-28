@@ -1492,14 +1492,21 @@ class AccountFiscalPosition(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    pfu_invoice_enable = fields.Boolean('Partner PFU exported',
+    pfu_invoice_enable = fields.Boolean(
+        'Partner PFU exported',
         help='If setup on partner will export PFU line')
     need_invoice = fields.Boolean('Always invoice')
     # Note: use also for extra document:
     private_market = fields.Char('Market private code', size=20)
-    partner_private = fields.Boolean('Partner private',
+    partner_private = fields.Boolean(
+        'Partner private',
         help='Enable partner private managamente (company or private '
-            'for invoice)')
+             'for invoice)')
+    manage_office_id = fields.Many2one(
+        comodel_name='sale.order.manage.office',
+        string='Manage office',
+        required=True,
+    )
 
 
 class AccountPaymentTerm(models.Model):
@@ -2530,6 +2537,10 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
+    manage_office_id = fields.Many2one(
+        comodel_name='sale.order.manage.office',
+        string='Manage office',
+    )
     go_purchase_pressed = fields.Boolean('Go purchase pressed')
 
     exported_date = fields.Date('Exported date')

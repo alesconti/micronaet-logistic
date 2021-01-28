@@ -1224,11 +1224,6 @@ class AccountFiscalPosition(models.Model):
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     need_invoice = fields.Boolean('Always invoice')
-    manage_office_id = fields.Many2one(
-        comodel_name='sale.order.manage.office',
-        string='Manage office',
-        required=True,
-    )
 
 
 class StockQuant(models.Model):
@@ -1835,11 +1830,6 @@ class SaleOrder(models.Model):
         ('cancel', 'Cancel'),  # Removed order
         ], 'Logistic state', default='draft',
         )
-
-    manage_office_id = fields.Many2one(
-        comodel_name='sale.order.manage.office',
-        string='Manage office',
-    )
 
 
 class SaleOrderLine(models.Model):
