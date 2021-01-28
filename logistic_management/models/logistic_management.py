@@ -1258,8 +1258,8 @@ class SaleOrder(models.Model):
         order_ids = []
         for order in self:
             line_state = set(order.order_line.mapped('logistic_state'))
-            line_state.discard('unused') # remove kit line (exploded)
-            line_state.discard('done') # if some line are in done (multidelivery)
+            line_state.discard('unused')  # remove kit line (exploded)
+            line_state.discard('done')  # if some line are in done (multidelivery)
             if tuple(line_state) == ('ready', ): # All ready
                 order.write({
                     'logistic_state': 'ready',
@@ -1275,9 +1275,9 @@ class SaleOrder(models.Model):
         for order in self:
             line_state = set(order.order_line.mapped('logistic_state'))
             line_state.discard('unused') # remove kit line (exploded)
-            if tuple(line_state) == ('done', ): # All done
+            if tuple(line_state) == ('done', ):  # All done
                 order.write({
-                    'logistic_state': 'delivering', # XXX ex done
+                    'logistic_state': 'delivering',  # XXX ex done
                     })
         return True
 
@@ -1293,13 +1293,13 @@ class SaleOrder(models.Model):
             'name': _('Order confirmed'),
             'view_type': 'form',
             'view_mode': 'tree,form',
-            #'res_id': 1,
+            # 'res_id': 1,
             'res_model': 'sale.order',
             'view_id': tree_view_id,
             'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
             'domain': [('id', 'in', order_ids)],
             'context': self.env.context,
-            'target': 'current', # 'new'
+            'target': 'current',  # 'new'
             'nodestroy': False,
             }
 
@@ -1312,15 +1312,15 @@ class SaleOrder(models.Model):
         template_pool = self.env['product.template']
 
         lines = line_pool.search([
-            ('order_id.logistic_state', '=', 'draft'), # Draft order
-            #'|', ('product_id.default_code', '=ilike', '%#%'),
-            ('product_id.product_tmpl_id.default_code', '=ilike', '%#%'), # Kit code
+            ('order_id.logistic_state', '=', 'draft'),  # Draft order
+            # '|', ('product_id.default_code', '=ilike', '%#%'),
+            ('product_id.product_tmpl_id.default_code', '=ilike', '%#%'),  # Kit code
             # TODO replace with: ('is__kit', '=', True),
             ])
         _logger.info('New order: check explode kit [# %s]' % len(lines))
 
-        template_ids = [] # ID of template checked
-        update_ids = [] # ID of template updated
+        template_ids = []  # ID of template checked
+        update_ids = []  # ID of template updated
         for line in lines:
             template = line.product_id.product_tmpl_id
             if template.id in template_ids:
@@ -1341,7 +1341,7 @@ class SaleOrder(models.Model):
                 template.is_kit = True
 
         # Reload product updated:
-        templates = template_pool.browse(update_ids) # Updated kit
+        templates = template_pool.browse(update_ids)  # Updated kit
         res = ''
         for template in templates:
             code_part = template.default_code.split('#')
@@ -1802,22 +1802,28 @@ class SaleOrder(models.Model):
         'stock.picking', 'sale_order_id', 'Picking')
 
     logistic_state = fields.Selection([
-        ('draft', 'Order draft'), # Draft, new order received
-        ('payment', 'Payment confirmed'), # Payment confirmed
+        ('draft', 'Order draft'),  # Draft, new order received
+        ('payment', 'Payment confirmed'),  # Payment confirmed
 
         # Start automation:
-        ('order', 'Order confirmed'), # Quotation transformed in order
-        ('pending', 'Pending delivery'), # Waiting for delivery
+        ('order', 'Order confirmed'),  # Quotation transformed in order
+        ('pending', 'Pending delivery'),  # Waiting for delivery
         ('ready', 'Ready'), # Ready for transfer
-        ('delivering', 'Delivering'), # In delivering phase
-        ('done', 'Done'), # Delivered or closed XXX manage partial delivery
-        ('dropshipped', 'Dropshipped'), # Order dropshipped
-        ('unificated', 'Unificated'), # Unificated with another
+        ('delivering', 'Delivering'),  # In delivering phase
+        ('done', 'Done'),  # Delivered or closed XXX manage partial delivery
+        ('dropshipped', 'Dropshipped'),  # Order dropshipped
+        ('unificated', 'Unificated'),  # Unificated with another
 
-        ('error', 'Error order'), # Order without line
-        ('cancel', 'Cancel'), # Removed order
+        ('error', 'Error order'),  # Order without line
+        ('cancel', 'Cancel'),  # Removed order
         ], 'Logistic state', default='draft',
         )
+    manage_place = fields.Selection([
+        ('hardware', 'Manage in hardware'),
+        ('office', 'Manage in office'),
+        ], 'Manage place', default='hardware', required=True,
+        )
+
 
 class SaleOrderLine(models.Model):
     """ Model name: Sale Order Line
@@ -1847,7 +1853,7 @@ class SaleOrderLine(models.Model):
         else:
             # Check pending order:
             orders = order_pool.search([('logistic_state', '=', 'pending')])
-            return orders.logistic_check_and_set_ready() # IDs order updated
+            return orders.logistic_check_and_set_ready()  # IDs order updated
         return True
 
     @api.model
@@ -1866,7 +1872,7 @@ class SaleOrderLine(models.Model):
             'name': _('Updated lines'),
             'view_type': 'form',
             'view_mode': 'tree,form',
-            #'res_id': 1,
+            # 'res_id': 1,
             'res_model': 'sale.order.line',
             'view_id': tree_view_id,
             'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
@@ -1927,8 +1933,8 @@ class SaleOrderLine(models.Model):
     def open_view_sale_order(self):
         """ Open order view
         """
-        #model_pool = self.env['ir.model.data']
-        #view_id = model_pool.get_object_reference(
+        # model_pool = self.env['ir.model.data']
+        # view_id = model_pool.get_object_reference(
         #    'module_name', 'view_name')[1]
         view_id = False
 
@@ -1939,10 +1945,10 @@ class SaleOrderLine(models.Model):
             'view_mode': 'form,tree',
             'res_id': self.order_id.id,
             'res_model': 'sale.order',
-            #'view_id': view_id, # False
+            # 'view_id': view_id, # False
             'views': [(False, 'form'), (False, 'tree')],
             'domain': [('id', '=', self.order_id.id)],
-            #'context': self.env.context,
+            # 'context': self.env.context,
             'target': 'current', # 'new'
             'nodestroy': False,
             }
@@ -1951,8 +1957,8 @@ class SaleOrderLine(models.Model):
     def open_view_sale_order_product(self):
         """ Open subsituted product
         """
-        #model_pool = self.env['ir.model.data']
-        #view_id = model_pool.get_object_reference(
+        # model_pool = self.env['ir.model.data']
+        # view_id = model_pool.get_object_reference(
         #    'module_name', 'view_name')[1]
         view_id = False
 
@@ -1963,10 +1969,10 @@ class SaleOrderLine(models.Model):
             'view_mode': 'form,tree',
             'res_id': self.product_id.id,
             'res_model': 'product.product',
-            #'view_id': view_id, # False
+            # 'view_id': view_id, # False
             'views': [(False, 'form'), (False, 'tree')],
             'domain': [('id', '=', self.product_id.id)],
-            #'context': self.env.context,
+            # 'context': self.env.context,
             'target': 'current', # 'new'
             'nodestroy': False,
             }
@@ -1975,8 +1981,8 @@ class SaleOrderLine(models.Model):
     def open_view_sale_order_original_product(self):
         """ Open original product
         """
-        #model_pool = self.env['ir.model.data']
-        #view_id = model_pool.get_object_reference(
+        # model_pool = self.env['ir.model.data']
+        # view_id = model_pool.get_object_reference(
         #    'module_name', 'view_name')[1]
         view_id = False
 
@@ -1987,10 +1993,10 @@ class SaleOrderLine(models.Model):
             'view_mode': 'form,tree',
             'res_id': self.origin_product_id.id,
             'res_model': 'product.product',
-            #'view_id': view_id, # False
+            # 'view_id': view_id, # False
             'views': [(False, 'form'), (False, 'tree')],
             'domain': [('id', '=', self.origin_product_id.id)],
-            #'context': self.env.context,
+            # 'context': self.env.context,
             'target': 'current', # 'new'
             'nodestroy': False,
             }
