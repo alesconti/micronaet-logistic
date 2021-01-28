@@ -35,6 +35,19 @@ from dateutil.relativedelta import relativedelta
 
 _logger = logging.getLogger(__name__)
 
+
+class SaleOrderManageOffice(models.Model):
+    """ Manage office
+    """
+    _name = 'sale.order.manage.office'
+    _description = 'Manage ice'
+    _order = 'name'
+
+    name = fields.Char('Name', size=60)
+    cups_printer = fields.Char('CUPS printer name', size=40)
+    note = fields.Text('Note')
+
+
 class ResCompany(models.Model):
     """ Model name: Res Company
     """
@@ -153,6 +166,7 @@ class ResCompany(models.Model):
         help='Check order before hours selected for unification process',
         )
 
+
 class ProductTemplate(models.Model):
     """ Template add fields
     """
@@ -173,6 +187,7 @@ class ProductTemplate(models.Model):
         help='Expense product is not order and produced')
     is_refund = fields.Boolean('Refund product',
         help='Refund product use for mark value for total')
+
 
 class PurchaseOrder(models.Model):
     """ Model name: Sale Order
@@ -281,6 +296,7 @@ class PurchaseOrder(models.Model):
         ], 'Logistic state', default='draft',
         )
 
+
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
     """
@@ -296,6 +312,7 @@ class PurchaseOrderLine(models.Model):
         help='Link generator sale order line: one customer line=one purchase',
         index=True, ondelete='set null',
         )
+
 
 class StockMoveIn(models.Model):
     """ Model name: Stock Move
@@ -350,6 +367,7 @@ class StockMoveIn(models.Model):
         index=True, ondelete='cascade',
         )
 
+
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
     """
@@ -398,6 +416,7 @@ class PurchaseOrderLine(models.Model):
         'stock.move', 'logistic_purchase_id', 'Linked load to purchase',
         help='Load linked to this purchase line',
         )
+
 
 class StockPicking(models.Model):
     """ Model name: Stock picking
@@ -995,7 +1014,7 @@ class StockPicking(models.Model):
         self.ensure_one()
 
         res = {
-            'total': 0.0, # net + vat
+            'total': 0.0,  # net + vat
             'net': 0.0,
             'vat': 0.0,
 
@@ -1189,6 +1208,7 @@ class StockPicking(models.Model):
     sale_order_id = fields.Many2one(
         'sale.order', 'Sale order', help='Sale order generator')
 
+
 class ResPartner(models.Model):
     """ Model name: Res Partner
     """
@@ -1199,8 +1219,9 @@ class ResPartner(models.Model):
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     need_invoice = fields.Boolean('Always invoice')
-    #sql_customer_code = fields.Char('SQL customer code', size=20)
-    #sql_supplier_code = fields.Char('SQL supplier code', size=20)
+    # sql_customer_code = fields.Char('SQL customer code', size=20)
+    # sql_supplier_code = fields.Char('SQL supplier code', size=20)
+
 
 class AccountFiscalPosition(models.Model):
     """ Model name: Account Fiscal Position
@@ -1212,6 +1233,10 @@ class AccountFiscalPosition(models.Model):
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     need_invoice = fields.Boolean('Always invoice')
+    manage_office_id = fields.Many2one(
+        comodel_name='sale.order.manage.office',
+        string='Manage office',
+    )
 
 
 class StockQuant(models.Model):
@@ -1251,7 +1276,7 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     #                           UTILITY:
     # -------------------------------------------------------------------------
-    @api.multi # XXX not api.one?!?
+    @api.multi  # XXX not api.one?!?
     def logistic_check_and_set_ready(self):
         """ Check if all line are in ready state (excluding unused)
         """
@@ -1439,7 +1464,7 @@ class SaleOrder(models.Model):
             ('logistic_state', '=', 'draft'), # Draft line
             ('product_id.type', '=', 'service'), # Direct ready
             ('product_id.is_expence', '=', True), # Direct ready
-            #('kit_line_id', '=', False), # Not the kit line (service = mrp)
+            # ('kit_line_id', '=', False), # Not the kit line (service = mrp)
             ])
         _logger.info('New order: Check product-service [# %s]' % len(lines))
         return lines.write({
@@ -1644,7 +1669,7 @@ class SaleOrder(models.Model):
 
     # State (sort of workflow):
     # TODO
-    #dropshipping = fields.Boolean('Dropshipping',
+    # dropshipping = fields.Boolean('Dropshipping',
     #    help='All order will be managed externally')
 
     # -------------------------------------------------------------------------
@@ -1818,11 +1843,11 @@ class SaleOrder(models.Model):
         ('cancel', 'Cancel'),  # Removed order
         ], 'Logistic state', default='draft',
         )
-    manage_place = fields.Selection([
-        ('hardware', 'Manage in hardware'),
-        ('office', 'Manage in office'),
-        ], 'Manage place', default='hardware', required=True,
-        )
+
+    manage_office_id = fields.Many2one(
+        comodel_name='sale.order.manage.office',
+        string='Manage office',
+    )
 
 
 class SaleOrderLine(models.Model):
@@ -1973,7 +1998,7 @@ class SaleOrderLine(models.Model):
             'views': [(False, 'form'), (False, 'tree')],
             'domain': [('id', '=', self.product_id.id)],
             # 'context': self.env.context,
-            'target': 'current', # 'new'
+            'target': 'current',  # 'new'
             'nodestroy': False,
             }
 
