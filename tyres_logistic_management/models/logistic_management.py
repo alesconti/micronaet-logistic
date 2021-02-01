@@ -2542,7 +2542,6 @@ class SaleOrder(models.Model):
         """ Override for setup default office from fiscal position
         """
         order = super(SaleOrder, self).create(values)
-        import pdb; pdb.set_trace()
 
         # Manage Office selection:
         fiscal_position = order.fiscal_position_id
