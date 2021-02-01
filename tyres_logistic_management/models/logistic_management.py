@@ -1501,7 +1501,7 @@ class AccountFiscalPosition(models.Model):
     private_market = fields.Char('Market private code', size=20)
     partner_private = fields.Boolean(
         'Partner private',
-        help='Enable partner private managamente (company or private '
+        help='Enable partner private managament (company or private '
              'for invoice)')
     manage_office_id = fields.Many2one(
         comodel_name='sale.order.manage.office',
@@ -2534,6 +2534,16 @@ class SaleOrder(models.Model):
             for picking in order.logistic_picking_ids:
                 invoice_detail += '%s ' % (picking.invoice_number or '')
             order.invoice_detail = invoice_detail
+
+    # Override:
+    @api.model
+    def create(self, values):
+        """ Override for setup default office from fiscal position
+        """
+        order = super(SaleOrder, self).create(self, values)
+        order.write({
+            'manage_office_id': order.fiscal_position_id.manage_office_id.id,
+        })
 
     # -------------------------------------------------------------------------
     # Columns:
