@@ -50,6 +50,7 @@ class SaleOrderManageOffice(models.Model):
     code = fields.Char('Code', size=20)
     cups_printer = fields.Char('CUPS printer name', size=40)
     note = fields.Text('Note')
+    default = fields.Boolean('Default')
 
 
 class CrmTeam(models.Model):
@@ -2542,14 +2543,24 @@ class SaleOrder(models.Model):
         """
         order = super(SaleOrder, self).create(values)
         import pdb; pdb.set_trace()
+
+        # Manage Office selection:
         fiscal_position = order.fiscal_position_id
         if fiscal_position and fiscal_position.manage_office_id:
-            order.write({
-                'manage_office_id': fiscal_position.manage_office_id.id,
-            })
+            office_id = fiscal_position.manage_office_id.id
         else:
-            _logger.warning(
-                'No manage office or fiscal position, leave default')
+            manage_pool = self.env['sale.order.manage.office']
+            _logger.warning('No manage office use default')
+            default_office = manage_pool.search([('default', '=', True)])
+            if default_office:
+                office_id = default_office[0].id
+            else:
+                office_id = False
+
+        order.write({
+            'manage_office_id': office_id,
+        })
+        return order
 
     # -------------------------------------------------------------------------
     # Columns:

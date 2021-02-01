@@ -7,6 +7,7 @@
             <field name="model">sale.order.manage.office</field>
             <field name="arch" type="xml">
                 <tree string="Manage office" editable="bottom">
+                    <field name="default" />
                     <field name="name" readonly="1"/>
                     <field name="code" invisible="1"/>
                     <field name="cups_printer"/>
