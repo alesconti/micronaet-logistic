@@ -2540,10 +2540,16 @@ class SaleOrder(models.Model):
     def create(self, values):
         """ Override for setup default office from fiscal position
         """
-        order = super(SaleOrder, self).create(self, values)
-        order.write({
-            'manage_office_id': order.fiscal_position_id.manage_office_id.id,
-        })
+        order = super(SaleOrder, self).create(values)
+        import pdb; pdb.set_trace()
+        fiscal_position = order.fiscal_position_id
+        if fiscal_position and fiscal_position.manage_office_id:
+            order.write({
+                'manage_office_id': fiscal_position.manage_office_id.id,
+            })
+        else:
+            _logger.warning(
+                'No manage office or fiscal position, leave default')
 
     # -------------------------------------------------------------------------
     # Columns:
