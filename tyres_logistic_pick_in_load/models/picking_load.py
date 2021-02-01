@@ -390,7 +390,7 @@ class SaleOrder(models.Model):
         """
         for order in self:
             if order.carrier_shippy:
-                if order.mmac_shippy_order_id > 0: # has the code
+                if order.mmac_shippy_order_id > 0:  # has the code
                     order.get_label_status = 'shippy'
                 else:
                     order.get_label_status = 'error'

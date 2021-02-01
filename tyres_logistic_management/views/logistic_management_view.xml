@@ -2,7 +2,7 @@
 <openerp>
     <data>
         <!--sale.order.manage.office-->
-        <record model="ir.ui.view" id="view_crm_team_view_tree">
+        <record model="ir.ui.view" id="view_action_sale_order_manage_office_tree">
             <field name="name">sale.order.manage.office.tree</field>
             <field name="model">sale.order.manage.office</field>
             <field name="arch" type="xml">
