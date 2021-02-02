@@ -1797,8 +1797,8 @@ class SaleOrder(models.Model):
             )
         self.message_post(
             body=body,
-            #subtype='mt_comment',
-            #partner_ids=followers
+            # subtype='mt_comment',
+            # partner_ids=followers
             )
 
     # -------------------------------------------------------------------------
@@ -1919,7 +1919,6 @@ class SaleOrder(models.Model):
                     _('Check supplier or mode before launch'))
         else:
             raise exceptions.Warning(_('No shippy carrier!'))
-
 
     # -------------------------------------------------------------------------
     #                           UTILITY:
@@ -2598,6 +2597,11 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
+    # Overrided fields:
+    carrier_shippy = fields.Boolean('Carrier Shippy', default=True,
+        help='Corriere gestito da hippy pro (altrimenti manuale)!')
+
+    # New fields:
     manage_office_id = fields.Many2one(
         comodel_name='sale.order.manage.office',
         string='Manage office',
