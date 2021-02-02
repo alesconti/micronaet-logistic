@@ -48,7 +48,7 @@ class SaleOrderManageOffice(models.Model):
 
     name = fields.Char('Name', size=60)
     code = fields.Char('Code', size=20)
-    cups_printer = fields.Char('CUPS printer name', size=40)
+    cups_printer = fields.Char('CUPS printer name', size=50)
     note = fields.Text('Note')
     default = fields.Boolean('Default')
 
@@ -1545,10 +1545,12 @@ class SaleOrder(models.Model):
     # Print action:
     # -------------------------------------------------------------------------
     @api.model
-    def send_report_to_printer(self, fullname, printer_mode):
+    def send_report_to_printer(
+            self, fullname, printer_mode, force_printer=False):
         """ Send report to printer
             Report file
             Printer mode
+            Force printer: Printer name forced here
         """
 
         # Parameter:
@@ -1560,7 +1562,7 @@ class SaleOrder(models.Model):
                 'PDF %s not found: %s!' % (printer_mode, fullname))
 
         # Print:
-        printer_name = eval('company.cups_%s' % printer_mode)
+        printer_name = force_printer or eval('company.cups_%s' % printer_mode)
         if not printer_name:
             raise exceptions.Warning(
                 _('Printer not found, configure name for %s mode!') % (
@@ -1589,8 +1591,8 @@ class SaleOrder(models.Model):
         """ Print picking
         """
         # TODO param in DDT report for add stock note
-        #self.workflow_ready_print_ddt()
-        #return send_report_to_printer(fullname, picking')
+        # self.workflow_ready_print_ddt()
+        # return send_report_to_printer(fullname, picking')
         return True
 
     @api.multi
@@ -1617,7 +1619,7 @@ class SaleOrder(models.Model):
         f_pdf = open(fullname, 'wb')
         f_pdf.write(pdf[0])
         f_pdf.close()
-        #self.write_log_chatter_message(_('Print DDT %s') % fullname)
+        # self.write_log_chatter_message(_('Print DDT %s') % fullname)
         return self.send_report_to_printer(fullname, 'ddt')
 
     @api.multi
@@ -2149,7 +2151,7 @@ class SaleOrder(models.Model):
         self.go_purchase_pressed = True
 
         now = fields.Datetime.now()
-        order = self # readability
+        order = self  # readability
 
         # Pool used:
         picking_pool = self.env['stock.picking']
@@ -2171,16 +2173,16 @@ class SaleOrder(models.Model):
         # Pre-Check (before document generation):
         # ---------------------------------------------------------------------
         if not order.payment_term_id:
-            #if not raise_error:
+            # if not raise_error:
             #    return False
-            #else:
+            # else:
             raise exceptions.Warning(
                 _('Payment not present in sale order!'))
 
         if not partner.property_account_position_id:
-            #if not raise_error:
+            # if not raise_error:
             #    return False
-            #else:
+            # else:
             raise exceptions.Warning(
                 _('Fiscal position not present (invoice partner)!'))
 

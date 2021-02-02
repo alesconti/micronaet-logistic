@@ -1387,6 +1387,12 @@
                      sequence="10"
                      />
                  <menuitem
+                     id="menu_sale_order_manage_office_config"
+                     parent="menu_logistic_left_configuration_parameter"
+                     action="action_sale_order_manage_office"
+                     sequence="20"
+                     />
+                 <menuitem
                      id="menu_stock_move_logistic_team"
                      parent="menu_logistic_left_configuration_root"
                      action="action_sales_team_tree"
@@ -1425,12 +1431,6 @@
                      parent="menu_res_company_parameter_configuration"
                      action="action_res_company_parameter"
                      sequence="10"
-                     />
-                 <menuitem
-                     id="menu_sale_order_manage_office_config"
-                     parent="menu_res_company_parameter_configuration"
-                     action="action_sale_order_manage_office"
-                     sequence="20"
                      />
 
     </data>

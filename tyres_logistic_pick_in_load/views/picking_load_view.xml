@@ -689,6 +689,17 @@
             </field>
         </record>
 
+         <record model="ir.ui.view" id="view_sale_order_logistic_manage_search">
+             <field name="name">sale.order.logistic.mge.search</field>
+             <field name="model">sale.order</field>
+             <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+             <field name="arch" type="xml">
+                 <field name="user_id" position="after">
+                     <filter name="manage_office_id_office" string="Manage in office" domain="[('manage_office_id.code', '=', 'office')]"/>
+                     <filter name="manage_office_id_workshop" string="Manage in workshop" domain="[('manage_office_id.code', '=', 'workshop')]"/>
+                 </field>
+             </field>
+         </record>
          <record model="ir.actions.act_window" id="action_sale_order_ready_form">
              <field name="name">Sale order ready</field>
              <field name="res_model">sale.order</field>
