@@ -1289,9 +1289,9 @@ class StockPicking(models.Model):
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
 
         # ---------------------------------------------------------------------
-        # Confirm pickign for DDT and Invoice:
+        # Confirm picking for DDT and Invoice:
         # ---------------------------------------------------------------------
-        invoice_ids = [] # For extra operation after
+        invoice_ids = []  # For extra operation after
         for picking in self:
             # Readability:
             order = picking.sale_order_id
@@ -1302,7 +1302,7 @@ class StockPicking(models.Model):
             need_invoice = \
                 partner.property_account_position_id.need_invoice or \
                     partner.need_invoice or order.need_invoice
-            is_fees = True # default
+            is_fees = True  # default
 
             # Invoice procedure (check rules):
             if need_invoice:
@@ -1352,8 +1352,8 @@ class StockPicking(models.Model):
                     'TIPO RIGA|NOTE|VETTORE|IVA INCLUSA\r\n'
                     )
 
-                mask = '%s|' * (cols - 1) + '%s' # 30 fields
-                mask_note = '|' * (cols + 6) + 'D|%s||\r\n' # Description row
+                mask = '%s|' * (cols - 1) + '%s'  # 30 fields
+                mask_note = '|' * (cols + 6) + 'D|%s||\r\n'  # Description row
 
                 # Parse extra data:
                 if order.carrier_shippy:
@@ -1366,11 +1366,11 @@ class StockPicking(models.Model):
                 # Private management:
                 account_position = partner.property_account_position_id
                 private_code = 'privato'
-                #if account_position.private_market and \
+                # if account_position.private_market and \
                 #        order.team_id.market_type == \
                 #            account_position.private_market:
                 #    private_code = 'privato'
-                #else:
+                # else:
                 if account_position.partner_private:
                     if partner.company_type == 'company':
                         private_code = 'business'
@@ -1384,7 +1384,7 @@ class StockPicking(models.Model):
                     # ---------------------------------------------------------
                     # PFU Line:
                     # ---------------------------------------------------------
-                    # Produt not in invoice (except partner and fis. pos. case)
+                    # Product not in invoice, except partner and fis. pos. case
                     if product.not_in_invoice:
                         if not partner.pfu_invoice_fiscal or not \
                                 account_position.pfu_invoice_enable:
@@ -1407,7 +1407,7 @@ class StockPicking(models.Model):
                         get_address(partner),
                         vat,
                         partner.fatturapa_fiscalcode or partner.mmac_fiscalid \
-                            or '',
+                        or '',
 
                         partner.email or '',
                         partner.phone or '',
@@ -1419,26 +1419,26 @@ class StockPicking(models.Model):
                         private_code,
                         get_address(address),
                         address.id,
-                        '', # TODO Account ID of Bank
+                        '',  # TODO Account ID of Bank
                         order.id,
 
                         order.name or '',
                         company_pool.formatLang(
                             order.date_order, date=True),
-                        account_position.id, # ODOO ID
+                        account_position.id,  # ODOO ID
                         parcel,
                         weight,
 
                         product.default_code or '',
                         move.name or '',
                         move.product_uom_qty,
-                        line.price_unit, # XXX read from line
+                        line.price_unit,  # XXX read from line
                         line.tax_id[0].account_ref or '', # TODO VAT code, >> sale order line?
                         line.order_id.team_id.channel_ref, # Channel agent code
                         order.payment_term_id.account_ref, # Payment code
                         row_mode,
-                        '', # comment
-                        order.carrier_supplier_id.account_ref or '', # code
+                        '',  # comment
+                        order.carrier_supplier_id.account_ref or '',  # code
                         '1' if line.tax_id[0].price_include else '0', # VAT incl.
                         )
                     text_line = text_line.replace('\r\n', ' ')
@@ -1451,11 +1451,11 @@ class StockPicking(models.Model):
                         order.note_invoice))
 
                 invoice_file.close()
-                self.check_import_reply() # Check previous import reply
+                self.check_import_reply()  # Check previous import reply
                 invoice_ids.append(picking.id)
 
             picking.write({
-                'state': 'done', # TODO needed?
+                'state': 'done',  # TODO needed?
                 'is_fees': is_fees,
                 })
 
@@ -2207,7 +2207,7 @@ class SaleOrder(models.Model):
                         _('Launched shippy ship call now [%s]!'
                             ) % order_ref)
                 else:
-                    order.shippy_ship_error = 'error' # XXX No more need!
+                    order.shippy_ship_error = 'error'  # XXX No more need!
                     raise exceptions.Warning(
                         _('Shippy call return no Order ID!'))
             else:
@@ -2222,33 +2222,33 @@ class SaleOrder(models.Model):
                             ' No rates selected!'),
                     ))
 
-        # else: order no shippy or yet assegnet mmac_shippy_order_id
+        # else: order no shippy or yet assegnent mmac_shippy_order_id
         # ---------------------------------------------------------------------
 
         # ---------------------------------------------------------------------
         # Select order to prepare:
         # ---------------------------------------------------------------------
-        picking_ids = [] # return value
+        picking_ids = []  # return value
         _logger.warning('Generate pick out from order')
 
         # -----------------------------------------------------------------
         # Create picking out document header:
         # -----------------------------------------------------------------
         partner = order.partner_id
-        name = order.name # same as order_ref
-        origin = _('%s [%s]') % (order.name, order.create_date[:10])
+        name = order.name  # same as order_ref
+        origin = _('%s [%s]') % (name, order.create_date[:10])
         picking = picking_pool.create({
-            'sale_order_id': order.id, # Link to order
+            'sale_order_id': order.id,  # Link to order
             'partner_id': partner.id,
             'scheduled_date': now,
             'origin': origin,
-            #'move_type': 'direct',
+            # 'move_type': 'direct',
             'picking_type_id': logistic_pick_out_type_id,
             'group_id': False,
             'location_id': location_from,
             'location_dest_id': location_to,
-            #'priority': 1,
-            'state': 'draft', # XXX To do manage done phase (for invoice)!!
+            # 'priority': 1,
+            'state': 'draft',  # XXX To do manage done phase (for invoice)!!
             })
         picking_ids.append(picking.id)
 
@@ -2295,7 +2295,7 @@ class SaleOrder(models.Model):
                 # reference'
                 # sale_line_id
                 # procure_method,
-                #'product_qty': select_qty,
+                # 'product_qty': select_qty,
                 })
 
         # TODO check if DDT / INVOICE document:
