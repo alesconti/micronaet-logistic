@@ -550,7 +550,7 @@
         <record model="ir.ui.view" id="view_sale_order_manage_form">
             <field name="name">sale.order.manage.office.form</field>
             <field name="model">sale.order</field>
-            <field name="inherit_id" ref="tyre_logistic_carrier.view_sale_order_form"/>
+            <field name="inherit_id" ref="tyres_logistic_carrier.view_sale_order_form"/>
             <field name="arch" type="xml">
                 <field name="carrier_shippy" position="after">
                     <field name="manage_office_id" />
