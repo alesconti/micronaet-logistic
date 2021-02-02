@@ -1542,6 +1542,29 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     # -------------------------------------------------------------------------
+    # On Change:
+    # -------------------------------------------------------------------------
+    @api.onchange('carrier_shippy')
+    def onchange_carrier_shippy(self):
+        """ Onchange set as office
+        """
+        manage_pool = self.env['sale.order.manage.office']
+        res = {}
+        manage_id = False
+        if self.carrier_shippy:
+            try:
+                manage_id = self.fiscal_position_id.manage_office_id.id
+            except:
+                pass
+        else:
+            manages = manage_pool.search([('code', '=', 'office')])
+            if manages:
+                manage_id = manages[0].id
+        if manage_id:
+            res['value']['manage_office_id'] = manage_id
+        return res
+
+    # -------------------------------------------------------------------------
     # Print action:
     # -------------------------------------------------------------------------
     @api.model
