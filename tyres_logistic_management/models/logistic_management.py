@@ -1561,7 +1561,10 @@ class SaleOrder(models.Model):
             if manages:
                 manage_id = manages[0].id
         if manage_id:
-            res['value']['manage_office_id'] = manage_id
+            res['value'] = {
+                'manage_office_id': manage_id,
+            }
+
         return res
 
     # -------------------------------------------------------------------------
