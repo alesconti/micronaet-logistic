@@ -547,6 +547,17 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="view_sale_order_manage_form">
+            <field name="name">sale.order.manage.office.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="tyre_logistic_carrier.view_sale_order_form"/>
+            <field name="arch" type="xml">
+                <field name="carrier_shippy" position="after">
+                    <field name="manage_office_id" />
+                </field>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="view_sale_order_logistic_form">
              <field name="name">sale.order.logistic.form</field>
              <field name="model">sale.order</field>
@@ -562,7 +573,6 @@
                      <button name="wk_order_cancel" type="object" attrs="{'invisible': [('logistic_state','!=','error')]}" string="Cancel order" confirm="Order will go in cancel order and end the process, confirm?"/>
                  </xpath>
                  <field name="payment_term_id" position="before">
-                     <field name="manage_office_id" />
                      <field name="partner_need_invoice" />
                      <field name="need_invoice" />
                      <field name="logistic_source" />
