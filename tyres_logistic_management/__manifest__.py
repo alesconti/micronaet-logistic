@@ -61,7 +61,7 @@
         ],
     'data': [
         'security/logistic_group.xml',
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
 
         # Data:
         'data/office_data.xml',
