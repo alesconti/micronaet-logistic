@@ -1564,7 +1564,6 @@ class SaleOrder(models.Model):
             res['value'] = {
                 'manage_office_id': manage_id,
             }
-
         return res
 
     # -------------------------------------------------------------------------
