@@ -1688,8 +1688,6 @@ class SaleOrder(models.Model):
         f_pdf.close()
 
         # Managed for office redirect:
-        import pdb;
-        pdb.set_trace()
         try:
             redirect_print = self.manage_office_id.cups_printer or False
         except:
