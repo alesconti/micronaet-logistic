@@ -69,13 +69,13 @@
         # Views:
         'views/logistic_management_view.xml',
         'views/dropship_view.xml',
-        'wizard/manual_operation_view.xml', # Test events
-        'wizard/status_extract_view.xml', # Extract operation
-        'wizard/fees_report_view.xml', # Extract feed
-        'wizard/revenue_report_view.xml', # Statistic report
-        'wizard/load_report_wizard.xml', # Delivery report
-        #'views/fatturapa_view.xml',
-        #'views/account_parameter_view.xml', # XXX move in logistic_ddt
+        'wizard/manual_operation_view.xml',  # Test events
+        'wizard/status_extract_view.xml',  # Extract operation
+        'wizard/fees_report_view.xml',  # Extract feed
+        'wizard/revenue_report_view.xml',  # Statistic report
+        'wizard/load_report_wizard.xml',  # Delivery report
+        # 'views/fatturapa_view.xml',
+        # 'views/account_parameter_view.xml', # XXX move in logistic_ddt
         ],
     'demo': [],
     'css': [],

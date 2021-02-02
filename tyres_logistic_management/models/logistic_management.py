@@ -2130,6 +2130,7 @@ class SaleOrder(models.Model):
     def workflow_ready_to_done_current_order(self):
         """ Button action for call all ready to done order:
         """
+        import pdb; pdb.set_trace()
         self.ensure_one()
 
         # If sequential print: print all:
