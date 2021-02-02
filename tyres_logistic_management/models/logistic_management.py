@@ -1577,7 +1577,7 @@ class SaleOrder(models.Model):
             Printer mode
             Force printer: Printer name forced here
         """
-
+        import pdb; pdb.set_trace()
         # Parameter:
         company_pool = self.env['res.company']
         company = company_pool.search([])[0]
