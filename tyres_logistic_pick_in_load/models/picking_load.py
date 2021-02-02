@@ -252,7 +252,6 @@ class SaleOrder(models.Model):
         """ Print all server action
             Managed also with manage office parameter CUPS
         """
-        import pdb; pdb.set_trace()
         result_pool = self.env['sale.order.print.result']
 
         log_print = {}
