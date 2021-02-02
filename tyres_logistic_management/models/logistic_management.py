@@ -1620,6 +1620,8 @@ class SaleOrder(models.Model):
         f_pdf.write(pdf[0])
         f_pdf.close()
         # self.write_log_chatter_message(_('Print DDT %s') % fullname)
+
+        # Not managed for office redirect:
         return self.send_report_to_printer(fullname, 'ddt')
 
     @api.multi
@@ -1641,6 +1643,7 @@ class SaleOrder(models.Model):
         report_path = os.path.join(logistic_root_folder, 'report')
         fullname = os.path.join(report_path, filename)
 
+        # Not managed for office print redirect:
         return self.send_report_to_printer(fullname, 'invoice')
 
     @api.multi
@@ -1659,7 +1662,13 @@ class SaleOrder(models.Model):
         f_pdf = open(fullname, 'wb')
         f_pdf.write(pdf[0])
         f_pdf.close()
-        return self.send_report_to_printer(fullname, 'picking')
+
+        # Managed for office redirect:
+        try:
+            redirect_print = self.manage_office_id.cups_printer or False
+        except:
+            redirect_print = False
+        return self.send_report_to_printer(fullname, 'picking', redirect_print)
 
     # -------------------------------------------------------------------------
     #                           SERVER ACTION:

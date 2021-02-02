@@ -250,6 +250,7 @@ class SaleOrder(models.Model):
     @api.multi
     def print_all_server_action(self):
         """ Print all server action
+            Managed also with manage office parameter CUPS
         """
         result_pool = self.env['sale.order.print.result']
 
