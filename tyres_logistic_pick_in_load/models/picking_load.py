@@ -138,14 +138,6 @@ class SaleOrder(models.Model):
         result_pool = self.env['sale.order.print.result']
         note = ''
         printed_order_invoice = []
-        # pdb.set_trace()
-        # _logger.info(
-        #    [item.invoice_detail for item in sorted(
-        #        self, reverse=True, key=lambda x: (
-        #        x.fiscal_position_id.print_group, x.invoice_detail, x.name))])
-        # pdb.set_trace()
-        # return True
-
         for order in sorted(self, reverse=True, key=lambda x: (
                 x.fiscal_position_id.print_group or '',
                 x.invoice_detail,
@@ -252,7 +244,6 @@ class SaleOrder(models.Model):
         """ Print all server action
             Managed also with manage office parameter CUPS
         """
-        pdb.set_trace()
         result_pool = self.env['sale.order.print.result']
 
         log_print = {}
