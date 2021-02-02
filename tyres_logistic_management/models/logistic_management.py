@@ -1577,7 +1577,6 @@ class SaleOrder(models.Model):
             Printer mode
             Force printer: Printer name forced here
         """
-        import pdb; pdb.set_trace()
         # Parameter:
         company_pool = self.env['res.company']
         company = company_pool.search([])[0]
@@ -1689,6 +1688,8 @@ class SaleOrder(models.Model):
         f_pdf.close()
 
         # Managed for office redirect:
+        import pdb;
+        pdb.set_trace()
         try:
             redirect_print = self.manage_office_id.cups_printer or False
         except:
