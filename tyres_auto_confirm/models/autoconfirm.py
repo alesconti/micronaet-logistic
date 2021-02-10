@@ -94,7 +94,7 @@ class AutoConfirmPeriod(models.Model):
     _rec_name = 'name'
     _order = 'passed, from_date'
 
-    name = fields.Char(string='name', size=35)
+    name = fields.Char(string='Name', size=35)
     passed = fields.Boolean(
         string='Passed',
         help='If range date is passed remove from list'
@@ -192,7 +192,8 @@ class ResCompany(models.Model):
     )
     template_id = fields.Many2one(
         comodel_name='auto.confirm.template',
-        string='Company',
+        string='Template',
+        help='Template for working period'
         )
     state = fields.Selection([
         ('enabled', 'Enabled'),

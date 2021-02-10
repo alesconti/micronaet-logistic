@@ -27,22 +27,20 @@
                     </header>
                     <sheet>
                         <group colspan="4" col="4">
-                            <field name="name" />
+                            <field name="name" readonly="1" colspan="4"/>
                             <field name="template_id" />
                             <field name="auto_group" />
 
-                            <separator string="Period:" colspan="3"/>
+                            <separator string="Date excluded:" colspan="3"/>
                             <button name="setup_this_year" type="object" string="Carica anno corrente" colspan="1" icon="fa-gear fa-2x"/>
+                            <field name="date_ids" colspan="4" nolabel="1"/>
+
+                            <separator string="Print setup:" colspan="4"/>
+                            <field name="auto_print" />
+                            <field name="auto_wait" />
 
                             <field name="auto_end_period" />
                             <field name="auto_period" />
-
-                            <separator string="Date esclused:" colspan="4"/>
-                            <field name="date_ids" colspan="4" nolabel="1"/>
-
-                            <separator string="Period:" colspan="4"/>
-                            <field name="auto_print" />
-                            <field name="auto_wait" />
                         </group>
                     </sheet>
                 </form>
