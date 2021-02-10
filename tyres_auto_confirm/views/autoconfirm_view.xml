@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_res_copmpany_auto_setup_tree">
+            <field name="name">res.company.auto.config.tree</field>
+            <field name="model">res.company</field>
+            <field name="arch" type="xml">
+                <tree string="Manage auto config.">
+                    <field name="name" />
+                    <field name="date_ids" />
+                    <field name="working_id" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_res_users_form">
+            <field name="name">res.users.form</field>
+            <field name="model">res.users</field>
+            <field name="arch" type="xml">
+                <form string="User for team">
+                    <header>
+                        <!--<button name="update_my_menu" string="Update my menu" type="object" icon="fa-magic" confirm="This will create master section for 'my menu', confirm?"/>-->
+                        <button name="remove_my_menu" string="Remove my menu" type="object" confirm="This will delete all 'my menu' section, confirm?"/>
+                    </header>
+                    <sheet>
+                        <group colspan="4" col="4">
+                            <field name="name" />
+                            <field name="my_user_template" />
+                            <field name="my_default_team_id" />
+                            <newline/>
+                            <field name="team_ids" widget="many2many_tags" options="{'no_create_edit': True}" colspan="4"/>
+
+                            <notebook colspan="4">
+                                <page string="My Menu">
+                                    <group colspan="4" col="4">
+                                        <separator string="My Menu extra" colspan="3"/>
+                                        <button name="load_template_menu" string="Load template menu" type="object" />
+                                        <field name="my_menu_ids" colspan="4" nolabel="1">
+                                            <tree string="Extra menu" editable="bottom">
+                                                <field name="my_sequence" />
+                                                <field name="my_action_id" />
+                                                <field name="my_menu_id" />
+                                            </tree>
+                                        </field>
+                                        <field name="my_group_id" readonly="1" colspan="4"/>
+                                    </group>
+                                </page>
+                                <page string="Template" attrs="{'invisible': [('my_user_template','=',False)]}">
+                                    <group colspan="4" col="4">
+                                        <separator string="Extra menu:" colspan="4"/>
+                                        <field name="template_ids" colspan="4" nolabel="1">
+                                            <tree string="Template" editable="bottom">
+                                                <field name="sequence" />
+                                                <field name="template_menu_id" />
+                                                <field name="force_name" />
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </page>
+
+                            </notebook>
+
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_res_user_my_menu">
+            <field name="name">User menu management</field>
+            <field name="res_model">res.users</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_res_users_tree"/>
+            <field name="context">{'form_view_ref': 'tyres_order_team_filter.view_res_users_form'}</field>
+            <field name="domain">[]</field>
+        </record>
+
+         <menuitem
+             id="menu_logistic_my_order_root"
+             parent="tyres_logistic_management.menu_logistic_header_root"
+             name="My Sale order"
+             sequence="1"
+             />
+
+        <menuitem
+            id="menu_user_menu_management"
+            parent="tyres_logistic_management.menu_logistic_left_configuration_root"
+            action="action_res_user_my_menu"
+            sequence="50"
+            />
+
+
+    </data>
+</openerp>

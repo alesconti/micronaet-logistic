@@ -1673,6 +1673,7 @@ class SaleOrder(models.Model):
     @api.multi
     def workflow_ready_print_extra(self):
         """ Print picking
+            (method overridden in mmac)
         """
         report_name = 'tyres_free_export_report.report_free_export_lang'
         fullname = '/tmp/free_export_%s.pdf' % self.id
