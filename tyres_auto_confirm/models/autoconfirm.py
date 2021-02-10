@@ -127,13 +127,13 @@ class ResCompany(models.Model):
     def enable_auto_confirm(self):
         """ Create this year date
         """
-        return self.write({'auto_enabled': True})
+        return self.write({'state': 'enabled'})
 
     @api.multi
     def disable_auto_confirm(self):
         """ Create this year date
         """
-        return self.write({'auto_enabled': False})
+        return self.write({'state': 'disabled'})
 
     @api.multi
     def check_still_enable(self):
