@@ -57,6 +57,12 @@ class AutoConfirmTemplateLine(models.Model):
         string='Day',
         selection=[
             ('mon', 'Monday'),
+            ('tue', 'Tuesday'),
+            ('wed', 'Wednesday'),
+            ('thu', 'Thursday'),
+            ('fri', 'Friday'),
+            ('sat', 'Saturday'),
+            ('sun', 'Sunday'),
         ],
         required=True,
     )
@@ -158,7 +164,7 @@ class ResCompany(models.Model):
 
     # Columns:
     auto_end_period = fields.Datetime(
-        string='End period',
+        string='End date time',
         help='When enabled this date time is the end of che auto period'
              '(used to check if the button need to be disabled)'
         )

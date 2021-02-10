@@ -1,6 +1,54 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <record model="ir.ui.view" id="view_auto_confirm_template_tree">
+            <field name="name">res.auto.confirm.template.tree</field>
+            <field name="model">auto.confirm.template</field>
+            <field name="arch" type="xml">
+                <tree string="Working template">
+                    <field name="name" />
+                    <field name="note" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_auto_confirm_template_form">
+            <field name="name">res.auto.confirm.template.form</field>
+            <field name="model">auto.confirm.template</field>
+            <field name="arch" type="xml">
+                <form string="Working template">
+                    <header>
+                    </header>
+                    <sheet>
+                        <group colspan="4" col="4">
+                            <field name="name" />
+
+                            <separator string="Timesheet" colspan="4"/>
+                            <field name="day_ids" colspan="4" nolabel="1">
+                                <tree string="Timesheet" editable="bottom">
+                                    <field name="day" />
+                                    <field name="from_hour" />
+                                    <field name="to_hour" />
+                                </tree>
+                            </field>
+
+                            <separator string="Note" colspan="4"/>
+                            <field name="note" colspan="4" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_view_auto_confirm_template">
+            <field name="name">Template</field>
+            <field name="res_model">auto.confirm.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_auto_confirm_template_tree"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <!--res.company-->
         <record model="ir.ui.view" id="view_res_company_auto_setup_tree">
             <field name="name">res.company.auto.config.tree</field>
             <field name="model">res.company</field>
@@ -33,14 +81,21 @@
 
                             <separator string="Date excluded:" colspan="3"/>
                             <button name="setup_this_year" type="object" string="Carica anno corrente" colspan="1" icon="fa-gear fa-2x"/>
-                            <field name="date_ids" colspan="4" nolabel="1"/>
+                            <field name="date_ids" colspan="4" nolabel="1">
+                                <tree string="Date excluded" editable="bottom" decoration-mute="passed==False">
+                                    <field name="passed" invisible="1" />
+                                    <field name="name" />
+                                    <field name="from_date" />
+                                    <field name="to_date" />
+                                </tree>
+                            </field>
 
                             <separator string="Print setup:" colspan="4"/>
                             <field name="auto_print" />
                             <field name="auto_wait" />
 
-                            <field name="auto_end_period" />
                             <field name="auto_period" />
+                            <field name="auto_end_period" />
                         </group>
                     </sheet>
                 </form>
@@ -56,7 +111,7 @@
             <field name="context">{}</field>
             <field name="domain">[]</field>
         </record>
-         <menuitem
+        <menuitem
              id="menu_logistic_auto_confirm_root"
              parent="tyres_logistic_management.menu_logistic_left_configuration_root"
              name="Auto confirm management"
@@ -67,6 +122,12 @@
                 parent="menu_logistic_auto_confirm_root"
                 action="action_view_res_company_auto_setup"
                 sequence="10"
+                />
+            <menuitem
+                id="menu_logistic_auto_confirm_template"
+                parent="menu_logistic_auto_confirm_root"
+                action="action_view_auto_confirm_template"
+                sequence="20"
                 />
     </data>
 </openerp>
