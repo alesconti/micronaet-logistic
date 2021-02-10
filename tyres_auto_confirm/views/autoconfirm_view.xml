@@ -71,7 +71,7 @@
                     <header>
                         <button name="enable_auto_confirm" type="object" string="Attiva auto conferma" attrs="{'invisible': [('state', '!=', 'enabled')]}" icon="fa-play fa-2x"/>
                         <button name="disable_auto_confirm" type="object" string="Disattiva auto conferma" attrs="{'invisible': [('state', '!=', 'disabled')]}" icon="fa-power-off fa-2x"/>
-                        <field name="state" widget="status_bar"/>
+                        <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
                         <group colspan="4" col="4">

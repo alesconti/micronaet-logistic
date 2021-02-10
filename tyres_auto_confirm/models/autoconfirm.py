@@ -204,6 +204,6 @@ class ResCompany(models.Model):
     state = fields.Selection([
         ('enabled', 'Enabled'),
         ('disabled', 'Disabled'),
-        ], string='State',
+        ], string='State', default='disabled',
         help='Orders go in delivery when ready automatically',
     )
