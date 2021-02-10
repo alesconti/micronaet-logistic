@@ -79,8 +79,9 @@
                             <field name="template_id" />
                             <field name="auto_group" />
 
-                            <separator string="Date excluded:" colspan="3"/>
+                            <separator string="Date excluded:" colspan="2"/>
                             <button name="setup_this_year" type="object" string="Carica anno corrente" colspan="1" icon="fa-gear fa-2x"/>
+                            <newline/>
                             <field name="date_ids" colspan="4" nolabel="1">
                                 <tree string="Date excluded" editable="bottom" decoration-mute="passed==False">
                                     <field name="passed" invisible="1" />

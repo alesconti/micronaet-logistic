@@ -24,9 +24,7 @@
 import os
 import sys
 import logging
-import odoo
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
-from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
 import pdb
 
@@ -41,7 +39,7 @@ class AutoConfirmTemplate(models.Model):
     _rec_name = 'name'
     _order = 'name'
 
-    name = fields.Char(string='Name', size=35)
+    name = fields.Char(string='Name', size=35, required=True)
     note = fields.Text(string='Note')
 
 
