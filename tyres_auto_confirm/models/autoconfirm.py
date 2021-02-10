@@ -33,7 +33,7 @@ import pdb
 _logger = logging.getLogger(__name__)
 
 
-class AutoConfirmWorking(models.Model):
+class AutoConfirmTemplate(models.Model):
     """ Auto confirm working template
     """
     _name = 'auto.confirm.template'
@@ -45,7 +45,7 @@ class AutoConfirmWorking(models.Model):
     note = fields.Text(string='Note')
 
 
-class AutoConfirmWorkingLine(models.Model):
+class AutoConfirmTemplateLine(models.Model):
     """ Auto confirm working template line
     """
     _name = 'auto.confirm.template.line'
@@ -148,19 +148,15 @@ class ResCompany(models.Model):
         return self.write({'auto_enabled': False})
 
     # Default function:
-    @api.multi
-    def group_auto_confirm_manager(self):
+    '''@api.multi
+    def get_default_auto_group(self):
         """ Init setup for basic management group
         """
-        pdb.set_trace()
-        group_id = self.env.ref('tyres_auto_confirm.get_default_auto_group').id
-        return group_id
+        group_id = self.env.ref(
+            'tyres_auto_confirm.group_auto_confirm_manager').id
+        return group_id'''
 
     # Columns:
-    auto_enabled = fields.Boolean(
-        string='Auto enabled',
-        help='Orders go in delivery when ready automatically',
-    )
     auto_end_period = fields.Datetime(
         string='End period',
         help='When enabled this date time is the end of che auto period'
@@ -186,11 +182,21 @@ class ResCompany(models.Model):
         comodel_name='res.groups',
         string='Auto group',
         help='Group for user that can manage auto button',
-        default=lambda s: s.get_default_auto_group(),
+        # default=lambda s: s.get_default_auto_group(),
         )
     date_ids = fields.One2many(
-        comodel_name='auto.confirm.date',
+        comodel_name='auto.confirm.period',
         inverse_name='company_id',
         string='Exclude date',
         help='Exclude date list'
+    )
+    template_id = fields.Many2one(
+        comodel_name='auto.confirm.template',
+        string='Company',
+        )
+    state = fields.Selection([
+        ('enabled', 'Enabled'),
+        ('disabled', 'Disabled'),
+        ], string='State',
+        help='Orders go in delivery when ready automatically',
     )
