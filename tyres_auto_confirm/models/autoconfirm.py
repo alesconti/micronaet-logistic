@@ -23,11 +23,11 @@
 
 import os
 import sys
+import pdb
 import logging
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.tools.translate import _
-import pdb
-
+from dateutil.easter import easter
 _logger = logging.getLogger(__name__)
 
 
@@ -137,29 +137,33 @@ class ResCompany(models.Model):
             '06-02': 'Festa della Repubblica',
             '08-15': 'Ferragosto',
             '12-08': 'Immacolata concezione',
-            '12-25': 'Natale',
-            '12-26': 'Santo Stefano',
+            ('12-25', '12-26'): 'Natale',
         }
-        from dateutil.easter import *
-        easter_date = easter(2010)
+        easter_date = easter(int(year))
         easter_record = '%02d-%02d' % (easter_date.month, easter_date.day)
         date_excluded[easter_record] = 'Pasqua'
 
         if self.patron_day:
-            patron_day = '{}-{}'.format(year, self.patron_day)
+            patron_day = self.patron_day
             date_excluded[patron_day] = 'Festa patronale'
 
-        for date in date_excluded:
+        for date in sorted(date_excluded):
+            if len(date) == 2:
+                from_date, to_date = date
+            else:
+                from_date = to_date = date
             name = date_excluded[date]
-            full_date = '{}-{}'.format(year, date)
-            periods = period_pool.search([('from_date', '=', full_date)])
-            if not periods:
-                period_pool.create({
-                    'name': name,
-                    'company_id': self.env.user.company_id.id,
-                    'from_date': full_date,
-                    'to_date': full_date,
-                })
+            periods = period_pool.search([('from_date', '=', from_date)])
+            data = {
+                'name': name,
+                'company_id': self.env.user.company_id.id,
+                'from_date': '{}-{}'.format(year, from_date),
+                'to_date': '{}-{}'.format(year, to_date),
+                }
+            if periods:
+                period_pool.write(data)
+            else:
+                period_pool.create(data)
         return True
 
     @api.multi
@@ -198,7 +202,7 @@ class ResCompany(models.Model):
     # Columns:
     patron_day = fields.Char(
         string='Patron day',
-        help='Write patron day in format MM-DD, ex.: 02-15 for 15 feb.'
+        help='Write patron day in format MM-DD, ex.: 02-15 for 15 feb.',
         default='02-15',
     )
     auto_end_period = fields.Datetime(
