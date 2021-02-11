@@ -28,6 +28,7 @@ from datetime import datetime
 
 pidfile = '/tmp/auto_print_daemon.pid'
 log_exec_file = './log/execution.log'
+log_exec_f = None  # open(log_exec_file, 'a')
 
 
 # -----------------------------------------------------------------------------
@@ -47,8 +48,6 @@ def write_log(message, mode='info', log_file=None, verbose=True):
 # -----------------------------------------------------------------------------
 # Check multi execution:
 # -----------------------------------------------------------------------------
-log_exec_f = False  # open(log_exec_file, 'a')
-
 # A. Check if yet running:
 pid = str(os.getpid())
 if os.path.isfile(pidfile):
@@ -108,8 +107,34 @@ try:
     for order_id in auto_order_ids:
         # Read order internally (maybe yet printed from ODOO)
         order = order_pool.browse(order_id)
+
+        if order.locked_delivery:
+            write_log(
+                'Order %s in locked delivery' % order.name,
+                log_file=log_exec_f)
+            continue  # Leave in automatic order
+
         if not order.auto_print_order:  # Yet printed
+            write_log(
+                'Order %s printed manually' % order.name,
+                log_file=log_exec_f)
             continue
+
+        if not order.auto_print_order:  # Yet printed (manually from ODOO)
+            continue
+
+        if not order.auto_print_order:  # Yet printed
+            write_log(
+                'Order %s not in ready status' % order.name,
+                log_file=log_exec_f)
+            order.write_log_chatter_message(
+                'Rimosso dagli automatici dato che non si trova in stato '
+                '"Pronto"')
+            order_pool.write([order.id], {
+                'auto_print_order': False,
+            })
+            continue
+
         counter += 1  # Counter really printed record!
 
         # Print N order and wait after print block:
@@ -117,7 +142,7 @@ try:
             counter = 1  # Restart
             time.sleep(wait)
 
-        # Press the send to tdelivery button:
+        # Press the send to delivery button:
         order.workflow_ready_to_done_current_order()
         # Log the message:
         order.write_log_chatter_message('Lancio stampa automatica ordine')

@@ -183,7 +183,7 @@ class ResCompany(models.Model):
             ('to_hour', '>=', hour),
         ])
         if not lines:
-            exceptions.UserError(
+            raise exceptions.UserError(
                 'Not activated, no working period available today')
             return False
 
@@ -326,6 +326,8 @@ class SaleOrderAutoPrint(models.Model):
                 # Setup order for printing:
                 order_2_print = self.search([
                     ('logistic_state', '=', 'ready'),
+                    ('logistic_source', 'not in', ('refund',)),
+
                     ('id', 'in', self.mapped('id')),
                 ])
                 order_2_print.write({
