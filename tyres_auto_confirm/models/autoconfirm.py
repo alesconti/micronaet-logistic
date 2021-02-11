@@ -237,7 +237,20 @@ class ResCompany(models.Model):
             'tyres_auto_confirm.group_auto_confirm_manager').id
         return group_id'''
 
+    @api.multi
+    def get_pending_autoconfirmed_order(self):
+        """ Auto order pending for printing
+        """
+        return self.env['sale.order'].search_count([
+            ('auto_print_order', '=', True),
+        ])
+
     # Columns:
+    auto_pending_order = fields.Integer(
+        string='Pending order',
+        help='Order marked for being printed automatically',
+        compute='get_pending_autoconfirmed_order',
+    )
     patron_day = fields.Char(
         string='Patron day',
         help='Write patron day in format MM-DD, ex.: 02-15 for 15 feb.',
