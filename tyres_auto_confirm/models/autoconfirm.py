@@ -25,6 +25,7 @@ import os
 import sys
 import pdb
 import logging
+from datetime import datetime
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.tools.translate import _
 from dateutil.easter import easter
@@ -123,20 +124,19 @@ class ResCompany(models.Model):
     # Button event:
     @api.multi
     def setup_this_year(self):
-        """ Create this year date
+        """ Create this year date (not used for now)
         """
         period_pool = self.env['auto.confirm.period']
-        pdb.set_trace()
         year = fields.Datetime.now()[:4]
 
         date_excluded = {
-            '01-01': 'Capodanno',
-            '01-06': 'Befana',
-            '04-25': '25 Aprile',
-            '05-01': 'I Maggio',
-            '06-02': 'Festa della Repubblica',
-            '08-15': 'Ferragosto',
-            '12-08': 'Immacolata concezione',
+            ('01-01'): 'Capodanno',
+            ('01-06'): 'Befana',
+            ('04-25'): '25 Aprile',
+            ('05-01'): 'I Maggio',
+            ('06-02'): 'Festa della Repubblica',
+            ('08-15'): 'Ferragosto',
+            ('12-08'): 'Immacolata concezione',
             ('12-25', '12-26'): 'Natale',
         }
         easter_date = easter(int(year))
@@ -147,7 +147,7 @@ class ResCompany(models.Model):
             patron_day = self.patron_day
             date_excluded[patron_day] = 'Festa patronale'
 
-        for date in sorted(date_excluded):
+        for date in sorted(date_excluded, key=lambda r: r[0]):
             if len(date) == 2:
                 from_date, to_date = date
             else:
@@ -170,6 +170,13 @@ class ResCompany(models.Model):
     def enable_auto_confirm(self):
         """ Create this year date
         """
+        translate = [
+            'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+
+        now = datetime.now()
+        weekday = translate[now.isoweekday()]
+
+        pdb.set_trace()
         return self.write({'auto_state': 'enabled'})
 
     @api.multi

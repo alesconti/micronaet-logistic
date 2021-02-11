@@ -26,8 +26,8 @@
                             <field name="day_ids" colspan="4" nolabel="1">
                                 <tree string="Timesheet" editable="bottom">
                                     <field name="day" />
-                                    <field name="from_hour" />
-                                    <field name="to_hour" />
+                                    <field name="from_hour" widget="float_time"/>
+                                    <field name="to_hour" widget="float_time" />
                                 </tree>
                             </field>
 
@@ -72,8 +72,8 @@
             <field name="arch" type="xml">
                 <form string="Manage auto config.">
                     <header>
-                        <button name="enable_auto_confirm" type="object" string="Attiva auto conferma" attrs="{'invisible': [('auto_state', '!=', 'enabled')]}" icon="fa-play fa-2x"/>
-                        <button name="disable_auto_confirm" type="object" string="Disattiva auto conferma" attrs="{'invisible': [('auto_state', '!=', 'disabled')]}" icon="fa-power-off fa-2x"/>
+                        <button name="enable_auto_confirm" type="object" string="Attiva auto conferma" attrs="{'invisible': [('auto_state', '=', 'enabled')]}" icon="fa-play fa-2x"/>
+                        <button name="disable_auto_confirm" type="object" string="Disattiva auto conferma" attrs="{'invisible': [('auto_state', '=', 'disabled')]}" icon="fa-power-off fa-2x"/>
                         <field name="auto_state" widget="statusbar"/>
                     </header>
                     <sheet>
@@ -82,7 +82,7 @@
                             <field name="template_id" />
                             <field name="auto_group" />
 
-                            <separator string="Date excluded:" colspan="2"/>
+                            <!--<separator string="Date excluded:" colspan="2"/>
                             <button name="setup_this_year" type="object" string="Carica anno corrente" colspan="1" icon="fa-gear fa-2x"/>
                             <newline/>
                             <field name="patron_day" />
@@ -94,14 +94,14 @@
                                     <field name="from_date" />
                                     <field name="to_date" />
                                 </tree>
-                            </field>
+                            </field>-->
 
                             <separator string="Print setup:" colspan="4"/>
                             <field name="auto_print" />
                             <field name="auto_wait" />
 
-                            <field name="auto_period" />
                             <field name="auto_end_period" />
+                            <!--<field name="auto_period" />-->
                         </group>
                     </sheet>
                 </form>
