@@ -24,6 +24,7 @@ import erppeek
 import ConfigParser
 import time
 import sys
+import pdb
 from datetime import datetime
 
 demo = True
@@ -31,7 +32,7 @@ pidfile = '/tmp/auto_print_daemon.pid'
 log_exec_file = './log/execution.log'
 log_exec_f = None  # open(log_exec_file, 'a')
 
-
+pdb.set_trace()
 # -----------------------------------------------------------------------------
 # Function:
 # -----------------------------------------------------------------------------
