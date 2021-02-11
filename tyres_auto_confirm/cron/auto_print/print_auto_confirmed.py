@@ -33,41 +33,41 @@ log_exec_file = './log/execution.log'
 # -----------------------------------------------------------------------------
 # Function:
 # -----------------------------------------------------------------------------
-def write_log(log_f, message, mode='info'):
+def write_log(message, mode='info', log_file=None, verbose=True):
     """ Log on file
     """
-    log_f.write('%s - [%s] %s\n' % (
-        datetime.now(),
-        mode.upper(),
-        message,
-    ))
+    full_message = '%s - [%s] %s\n' % (
+        datetime.now(), mode.upper(), message)
+    if log_file:
+        log_file.write(full_message)
+    if verbose:
+        print(full_message.strip())
 
 
 # -----------------------------------------------------------------------------
 # Check multi execution:
 # -----------------------------------------------------------------------------
-log_exec_f = open(log_exec_file, 'a')
+log_exec_f = False  # open(log_exec_file, 'a')
 
 # A. Check if yet running:
 pid = str(os.getpid())
 if os.path.isfile(pidfile):
-    message = '\n[%s] Invoice Daemon already running [%s]\n' % (pid, pidfile)
-    # write_log(log_exec_f, message, 'error')
-    print(message)
+    message = '[%s] Invoice Daemon already running [%s]' % (pid, pidfile)
+    write_log(message, log_file=log_exec_f)
     sys.exit()
 else:
     message = '[%s] Invoice Daemon running [%s]' % (pid, pidfile)
-    write_log(log_exec_f, message)
+    write_log(message, log_file=log_exec_f)
 
-# B. Create PID file:
-pid_f = open(pidfile, 'w')
-pid_f.write(pid)
-pid_f.close()
+    # B. Create PID file:
+    pid_f = open(pidfile, 'w')
+    pid_f.write(pid)
+    pid_f.close()
 
-# -----------------------------------------------------------------------------
-# Read configuration parameter:
-# -----------------------------------------------------------------------------
 try:
+    # -------------------------------------------------------------------------
+    # Read configuration parameter:
+    # -------------------------------------------------------------------------
     cfg_file = os.path.expanduser('../odoo.cfg')
 
     config = ConfigParser.ConfigParser()
@@ -88,9 +88,11 @@ try:
         password=pwd,
         )
     order_pool = odoo.model('sale.order')
-    company_pool = odoo.model('sale.order')
+    company_pool = odoo.model('res.company')
 
-    # If present read parameters and print:
+    # -------------------------------------------------------------------------
+    # Read parameters:
+    # -------------------------------------------------------------------------
     company_ids = company_pool.search([])
     company = company_pool.browse(company_ids)[0]
     block = company.auto_print
@@ -108,17 +110,20 @@ try:
         order = order_pool.browse(order_id)
         if not order.auto_print_order:  # Yet printed
             continue
-        counter += 1
+        counter += 1  # Counter really printed record!
 
         # Print N order and wait after print block:
         if counter > block:
-            counter = 1
+            counter = 1  # Restart
             time.sleep(wait)
 
+        # Press the send to tdelivery button:
         order.workflow_ready_to_done_current_order()
+        # Log the message:
         order.write_log_chatter_message('Lancio stampa automatica ordine')
 finally:
     os.unlink(pidfile)
     message = '[%s] Invoice Daemon stopped [%s]\n' % (pid, pidfile)
-    write_log(log_exec_f, message)
-    log_exec_f.close()
+    write_log(message, log_file=log_exec_f)
+    if log_exec_f:
+        log_exec_f.close()
