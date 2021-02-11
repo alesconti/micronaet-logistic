@@ -60,6 +60,9 @@
                     <field name="auto_period" />
                     <field name="auto_print" />
                     <field name="auto_wait" />
+                    <button name="enable_auto_confirm" type="object" string="Attiva auto conferma" attrs="{'invisible': [('auto_state', '!=', 'enabled')]}" icon="fa-play fa-2x"/>
+                    <button name="disable_auto_confirm" type="object" string="Disattiva auto conferma" attrs="{'invisible': [('auto_state', '!=', 'disabled')]}" icon="fa-power-off fa-2x"/>
+                    <field name="auto_state"/>
                 </tree>
             </field>
         </record>
@@ -69,9 +72,9 @@
             <field name="arch" type="xml">
                 <form string="Manage auto config.">
                     <header>
-                        <button name="enable_auto_confirm" type="object" string="Attiva auto conferma" attrs="{'invisible': [('state', '!=', 'enabled')]}" icon="fa-play fa-2x"/>
-                        <button name="disable_auto_confirm" type="object" string="Disattiva auto conferma" attrs="{'invisible': [('state', '!=', 'disabled')]}" icon="fa-power-off fa-2x"/>
-                        <field name="state" widget="statusbar"/>
+                        <button name="enable_auto_confirm" type="object" string="Attiva auto conferma" attrs="{'invisible': [('auto_state', '!=', 'enabled')]}" icon="fa-play fa-2x"/>
+                        <button name="disable_auto_confirm" type="object" string="Disattiva auto conferma" attrs="{'invisible': [('auto_state', '!=', 'disabled')]}" icon="fa-power-off fa-2x"/>
+                        <field name="auto_state" widget="statusbar"/>
                     </header>
                     <sheet>
                         <group colspan="4" col="4">
@@ -81,6 +84,8 @@
 
                             <separator string="Date excluded:" colspan="2"/>
                             <button name="setup_this_year" type="object" string="Carica anno corrente" colspan="1" icon="fa-gear fa-2x"/>
+                            <newline/>
+                            <field name="patron_day" />
                             <newline/>
                             <field name="date_ids" colspan="4" nolabel="1">
                                 <tree string="Date excluded" editable="bottom" decoration-mute="passed==False">

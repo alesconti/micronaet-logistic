@@ -125,19 +125,54 @@ class ResCompany(models.Model):
     def setup_this_year(self):
         """ Create this year date
         """
+        period_pool = self.env['auto.confirm.period']
+        pdb.set_trace()
+        year = fields.Datetime.now()[:4]
+
+        date_excluded = {
+            '01-01': 'Capodanno',
+            '01-06': 'Befana',
+            '04-25': '25 Aprile',
+            '05-01': 'I Maggio',
+            '06-02': 'Festa della Repubblica',
+            '08-15': 'Ferragosto',
+            '12-08': 'Immacolata concezione',
+            '12-25': 'Natale',
+            '12-26': 'Santo Stefano',
+        }
+        from dateutil.easter import *
+        easter_date = easter(2010)
+        easter_record = '%02d-%02d' % (easter_date.month, easter_date.day)
+        date_excluded[easter_record] = 'Pasqua'
+
+        if self.patron_day:
+            patron_day = '{}-{}'.format(year, self.patron_day)
+            date_excluded[patron_day] = 'Festa patronale'
+
+        for date in date_excluded:
+            name = date_excluded[date]
+            full_date = '{}-{}'.format(year, date)
+            periods = period_pool.search([('from_date', '=', full_date)])
+            if not periods:
+                period_pool.create({
+                    'name': name,
+                    'company_id': self.env.user.company_id.id,
+                    'from_date': full_date,
+                    'to_date': full_date,
+                })
         return True
 
     @api.multi
     def enable_auto_confirm(self):
         """ Create this year date
         """
-        return self.write({'state': 'enabled'})
+        return self.write({'auto_state': 'enabled'})
 
     @api.multi
     def disable_auto_confirm(self):
         """ Create this year date
         """
-        return self.write({'state': 'disabled'})
+        return self.write({'auto_state': 'disabled'})
 
     @api.multi
     def check_still_enable(self):
@@ -161,6 +196,11 @@ class ResCompany(models.Model):
         return group_id'''
 
     # Columns:
+    patron_day = fields.Char(
+        string='Patron day',
+        help='Write patron day in format MM-DD, ex.: 02-15 for 15 feb.'
+        default='02-15',
+    )
     auto_end_period = fields.Datetime(
         string='End date time',
         help='When enabled this date time is the end of che auto period'
@@ -199,7 +239,7 @@ class ResCompany(models.Model):
         string='Template',
         help='Template for working period'
         )
-    state = fields.Selection([
+    auto_state = fields.Selection([
         ('enabled', 'Enabled'),
         ('disabled', 'Disabled'),
         ], string='State', default='disabled',
