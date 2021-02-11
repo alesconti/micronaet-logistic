@@ -130,13 +130,13 @@ class ResCompany(models.Model):
         year = fields.Datetime.now()[:4]
 
         date_excluded = {
-            ('01-01'): 'Capodanno',
-            ('01-06'): 'Befana',
-            ('04-25'): '25 Aprile',
-            ('05-01'): 'I Maggio',
-            ('06-02'): 'Festa della Repubblica',
-            ('08-15'): 'Ferragosto',
-            ('12-08'): 'Immacolata concezione',
+            ('01-01', ): 'Capodanno',
+            ('01-06', ): 'Befana',
+            ('04-25', ): '25 Aprile',
+            ('05-01', ): 'I Maggio',
+            ('06-02', ): 'Festa della Repubblica',
+            ('08-15', ): 'Ferragosto',
+            ('12-08', ): 'Immacolata concezione',
             ('12-25', '12-26'): 'Natale',
         }
         easter_date = easter(int(year))

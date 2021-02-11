@@ -66,10 +66,10 @@
                 <tree string="Manage auto config." decoration-success="auto_state=='enabled'" decoration-danger="auto_state=='disabled'">
                     <field name="name" />
                     <field name="template_id" />
-                    <field name="auto_end_period" />
-                    <field name="auto_period" />
                     <field name="auto_print" />
                     <field name="auto_wait" />
+                    <field name="auto_start_period" />
+                    <field name="auto_end_period" />
                     <button name="enable_auto_confirm" type="object" string="Attiva auto conferma" attrs="{'invisible': [('auto_state', '=', 'enabled')]}" icon="fa-play fa-3x"/>
                     <button name="disable_auto_confirm" type="object" string="Disattiva auto conferma" attrs="{'invisible': [('auto_state', '=', 'disabled')]}" icon="fa-power-off fa-3x"/>
                     <field name="auto_state"/>
