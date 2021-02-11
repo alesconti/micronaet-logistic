@@ -170,20 +170,51 @@ class ResCompany(models.Model):
     def enable_auto_confirm(self):
         """ Create this year date
         """
+        line = self.env['auto.confirm.template.line']
+
         translate = [
             'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 
         now = datetime.now()
+        hour = now.hour + now.minute / 60.0
         weekday = translate[now.isoweekday()]
+        lines = line.search([
+            ('day', '=', weekday),
+            ('to_hour', '>=', hour),
+        ])
+        if not lines:
+            exceptions.UserError(
+                'Not activated, no working period available today')
+            return False
 
-        pdb.set_trace()
-        return self.write({'auto_state': 'enabled'})
+        now_text = now.strftime('%Y-%m-%d')
+        from_hour = lines[0].from_hour
+        to_hour = lines[0].to_hour
+        auto_start_period = '%s %02d:%02d:00' % (
+            now_text,
+            int(from_hour),
+            int((from_hour - int(from_hour)) * 60.0),
+        )
+        auto_end_period = '%s %02d:%02d:00' % (
+            now_text,
+            int(to_hour),
+            int((to_hour - int(to_hour)) * 60.0),
+        )
+        return self.write({
+            'auto_state': 'enabled',
+            'auto_start_period': auto_start_period,
+            'auto_end_period': auto_end_period,
+        })
 
     @api.multi
     def disable_auto_confirm(self):
         """ Create this year date
         """
-        return self.write({'auto_state': 'disabled'})
+        return self.write({
+            'auto_state': 'disabled',
+            'auto_start_period': False,
+            'auto_end_period': False,
+        })
 
     @api.multi
     def check_still_enable(self):
@@ -212,9 +243,14 @@ class ResCompany(models.Model):
         help='Write patron day in format MM-DD, ex.: 02-15 for 15 feb.',
         default='02-15',
     )
+    auto_start_period = fields.Datetime(
+        string='Start date time',
+        help='When enabled this date time is the start of the auto period'
+             '(used to check if the button need to be disabled)'
+        )
     auto_end_period = fields.Datetime(
         string='End date time',
-        help='When enabled this date time is the end of che auto period'
+        help='When enabled this date time is the end of the auto period'
              '(used to check if the button need to be disabled)'
         )
     auto_period = fields.Integer(

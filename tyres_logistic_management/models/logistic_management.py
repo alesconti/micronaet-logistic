@@ -1933,7 +1933,7 @@ class SaleOrder(models.Model):
         order_ids = []
         for order in self:
             # Only carrier confirmed order goes in ready? internal order?
-            #if order.logistic_source == 'web' and not order.carrier_ok:
+            # if order.logistic_source == 'web' and not order.carrier_ok:
             #    order.write_log_chatter_message(
             #        _('Order cannot go in ready if carrier is not OK'))
             #    continue
@@ -1942,7 +1942,7 @@ class SaleOrder(models.Model):
             line_state.discard('unused') # remove kit line (exploded)
             line_state.discard('done') # if some line are in done multidelivery
             if tuple(line_state) == ('ready', ): # All line are logistic ready
-                #if order.logistic_state in ('ready', 'done', 'cancel'):
+                # if order.logistic_state in ('ready', 'done', 'cancel'):
                 #    # Do nothing if in this states:
                 #    continue
 
@@ -2698,7 +2698,7 @@ class SaleOrderLine(models.Model):
         _logger.info('Update sale order line as ready:')
         for line in self.browse([item.id for item in browse_list]):
             if line.logistic_state == 'ordered' and \
-                    line.logistic_remain_qty <= 0: # (is sale order so remain)
+                    line.logistic_remain_qty <= 0:  # (is sale order so remain)
                 line.logistic_state = 'ready'
 
         # B. Check Sale Order with all line ready:
