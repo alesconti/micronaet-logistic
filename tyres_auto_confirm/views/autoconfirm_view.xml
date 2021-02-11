@@ -9,7 +9,11 @@
                 <kanban>
                     <field name="id" readonly="1"/>
                     <field name="name" />
-                    <field name="image" />
+                    <!--<field name="image" />-->
+                    <field name="auto_print" />
+                    <field name="auto_wait" />
+                    <field name="auto_start_period" />
+                    <field name="auto_end_period" />
                     <templates>
                         <t t-name="kanban-box">
                             <div class="oe_kanban_global_click">
@@ -25,17 +29,25 @@
                                             ]
                                         </small>-->
                                     </strong>
-                                    <!--<ul>
-                                        <li >
-                                            Prezzo:
-                                            <field name="lst_price" widget="monetary" options="{'currency_field': 'currency_id', 'field_digits': True}" />
+                                    <ul>
+                                        <li>
+                                            Attivo da: <field name="auto_start_period" />
                                         </li>
-                                        <li t-if="record.type.raw_value == 'product'" >
+                                        <li>
+                                            Attivo fino: <field name="auto_end_period" />
+                                        </li>
+                                        <li>
+                                            Blocchi: <field name="auto_print" />
+                                        </li>
+                                        <li>
+                                            Attesa tra i blocchi: <field name="auto_wait" />
+                                        </li>
+                                        <!--<li t-if="record.type.raw_value == 'product'" >
                                             In possesso:
                                             <field name="qty_available" modifiers="{'readonly':true}"/>
                                             <field name="uom_id" on_change="1" can_create="true" can_write="true" modifiers="{'required':true}"/>
-                                        </li>
-                                    </ul>-->
+                                        </li>-->
+                                    </ul>
                                 </div>
                             </div>
                         </t>
