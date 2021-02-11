@@ -1,0 +1,354 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* tyres_auto_confirm
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-02-11 14:17+0000\n"
+"PO-Revision-Date: 2021-02-11 14:17+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,help:tyres_auto_confirm.field_res_company_auto_wait
+msgid "All printable orders will be spliced in blocks, every block waitX seconds before print next"
+msgstr "Tutti gli ordini stampabili saranno spezzati in blocchi, ogni blocco attende X secondi prima di essere stampato"
+
+#. module: tyres_auto_confirm
+#: model:ir.ui.view,arch_db:tyres_auto_confirm.view_res_company_auto_setup_form
+#: model:ir.ui.view,arch_db:tyres_auto_confirm.view_res_company_auto_setup_tree
+msgid "Attiva auto conferma"
+msgstr "Attiva auto conferma"
+
+#. module: tyres_auto_confirm
+#: model:res.groups,name:tyres_auto_confirm.group_auto_confirm_manager
+msgid "Auto confirm group"
+msgstr "Gruppo autoconferma"
+
+#. module: tyres_auto_confirm
+#: model:ir.ui.menu,name:tyres_auto_confirm.menu_logistic_auto_confirm_root
+msgid "Auto confirm management"
+msgstr "Gestore conferma automatica ordini"
+
+#. module: tyres_auto_confirm
+#: model:ir.model,name:tyres_auto_confirm.model_auto_confirm_period
+msgid "Auto confirm period"
+msgstr "Periodo autoconferma"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_res_company_auto_group
+msgid "Auto group"
+msgstr "Gruppo gestione"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_res_company_auto_period
+msgid "Auto period (min.)"
+msgstr "Periodo automatico (min.)"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,help:tyres_auto_confirm.field_res_company_auto_period
+msgid "Auto period for enable auto go in delivery"
+msgstr "Periodo automatico per abilitare il bottone automatico: Vai in consegna"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_sale_order_auto_print_order
+msgid "Auto print"
+msgstr "Stampa automatica"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_res_company_auto_print
+msgid "Auto print block"
+msgstr "Lotto di stampa"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,help:tyres_auto_confirm.field_sale_order_auto_print_order
+msgid "Auto print order (go in delivery)"
+msgstr "Ordine automatico (vai in consegna)"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_res_company_auto_wait
+msgid "Auto print wait"
+msgstr "Periodo attesa stampa blocchi"
+
+#. module: tyres_auto_confirm
+#: model:ir.actions.act_window,name:tyres_auto_confirm.action_sale_order_ready_autoprint_form
+#: model:ir.ui.menu,name:tyres_auto_confirm.menu_action_sale_order_ready_autoprint
+msgid "Autoprint order"
+msgstr "Stampa automatica ordine"
+
+#. module: tyres_auto_confirm
+#: model:ir.model,name:tyres_auto_confirm.model_res_company
+msgid "Companies"
+msgstr "Aziende"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_period_company_id
+msgid "Company"
+msgstr "Azienda"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_period_create_uid
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_create_uid
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_line_create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_period_create_date
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_create_date
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_line_create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_line_day
+msgid "Day"
+msgstr "Giorno"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_day_ids
+msgid "Days"
+msgstr "Giorni"
+
+#. module: tyres_auto_confirm
+#: selection:res.company,auto_state:0
+msgid "Disabled"
+msgstr "Disabilitato"
+
+#. module: tyres_auto_confirm
+#: model:ir.ui.view,arch_db:tyres_auto_confirm.view_res_company_auto_setup_form
+#: model:ir.ui.view,arch_db:tyres_auto_confirm.view_res_company_auto_setup_tree
+msgid "Disattiva auto conferma"
+msgstr "Disattiva auto conferma"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_period_display_name
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_display_name
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_line_display_name
+msgid "Display Name"
+msgstr "Nome Completo"
+
+#. module: tyres_auto_confirm
+#: selection:res.company,auto_state:0
+msgid "Enabled"
+msgstr "Abilitato"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_res_company_auto_end_period
+msgid "End date time"
+msgstr "Fine periodo automatico"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,help:tyres_auto_confirm.field_res_company_auto_print
+msgid "Every list of ready order will be print with block of X items"
+msgstr "Ogni ordine nella lista dei pronti sarà stampato a blocci di X elementi"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_res_company_date_ids
+msgid "Exclude date"
+msgstr "Date escluse"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,help:tyres_auto_confirm.field_res_company_date_ids
+msgid "Exclude date list"
+msgstr "Lista date escluse"
+
+#. module: tyres_auto_confirm
+#: selection:auto.confirm.template.line,day:0
+msgid "Friday"
+msgstr "Venerdì"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_period_from_date
+msgid "From date"
+msgstr "Dalla data"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_line_from_hour
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_line_to_hour
+msgid "From hour (morning)"
+msgstr "Dall'ora (mattino)"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,help:tyres_auto_confirm.field_res_company_auto_group
+msgid "Group for user that can manage auto button"
+msgstr "Gruppo di utenti che può gestire il bottone automatico"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_period_id
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_id
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_line_id
+msgid "ID"
+msgstr "ID"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,help:tyres_auto_confirm.field_auto_confirm_period_passed
+msgid "If range date is passed remove from list"
+msgstr "Se la data range è passata rimuove il periodo"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_period___last_update
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template___last_update
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_line___last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_period_write_uid
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_line_write_uid
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_period_write_date
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_line_write_date
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: tyres_auto_confirm
+#: model:ir.ui.view,arch_db:tyres_auto_confirm.view_res_company_auto_setup_form
+#: model:ir.ui.view,arch_db:tyres_auto_confirm.view_res_company_auto_setup_tree
+msgid "Manage auto config."
+msgstr "Gestione config. automatico"
+
+#. module: tyres_auto_confirm
+#: selection:auto.confirm.template.line,day:0
+msgid "Monday"
+msgstr "Lunedì"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_period_name
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_name
+msgid "Name"
+msgstr "Nome"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_note
+#: model:ir.ui.view,arch_db:tyres_auto_confirm.view_auto_confirm_template_form
+msgid "Note"
+msgstr "Nota"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,help:tyres_auto_confirm.field_res_company_auto_state
+msgid "Orders go in delivery when ready automatically"
+msgstr "Ordini che vanno in consegna automaticamente quando pronti"
+
+#. module: tyres_auto_confirm
+#: model:ir.actions.act_window,name:tyres_auto_confirm.action_view_res_company_auto_setup
+#: model:ir.ui.menu,name:tyres_auto_confirm.menu_logistic_auto_confirm_parameter
+msgid "Parameters"
+msgstr "Parametri"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_period_passed
+msgid "Passed"
+msgstr "Passato"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_res_company_patron_day
+msgid "Patron day"
+msgstr "Giorno Patrono"
+
+#. module: tyres_auto_confirm
+#: model:ir.ui.view,arch_db:tyres_auto_confirm.view_res_company_auto_setup_form
+msgid "Print setup:"
+msgstr "Impostazione stampa automatica:"
+
+#. module: tyres_auto_confirm
+#: model:ir.model,name:tyres_auto_confirm.model_sale_order
+msgid "Quotation"
+msgstr "Preventivo"
+
+#. module: tyres_auto_confirm
+#: selection:auto.confirm.template.line,day:0
+msgid "Saturday"
+msgstr "Sabato"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_res_company_auto_start_period
+msgid "Start date time"
+msgstr "Inizio periodo automatico"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_res_company_auto_state
+msgid "State"
+msgstr "Stato"
+
+#. module: tyres_auto_confirm
+#: selection:auto.confirm.template.line,day:0
+msgid "Sunday"
+msgstr "Domenica"
+
+#. module: tyres_auto_confirm
+#: model:ir.actions.act_window,name:tyres_auto_confirm.action_view_auto_confirm_template
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_template_line_template_id
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_res_company_template_id
+#: model:ir.ui.menu,name:tyres_auto_confirm.menu_logistic_auto_confirm_template
+msgid "Template"
+msgstr "Modello"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,help:tyres_auto_confirm.field_res_company_template_id
+msgid "Template for working period"
+msgstr "Modello orario lavorativo"
+
+#. module: tyres_auto_confirm
+#: selection:auto.confirm.template.line,day:0
+msgid "Thursday"
+msgstr "Giovedì"
+
+#. module: tyres_auto_confirm
+#: model:ir.ui.view,arch_db:tyres_auto_confirm.view_auto_confirm_template_form
+msgid "Timesheet"
+msgstr "Foglio ora"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,field_description:tyres_auto_confirm.field_auto_confirm_period_to_date
+msgid "To date"
+msgstr "Alla data"
+
+#. module: tyres_auto_confirm
+#: selection:auto.confirm.template.line,day:0
+msgid "Tuesday"
+msgstr "Martedì"
+
+#. module: tyres_auto_confirm
+#: selection:auto.confirm.template.line,day:0
+msgid "Wednesday"
+msgstr "Mercoledì"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,help:tyres_auto_confirm.field_res_company_auto_end_period
+msgid "When enabled this date time is the end of the auto period(used to check if the button need to be disabled)"
+msgstr "Quando abilitato questa data indica la fine del periodo automatico (usato per disattivare il bottone automatico)"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,help:tyres_auto_confirm.field_res_company_auto_start_period
+msgid "When enabled this date time is the start of the auto period(used to check if the button need to be disabled)"
+msgstr "Quando abilitato questa data indica l'inizio del periodo automatico (usato per disattivare il bottone automatico)"
+
+#. module: tyres_auto_confirm
+#: model:ir.model,name:tyres_auto_confirm.model_auto_confirm_template_line
+msgid "Working line"
+msgstr "Riga periodo lavorativo"
+
+#. module: tyres_auto_confirm
+#: model:ir.model,name:tyres_auto_confirm.model_auto_confirm_template
+#: model:ir.ui.view,arch_db:tyres_auto_confirm.view_auto_confirm_template_form
+#: model:ir.ui.view,arch_db:tyres_auto_confirm.view_auto_confirm_template_tree
+msgid "Working template"
+msgstr "Modello foglio lavoro"
+
+#. module: tyres_auto_confirm
+#: model:ir.model.fields,help:tyres_auto_confirm.field_res_company_patron_day
+msgid "Write patron day in format MM-DD, ex.: 02-15 for 15 feb."
+msgstr "Scrivere il giorno del patrono nel formato MM-DD, es. 02-15 per 15 febbr."
+
