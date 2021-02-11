@@ -26,6 +26,7 @@ import time
 import sys
 from datetime import datetime
 
+demo = True
 pidfile = '/tmp/auto_print_daemon.pid'
 log_exec_file = './log/execution.log'
 log_exec_f = None  # open(log_exec_file, 'a')
@@ -140,12 +141,15 @@ try:
         # Print N order and wait after print block:
         if counter > block:
             counter = 1  # Restart
+            write_log('In attesa per %s secondi' % wait, log_file=log_exec_f)
             time.sleep(wait)
 
         # Press the send to delivery button:
-        order.workflow_ready_to_done_current_order()
-        # Log the message:
-        order.write_log_chatter_message('Lancio stampa automatica ordine')
+        if not demo:
+            order.workflow_ready_to_done_current_order()
+            # Log the message:
+            order.write_log_chatter_message('Lancio stampa automatica ordine')
+        write_log('Elaborazione ordine %s' % order.name, log_file=log_exec_f)
 finally:
     os.unlink(pidfile)
     message = '[%s] Invoice Daemon stopped [%s]\n' % (pid, pidfile)
