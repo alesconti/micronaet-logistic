@@ -292,3 +292,56 @@ class ResCompany(models.Model):
         ], string='State', default='disabled',
         help='Orders go in delivery when ready automatically',
     )
+
+
+class SaleOrderAutoPrint(models.Model):
+    """ Model name: Sale Order
+    """
+
+    _inherit = 'sale.order'
+
+    auto_print_order = fields.Boolean(
+        string='Auto print',
+        help='Auto print order (go in delivery)',
+    )
+
+    @api.multi
+    def logistic_check_and_set_ready(self):
+        """ Override original action for put in auto print
+            TODO use filter?
+            ('logistic_state', '=', 'ready'),
+            ('locked_delivery', '=', False),
+            ('logistic_source', 'not in', ('refund', ))
+        """
+        # Call super method:
+        res = super(SaleOrderAutoPrint, self).logistic_check_and_set_ready()
+
+        # Reload order:
+        now = fields.Datetime.now()
+        company = self.env.user.company_id
+        auto_start = company.auto_start_period
+        auto_stop = company.auto_stop_period
+        if auto_start and auto_stop:
+            if auto_start <= now <= auto_stop:
+                # Setup order for printing:
+                order_2_print = self.search([
+                    ('logistic_state', '=', 'ready'),
+                    ('id', 'in', self.mapped('id')),
+                ])
+                order_2_print.write({
+                    'auto_print_order': True,
+                })
+            else:
+                # If extra range disable:
+                company.disable_auto_confirm()
+        return res
+
+    def workflow_ready_to_done_current_order(self):
+        """ After ready to done remove auto print (if present)
+        """
+        # Call super method:
+        res = super(SaleOrderAutoPrint, self).logistic_check_and_set_ready()
+        self.write({
+            'auto_print_order': False,
+        })
+        return res

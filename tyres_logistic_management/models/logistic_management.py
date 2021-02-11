@@ -328,7 +328,7 @@ class PurchaseOrder(models.Model):
                             # TODO manage this case
                             continue
 
-                        logistic_sale_id.logistic_state = 'ready' # XXX needed?
+                        logistic_sale_id.logistic_state = 'ready'  # needed?
 
                     # ---------------------------------------------------------
                     # Create movement (not load stock):
@@ -1939,9 +1939,9 @@ class SaleOrder(models.Model):
             #    continue
 
             line_state = set(order.order_line.mapped('logistic_state'))
-            line_state.discard('unused') # remove kit line (exploded)
+            line_state.discard('unused')  # remove kit line (exploded)
             line_state.discard('done') # if some line are in done multidelivery
-            if tuple(line_state) == ('ready', ): # All line are logistic ready
+            if tuple(line_state) == ('ready', ):  # All line are logistic ready
                 # if order.logistic_state in ('ready', 'done', 'cancel'):
                 #    # Do nothing if in this states:
                 #    continue
@@ -1981,7 +1981,7 @@ class SaleOrder(models.Model):
             'name': _('Order confirmed'),
             'view_type': 'form',
             'view_mode': 'tree,form',
-            #'res_id': 1,
+            # 'res_id': 1,
             'res_model': 'sale.order',
             'view_id': tree_view_id,
             'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
@@ -2725,7 +2725,7 @@ class SaleOrderLine(models.Model):
         else:
             # Check pending order:
             orders = order_pool.search([('logistic_state', '=', 'pending')])
-            return orders.logistic_check_and_set_ready() # IDs order updated
+            return orders.logistic_check_and_set_ready()  # IDs order updated
         return True
 
     @api.model
@@ -2746,7 +2746,7 @@ class SaleOrderLine(models.Model):
             'name': _('Updated lines'),
             'view_type': 'form',
             'view_mode': 'tree,form',
-            #'res_id': 1,
+            # 'res_id': 1,
             'res_model': 'sale.order.line',
             'view_id': tree_view_id,
             'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],

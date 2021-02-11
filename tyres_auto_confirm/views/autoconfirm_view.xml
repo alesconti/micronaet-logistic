@@ -1,6 +1,16 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+         <record model="ir.actions.act_window" id="action_sale_order_ready_autoprint_form">
+             <field name="name">Autoprint order</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form,graph,pivot</field>
+             <field name="context">{}</field>
+             <field name="domain">[('auto_print_order', '=', True)]</field>
+         </record>
+
+
         <record model="ir.ui.view" id="view_auto_confirm_template_tree">
             <field name="name">res.auto.confirm.template.tree</field>
             <field name="model">auto.confirm.template</field>
@@ -135,6 +145,12 @@
                 parent="menu_logistic_auto_confirm_root"
                 action="action_view_auto_confirm_template"
                 sequence="20"
+                />
+            <menuitem
+                id="menu_action_sale_order_ready_autoprint"
+                parent="menu_logistic_auto_confirm_root"
+                action="action_sale_order_ready_autoprint_form"
+                sequence="30"
                 />
     </data>
 </openerp>
