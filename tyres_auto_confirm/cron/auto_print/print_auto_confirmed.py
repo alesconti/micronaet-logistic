@@ -90,21 +90,24 @@ try:
     order_pool = odoo.model('sale.order')
     company_pool = odoo.model('sale.order')
 
-    auto_order_ids = order_pool.search([
-        ('auto_print_order', '=', True)
-    ])
-
     # If present read parameters and print:
-    orders = order_pool.browse(auto_order_ids)
-    company = orders[0].company_id
+    company_ids = company_pool.search([])
+    company = company_pool.browse(company_ids)[0]
     block = company.auto_print
     wait = company.auto_wait
 
     # -------------------------------------------------------------------------
     # Print order:
     # -------------------------------------------------------------------------
+    auto_order_ids = order_pool.search([
+        ('auto_print_order', '=', True)
+    ])
     counter = 0
-    for order in orders:
+    for order_id in auto_order_ids:
+        # Read order internally (maybe yet printed from ODOO)
+        order = order_pool.browse(order_id)
+        if not order.auto_print_order:  # Yet printed
+            continue
         counter += 1
 
         # Print N order and wait after print block:
