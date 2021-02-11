@@ -313,6 +313,7 @@ class SaleOrderAutoPrint(models.Model):
             ('locked_delivery', '=', False),
             ('logistic_source', 'not in', ('refund', ))
         """
+        pdb.set_trace()
         # Call super method:
         res = super(SaleOrderAutoPrint, self).logistic_check_and_set_ready()
 
@@ -341,6 +342,7 @@ class SaleOrderAutoPrint(models.Model):
     def workflow_ready_to_done_current_order(self):
         """ After ready to done remove auto print (if present)
         """
+        pdb.set_trace()
         # Call super method:
         res = super(SaleOrderAutoPrint, self).logistic_check_and_set_ready()
         self.write({
