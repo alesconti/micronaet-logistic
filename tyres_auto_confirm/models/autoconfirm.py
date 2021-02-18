@@ -201,6 +201,21 @@ class ResCompany(models.Model):
             int(to_hour),
             int((to_hour - int(to_hour)) * 60.0),
         )
+        # Put pending order in queue:
+        order_pool = self.env['sale.order']
+        sale_orders = order_pool.search([
+            ('manage_office_id.code', '=', 'workshop'),
+            ('logistic_source', 'not in', ('refund',)),
+            ('logistic_state', 'in', ('ready', )),
+            ('logistic_done', '=', False),
+            ('logistic_source', '!=', 'internal'),
+        ])
+        if sale_orders:
+            _logger.warning('Put in auto confirm %s orders' % len(sale_orders))
+            sale_orders.write({
+                'auto_print_order': True,
+            })
+
         return self.write({
             'auto_state': 'enabled',
             'auto_start_period': auto_start_period,
