@@ -146,7 +146,6 @@ try:
             time.sleep(wait)
 
         # Press the send to delivery button:
-        pdb.set_trace()
         if order.erppeek_workflow_ready_to_done_current_order():
             write_log('Elaborazione ordine %s' % order.name,
                       log_file=log_exec_f)
