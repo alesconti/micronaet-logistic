@@ -211,11 +211,11 @@ class ResCompany(models.Model):
             ('logistic_source', '!=', 'internal'),
         ])
         if sale_orders:
-            _logger.warning('Put in auto confirm %s orders' % len(sale_orders))
             for order in sale_orders:
                 order.write({
                     'auto_print_order': True,
                 })
+                _logger.warning('Put in auto %s' % order.name)
 
         return self.write({
             'auto_state': 'enabled',
