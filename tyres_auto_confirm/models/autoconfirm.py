@@ -175,7 +175,7 @@ class ResCompany(models.Model):
         translate = [
             'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 
-        gmt_correct = -1.0
+        gmt_correct = -1.0  # TODO manage better!
         now = datetime.now()
         hour = now.hour + now.minute / 60.0
         weekday = translate[now.isoweekday()]
