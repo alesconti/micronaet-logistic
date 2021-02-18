@@ -334,7 +334,7 @@ class SaleOrderAutoPrint(models.Model):
         now = fields.Datetime.now()
         company = self.env.user.company_id
         auto_start = company.auto_start_period
-        auto_stop = company.auto_stop_period
+        auto_stop = company.auto_end_period
         if auto_start and auto_stop:
             _logger.warning('Auto print evalutation time now: %s' % now)
             # pdb.set_trace()
