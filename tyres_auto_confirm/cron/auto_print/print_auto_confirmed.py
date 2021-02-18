@@ -28,8 +28,8 @@ import pdb
 from datetime import datetime
 
 pidfile = '/tmp/auto_print_daemon.pid'
-log_exec_file = './log/execution.log'
-os.system('mkdir -p ./log')  # Create log folder
+log_exec_file = '/tmp/auto_print.log'
+# os.system('mkdir -p ./log')  # Create log folder
 log_exec_f = None  # open(log_exec_file, 'a')
 
 
