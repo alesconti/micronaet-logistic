@@ -212,9 +212,10 @@ class ResCompany(models.Model):
         ])
         if sale_orders:
             _logger.warning('Put in auto confirm %s orders' % len(sale_orders))
-            sale_orders.write({
-                'auto_print_order': True,
-            })
+            for order in sale_orders:
+                order.write({
+                    'auto_print_order': True,
+                })
 
         return self.write({
             'auto_state': 'enabled',
