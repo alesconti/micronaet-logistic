@@ -337,7 +337,7 @@ class SaleOrderAutoPrint(models.Model):
         auto_stop = company.auto_end_period
         if auto_start and auto_stop:
             _logger.info(
-                '\n\n\n\n\n\n\n\n\n\n\n Set ready: %s [%s:%s]\n\n\n\n\n' % (
+                '\n\n\n Set ready: %s [%s:%s]\n\n\n' % (
                     now, auto_start, auto_stop))
             if auto_start <= now <= auto_stop:
                 # Setup order for printing:
@@ -374,7 +374,6 @@ class SaleOrderAutoPrint(models.Model):
     def erppeek_workflow_ready_to_done_current_order(self):
         """ After ready to done remove auto print (if present)
         """
-        pdb.set_trace()
         # Call super method:
         # order = self.browse(order_id)
         order = self
