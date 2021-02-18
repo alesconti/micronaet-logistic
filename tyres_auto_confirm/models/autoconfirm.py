@@ -358,6 +358,7 @@ class SaleOrderAutoPrint(models.Model):
                 company.disable_auto_confirm()
         return res
 
+    @api.multi
     def workflow_ready_to_done_current_order(self):
         """ After ready to done remove auto print (if present)
         """
