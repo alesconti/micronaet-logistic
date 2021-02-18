@@ -327,7 +327,6 @@ class SaleOrderAutoPrint(models.Model):
             ('logistic_source', 'not in', ('refund', ))
         """
         # Call super method:
-        _logger.info('\n\n\n\n\n\n\n\n\n\n\n\n\n\n Set ready\n\n\n\n\n')
         res = super(SaleOrderAutoPrint, self).logistic_check_and_set_ready()
 
         # Reload order:
@@ -336,7 +335,9 @@ class SaleOrderAutoPrint(models.Model):
         auto_start = company.auto_start_period
         auto_stop = company.auto_end_period
         if auto_start and auto_stop:
-            _logger.warning('Auto print evalutation time now: %s' % now)
+            _logger.info(
+                '\n\n\n\n\n\n\n\n\n\n\n Set ready: %s [%s:%s]\n\n\n\n\n' % (
+                    now, auto_start, auto_stop))
             # pdb.set_trace()
             if auto_start <= now <= auto_stop:
                 # Setup order for printing:
@@ -350,6 +351,8 @@ class SaleOrderAutoPrint(models.Model):
                 order_2_print.write({
                     'auto_print_order': True,
                 })
+                _logger.info(
+                    '\n Done: %s\n\n' % len(order_2_print))
             else:
                 # If extra range disable:
                 company.disable_auto_confirm()
@@ -358,7 +361,6 @@ class SaleOrderAutoPrint(models.Model):
     def workflow_ready_to_done_current_order(self):
         """ After ready to done remove auto print (if present)
         """
-        _logger.info('\n\n\n\n\n\n\n\n\n\n\n\n\n\n Remove auto\n\n\n\n\n')
         # Call super method:
         res = super(SaleOrderAutoPrint, self).logistic_check_and_set_ready()
         self.write({
