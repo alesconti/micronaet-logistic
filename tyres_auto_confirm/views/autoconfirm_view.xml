@@ -185,11 +185,11 @@
             <field name="context">{'form_view_ref': 'tyres_auto_confirm.view_res_company_auto_setup_form', 'tree_view_ref': 'tyres_auto_confirm.view_res_company_auto_setup_tree'}</field>
             <field name="domain">[]</field>
         </record>
+        <!--parent="tyres_logistic_management.menu_logistic_left_configuration_root"-->
         <menuitem
              id="menu_logistic_auto_confirm_root"
-             parent="tyres_logistic_management.menu_logistic_left_configuration_root"
-             name="Auto confirm management"
-             sequence="150"
+             name="Autoprint"
+             sequence="20"
              />
             <menuitem
                 id="menu_logistic_auto_confirm_parameter"
