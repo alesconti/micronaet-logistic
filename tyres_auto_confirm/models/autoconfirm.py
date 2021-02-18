@@ -175,6 +175,7 @@ class ResCompany(models.Model):
         translate = [
             'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 
+        gmt_correct = -1.0
         now = datetime.now()
         hour = now.hour + now.minute / 60.0
         weekday = translate[now.isoweekday()]
@@ -188,8 +189,8 @@ class ResCompany(models.Model):
             return False
 
         now_text = now.strftime('%Y-%m-%d')
-        from_hour = lines[0].from_hour
-        to_hour = lines[0].to_hour
+        from_hour = lines[0].from_hour + gmt_correct
+        to_hour = lines[0].to_hour + gmt_correct
         auto_start_period = '%s %02d:%02d:00' % (
             now_text,
             int(from_hour),
@@ -338,7 +339,6 @@ class SaleOrderAutoPrint(models.Model):
             _logger.info(
                 '\n\n\n\n\n\n\n\n\n\n\n Set ready: %s [%s:%s]\n\n\n\n\n' % (
                     now, auto_start, auto_stop))
-            # pdb.set_trace()
             if auto_start <= now <= auto_stop:
                 # Setup order for printing:
                 order_2_print = self.search([
