@@ -336,6 +336,7 @@ class SaleOrderAutoPrint(models.Model):
         auto_start = company.auto_start_period
         auto_stop = company.auto_stop_period
         if auto_start and auto_stop:
+            _logger.warning('Auto print evalutation time now: %s' % now)
             pdb.set_trace()
             if auto_start <= now <= auto_stop:
                 # Setup order for printing:
