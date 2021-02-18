@@ -358,7 +358,8 @@ class SaleOrderAutoPrint(models.Model):
         pdb.set_trace()
         # Call super method:
         res = super(SaleOrderAutoPrint, self).logistic_check_and_set_ready()
-        if self.manage_office_id.code == 'workshop':
+        manage_office = self.manage_office_id
+        if manage_office and manage_office.code == 'workshop':
             self.write({
                 'auto_print_order': False,
             })
