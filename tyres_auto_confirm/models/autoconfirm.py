@@ -367,3 +367,13 @@ class SaleOrderAutoPrint(models.Model):
         self.write({
             'auto_print_order': False,
         })
+        return res
+
+    @api.model
+    def erppeek_workflow_ready_to_done_current_order(self, order_id):
+        """ After ready to done remove auto print (if present)
+        """
+        # Call super method:
+        order = self.browse(order_id)
+        super(SaleOrderAutoPrint, order).logistic_check_and_set_ready()
+        return True
