@@ -374,7 +374,9 @@ class SaleOrderAutoPrint(models.Model):
     def erppeek_workflow_ready_to_done_current_order(self, order_id):
         """ After ready to done remove auto print (if present)
         """
+        pdb.set_trace()
         # Call super method:
         order = self.browse(order_id)
-        super(SaleOrderAutoPrint, order).logistic_check_and_set_ready()
+        order.workflow_ready_to_done_current_order()
+        order.write_log_chatter_message('Lancio stampa automatica ordine')
         return True

@@ -151,9 +151,9 @@ try:
         if not demo:
             pdb.set_trace()
             order.erppeek_workflow_ready_to_done_current_order(order.id)
-            #order.workflow_ready_to_done_current_order()
+            # order.workflow_ready_to_done_current_order()
             # Log the message:
-            order.write_log_chatter_message('Lancio stampa automatica ordine')
+
         write_log('Elaborazione ordine %s' % order.name, log_file=log_exec_f)
 finally:
     os.unlink(pidfile)
