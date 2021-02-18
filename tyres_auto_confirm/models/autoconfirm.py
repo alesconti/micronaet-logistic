@@ -181,7 +181,7 @@ class ResCompany(models.Model):
         weekday = translate[now.isoweekday()]
         lines = line.search([
             ('day', '=', weekday),
-            ('to_hour', '>=', hour),
+            ('to_hour', '>', hour),
         ])
         if not lines:
             raise exceptions.UserError(
