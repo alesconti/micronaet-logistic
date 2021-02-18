@@ -363,7 +363,8 @@ class SaleOrderAutoPrint(models.Model):
         """ After ready to done remove auto print (if present)
         """
         # Call super method:
-        res = super(SaleOrderAutoPrint, self).logistic_check_and_set_ready()
+        res = super(SaleOrderAutoPrint, self).\
+            workflow_ready_to_done_current_order()
         self.write({
             'auto_print_order': False,
         })
