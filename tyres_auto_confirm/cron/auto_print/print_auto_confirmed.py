@@ -27,14 +27,12 @@ import sys
 import pdb
 from datetime import datetime
 
-demo = False
 pidfile = '/tmp/auto_print_daemon.pid'
 log_exec_file = './log/execution.log'
 os.system('mkdir -p ./log')  # Create log folder
 log_exec_f = None  # open(log_exec_file, 'a')
 
 
-pdb.set_trace()
 # -----------------------------------------------------------------------------
 # Function:
 # -----------------------------------------------------------------------------
@@ -148,11 +146,10 @@ try:
             time.sleep(wait)
 
         # Press the send to delivery button:
-        if not demo:
-            pdb.set_trace()
-            order.erppeek_workflow_ready_to_done_current_order(order.id)
-            # order.workflow_ready_to_done_current_order()
-            # Log the message:
+        pdb.set_trace()
+        order.erppeek_workflow_ready_to_done_current_order(order.id)
+        # order.workflow_ready_to_done_current_order()
+        # Log the message:
 
         write_log('Elaborazione ordine %s' % order.name, log_file=log_exec_f)
 finally:
