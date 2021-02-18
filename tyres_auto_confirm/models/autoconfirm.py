@@ -340,7 +340,7 @@ class SaleOrderAutoPrint(models.Model):
                 # Setup order for printing:
                 order_2_print = self.search([
                     ('logistic_state', '=', 'ready'),
-                    ('logistic_source', 'not in', ('refund',)),
+                    ('logistic_source', 'not in', ('refund', )),
 
                     ('id', 'in', self.mapped('id')),
                 ])
@@ -358,7 +358,8 @@ class SaleOrderAutoPrint(models.Model):
         pdb.set_trace()
         # Call super method:
         res = super(SaleOrderAutoPrint, self).logistic_check_and_set_ready()
-        self.write({
-            'auto_print_order': False,
-        })
+        if self.manage_office_id.code == 'workshop':
+            self.write({
+                'auto_print_order': False,
+            })
         return res
