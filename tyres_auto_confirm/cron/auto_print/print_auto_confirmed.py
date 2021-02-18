@@ -149,7 +149,9 @@ try:
 
         # Press the send to delivery button:
         if not demo:
-            order.workflow_ready_to_done_current_order()
+            pdb.set_trace()
+            order.erppeek_workflow_ready_to_done_current_order(order.id)
+            #order.workflow_ready_to_done_current_order()
             # Log the message:
             order.write_log_chatter_message('Lancio stampa automatica ordine')
         write_log('Elaborazione ordine %s' % order.name, log_file=log_exec_f)
