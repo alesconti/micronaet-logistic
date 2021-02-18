@@ -571,6 +571,9 @@
             <field name="arch" type="xml">
                 <tree string="Sale order ready (highlith no label line)" decoration-info="get_label_status=='manual'" decoration-danger="get_label_status=='error'" decoration-success="get_label_status=='shippy'">
                     <field name="name" />
+                    <field name="locked_delivery" invisible="1"/>
+                    <button name="locked_delivery_on" string="Lock delivery" type="object" attrs="{'invisible': [('locked_delivery','=',True)]}" icon="fa-lock"/><!--attrs="{'invisible': [('logistic_state','!=',('draft', 'order', 'pending'))]}"-->
+                    <button name="locked_delivery_off" string="Unlock delivery" type="object" attrs="{'invisible': [('locked_delivery','=',False)]}" icon="fa-mail-reply"/>
 	                <field name="date_order" />
 	                <field name="partner_id" />
 	                <field name="partner_shipping_id" />
@@ -707,7 +710,7 @@
              <field name="view_id" ref="view_sale_order_ready_tree"/>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('logistic_source', 'not in', ('refund', )), ('logistic_state', 'in', ('ready', 'done')), ('locked_delivery', '=', False), ('logistic_done', '=', False), ('logistic_source', '!=', 'internal')]</field>
+             <field name="domain">[('logistic_source', 'not in', ('refund', )), ('logistic_state', 'in', ('ready', 'done')), ('logistic_done', '=', False), ('logistic_source', '!=', 'internal')]</field>
          </record>
          <record model="ir.actions.act_window" id="action_sale_order_ready_workshop_form">
              <field name="name">Sale order ready workshop</field>
