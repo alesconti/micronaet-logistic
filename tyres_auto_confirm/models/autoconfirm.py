@@ -362,6 +362,12 @@ class SaleOrderAutoPrint(models.Model):
     def workflow_ready_to_done_current_order(self):
         """ After ready to done remove auto print (if present)
         """
+        order = self
+
+        if order.locked_delivery:
+            _logger.error('Cannot print, locked delivery!')
+            return False
+
         # Call super method:
         res = super(SaleOrderAutoPrint, self).\
             workflow_ready_to_done_current_order()
@@ -374,8 +380,6 @@ class SaleOrderAutoPrint(models.Model):
     def erppeek_workflow_ready_to_done_current_order(self):
         """ After ready to done remove auto print (if present)
         """
-        # Call super method:
-        # order = self.browse(order_id)
         order = self
         if not order.auto_print_order:
             _logger.error('Order not in auto print %s!' % order.name)
