@@ -326,8 +326,8 @@ class SaleOrderAutoPrint(models.Model):
             ('locked_delivery', '=', False),
             ('logistic_source', 'not in', ('refund', ))
         """
-        pdb.set_trace()
         # Call super method:
+        _logger.info('\n\n\n\n\n\n\n\n\n\n\n\n\n\n Set ready\n\n\n\n\n')
         res = super(SaleOrderAutoPrint, self).logistic_check_and_set_ready()
 
         # Reload order:
@@ -341,6 +341,7 @@ class SaleOrderAutoPrint(models.Model):
                 order_2_print = self.search([
                     ('logistic_state', '=', 'ready'),
                     ('logistic_source', 'not in', ('refund', )),
+                    ('manage_office_id.code', '=', 'workshop'),  # only WS!
 
                     ('id', 'in', self.mapped('id')),
                 ])
@@ -355,12 +356,9 @@ class SaleOrderAutoPrint(models.Model):
     def workflow_ready_to_done_current_order(self):
         """ After ready to done remove auto print (if present)
         """
-        pdb.set_trace()
+        _logger.info('\n\n\n\n\n\n\n\n\n\n\n\n\n\n Remove auto\n\n\n\n\n')
         # Call super method:
         res = super(SaleOrderAutoPrint, self).logistic_check_and_set_ready()
-        manage_office = self.manage_office_id
-        if manage_office and manage_office.code == 'workshop':
-            self.write({
-                'auto_print_order': False,
-            })
-        return res
+        self.write({
+            'auto_print_order': False,
+        })
