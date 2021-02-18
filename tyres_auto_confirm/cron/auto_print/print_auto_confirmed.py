@@ -147,11 +147,13 @@ try:
 
         # Press the send to delivery button:
         pdb.set_trace()
-        order.erppeek_workflow_ready_to_done_current_order()
-        # order.workflow_ready_to_done_current_order()
-        # Log the message:
+        if order.erppeek_workflow_ready_to_done_current_order():
+            write_log('Elaborazione ordine %s' % order.name,
+                      log_file=log_exec_f)
+        else:
+            write_log('Errore elaborazione ordine %s' % order.name,
+                      log_file=log_exec_f)
 
-        write_log('Elaborazione ordine %s' % order.name, log_file=log_exec_f)
 finally:
     os.unlink(pidfile)
     message = '[%s] Invoice Daemon stopped [%s]\n' % (pid, pidfile)

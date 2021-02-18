@@ -377,6 +377,10 @@ class SaleOrderAutoPrint(models.Model):
         # Call super method:
         # order = self.browse(order_id)
         order = self
+        if not order.auto_print_order:
+            _logger.error('Order not in auto print %s!' % order.name)
+            return False
+
         order.workflow_ready_to_done_current_order()
         order.write_log_chatter_message('Lancio stampa automatica ordine')
         return True
