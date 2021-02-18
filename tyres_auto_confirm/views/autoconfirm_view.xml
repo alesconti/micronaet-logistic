@@ -192,22 +192,28 @@
              sequence="20"
              />
             <menuitem
-                id="menu_logistic_auto_confirm_parameter"
+                id="menu_logistic_auto_confirm_management"
+                name="Gestione stampa automatica"
                 parent="menu_logistic_auto_confirm_root"
-                action="action_view_res_company_auto_setup"
                 sequence="10"
                 />
-            <menuitem
-                id="menu_logistic_auto_confirm_template"
-                parent="menu_logistic_auto_confirm_root"
-                action="action_view_auto_confirm_template"
-                sequence="20"
-                />
-            <menuitem
-                id="menu_action_sale_order_ready_autoprint"
-                parent="menu_logistic_auto_confirm_root"
-                action="action_sale_order_ready_autoprint_form"
-                sequence="30"
-                />
+                <menuitem
+                    id="menu_logistic_auto_confirm_parameter"
+                    parent="menu_logistic_auto_confirm_management"
+                    action="action_view_res_company_auto_setup"
+                    sequence="10"
+                    />
+                <menuitem
+                    id="menu_logistic_auto_confirm_template"
+                    parent="menu_logistic_auto_confirm_management"
+                    action="action_view_auto_confirm_template"
+                    sequence="20"
+                    />
+                <menuitem
+                    id="menu_action_sale_order_ready_autoprint"
+                    parent="menu_logistic_auto_confirm_management"
+                    action="action_sale_order_ready_autoprint_form"
+                    sequence="30"
+                    />
     </data>
 </openerp>
