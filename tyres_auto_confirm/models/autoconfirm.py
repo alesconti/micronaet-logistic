@@ -403,11 +403,11 @@ class SaleOrderAutoPrint(models.Model):
             return False
 
         # Check if is in auto period (instead put in queue)
-        if order.company_id.auto_state == 'enabled':
-            order.write({
+        if order.company_id.auto_state == 'enabled' and \
+                order.manage_office_id.code == 'workshop':
+            return order.write({
                 'auto_print_order': True,
             })
-            return True
         else:
             # Call super method:
             res = super(SaleOrderAutoPrint, self).\
