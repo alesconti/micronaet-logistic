@@ -398,6 +398,8 @@ class SaleOrderAutoPrint(models.Model):
         """
         order = self
         erppeek = self.env.context.get('erppeek')
+        if erppeek:
+            _logger.info('Erppeek mode enabled!')
         if order.locked_delivery:
             _logger.error('Cannot print, locked delivery!')
             return False
