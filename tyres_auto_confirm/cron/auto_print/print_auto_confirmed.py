@@ -123,18 +123,9 @@ try:
             continue  # Jump this order
 
         if not order.auto_print_order:  # Yet printed
-            write_log(
-                'Order %s printed manually' % order.name,
-                log_file=log_exec_f)
-            continue
-
-        if not order.auto_print_order:  # Yet printed (manually from ODOO)
-            continue
-
-        if not order.auto_print_order:  # Yet printed
-            write_log(
-                'Order %s not in ready status' % order.name,
-                log_file=log_exec_f)
+            # write_log(
+            #    'Order %s not in ready status' % order.name,
+            #    log_file=log_exec_f)
             order.write_log_chatter_message(
                 'Rimosso dagli automatici dato che non si trova in stato '
                 '"Pronto"')
