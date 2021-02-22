@@ -116,6 +116,9 @@ try:
                 log_file=log_exec_f)
             continue  # Leave in automatic order
 
+        if not order.carrier_ok:
+            continue  # Jump this order
+
         if not order.carrier_supplier_id:  # No supplier no management delivery
             continue  # Jump this order
 
