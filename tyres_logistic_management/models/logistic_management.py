@@ -1879,7 +1879,7 @@ class SaleOrder(models.Model):
         for line in self.order_line:
             if line.logistic_state != 'ready' and not line.state_check:
                 raise exceptions.UserError(
-                _('Not all line are mapped to supplier!'))
+                    _('Not all line are mapped to supplier!'))
         self.logistic_state = 'pending'
         self.exported_date = fields.Datetime.now()
 
@@ -1905,7 +1905,7 @@ class SaleOrder(models.Model):
 
         # Call original action:
         line_pool.workflow_order_pending(lines)
-        return True # Return nothing
+        return True  # Return nothing
 
     @api.multi
     def launch_shippy_ship(self, ):
@@ -1914,7 +1914,7 @@ class SaleOrder(models.Model):
         if self.carrier_shippy:
             if self.carrier_supplier_id and self.carrier_mode_id:
                 self.shippy_ship()
-                self.shippy_ship_error = 'ok' # reset error state
+                self.shippy_ship_error = 'ok'  # reset error state
                 self.write_log_chatter_message(_('Relaunch shippy ship call'))
             else:
                 raise exceptions.Warning(
@@ -2928,7 +2928,7 @@ class SaleOrderLine(models.Model):
             'views': [(False, 'form')],
             'domain': [],
             'context': self.env.context,
-            'target': 'current', # 'new'
+            'target': 'current',  # 'new'
             'nodestroy': False,
             }
 

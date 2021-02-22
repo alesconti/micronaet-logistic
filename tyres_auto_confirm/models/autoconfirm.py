@@ -215,7 +215,10 @@ class ResCompany(models.Model):
                 order.write({
                     'auto_print_order': True,
                 })
-                _logger.warning('Put in auto %s' % order.name)
+                order.write_log_chatter_message(
+                    'Messo nella coda di stampa automatica '
+                    '(attivato ora il periodo di stampa auto)'
+                )
 
         return self.write({
             'auto_state': 'enabled',
@@ -399,13 +402,20 @@ class SaleOrderAutoPrint(models.Model):
             _logger.error('Cannot print, locked delivery!')
             return False
 
-        # Call super method:
-        res = super(SaleOrderAutoPrint, self).\
-            workflow_ready_to_done_current_order()
-        self.write({
-            'auto_print_order': False,
-        })
-        return res
+        # Check if is in auto period (instead put in queue)
+        if order.company_id.auto_state == 'enabled':
+            order.write({
+                'auto_print_order': True,
+            })
+            return True
+        else:
+            # Call super method:
+            res = super(SaleOrderAutoPrint, self).\
+                workflow_ready_to_done_current_order()
+            self.write({
+                'auto_print_order': False,
+            })
+            return res
 
     @api.multi
     def erppeek_workflow_ready_to_done_current_order(self):
