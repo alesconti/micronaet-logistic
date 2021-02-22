@@ -189,7 +189,7 @@
         <menuitem
              id="menu_logistic_auto_confirm_root"
              name="Autoprint"
-             sequence="20"
+             sequence="2"
              />
             <menuitem
                 id="menu_logistic_auto_confirm_management"

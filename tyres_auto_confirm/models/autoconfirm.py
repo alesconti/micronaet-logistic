@@ -227,6 +227,21 @@ class ResCompany(models.Model):
     def disable_auto_confirm(self):
         """ Create this year date
         """
+        # Put pending order in queue removed:
+        order_pool = self.env['sale.order']
+        sale_orders = order_pool.search([
+            ('auto_print_order', '=', True),
+        ])
+        for order in sale_orders:
+            order.write({
+                'auto_print_order': False,
+            })
+            order.write_log_chatter_message(
+                'Timeout, tolto dalla coda di stampa automatica '
+                '(fuori periodo)'
+            )
+            _logger.warning('Removed from auto %s' % order.name)
+
         return self.write({
             'auto_state': 'disabled',
             'auto_start_period': False,
