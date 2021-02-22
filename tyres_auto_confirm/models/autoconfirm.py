@@ -397,13 +397,13 @@ class SaleOrderAutoPrint(models.Model):
         """ After ready to done remove auto print (if present)
         """
         order = self
-
+        erppeek = self.env.context.get('erppeek')
         if order.locked_delivery:
             _logger.error('Cannot print, locked delivery!')
             return False
 
         # Check if is in auto period (instead put in queue)
-        if order.company_id.auto_state == 'enabled' and \
+        if not erppeek and order.company_id.auto_state == 'enabled' and \
                 order.manage_office_id.code == 'workshop':
             return order.write({
                 'auto_print_order': True,

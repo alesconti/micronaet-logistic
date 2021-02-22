@@ -88,6 +88,10 @@ try:
         user=user,
         password=pwd,
         )
+    odoo.context = {
+        'erppeek': True,
+        # 'lang': 'it_IT',
+    }
     order_pool = odoo.model('sale.order')
     company_pool = odoo.model('res.company')
 
