@@ -191,6 +191,10 @@ class SaleOrder(models.Model):
                     street = format_error(street)
                 if len(street2) > check_dimension:
                     street2 = format_error(street2)
+                if len('%s%s' % (street or '', street2 or '')) > \
+                        check_dimension:
+                    street = format_error(street)
+                    street2 = format_error(street2)
 
             return '%s %s %s - %s %s [%s %s] %s - %s<br/>' % (
                 name,
