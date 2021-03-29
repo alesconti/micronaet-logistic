@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -33,7 +33,7 @@ _logger = logging.getLogger(__name__)
 class PurchaseOrderLine(models.Model):
     """ Model name: Partner for dropshipping
     """
-    
+
     _inherit = 'purchase.order.line'
 
     # -------------------------------------------------------------------------
@@ -44,7 +44,7 @@ class PurchaseOrderLine(models.Model):
 class StockMove(models.Model):
     """ Model name: Stock move
     """
-    
+
     _inherit = 'stock.move'
 
     # -------------------------------------------------------------------------
@@ -55,9 +55,9 @@ class StockMove(models.Model):
 class ResPartner(models.Model):
     """ Model name: Partner for dropshipping
     """
-    
+
     _inherit = 'res.partner'
-    
+
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
@@ -66,24 +66,25 @@ class ResPartner(models.Model):
 class ProductTemplateSupplierStock(models.Model):
     """ Model name: ProductTemplateSupplierStock
     """
-    
+
     _inherit = 'product.template.supplier.stock'
-    
+
     @api.multi
     def dummy(self):
-        ''' Do nothing
-        '''
+        """ Do nothing
+        """
         return True
     # -------------------------------------------------------------------------
     # Columns:
     # -------------------------------------------------------------------------
     partner_dropship_manage = fields.Boolean(
-        'Partner dropship', related='supplier_id.dropship_manage')    
-    
+        'Partner dropship', related='supplier_id.dropship_manage')
+
+
 class SaleOrderLinePurchase(models.Model):
     """ Model name: SaleOrderLinePurchase
     """
-    
+
     _inherit = 'sale.order.line.purchase'
 
     # -------------------------------------------------------------------------
@@ -91,14 +92,14 @@ class SaleOrderLinePurchase(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def set_dropship_on(self):
-        ''' Set dropship on
-        '''
+        """ Set dropship on
+        """
         self.dropship_manage = True
 
     @api.multi
     def set_dropship_off(self):
-        ''' Set dropship off
-        '''
+        """ Set dropship off
+        """
         self.dropship_manage = False
 
     # -------------------------------------------------------------------------
@@ -106,6 +107,6 @@ class SaleOrderLinePurchase(models.Model):
     # -------------------------------------------------------------------------
     dropship_manage = fields.Boolean('Dropship manage')
     partner_dropship_manage = fields.Boolean(
-        'Partner dropship', related='supplier_id.dropship_manage')    
+        'Partner dropship', related='supplier_id.dropship_manage')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
