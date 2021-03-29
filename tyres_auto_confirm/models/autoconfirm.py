@@ -369,6 +369,7 @@ class SaleOrderAutoPrint(models.Model):
         for order in self:
             for purchase in order.purchase_split_ids:
                 if purchase.dropship_manage:
+                    _logger.warning('Dropship manage, managed in office!')
                     order.write({
                         'manage_office_id': manage_office_id,
                     })
