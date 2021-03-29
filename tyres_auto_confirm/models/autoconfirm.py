@@ -352,15 +352,15 @@ class SaleOrderAutoPrint(models.Model):
         help='Auto print order (go in delivery)',
     )
 
-
+    # Override:
     @api.multi
     def workflow_manual_order_pending(self):
         """ Override original action just to test if there's some dropship
             request, so order will be managed in office
         """
-        manage_pool = self.env[]
+        manage_pool = self.env['sale.order.manage.office']
         manage_offices = manage_pool.search([
-            ('code', '=', 'office')
+            ('code', '=', 'office'),
         ])
         if not manage_offices:
             raise exceptions.UserError(
