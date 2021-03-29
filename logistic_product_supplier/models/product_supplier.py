@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -27,7 +27,7 @@ import logging
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
-from odoo import exceptions 
+from odoo import exceptions
 
 
 _logger = logging.getLogger(__name__)
@@ -35,7 +35,7 @@ _logger = logging.getLogger(__name__)
 class ProductTemplateSupplierStock(models.Model):
     """ Model name: ProductTemplateSupplierStock
     """
-    
+
     _name = 'product.template.supplier.stock'
     _description = 'Supplier stock'
     _rec_name = 'supplier_id'
@@ -60,14 +60,14 @@ class ProductTemplateSupplierStock(models.Model):
             if splitted.supplier_id == self.supplier_id:
                 splitted.unlink()
         return True
-        
+
     @api.multi
     def assign_to_purchase_minus(self):
         ''' Assign -1 to this supplier
         '''
         sale_pool = self.env['sale.order.line']
         purchase_pool = self.env['sale.order.line.purchase']
-        
+
         # Current sale line:
         line = self.get_context_sale_order_object()
 
@@ -75,7 +75,7 @@ class ProductTemplateSupplierStock(models.Model):
         stock_qty = self.stock_qty
 
         current_qty = 0.0
-        current_line = False   
+        current_line = False
         for splitted in line.purchase_split_ids:
             if splitted.supplier_id == self.supplier_id:
                 current_line = splitted
@@ -90,7 +90,7 @@ class ProductTemplateSupplierStock(models.Model):
             current_line.write({
                 'purchase_price': self.quotation,
                 'product_uom_qty': new_qty,
-                })                
+                })
         return True
 
     @api.multi
@@ -99,14 +99,14 @@ class ProductTemplateSupplierStock(models.Model):
         '''
         sale_pool = self.env['sale.order.line']
         purchase_pool = self.env['sale.order.line.purchase']
-        
+
         # Current sale line:
         line = self.get_context_sale_order_object()
         product_uom_qty = line.product_uom_qty
         stock_qty = self.stock_qty
 
         current_qty = 0.0
-        current_line = False   
+        current_line = False
 
         for splitted in line.purchase_split_ids:
             if splitted.supplier_id == self.supplier_id:
@@ -119,7 +119,7 @@ class ProductTemplateSupplierStock(models.Model):
         if current_line:
             used_qty = current_line.product_uom_qty + 1.0
         else:
-            used_qty = 1.0     
+            used_qty = 1.0
         if used_qty > stock_qty:
             raise exceptions.Warning(
                 'Stock not available to cover! [%s < %s]' % (
@@ -130,13 +130,13 @@ class ProductTemplateSupplierStock(models.Model):
                 'purchase_price': self.quotation,
                 'product_uom_qty': used_qty,
                 })
-        else:        
+        else:
             purchase_pool.create({
                 'line_id': line.id,
                 'purchase_price': self.quotation,
                 'supplier_id': self.supplier_id.id,
                 'product_uom_qty': used_qty,
-                })                        
+                })
         return True
 
     @api.multi
@@ -145,13 +145,13 @@ class ProductTemplateSupplierStock(models.Model):
         '''
         # Selected sale line:
         purchase_pool = self.env['sale.order.line.purchase']
-        
+
         line = self.get_context_sale_order_object()
         line.clean_all_purchase_selected() # Remove all
-        
+
         # Collect fields:
         product_uom_qty = line.product_uom_qty
-        stock_qty = self.stock_qty 
+        stock_qty = self.stock_qty
         if stock_qty >= product_uom_qty:
             used_qty = product_uom_qty
         else:
@@ -171,7 +171,7 @@ class ProductTemplateSupplierStock(models.Model):
         '''
         sale_pool = self.env['sale.order.line']
         purchase_pool = self.env['sale.order.line.purchase']
-        
+
         # Current sale line:
         line = self.get_context_sale_order_object()
 
@@ -179,13 +179,13 @@ class ProductTemplateSupplierStock(models.Model):
         stock_qty = self.stock_qty
 
         current_qty = product_uom_qty
-        current_line = False   
+        current_line = False
         for splitted in line.purchase_split_ids:
             if splitted.supplier_id == self.supplier_id:
                 current_line = splitted
-            else:    
+            else:
                 current_qty -= splitted.product_uom_qty
-        
+
         if current_qty <= 0.0:
             return True
 
@@ -195,25 +195,25 @@ class ProductTemplateSupplierStock(models.Model):
         else:
             used_qty = stock_qty
         if used_qty <= 0.0:
-            return True    
+            return True
 
         if current_line: # Update:
             current_line.write({
                 'purchase_price': self.quotation,
                 'product_uom_qty': used_qty,
                 })
-        else:        
+        else:
             purchase_pool.create({
                 'line_id': line.id,
                 'purchase_price': self.quotation,
                 'supplier_id': self.supplier_id.id,
                 'product_uom_qty': used_qty,
-                })                        
+                })
         return True
 
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     product_id = fields.Many2one(
         'product.template', 'Product', index=True, ondelete='cascade',
         )
@@ -226,36 +226,37 @@ class ProductTemplateSupplierStock(models.Model):
         digits=dp.get_precision('Product Unit of Measure'))
     quotation = fields.Float(
         'Price', digits=dp.get_precision('Product Price'))
-    best_price = fields.Boolean('Best price')    
+    best_price = fields.Boolean('Best price')
     ipcode = fields.Char('Supplier code', size=24)
     promo = fields.Boolean('Promo')
 
 class ProductTemplate(models.Model):
     """ Model name: ProductTemplate
     """
-    
+
     _inherit = 'product.template'
-    
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
     supplier_stock_ids = fields.One2many(
         'product.template.supplier.stock', 'product_id', 'Supplier stock')
 
+
 class SaleOrderLinePurchase(models.Model):
-    """ Model name: Temp reference that will generare purchase order
+    """ Model name: Temp reference that will generate purchase order
     """
-    
+
     _name = 'sale.order.line.purchase'
     _description = 'Sale purchase line'
     _rec_name = 'line_id'
-    
+
     # -------------------------------------------------------------------------
     # COLUMNS:
     # -------------------------------------------------------------------------
     line_id = fields.Many2one('sale.order.line', 'Line')
     purchase_price = fields.Float(
-        'Purchase Price', digits=dp.get_precision('Product Price'), 
+        'Purchase Price', digits=dp.get_precision('Product Price'),
         required=True)
     product_uom_qty = fields.Float(
         'Q.ty', digits=dp.get_precision('Product Unit of Measure'),
@@ -269,7 +270,7 @@ class SaleOrderLinePurchase(models.Model):
 class SaleOrderLine(models.Model):
     """ Model name: Sale order line relations
     """
-    
+
     _inherit = 'sale.order.line'
 
     @api.multi
@@ -292,17 +293,17 @@ class SaleOrderLine(models.Model):
                 covered_qty += purchase.product_uom_qty
             if abs(covered_qty - product_uom_qty) < gap:
                 line.state_check = True
-            else:    
+            else:
                 line.state_check = False
             line.state_qty = covered_qty
         return
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    # TODO field for state of purchase 
-    # TODO field for purchase supplier present    
+    # TODO field for state of purchase
+    # TODO field for purchase supplier present
     product_supplier_ids = fields.One2many(
-        'product.template.supplier.stock', 
+        'product.template.supplier.stock',
         related='product_id.supplier_stock_ids',
         )
     purchase_split_ids = fields.One2many(
@@ -310,41 +311,42 @@ class SaleOrderLine(models.Model):
     state_qty = fields.Float(
         'Covered q.', digits=dp.get_precision('Product Unit of Measure'),
         compute='_get_purchase_state', multi=True,
-        ) 
+        )
     state_check = fields.Boolean(
         'OK', compute='_get_purchase_state', multi=True,
-        ) 
+        )
+
 
 class ResPartner(models.Model):
     """ Model name: Res Partner
     """
-    
+
     _inherit = 'res.partner'
-    
+
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    hide_supplier = fields.Boolean('Hide supplier', 
+    hide_supplier = fields.Boolean('Hide supplier',
         help='Supplier hide from generate purchase order')
 
 class SaleOrder(models.Model):
     """ Model name: Sale order line relations
     """
-    
+
     _inherit = 'sale.order'
-    
+
     @api.multi
     def purchase_management_button(self):
         ''' Open view for purchase management
         '''
         model_pool = self.env['ir.model.data']
         tree_view_id = model_pool.get_object_reference(
-            'logistic_product_supplier', 
+            'logistic_product_supplier',
             'view_sale_order_line_purchase_management_tree')[1]
         form_view_id = model_pool.get_object_reference(
-            'logistic_product_supplier', 
+            'logistic_product_supplier',
             'view_sale_order_line_purchase_management_form')[1]
-        
+
         line_ids = [item.id for item in self.order_line if \
             not item.product_id.is_expence]
         if len(line_ids) == 1:
@@ -352,12 +354,12 @@ class SaleOrder(models.Model):
             views = [(form_view_id, 'form'), (tree_view_id, 'tree')]
             view_mode = 'form,tree'
             res_id = line_ids[0]
-        else:    
+        else:
             view_id = tree_view_id
             views = [(tree_view_id, 'tree'), (form_view_id, 'form')]
             view_mode = 'tree,form'
             res_id = False
-        
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Purchase line management'),
