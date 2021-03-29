@@ -43,8 +43,8 @@ class ProductTemplateSupplierStock(models.Model):
 
     @api.model
     def get_context_sale_order_object(self):
-        ''' Return browseable sale line reference:
-        '''
+        """ Return browseable sale line reference:
+        """
         line_pool = self.env['sale.order.line']
         context = self.env.context
         sale_order_id = context.get('sale_order_id')
@@ -52,8 +52,8 @@ class ProductTemplateSupplierStock(models.Model):
 
     @api.multi
     def assign_to_purchase_none(self):
-        ''' Remove this supplier
-        '''
+        """ Remove this supplier
+        """
         line = self.get_context_sale_order_object()
 
         for splitted in line.purchase_split_ids:
@@ -63,8 +63,8 @@ class ProductTemplateSupplierStock(models.Model):
 
     @api.multi
     def assign_to_purchase_minus(self):
-        ''' Assign -1 to this supplier
-        '''
+        """ Assign -1 to this supplier
+        """
         sale_pool = self.env['sale.order.line']
         purchase_pool = self.env['sale.order.line.purchase']
 
@@ -95,8 +95,8 @@ class ProductTemplateSupplierStock(models.Model):
 
     @api.multi
     def assign_to_purchase_plus(self):
-        ''' Assign +1 to this supplier
-        '''
+        """ Assign +1 to this supplier
+        """
         sale_pool = self.env['sale.order.line']
         purchase_pool = self.env['sale.order.line.purchase']
 
@@ -141,8 +141,8 @@ class ProductTemplateSupplierStock(models.Model):
 
     @api.multi
     def assign_to_purchase_all(self):
-        ''' Assign all order to this supplier
-        '''
+        """ Assign all order to this supplier
+        """
         # Selected sale line:
         purchase_pool = self.env['sale.order.line.purchase']
 
@@ -167,8 +167,8 @@ class ProductTemplateSupplierStock(models.Model):
 
     @api.multi
     def assign_to_purchase_this(self):
-        ''' Assign max stock from this supplier (or remain)
-        '''
+        """ Assign max stock from this supplier (or remain)
+        """
         sale_pool = self.env['sale.order.line']
         purchase_pool = self.env['sale.order.line.purchase']
 
@@ -267,6 +267,7 @@ class SaleOrderLinePurchase(models.Model):
         )
     # -------------------------------------------------------------------------
 
+
 class SaleOrderLine(models.Model):
     """ Model name: Sale order line relations
     """
@@ -275,16 +276,16 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def clean_all_purchase_selected(self):
-        ''' Clean all selected elements
-        '''
+        """ Clean all selected elements
+        """
         for splitted in self.purchase_split_ids:
             splitted.unlink()
         return True
 
     @api.multi
     def _get_purchase_state(self):
-        ''' Return stat of line
-        '''
+        """ Return stat of line
+        """
         gap = 0.00001
         for line in self:
             product_uom_qty = line.product_uom_qty
@@ -337,8 +338,8 @@ class SaleOrder(models.Model):
 
     @api.multi
     def purchase_management_button(self):
-        ''' Open view for purchase management
-        '''
+        """ Open view for purchase management
+        """
         model_pool = self.env['ir.model.data']
         tree_view_id = model_pool.get_object_reference(
             'logistic_product_supplier',
