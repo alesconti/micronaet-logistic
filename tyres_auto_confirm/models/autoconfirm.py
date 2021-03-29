@@ -367,13 +367,18 @@ class SaleOrderAutoPrint(models.Model):
                 'Non esiste la gestione ufficio in anagrafica, inserirla!')
         manage_office_id = manage_offices[0].id
         for order in self:
-            for purchase in order.purchase_split_ids:
-                if purchase.dropship_manage:
-                    _logger.warning('Dropship manage, managed in office!')
-                    order.write({
-                        'manage_office_id': manage_office_id,
-                    })
-                    break  # Order (line) managed in dropship
+            dropship = False
+            for line in order.order_line:
+                for purchase in line.purchase_split_ids:
+                    if purchase.dropship_manage:
+                        _logger.warning('Dropship manage, managed in office!')
+                        dropship = True
+                        order.write({
+                            'manage_office_id': manage_office_id,
+                        })
+                        break  # Order (line) managed in dropship
+                if dropship:
+                    break
 
         return super(SaleOrderAutoPrint, self).workflow_manual_order_pending(
             self)
