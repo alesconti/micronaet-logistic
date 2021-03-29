@@ -380,8 +380,7 @@ class SaleOrderAutoPrint(models.Model):
                 if dropship:
                     break
 
-        return super(SaleOrderAutoPrint, self).workflow_manual_order_pending(
-            self)
+        return super(SaleOrderAutoPrint, self).workflow_manual_order_pending()
 
     @api.multi
     def logistic_check_and_set_ready(self):
