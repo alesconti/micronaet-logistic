@@ -186,7 +186,6 @@ class ResCompany(models.Model):
         if not lines:
             raise exceptions.UserError(
                 'Not activated, no working period available today')
-            return False
 
         now_text = now.strftime('%Y-%m-%d')
         from_hour = lines[0].from_hour + gmt_correct
@@ -352,6 +351,31 @@ class SaleOrderAutoPrint(models.Model):
         string='Auto print',
         help='Auto print order (go in delivery)',
     )
+
+
+    @api.multi
+    def workflow_manual_order_pending(self):
+        """ Override original action just to test if there's some dropship
+            request, so order will be managed in office
+        """
+        manage_pool = self.env[]
+        manage_offices = manage_pool.search([
+            ('code', '=', 'office')
+        ])
+        if not manage_offices:
+            raise exceptions.UserError(
+                'Non esiste la gestione ufficio in anagrafica, inserirla!')
+        manage_office_id = manage_offices[0].id
+        for order in self:
+            for purchase in order.purchase_split_ids:
+                if purchase.dropship_manage:
+                    order.write({
+                        'manage_office_id': manage_office_id,
+                    })
+                    break  # Order (line) managed in dropship
+
+        return super(SaleOrderAutoPrint, self).workflow_manual_order_pending(
+            self)
 
     @api.multi
     def logistic_check_and_set_ready(self):

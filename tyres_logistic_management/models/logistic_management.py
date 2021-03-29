@@ -1821,7 +1821,7 @@ class SaleOrder(models.Model):
         for line in self.order_line:
             line.undo_returned = False
 
-        # Lauch draft to order
+        # Launch draft to order
         res = self.workflow_draft_to_order()
 
         self.write_log_chatter_message(_('Order marked as payed'))
@@ -2908,7 +2908,7 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def workflow_manual_order_line_pending(self):
-        """ When order are in 'order' state and all supplier will be choosen
+        """ When order are in 'order' state and all supplier will be chosen
             The operator put the order in 'pending' state to be evaluated
             and the next step create the order as setup in the line
             >> after: workflow_order_pending

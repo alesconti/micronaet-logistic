@@ -108,5 +108,3 @@ class SaleOrderLinePurchase(models.Model):
     dropship_manage = fields.Boolean('Dropship manage')
     partner_dropship_manage = fields.Boolean(
         'Partner dropship', related='supplier_id.dropship_manage')
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
