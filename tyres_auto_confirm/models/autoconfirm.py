@@ -379,7 +379,6 @@ class SaleOrderAutoPrint(models.Model):
                         break  # Order (line) managed in dropship
                 if dropship:
                     break
-
         return super(SaleOrderAutoPrint, self).workflow_manual_order_pending()
 
     @api.multi
