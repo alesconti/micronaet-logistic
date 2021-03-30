@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -32,21 +32,21 @@ _logger = logging.getLogger(__name__)
 
 
 class SaleOrder(models.Model):
-    ''' Stock picking extract
-    '''
+    """ Stock picking extract
+    """
     _inherit = 'sale.order'
 
     @api.multi
     def qweb_get_invoice_text(self, ):
-        ''' Get partner extra info data (for address print)
+        """ Get partner extra info data (for address print)
             self: res.partner obj
-        '''
+        """
         self.ensure_one()
         try:
             picking = self.logistic_picking_ids[0]
             if not picking.invoice_number:
                 raise exceptions.Warning(_('Invoice number not yet present!'))
-            
+
             return '''
                 n. %s del %s intestata a %s 
                 destinazione %s %s''' % (
@@ -55,20 +55,20 @@ class SaleOrder(models.Model):
                     self.partner_invoice_id.name,
 
                     self.partner_shipping_id.city.upper(),
-                    self.partner_shipping_id.country_id.name.upper(),                    
+                    self.partner_shipping_id.country_id.name.upper(),
                     )
-                
+
         except:
             raise exceptions.Warning(_('Invoice not present!'))
-        
+
     @api.multi
     def get_report_footer_stamp(self, ):
-        ''' Get partner extra info data (for address print)
+        """ Get partner extra info data (for address print)
             self: res.partner obj
-        '''
+        """
         self.ensure_one()
         company = self.company_id
-        
+
         text = u'''%s
             %s%s
             %s - %s (%s)
@@ -79,24 +79,24 @@ class SaleOrder(models.Model):
 
                 company.street or '',
                 company.street2 or '',
-                
-                company.zip or '', 
+
+                company.zip or '',
                 company.city or '',
                 company.state_id.name if company.state_id else '',
 
                 (company.country_id.name if company.country_id else ''
                     ).upper(),
                 company.phone or '',
-                
+
                 company.vat or '',
                 )
-        return text.split('\n')        
-            
+        return text.split('\n')
+
     @api.multi
     def get_report_header_company(self, ):
-        ''' Get partner extra info data (for address print)
+        """ Get partner extra info data (for address print)
             self: res.partner obj
-        '''
+        """
         self.ensure_one()
         company = self.company_id
         return u'''
@@ -110,14 +110,14 @@ class SaleOrder(models.Model):
             ''' % (
                 company.street or '',
                 company.street2 or '',
-                
-                company.zip or '', 
+
+                company.zip or '',
                 company.city or '',
                 company.state_id.name if company.state_id else '',
-                
+
                 company.email or '',
                 company.phone or '',
                 company.vat or '',
                 )
-        
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
