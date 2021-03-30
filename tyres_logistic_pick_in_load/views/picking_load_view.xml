@@ -737,8 +737,8 @@
              <field name="view_id" ref="view_sale_order_ready_sequential_print_tree"/>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[ ('need_invoice', '=', True),('fiscal_position_id.sequential_print', '=', True), ('sequential_printed', '=', False), ('logistic_source', 'not in', ('refund', )), ('logistic_state', '=', 'done'), ('locked_delivery', '=', False), ('logistic_source', '!=', 'internal')]</field>
-             <!--(logistic_picking_ids[0].invoice_number != 'DA ASSEGNARE'),-->
+             <field name="domain">[('need_invoice', '=', True),('fiscal_position_id.sequential_print', '=', True), ('sequential_printed', '=', False), ('logistic_source', 'not in', ('refund', )), ('logistic_state', '=', 'done'), ('locked_delivery', '=', False), ('logistic_source', '!=', 'internal')]</field>
+             <!--(logistic_picking_ids[0].invoice_number, '!=', 'DA ASSEGNARE'), -->
          </record> <!--('logistic_done', '=', False), -->
 
          <record model="ir.actions.act_window" id="action_sale_order_closed_form">
