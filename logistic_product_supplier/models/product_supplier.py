@@ -230,6 +230,7 @@ class ProductTemplateSupplierStock(models.Model):
     ipcode = fields.Char('Supplier code', size=24)
     promo = fields.Boolean('Promo')
 
+
 class ProductTemplate(models.Model):
     """ Model name: ProductTemplate
     """

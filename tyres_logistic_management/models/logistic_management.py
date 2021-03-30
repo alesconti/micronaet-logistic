@@ -1318,6 +1318,7 @@ class StockPicking(models.Model):
                     picking.write({
                         'invoice_number': 'DA ASSEGNARE',
                         'invoice_date': fields.Datetime.now(),
+                        # .strftime('%d-%m-%Y')
                         'invoice_filename': 'DA ASSEGNARE',
                     })
                     continue  # Nothing to do with this picking
@@ -1678,8 +1679,9 @@ class SaleOrder(models.Model):
             filename = self.logistic_picking_ids[0].invoice_filename
             # Amazon UK:
             if filename == 'DA ASSEGNARE':
-                raise exceptions.Warning(
-                    'Fattura esterna non ancora inserita a sistema!')
+                _logger.error('Fattura esterna non ancora inserita a sistema!')
+                # raise exceptions.Warning(
+                #    'Fattura esterna non ancora inserita a sistema!')
 
         except:
             raise exceptions.Warning('Invoice not generated!')

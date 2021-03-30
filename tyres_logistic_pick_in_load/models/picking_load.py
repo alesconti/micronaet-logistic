@@ -171,6 +171,14 @@ class SaleOrder(models.Model):
                 _logger.error('Order not for printing '
                               '(not ready / done, locked or internal)')
                 continue
+            if order.logistic_picking_ids and \
+                    order.order.logistic_picking_ids[
+                        0].invoice_number == 'DA ASSEGNARE':
+                note += \
+                    'Ordine %s: fattura ancora da assegnare\n' % order_name
+                _logger.error('Order not for printing '
+                              '(not ready / done, locked or internal)')
+                continue
 
             # -----------------------------------------------------------------
             # Read print parameters:
