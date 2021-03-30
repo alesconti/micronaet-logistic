@@ -1434,8 +1434,8 @@ class StockPicking(models.Model):
                         move.product_uom_qty,
                         line.price_unit,  # XXX read from line
                         line.tax_id[0].account_ref or '', # TODO VAT code, >> sale order line?
-                        line.order_id.team_id.channel_ref, # Channel agent code
-                        order.payment_term_id.account_ref, # Payment code
+                        line.order_id.team_id.channel_ref,  # Channel agent code
+                        order.payment_term_id.account_ref,  # Payment code
                         row_mode,
                         '',  # comment
                         order.carrier_supplier_id.account_ref or '',  # code
@@ -1498,6 +1498,11 @@ class AccountFiscalPosition(models.Model):
         'Partner PFU exported',
         help='If setup on partner will export PFU line')
     need_invoice = fields.Boolean('Always invoice')
+    external_invoice = fields.Boolean(
+        'Non generare fattura',
+        help='Spuntare se questa posizione fiscale richiede che sia Amazon ad'
+             'emettere fattura in conto nostro, la fattura verrà poi integrata'
+             'con processi esterni e non caricata dal gestionale!')
     # Note: use also for extra document:
     private_market = fields.Char('Market private code', size=20)
     partner_private = fields.Boolean(
