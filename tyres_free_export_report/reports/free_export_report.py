@@ -44,13 +44,16 @@ class SaleOrder(models.Model):
         self.ensure_one()
         try:
             picking = self.logistic_picking_ids[0]
+            invoice_number = picking.invoice_number
             if not picking.invoice_number:
                 raise exceptions.Warning(_('Invoice number not yet present!'))
+            if invoice_number == 'DA ASSEGNARE':
+                invoice_number = self.name  # Use order number not invoice!
 
             return '''
                 n. %s del %s intestata a %s 
                 destinazione %s %s''' % (
-                    picking.invoice_number,
+                    invoice_number,
                     picking.invoice_date[:10],
                     self.partner_invoice_id.name,
 
