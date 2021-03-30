@@ -703,7 +703,7 @@ class StockPicking(models.Model):
 
     @api.multi
     def refund_confirm_state_event(self):
-        """ Confirm operation (will be overrided)
+        """ Confirm operation (will be overridden)
         """
         # Confirm document and export in files:
         self.workflow_ready_to_done_done_picking()
@@ -916,9 +916,9 @@ class StockPicking(models.Model):
         fees_path = companys[0]._logistic_folder('corrispettivi')
 
         # Period current date:
-        if evaluation_date: # use evaluation
+        if evaluation_date:  # use evaluation
             now_dt = datetime.strptime(evaluation_date, '%Y-%m-%d')
-        else: # use now
+        else:  # use now
             now_dt = datetime.now()
         _logger.warning('Account Fees evalutation: %s' % now_dt)
 
@@ -1014,7 +1014,7 @@ class StockPicking(models.Model):
             # Readability:
             order = picking.sale_order_id
             partner = order.partner_id
-            stock_mode = picking.stock_mode #in: refund, out: DDT
+            stock_mode = picking.stock_mode  # in: refund, out: DDT
 
             if stock_mode == 'in':
                 sign = -1.0
@@ -1025,18 +1025,21 @@ class StockPicking(models.Model):
                 f_text = f_text_black
                 sign = +1.0
 
-            subtotal = { # common subtotal
+            subtotal = {  # common subtotal
                 'amount': 0.0,
                 'vat': 0.0,
                 'total': 0.0,
                 }
 
             if picking.invoice_number:
-                row_invoice +=1
+                row_invoice += 1
                 for move in picking.move_lines_for_report():
-                    subtotal['amount'] += sign * float(move[9]) # Total without VAT
-                    subtotal['vat'] += sign * float(move[6]) # VAT Total
-                    subtotal['total'] += sign * float(move[10]) # Total with VAT
+                    # Total without VAT:
+                    subtotal['amount'] += sign * float(move[9])
+                    # VAT Total:
+                    subtotal['vat'] += sign * float(move[6])
+                    # Total with VAT:
+                    subtotal['total'] += sign * float(move[10])
 
                 # Update total:
                 total_invoice['amount'] += subtotal['amount']
@@ -1057,12 +1060,15 @@ class StockPicking(models.Model):
                     (subtotal['total'], f_number),
                     ), default_format=f_text)
 
-            else: # No invoice:
-                row +=1
+            else:  # No invoice:
+                row += 1
                 for move in picking.move_lines_for_report():
-                    subtotal['amount'] += sign * float(move[9]) # Total without VAT
-                    subtotal['vat'] += sign * float(move[6]) # VAT Total
-                    subtotal['total'] += sign * float(move[10]) # Total with VAT
+                    # Total without VAT:
+                    subtotal['amount'] += sign * float(move[9])
+                    # VAT Total:
+                    subtotal['vat'] += sign * float(move[6])
+                    # Total with VAT:
+                    subtotal['total'] += sign * float(move[10])
 
                 # Update total:
                 total['amount'] += subtotal['amount']
@@ -1076,7 +1082,7 @@ class StockPicking(models.Model):
                     picking.name,
                     '' if stock_mode == 'in' else order.logistic_state,
                     partner.name,
-                    partner.property_account_position_id.name, # Fiscal position
+                    partner.property_account_position_id.name, # Fiscal pos.
                     (subtotal['amount'], f_number),
                     (subtotal['vat'], f_number),
                     (subtotal['total'], f_number),
@@ -1229,10 +1235,10 @@ class StockPicking(models.Model):
                 if check_ids:
                     invoice_pick = self.browse(pick_id)
                     invoice_pick.write({
-                        'invoice_filename': invoice_filename,  # PDF name
                         'invoice_number': invoice_number,
                         'invoice_date': invoice_date,
-                        })
+                        'invoice_filename': invoice_filename,  # PDF name
+                    })
                     destination_path = history_path
                 else:
                     destination_path = notfound_path
@@ -1299,6 +1305,7 @@ class StockPicking(models.Model):
             address = order.partner_shipping_id
 
             # Need invoice check (fiscal position or order check):
+            no_print_invoice = order.fiscal_position_id.external_invoice
             need_invoice = \
                 partner.property_account_position_id.need_invoice or \
                 partner.need_invoice or order.need_invoice
@@ -1307,6 +1314,13 @@ class StockPicking(models.Model):
             # Invoice procedure (check rules):
             if need_invoice:
                 is_fees = False
+                if no_print_invoice:
+                    picking.write({
+                        'invoice_number': 'DA ASSEGNARE',
+                        'invoice_date': fields.Datetime.now(),
+                        'invoice_filename': 'DA ASSEGNARE',
+                    })
+                    continue  # Nothing to do with this picking
 
                 # -------------------------------------------------------------
                 # Extract invoice from account:
@@ -1406,7 +1420,7 @@ class StockPicking(models.Model):
                         clean_name(partner.name),
                         get_address(partner),
                         vat,
-                        partner.fatturapa_fiscalcode or partner.mmac_fiscalid \
+                        partner.fatturapa_fiscalcode or partner.mmac_fiscalid
                         or '',
 
                         partner.email or '',
@@ -1433,13 +1447,16 @@ class StockPicking(models.Model):
                         move.name or '',
                         move.product_uom_qty,
                         line.price_unit,  # XXX read from line
-                        line.tax_id[0].account_ref or '', # TODO VAT code, >> sale order line?
-                        line.order_id.team_id.channel_ref,  # Channel agent code
+                        # TODO VAT code, >> sale order line?
+                        line.tax_id[0].account_ref or '',
+                        # Channel agent code:
+                        line.order_id.team_id.channel_ref,
                         order.payment_term_id.account_ref,  # Payment code
                         row_mode,
                         '',  # comment
                         order.carrier_supplier_id.account_ref or '',  # code
-                        '1' if line.tax_id[0].price_include else '0', # VAT incl.
+                        # VAT incl.:
+                        '1' if line.tax_id[0].price_include else '0',
                         )
                     text_line = text_line.replace('\r\n', ' ')
                     text_line = text_line + '\r\n'
@@ -1452,7 +1469,7 @@ class StockPicking(models.Model):
 
                 invoice_file.close()
                 self.check_import_reply()  # Check previous import reply
-                invoice_ids.append(picking.id)
+                invoice_ids.append(picking.id)  # not used!
 
             picking.write({
                 'state': 'done',  # TODO needed?
@@ -1659,6 +1676,11 @@ class SaleOrder(models.Model):
         """
         try:
             filename = self.logistic_picking_ids[0].invoice_filename
+            # Amazon UK:
+            if filename == 'DA ASSEGNARE':
+                raise exceptions.Warning(
+                    'Fattura esterna non ancora inserita a sistema!')
+
         except:
             raise exceptions.Warning('Invoice not generated!')
         if not filename:
@@ -1778,14 +1800,14 @@ class SaleOrder(models.Model):
             row += 1
             excel_pool.write_xls_line(ws_name, row, (
                 product.default_code,
-                product.description_sale or \
-                    product.titolocompleto or product.name or 'Non trovato',
+                product.description_sale or
+                product.titolocompleto or product.name or 'Non trovato',
 
                 order.name,
                 order.date_order[:10],
                 line.product_uom_qty,
-                #(line.product_uom_qty, format_type['number']['black']),
-                #logistic_undelivered_qty
+                # (line.product_uom_qty, format_type['number']['black']),
+                # logistic_undelivered_qty
                 ), default_format=format_type['text']['black'])
 
         # ---------------------------------------------------------------------
