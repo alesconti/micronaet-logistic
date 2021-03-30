@@ -1301,7 +1301,7 @@ class StockPicking(models.Model):
             # Need invoice check (fiscal position or order check):
             need_invoice = \
                 partner.property_account_position_id.need_invoice or \
-                    partner.need_invoice or order.need_invoice
+                partner.need_invoice or order.need_invoice
             is_fees = True  # default
 
             # Invoice procedure (check rules):

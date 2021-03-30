@@ -175,7 +175,11 @@ class ResCompany(models.Model):
         translate = [
             'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 
-        gmt_correct = -1.0  # TODO manage better!
+        company = self
+        gmt_correct = company.auto_gmt_correct
+        daylight_correct = -1 if company.auto_daylight_correct else 0
+        hour_correct = gmt_correct + daylight_correct
+
         now = datetime.now()
         hour = now.hour + now.minute / 60.0
         weekday = translate[now.isoweekday()]
@@ -188,8 +192,8 @@ class ResCompany(models.Model):
                 'Not activated, no working period available today')
 
         now_text = now.strftime('%Y-%m-%d')
-        from_hour = lines[0].from_hour + gmt_correct
-        to_hour = lines[0].to_hour + gmt_correct
+        from_hour = lines[0].from_hour + hour_correct
+        to_hour = lines[0].to_hour + hour_correct
         auto_start_period = '%s %02d:%02d:00' % (
             now_text,
             int(from_hour),
@@ -280,6 +284,15 @@ class ResCompany(models.Model):
         ])
 
     # Columns:
+    auto_gmt_correct = fields.Integer(
+        string='Correzione GMT',
+        help='Ore aggiunte all\'orario effettivo per salvare in GMT',
+        default=-1,
+    )
+    auto_daylight_correct = fields.Boolean(
+        string='Ora legale attiva',
+        help='E\' presente l\'ora legale',
+    )
     auto_pending_order = fields.Integer(
         string='Pending order',
         help='Order marked for being printed automatically',

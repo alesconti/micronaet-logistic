@@ -149,6 +149,9 @@
                             <field name="template_id" />
                             <field name="auto_group" />
                             <field name="auto_pending_order" />
+                            <separator string="Correzione orario" colspan="4"/>
+                            <field name="auto_gmt_correct" />
+                            <field name="auto_daylight_correct" />
                             <!--<separator string="Date excluded:" colspan="2"/>
                             <button name="setup_this_year" type="object" string="Carica anno corrente" colspan="1" icon="fa-gear fa-2x"/>
                             <newline/>
