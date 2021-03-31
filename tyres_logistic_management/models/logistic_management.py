@@ -2161,7 +2161,7 @@ class SaleOrder(models.Model):
         """ Button action for call all ready to done order:
         """
         self.ensure_one()
-        import pdb; pdb.set_trace()
+
         # If sequential print: print all:
         res = self.workflow_ready_to_done_draft_picking()
         if self.fiscal_position_id.sequential_print:
