@@ -1683,7 +1683,7 @@ class SaleOrder(models.Model):
                 _logger.error('Fattura esterna non ancora inserita a sistema!')
                 # raise exceptions.Warning(
                 #    'Fattura esterna non ancora inserita a sistema!')
-
+                return False
         except:
             raise exceptions.Warning('Invoice not generated!')
         if not filename:
