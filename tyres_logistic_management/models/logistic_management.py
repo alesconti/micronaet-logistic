@@ -2120,7 +2120,7 @@ class SaleOrder(models.Model):
             # -----------------------------------------------------------------
             # 2. Secure market (sale team):
             # -----------------------------------------------------------------
-            try: # error if not present
+            try:  # error if not present
                 if order.team_id.secure_payment:
                     payment_order.append(order)
                     continue
@@ -2130,7 +2130,7 @@ class SaleOrder(models.Model):
             # -----------------------------------------------------------------
             # 3. Secure payment in fiscal position
             # -----------------------------------------------------------------
-            try: # problem in not present
+            try:  # problem in not present
                 position = order.partner_id.property_account_position_id
                 payment = order.payment_term_id
                 if payment and payment in [
@@ -2161,7 +2161,7 @@ class SaleOrder(models.Model):
         """ Button action for call all ready to done order:
         """
         self.ensure_one()
-
+        import pdb; pdb.set_trace()
         # If sequential print: print all:
         res = self.workflow_ready_to_done_draft_picking()
         if self.fiscal_position_id.sequential_print:
