@@ -292,7 +292,6 @@ class SaleOrder(models.Model):
             # -----------------------------------------------------------------
             # Picking
             # -----------------------------------------------------------------
-            # TODO
             for time in range(0, loop_picking):
                 order.workflow_ready_print_picking()
             log_print[order].append(_('Print #%s Picking') % loop_picking)
