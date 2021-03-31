@@ -280,9 +280,7 @@ class SaleOrder(models.Model):
                     fiscal = order.fiscal_position_id
             else:
                 fiscal = order.fiscal_position_id
-            _logger.info('---- PRINT ALL ----')
-            _logger.info('---- FISCAL POSITION %s' % fiscal.name)
-
+            _logger.info('---- PRINT ALL FISCAL POSITION %s' % fiscal.name)
             market = order.team_id.market_type
             try:
                 # Read parameter line:
