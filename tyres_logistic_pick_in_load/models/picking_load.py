@@ -300,7 +300,9 @@ class SaleOrder(models.Model):
                 # Default print 1
                 loop_picking = loop_ddt = loop_invoice = loop_extra = \
                     loop_label = 1
-
+            _logger.info(
+                '\n\n\n\n: pick: %s, ddt: %s, invoice: %s, Extra: %s\n\n' % (
+                    loop_picking, loop_ddt, loop_invoice, loop_extra))
             log_print[order].append(_('Start print order: %s') % order.name)
             # -----------------------------------------------------------------
             # Picking
