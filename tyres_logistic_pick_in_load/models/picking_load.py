@@ -260,7 +260,6 @@ class SaleOrder(models.Model):
         result_pool = self.env['sale.order.print.result']
 
         log_print = {}
-        pdb.set_trace()
         for order in sorted(self, key=lambda x: x.name):
             log_print[order] = []
             if order.locked_delivery or order.logistic_source == 'internal' or\
@@ -330,7 +329,7 @@ class SaleOrder(models.Model):
                 for time in range(0, loop_label):
                     order.workflow_ready_print_label()
                 log_print[order].append(_('Print #%s label') % loop_label)
-            order.mmac_print_status = 'all'
+            order.mmac_print_status = 'all'  # print_status = 'all'
         if len(self) <= 1:
             return True
 
