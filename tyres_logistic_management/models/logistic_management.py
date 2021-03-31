@@ -1305,7 +1305,8 @@ class StockPicking(models.Model):
             address = order.partner_shipping_id
 
             # Need invoice check (fiscal position or order check):
-            no_print_invoice = order.fiscal_position_id.external_invoice_management
+            no_print_invoice = \
+                order.fiscal_position_id.external_invoice_management
             need_invoice = \
                 partner.property_account_position_id.need_invoice or \
                 partner.need_invoice or order.need_invoice
