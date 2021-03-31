@@ -266,8 +266,22 @@ class SaleOrder(models.Model):
                 log_print[order].append(_('Not print order: %s') % order.name)
                 continue
 
-            # TODO Setup loop print:
-            fiscal = order.fiscal_position_id
+            # Setup loop print:
+            # 31/03/2021 Integrazione parte di Alessandro:
+            # modifica per gestire pos. fiscale UK come parametri di stampa
+            if order.partner_shipping_id.country_id.code == 'GB':
+                fisc_obj = self.env['account.fiscal.position'].search(
+                    [('name', '=', 'United Kingdom')]
+                )
+                if fisc_obj:
+                    fiscal = fisc_obj
+                else:
+                    fiscal = order.fiscal_position_id
+            else:
+                fiscal = order.fiscal_position_id
+            _logger.info('---- PRINT ALL ----')
+            _logger.info('---- FISCAL POSITION %s' % fiscal.name)
+
             market = order.team_id.market_type
             try:
                 # Read parameter line:
@@ -296,21 +310,42 @@ class SaleOrder(models.Model):
                 order.workflow_ready_print_picking()
             log_print[order].append(_('Print #%s Picking') % loop_picking)
 
-            # -----------------------------------------------------------------
-            # Invoice
-            # -----------------------------------------------------------------
-            if order.check_need_invoice:
+            # =================================================================
+            # 31/03/2021 Integrazione parte gestione GB di Conti:
+            if order.partner_shipping_id.country_id.code == 'GB':
+                # -------------------------------------------------------------
+                # Invoice
+                # -------------------------------------------------------------
                 for time in range(0, loop_invoice):
                     order.workflow_ready_print_invoice()
-                log_print[order].append(_('Print #%s Invoice') % loop_invoice)
+                log_print[order].append('Print #%s Invoice' % loop_invoice)
 
-            # -----------------------------------------------------------------
-            # DDT
-            # -----------------------------------------------------------------
-            else:
+                # -------------------------------------------------------------
+                # DDT
+                # -------------------------------------------------------------
                 for time in range(0, loop_ddt):
                     order.workflow_ready_print_ddt()
-                log_print[order].append(_('Print #%s DDT') % loop_ddt)
+                log_print[order].append('Print #%s DDT' % loop_ddt)
+
+            else:  # Normal part:
+                # -------------------------------------------------------------
+                # Invoice
+                # -------------------------------------------------------------
+                if order.check_need_invoice:
+                    for time in range(0, loop_invoice):
+                        order.workflow_ready_print_invoice()
+                    log_print[order].append(
+                        'Print #%s Invoice' % loop_invoice)
+
+                # -------------------------------------------------------------
+                # DDT
+                # -------------------------------------------------------------
+                else:
+                    for time in range(0, loop_ddt):
+                        order.workflow_ready_print_ddt()
+                    log_print[order].append('Print #%s DDT' % loop_ddt)
+            # Alessandro Conti, [31.03.21 13: 16]
+            # =================================================================
 
             # -----------------------------------------------------------------
             # Extra document
