@@ -174,11 +174,13 @@ class SaleOrder(models.Model):
             if order.logistic_picking_ids and \
                     order.order.logistic_picking_ids[
                         0].invoice_number == 'DA ASSEGNARE':
+                no_invoice = True
                 note += \
                     'Ordine %s: fattura ancora da assegnare\n' % order_name
                 _logger.error('Order not for printing '
                               '(not ready / done, locked or internal)')
-                continue
+            else:
+                no_invoice = False
 
             # -----------------------------------------------------------------
             # Read print parameters:
@@ -199,8 +201,11 @@ class SaleOrder(models.Model):
             # Invoice
             # -----------------------------------------------------------------
             try:
-                for time in range(0, loop_invoice):
-                    order.workflow_ready_print_invoice()
+                if no_invoice:
+                    _logger.warning('Jumped invoice printing')
+                else:
+                    for time in range(0, loop_invoice):
+                        order.workflow_ready_print_invoice()
             except:
                 note += \
                     'Ordine %s: errore stampa fattura: %s\n' % (
