@@ -30,7 +30,6 @@ from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
 import pdb
 
-
 _logger = logging.getLogger(__name__)
 
 
