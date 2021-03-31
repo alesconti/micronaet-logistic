@@ -181,7 +181,7 @@ class ResCompany(models.Model):
         hour_correct = gmt_correct + daylight_correct
 
         now = datetime.now()
-        hour = now.hour + now.minute / 60.0
+        hour = (now.hour - daylight_correct - gmt_correct) + now.minute / 60.0
         weekday = translate[now.isoweekday()]
         lines = line.search([
             ('day', '=', weekday),
