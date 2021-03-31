@@ -301,8 +301,9 @@ class SaleOrder(models.Model):
                 loop_picking = loop_ddt = loop_invoice = loop_extra = \
                     loop_label = 1
             _logger.info(
-                '\n\n\n\n: pick: %s, ddt: %s, invoice: %s, Extra: %s\n\n' % (
-                    loop_picking, loop_ddt, loop_invoice, loop_extra))
+                'Printall: pick %s, ddt %s, invoice %s, extra %s, label %s' %
+                (loop_picking, loop_ddt, loop_invoice, loop_extra, loop_label))
+
             log_print[order].append(_('Start print order: %s') % order.name)
             # -----------------------------------------------------------------
             # Picking
@@ -313,8 +314,7 @@ class SaleOrder(models.Model):
 
             # =================================================================
             # 31/03/2021 Integrazione parte gestione GB di Conti:
-            if order.partner_shipping_id.country_id.code == 'GB' and \
-                    not order.fiscal_position_id.external_invoice_management:
+            if order.partner_shipping_id.country_id.code == 'GB':
                 # -------------------------------------------------------------
                 # Invoice
                 # -------------------------------------------------------------
