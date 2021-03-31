@@ -259,7 +259,6 @@ class SaleOrder(models.Model):
         result_pool = self.env['sale.order.print.result']
 
         log_print = {}
-        pdb.set_trace()
         for order in sorted(self, key=lambda x: x.name):
             log_print[order] = []
             if order.locked_delivery or order.logistic_source == 'internal' or\
@@ -270,7 +269,8 @@ class SaleOrder(models.Model):
             # Setup loop print:
             # 31/03/2021 Integrazione parte di Alessandro:
             # modifica per gestire pos. fiscale UK come parametri di stampa
-            if order.partner_shipping_id.country_id.code == 'GB':
+            if order.partner_shipping_id.country_id.code == 'GB' and \
+                    not order.fiscal_position_id.external_invoice_management:
                 fisc_obj = self.env['account.fiscal.position'].search(
                     [('name', '=', 'United Kingdom')]
                 )
