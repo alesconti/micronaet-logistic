@@ -99,7 +99,7 @@
             <field name="arch" type="xml">
                 <field name="company_id" position="after">
                     <field name="need_invoice" />
-                    <field name="external_invoice" />
+                    <field name="external_invoice_management" />
                     <field name="private_market" />
                     <field name="partner_private" />
                     <field name="pfu_invoice_enable" />
@@ -114,7 +114,7 @@
             <field name="arch" type="xml">
                 <field name="company_id" position="before">
                     <field name="need_invoice" />
-                    <field name="external_invoice" />
+                    <field name="external_invoice_management" />
                     <field name="private_market" />
                     <field name="partner_private" />
                     <field name="pfu_invoice_enable" />

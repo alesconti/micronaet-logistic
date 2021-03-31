@@ -1305,7 +1305,7 @@ class StockPicking(models.Model):
             address = order.partner_shipping_id
 
             # Need invoice check (fiscal position or order check):
-            no_print_invoice = order.fiscal_position_id.external_invoice
+            no_print_invoice = order.fiscal_position_id.external_invoice_management
             need_invoice = \
                 partner.property_account_position_id.need_invoice or \
                 partner.need_invoice or order.need_invoice
@@ -1516,7 +1516,7 @@ class AccountFiscalPosition(models.Model):
         'Partner PFU exported',
         help='If setup on partner will export PFU line')
     need_invoice = fields.Boolean('Always invoice')
-    external_invoice = fields.Boolean(
+    external_invoice_management = fields.Boolean(
         'Non generare fattura',
         help='Spuntare se questa posizione fiscale richiede che sia Amazon ad'
              'emettere fattura in conto nostro, la fattura verrà poi integrata'
