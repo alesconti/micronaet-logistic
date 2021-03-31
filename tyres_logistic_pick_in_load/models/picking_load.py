@@ -260,6 +260,7 @@ class SaleOrder(models.Model):
         result_pool = self.env['sale.order.print.result']
 
         log_print = {}
+        pdb.set_trace()
         for order in sorted(self, key=lambda x: x.name):
             log_print[order] = []
             if order.locked_delivery or order.logistic_source == 'internal' or\
@@ -294,7 +295,6 @@ class SaleOrder(models.Model):
             # Picking
             # -----------------------------------------------------------------
             # TODO
-
             for time in range(0, loop_picking):
                 order.workflow_ready_print_picking()
             log_print[order].append(_('Print #%s Picking') % loop_picking)
