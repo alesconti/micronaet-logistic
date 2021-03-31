@@ -312,7 +312,8 @@ class SaleOrder(models.Model):
 
             # =================================================================
             # 31/03/2021 Integrazione parte gestione GB di Conti:
-            if order.partner_shipping_id.country_id.code == 'GB':
+            if order.partner_shipping_id.country_id.code == 'GB' and \
+                    not order.fiscal_position_id.external_invoice_management:
                 # -------------------------------------------------------------
                 # Invoice
                 # -------------------------------------------------------------
