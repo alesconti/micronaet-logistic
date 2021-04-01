@@ -147,13 +147,17 @@ try:
             time.sleep(wait)
 
         # Press the send to delivery button:
-        if order.erppeek_workflow_ready_to_done_current_order():
-            write_log('Elaborazione ordine %s' % order.name,
+        try:
+            if order.erppeek_workflow_ready_to_done_current_order():
+                write_log('Elaborazione ordine %s' % order.name,
+                          log_file=log_exec_f)
+            else:
+                write_log('Errore elaborazione ordine %s' % order.name,
+                          log_file=log_exec_f)
+        except:
+            write_log('Errore non gestito ordine %s' % order.name,
                       log_file=log_exec_f)
-        else:
-            write_log('Errore elaborazione ordine %s' % order.name,
-                      log_file=log_exec_f)
-
+            continue
 finally:
     os.unlink(pidfile)
     message = '[%s] Invoice Daemon stopped [%s]\n' % (pid, pidfile)
