@@ -171,7 +171,7 @@ class SaleOrder(models.Model):
                               '(not ready / done, locked or internal)')
                 continue
             if order.logistic_picking_ids and \
-                    order.order.logistic_picking_ids[
+                    order.logistic_picking_ids[
                         0].invoice_number == 'DA ASSEGNARE':
                 no_invoice = True
                 note += \
