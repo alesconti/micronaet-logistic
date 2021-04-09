@@ -74,10 +74,8 @@ class SaleOrderInternal(models.Model):
     def confirm_internal_order_button(self):
         """ Button to create job for confirm order
         """
+        self.confirmed = True
         self.with_delay().confirm_internal_order()
-        # {'search_default_logistic_state_pending': True, 'search_default_logistic_state_ready': True}
-        # self.env.context
-        pdb.set_trace()
         return {
             'type': 'ir.actions.act_window',
             'name': _('Internal order'),
@@ -86,7 +84,7 @@ class SaleOrderInternal(models.Model):
             'res_id': False,
             'res_model': 'sale.order',
             'view_id': False,  # view_id, # False
-            'views': [(False, 'form'), (False, 'tree')],
+            'views': [(False, 'tree'), (False, 'form'), ],
             'domain': [('logistic_source', '=', 'internal')],
             'context': self.with_context(
                 search_default_logistic_state_pending=True,
