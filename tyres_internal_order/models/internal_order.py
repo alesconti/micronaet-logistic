@@ -32,10 +32,9 @@ from odoo.tools.translate import _
 
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-from odoo.addons.queue_job.job import job
+
 
 _logger = logging.getLogger(__name__)
-
 
 class ProductProduct(models.Model):
     """ Override method
@@ -69,7 +68,6 @@ class SaleOrderInternal(models.Model):
     _rec_name = 'date'
     _order = 'date desc'
 
-    @job
     @api.multi
     def confirm_internal_order(self):
         """ Create Sale order
