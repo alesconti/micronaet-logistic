@@ -22,7 +22,6 @@
 ###############################################################################
 
 import os
-import pdb
 import sys
 import logging
 import odoo
@@ -69,32 +68,6 @@ class SaleOrderInternal(models.Model):
     _name = 'sale.order.internal'
     _rec_name = 'date'
     _order = 'date desc'
-
-    @api.multi
-    def confirm_internal_order_button(self):
-        """ Button to create job for confirm order
-        """
-        self.with_delay().confirm_internal_order()
-        # {'search_default_logistic_state_pending': True, 'search_default_logistic_state_ready': True}
-        # self.env.context
-        pdb.set_trace()
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Internal order'),
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_id': False,
-            'res_model': 'sale.order',
-            'view_id': False,  # view_id, # False
-            'views': [(False, 'form'), (False, 'tree')],
-            'domain': [('logistic_source', '=', 'internal')],
-            'context': self.with_context(
-                search_default_logistic_state_pending=True,
-                search_default_logistic_state_ready=True,
-            ).env.context,
-            'target': 'current',
-            'nodestroy': False,
-            }
 
     @job
     @api.multi
@@ -162,7 +135,21 @@ class SaleOrderInternal(models.Model):
         # ---------------------------------------------------------------------
         order.workflow_manual_order_pending()
         self.confirmed = True
-        return True
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Internal order'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_id': order_id,
+            'res_model': 'sale.order',
+            'view_id': False,  # view_id, # False
+            'views': [(False, 'form'), (False, 'tree')],
+            'domain': [],
+            'context': self.env.context,
+            'target': 'current',  # 'new'
+            'nodestroy': False,
+            }
 
     # -------------------------------------------------------------------------
     # Columns:
@@ -172,7 +159,7 @@ class SaleOrderInternal(models.Model):
     note = fields.Text('Note')
     confirmed = fields.Boolean('Confirmed')
     logistic_source = fields.Selection([
-        # ('web', 'Web order'),
+        #('web', 'Web order'),
         ('resell', 'Customer resell order'),
         ('workshop', 'Workshop order'),
         ('internal', 'Internal provisioning order'),
