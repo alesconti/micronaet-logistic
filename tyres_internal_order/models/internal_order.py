@@ -80,10 +80,6 @@ class SaleOrderInternal(models.Model):
         # ---------------------------------------------------------------------
         # Search company partner:
         # ---------------------------------------------------------------------
-        if self.confirmed:
-            _logger.error('Internal order yet confirmed')
-            return False
-
         partner_id = self.env.user.company_id.partner_id.id
 
         # ---------------------------------------------------------------------
@@ -141,11 +137,11 @@ class SaleOrderInternal(models.Model):
             'view_mode': 'form',
             'res_id': order_id,
             'res_model': 'sale.order',
-            'view_id': False,  # view_id, # False
+            'view_id': False,#view_id, # False
             'views': [(False, 'form'), (False, 'tree')],
             'domain': [],
             'context': self.env.context,
-            'target': 'current',  # 'new'
+            'target': 'current', # 'new'
             'nodestroy': False,
             }
 
