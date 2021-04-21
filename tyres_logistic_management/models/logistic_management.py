@@ -248,14 +248,14 @@ class PurchaseOrder(models.Model):
 
         _logger.warning(
             'Checking internal order in folder: %s' % path_folder['reply'])
-        for path in path_folder: # Create if not present
+        for path in path_folder:  # Create if not present
             os.system('mkdir -p %s' % path_folder[path])
 
         # Open order (for check):
         open_po_ids = (self.search([
             ('logistic_state', '!=', 'done')])).mapped('id')
 
-        sale_line_ready = [] # ready line after assign load qty to purchase
+        sale_line_ready = []  # ready line after assign load qty to purchase
         move_file = []
         for root, subfolders, files in os.walk(path_folder['reply']):
             for f in files:
@@ -264,7 +264,7 @@ class PurchaseOrder(models.Model):
                     continue
 
                 _logger.warning('Check internal purchase: %s' % f)
-                po_id = int(f[:-4].split('_')[-1]) # SUPPLIER_NAME_ID.csv
+                po_id = int(f[:-4].split('_')[-1])  # SUPPLIER_NAME_ID.csv
                 if po_id not in open_po_ids:
                     _logger.error('Order yet manage: %s (remove manually)' % f)
                     # Move in unused files folder:
@@ -303,13 +303,13 @@ class PurchaseOrder(models.Model):
                     'partner_id': partner.id,
                     'scheduled_date': date,
                     'origin': origin,
-                    #'move_type': 'direct',
+                    # 'move_type': 'direct',
                     'picking_type_id': logistic_pick_in_type_id,
                     'group_id': False,
                     'location_id': location_from,
                     'location_dest_id': location_to,
-                    #'priority': 1,
-                    'state': 'done', # immediately!
+                    # 'priority': 1,
+                    'state': 'done',  # immediately!
                     })
 
                 # -------------------------------------------------------------
@@ -347,7 +347,7 @@ class PurchaseOrder(models.Model):
                         'product_uom': product.uom_id.id,
                         'state': 'done',
                         'origin': origin,
-                        'price_unit': line.price_unit, # Save purchase price
+                        'price_unit': line.price_unit,  # Save purchase price
 
                         # Sale order line link:
                         'logistic_load_id': logistic_sale_id.id,
@@ -365,7 +365,7 @@ class PurchaseOrder(models.Model):
                 purchase.logistic_state = 'done'
                 _logger.info('Purchase order: %s done!' % f)
 
-            break # only first folder
+            break  # only first folder
 
         # ---------------------------------------------------------------------
         # Check Sale Order header with all line ready:
@@ -2864,7 +2864,7 @@ class SaleOrderLine(models.Model):
             # -----------------------------------------------------------------
             # Collect data for picking:
             # -----------------------------------------------------------------
-            for line in self.load_line_ids: # BF or Internal
+            for line in self.load_line_ids:  # BF or Internal
                 picking_id = line.picking_id.id or ''
                 if picking_id not in pickings:
                     pickings[picking_id] = []
@@ -2892,15 +2892,15 @@ class SaleOrderLine(models.Model):
                         order_file.write(row_mask % (
                             line.product_id.default_code,
                             line.product_qty,
-                            line.price_unit, # TODO Check!!!
-                            '', # No product code=undo
-                            'undo order', # Order ref.
+                            line.price_unit,  # TODO Check!!!
+                            '',  # No product code=undo
+                            'undo order',  # Order ref.
                             company_pool.formatLang(now, date=True),
                             ))
                 order_file.close()
 
             # Check if procedure if fast to confirm reply (instead scheduled!):
-            #self.check_import_reply() # Needed?
+            # self.check_import_reply() # Needed?
 
             # Remove all lines:
             comment += _('Remove delivery/internal line in Pick IN doc.<br/>')
