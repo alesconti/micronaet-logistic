@@ -213,6 +213,7 @@ class PurchaseOrder(models.Model):
         """ Check passed purchase IDs passed or all confirmed order
             if not present
         """
+
         if purchase_ids:
             purchases = self.browse(purchase_ids)
         else:
@@ -250,7 +251,7 @@ class PurchaseOrder(models.Model):
             'name': _('Purchase line'),
             'view_type': 'form',
             'view_mode': 'tree,form',
-            #'res_id': 1,
+            # 'res_id': 1,
             'res_model': 'purchase.order.line',
             'view_id': tree_view_id,
             'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
@@ -1548,8 +1549,18 @@ class SaleOrder(models.Model):
         for order in self.browse(moved_ids):
             order.migrate_to_destination_button()
         return True
+
     # -------------------------------------------------------------------------
     #                   WORKFLOW: [LOGISTIC OPERATION TRIGGER]
+    # -------------------------------------------------------------------------
+    # A. Logistic phase 1: Check secure payment:
+    # -------------------------------------------------------------------------
+    @api.model
+    def force_workflow_draft_to_payment(self, order_ids):
+        """ Call original action from externally
+        """
+        return self.with_context(force_order_ids=order_ids).workflow_draft_to_payment()
+
     # -------------------------------------------------------------------------
     # A. Logistic phase 1: Check secure payment:
     # -------------------------------------------------------------------------
@@ -1580,9 +1591,13 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Start order payment check:
         # ---------------------------------------------------------------------
-        orders = self.search([
+        domain = [
             ('logistic_state', '=', 'draft'),  # new order
-            ])
+            ]
+        force_order_ids = self.env.context.get('force_order_ids')
+        if force_order_ids:
+            domain.append(('id', 'in', force_order_ids))
+        orders = self.search(domain)
         _logger.info('New order: Selection [# %s]' % len(orders))
 
         # Search new order:
@@ -1598,7 +1613,7 @@ class SaleOrder(models.Model):
             # -----------------------------------------------------------------
             # 2. Secure market (sale team):
             # -----------------------------------------------------------------
-            try: # error if not present
+            try:  # error if not present
                 if order.team_id.secure_payment:
                     payment_order.append(order)
                     continue
@@ -1634,12 +1649,22 @@ class SaleOrder(models.Model):
     # B. Logistic phase 2: payment > order
     # -------------------------------------------------------------------------
     @api.model
+    def force_workflow_payment_to_order(self, order_ids):
+        """ Confirm payment order (before expand kit)
+        """
+        return self.with_context(force_order_ids=order_ids).workflow_payment_to_order()
+
+    @api.model
     def workflow_payment_to_order(self):
         """ Confirm payment order (before expand kit)
         """
-        orders = self.search([
+        domain = [
             ('logistic_state', '=', 'payment'),
-            ])
+            ]
+        force_order_ids = self.env.context.get('force_order_ids')
+        if force_order_ids:
+            domain.append(('id', 'in', force_order_ids))
+        orders = self.search(domain)
         selected_ids = []
         for order in orders:
             selected_ids.append(order.id)
@@ -1662,6 +1687,12 @@ class SaleOrder(models.Model):
     # -------------------------------------------------------------------------
     # B. Logistic delivery phase: ready > done
     # -------------------------------------------------------------------------
+    @api.model
+    def force_workflow_ready_to_done_draft_picking(self, order_ids,  limit=False):
+        """ Forced procedure: Confirm payment order (before expand kit)
+        """
+        return self.with_context(force_order_ids=order_ids).workflow_ready_to_done_draft_picking(limit=limit)
+
     @api.model
     def workflow_ready_to_done_draft_picking(self, limit=False):
         """ Confirm payment order (before expand kit)
@@ -1686,30 +1717,33 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Select order to prepare:
         # ---------------------------------------------------------------------
+        domain = [
+            ('logistic_state', '=', 'ready'),
+            ]
+        force_order_ids = self.env.context.get('force_order_ids')
+        if force_order_ids:
+            domain.append(('id', 'in', force_order_ids))
+
         if limit:
             _logger.warning('Limited export: %s' % limit)
-            orders = self.search([
-                ('logistic_state', '=', 'ready'),
-                ], limit=limit)
+            orders = self.search(domain, limit=limit)
         else:
-            orders = self.search([
-                ('logistic_state', '=', 'ready'),
-                ])
+            orders = self.search(domain)
 
         verbose_order = len(orders)
 
-        #ddt_list = []
-        #invoice_list = []
-        picking_ids = [] # return value
+        # ddt_list = []
+        # invoice_list = []
+        picking_ids = []  # return value
         i = 0
         for order in orders:
             i += 1
-            _logger.warning('Generate pick out from order: %s / %s'  % (
+            _logger.warning('Generate pick out from order: %s / %s' % (
                 i, verbose_order))
 
             # Create picking document:
             partner = order.partner_id
-            name = order.name # same as order_ref
+            name = order.name  # same as order_ref
             origin = _('%s [%s]') % (order.name, order.create_date[:10])
 
             picking = picking_pool.create({
@@ -1717,12 +1751,12 @@ class SaleOrder(models.Model):
                 'partner_id': partner.id,
                 'scheduled_date': now,
                 'origin': origin,
-                #'move_type': 'direct',
+                # 'move_type': 'direct',
                 'picking_type_id': logistic_pick_out_type_id,
                 'group_id': False,
                 'location_id': location_from,
                 'location_dest_id': location_to,
-                #'priority': 1,
+                # 'priority': 1,
                 'state': 'draft',  # XXX To do manage done phase (for invoice)!!
                 })
             picking_ids.append(picking.id)
