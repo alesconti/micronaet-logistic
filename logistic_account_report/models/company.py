@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -30,9 +30,9 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from openerp.tools.translate import _
 from openerp.tools import (
-    DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+    DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare,
     )
 
@@ -43,9 +43,9 @@ _logger = logging.getLogger(__name__)
 class ResCompany(models.Model):
     """ Model name: ResCompany
     """
-    
+
     _inherit = 'res.company'
-    
+
     # -------------------------------------------------------------------------
     # COLUMNS:
     # -------------------------------------------------------------------------
@@ -53,8 +53,5 @@ class ResCompany(models.Model):
     report_text_thanks = fields.Text('Report text: Thanks')
     report_text_privacy = fields.Text('Report text: Privacy')
     report_text_invoice = fields.Text('Report text: Invoice')
-    
+
     # -------------------------------------------------------------------------
-
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

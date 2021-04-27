@@ -1,0 +1,222 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+         <record model="ir.actions.act_window" id="action_sale_order_ready_autoprint_form">
+             <field name="name">Autoprint order</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form,graph,pivot</field>
+             <field name="context">{}</field>
+             <field name="domain">[('auto_print_order', '=', True)]</field>
+         </record>
+
+
+        <record model="ir.ui.view" id="view_auto_confirm_template_tree">
+            <field name="name">res.auto.confirm.template.tree</field>
+            <field name="model">auto.confirm.template</field>
+            <field name="arch" type="xml">
+                <tree string="Working template">
+                    <field name="name" />
+                    <field name="note" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_auto_confirm_template_form">
+            <field name="name">res.auto.confirm.template.form</field>
+            <field name="model">auto.confirm.template</field>
+            <field name="arch" type="xml">
+                <form string="Working template">
+                    <header>
+                    </header>
+                    <sheet>
+                        <group colspan="4" col="4">
+                            <field name="name" />
+
+                            <separator string="Timesheet" colspan="4"/>
+                            <field name="day_ids" colspan="4" nolabel="1">
+                                <tree string="Timesheet" editable="bottom">
+                                    <field name="day" />
+                                    <field name="from_hour" widget="float_time"/>
+                                    <field name="to_hour" widget="float_time" />
+                                </tree>
+                            </field>
+
+                            <separator string="Note" colspan="4"/>
+                            <field name="note" colspan="4" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_view_auto_confirm_template">
+            <field name="name">Template</field>
+            <field name="res_model">auto.confirm.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_auto_confirm_template_tree"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <!--res.company-->
+        <record id="view_res_company_parameter_kanban" model="ir.ui.view">
+            <field name="name">Autoorder Kanban</field>
+            <field name="model">res.company</field>
+            <field name="priority" eval="40"/>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="id" readonly="1"/>
+                    <field name="name" />
+                    <field name="logo" />
+                    <field name="auto_print" />
+                    <field name="auto_wait" />
+                    <field name="auto_start_period" />
+                    <field name="auto_end_period" />
+                    <field name="auto_state"/>
+                    <field name="auto_pending_order"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="o_kanban_image">
+                                    <img t-att-src="kanban_image('res.company', 'logo', record.id.raw_value)" class="oe_kanban_image" />
+                                </div>
+
+                                <div>
+                                    <button name="enable_auto_confirm" type="object" string="Attiva auto conferma" attrs="{'invisible': [('auto_state', '=', 'enabled')]}" class="btn fa fa-play"/>
+                                    <button name="disable_auto_confirm" type="object" string="Disattiva auto conferma" attrs="{'invisible': [('auto_state', '=', 'disabled')]}" class="btn fa fa-power-off"/>
+                                </div>
+
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title">
+                                        Azienda: <field name="name" required="1"/>
+                                        [Pendenti: <field name="auto_pending_order" readonly="1"/>]
+                                    </strong>
+                                    <ul>
+                                        <li>
+                                            Attivo da: <field name="auto_start_period" />
+                                        </li>
+                                        <li>
+                                            Attivo fino: <field name="auto_end_period" />
+                                        </li>
+                                        <li>
+                                            Blocchi: <field name="auto_print" />
+                                        </li>
+                                        <li>
+                                            Attesa tra i blocchi: <field name="auto_wait" />
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_res_company_auto_setup_tree">
+            <field name="name">res.company.auto.config.tree</field>
+            <field name="model">res.company</field>
+            <field name="priority" eval="40"/>
+            <field name="arch" type="xml">
+                <tree string="Manage auto config." decoration-success="auto_state=='enabled'" decoration-danger="auto_state=='disabled'">
+                    <field name="name" />
+                    <field name="template_id" />
+                    <field name="auto_print" />
+                    <field name="auto_wait" />
+                    <field name="auto_start_period" />
+                    <field name="auto_end_period" />
+                    <field name="auto_pending_order" />
+                    <button name="enable_auto_confirm" type="object" string="Attiva auto conferma" attrs="{'invisible': [('auto_state', '=', 'enabled')]}" icon="fa-play fa-3x"/>
+                    <button name="disable_auto_confirm" type="object" string="Disattiva auto conferma" attrs="{'invisible': [('auto_state', '=', 'disabled')]}" icon="fa-power-off fa-3x"/>
+                    <field name="auto_state"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_res_company_auto_setup_form">
+            <field name="name">res.company.auto.config.form</field>
+            <field name="model">res.company</field>
+            <field name="priority" eval="40"/>
+            <field name="arch" type="xml">
+                <form string="Manage auto config.">
+                    <header>
+                        <button name="enable_auto_confirm" type="object" string="Attiva auto conferma" attrs="{'invisible': [('auto_state', '=', 'enabled')]}" icon="fa-play fa-2x"/>
+                        <button name="disable_auto_confirm" type="object" string="Disattiva auto conferma" attrs="{'invisible': [('auto_state', '=', 'disabled')]}" icon="fa-power-off fa-2x"/>
+                        <field name="auto_state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group colspan="4" col="4">
+                            <field name="name" readonly="1" colspan="4"/>
+                            <field name="template_id" />
+                            <field name="auto_group" />
+                            <field name="auto_pending_order" />
+                            <separator string="Correzione orario" colspan="4"/>
+                            <field name="auto_gmt_correct" />
+                            <field name="auto_daylight_correct" />
+                            <!--<separator string="Date excluded:" colspan="2"/>
+                            <button name="setup_this_year" type="object" string="Carica anno corrente" colspan="1" icon="fa-gear fa-2x"/>
+                            <newline/>
+                            <field name="patron_day" />
+                            <newline/>
+                            <field name="date_ids" colspan="4" nolabel="1">
+                                <tree string="Date excluded" editable="bottom" decoration-mute="passed==False">
+                                    <field name="passed" invisible="1" />
+                                    <field name="name" />
+                                    <field name="from_date" />
+                                    <field name="to_date" />
+                                </tree>
+                            </field>-->
+
+                            <separator string="Print setup:" colspan="4"/>
+                            <field name="auto_print" />
+                            <field name="auto_wait" />
+
+                            <field name="auto_start_period" />
+                            <field name="auto_end_period" />
+                            <!--<field name="auto_period" />-->
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_view_res_company_auto_setup">
+            <field name="name">Parameters</field>
+            <field name="res_model">res.company</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_id" ref="view_res_company_parameter_kanban"/>
+            <field name="context">{'form_view_ref': 'tyres_auto_confirm.view_res_company_auto_setup_form', 'tree_view_ref': 'tyres_auto_confirm.view_res_company_auto_setup_tree'}</field>
+            <field name="domain">[]</field>
+        </record>
+        <!--parent="tyres_logistic_management.menu_logistic_left_configuration_root"-->
+        <menuitem
+             id="menu_logistic_auto_confirm_root"
+             name="Autoprint"
+             sequence="2"
+             />
+            <menuitem
+                id="menu_logistic_auto_confirm_management"
+                name="Gestione stampa automatica"
+                parent="menu_logistic_auto_confirm_root"
+                sequence="10"
+                />
+                <menuitem
+                    id="menu_logistic_auto_confirm_parameter"
+                    parent="menu_logistic_auto_confirm_management"
+                    action="action_view_res_company_auto_setup"
+                    sequence="10"
+                    />
+                <menuitem
+                    id="menu_logistic_auto_confirm_template"
+                    parent="menu_logistic_auto_confirm_management"
+                    action="action_view_auto_confirm_template"
+                    sequence="20"
+                    />
+                <menuitem
+                    id="menu_action_sale_order_ready_autoprint"
+                    parent="menu_logistic_auto_confirm_management"
+                    action="action_sale_order_ready_autoprint_form"
+                    sequence="30"
+                    />
+    </data>
+</openerp>

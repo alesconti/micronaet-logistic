@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="sale.order.manage.office" id="sale_order_manage_office_office">
+            <field name="name">Office</field>
+            <field name="code">office</field>
+            <field name="note">Order delivery managed in office</field>
+        </record>
+        <record model="sale.order.manage.office" id="sale_order_manage_office_workshop">
+            <field name="name">Workshop</field>
+            <field name="default" eval="True"/>
+            <field name="code">workshop</field>
+            <field name="note">Order delivery managed in workshop</field>
+        </record>
+    </data>
+</openerp>

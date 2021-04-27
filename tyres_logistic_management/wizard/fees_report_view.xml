@@ -9,12 +9,14 @@
                   <header>
                       <button string="Cancel" class="btn-default" special="cancel" />
                       <button name="fees_report_button" string="Print report" type="object" class="btn-primary" colspan="1" icon="fa-file-text-o fa-2x"/>
-                      <button name="fees_extract_button" string="Extract fees" type="object" class="btn-primary" colspan="1" confirm="Program will generate the fees data in accounting, confirm?" icon="fa-exchange fa-2x"/>
+                      <button name="fees_extract_button" string="Extract fees" type="object" class="btn-primary" colspan="1"
+                              groups="tyres_logistic_management.group_logistic_fee_manager"
+                              confirm="Program will generate the fees data in accounting, confirm?" icon="fa-exchange fa-2x"/>
                   </header>
-                  <sheet>                  
+                  <sheet>
                       <group colspan="4" col="4">
                           <separator string="Report: Accounting Fees" colspan="2"/><field name="evaluation_date" />
-                      </group>                          
+                      </group>
                   </sheet>
               </form>
             </field>
@@ -31,13 +33,13 @@
         </record>
 
          <menuitem
-             id="menu_logistic_management_fees_root" 
+             id="menu_logistic_management_fees_root"
              parent="menu_logistic_header_root"
              name="Fees"
-             sequence="51"             
-             groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"            
-             />        
-             <menuitem 
+             sequence="51"
+             groups="tyres_logistic_management.group_logistic_sale_manager,tyres_logistic_management.group_logistic_manager"
+             />
+             <menuitem
                  parent="menu_logistic_management_fees_root"
                  id="menu_logistic_management_fees_extract"
                  sequence="10"

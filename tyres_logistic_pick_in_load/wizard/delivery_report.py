@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -28,23 +28,23 @@ from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
 
-
 _logger = logging.getLogger(__name__)
 
+
 class LogisticDeliveryReportWizard(models.TransientModel):
-    ''' Report wizard for delivery in period
-    '''
+    """ Report wizard for delivery in period
+    """
     _name = 'logistic.delivery.report.wizard'
     _description = 'Delivery report'
 
     # -------------------------------------------------------------------------
-    #                               BUTTON EVENT:    
-    # -------------------------------------------------------------------------    
+    #                               BUTTON EVENT:
+    # -------------------------------------------------------------------------
     @api.multi
     def delivery_report_button(self):
         """ Account fees report
         """
-        delivery_pool = self.env['stock.picking.delivery'] 
+        delivery_pool = self.env['stock.picking.delivery']
         excel_pool = self.env['excel.writer']
 
         filename = 'consegne_fornitore'
@@ -62,16 +62,15 @@ class LogisticDeliveryReportWizard(models.TransientModel):
             ]
         title = 'Dettaglio consegne del periodo: [%s - %s]' % (
                 from_date, to_date,
-                )    
+                )
         if supplier:
-            domain.append(('supplier_id', '=', supplier.id))    
+            domain.append(('supplier_id', '=', supplier.id))
             title += ', fornitore: %s' % supplier.name
-        else:    
+        else:
             title += ', fornitore: Tutti'
-            
+
         delivery_data = delivery_pool.search(domain)
-        
-        
+
         # ---------------------------------------------------------------------
         #                               EXCEL:
         # ---------------------------------------------------------------------
@@ -79,7 +78,7 @@ class LogisticDeliveryReportWizard(models.TransientModel):
         excel_pool.create_worksheet(ws_name)
 
         excel_pool.set_format()
-        format_text = {                
+        format_text = {
             'title': excel_pool.get_format('title'),
             'header': excel_pool.get_format('header'),
             'text': excel_pool.get_format('text'),
@@ -93,10 +92,10 @@ class LogisticDeliveryReportWizard(models.TransientModel):
             'Fornitore',
             'Rif.',
             'Data',
-            'Utente', 
-            'Creazione', 
+            'Utente',
+            'Creazione',
             'Picking',
-            
+
             'Codice',
             'Nome',
             'Q.',
@@ -107,9 +106,9 @@ class LogisticDeliveryReportWizard(models.TransientModel):
             ]
 
         width = [
-            30, 10, 8, 15, 18, 12, 
+            30, 10, 8, 15, 18, 12,
             12, 40, 5, 10, 15, 5, 5,
-            ]    
+            ]
 
         excel_pool.column_width(ws_name, width)
 
@@ -119,13 +118,13 @@ class LogisticDeliveryReportWizard(models.TransientModel):
             ], default_format=format_text['title'])
 
         row += 2
-        excel_pool.write_xls_line(ws_name, row, header,             
-            default_format=format_text['header'])            
+        excel_pool.write_xls_line(ws_name, row, header,
+            default_format=format_text['header'])
 
         total = 0.0
-        for delivery in sorted(delivery_data, key=lambda x: 
+        for delivery in sorted(delivery_data, key=lambda x:
                 (x.supplier_id.name, x.date)):
-                
+
             header = [
                 delivery.supplier_id.name,
                 delivery.name,
@@ -134,18 +133,18 @@ class LogisticDeliveryReportWizard(models.TransientModel):
                 delivery.create_date,
                 delivery.picking_id.name,
                 ]
-            
+
             # -----------------------------------------------------------------
-            # Row linked to customer order:    
+            # Row linked to customer order:
             # -----------------------------------------------------------------
             internal = ''
             for detail in delivery.move_line_ids:
                 row += 1
                 # Header:
-                excel_pool.write_xls_line(ws_name, row, header,             
+                excel_pool.write_xls_line(ws_name, row, header,
                     default_format=format_text['text'])
-                    
-                # Detail:    
+
+                # Detail:
                 subtotal = detail.product_uom_qty * detail.price_unit
                 total += subtotal
                 line = [
@@ -157,20 +156,20 @@ class LogisticDeliveryReportWizard(models.TransientModel):
                     detail.dropship_manage,
                     internal,
                     ]
-                excel_pool.write_xls_line(ws_name, row, line,             
+                excel_pool.write_xls_line(ws_name, row, line,
                     default_format=format_text['text'], col=6)
-                    
+
             # -----------------------------------------------------------------
-            # Row linked to internal stock: 
+            # Row linked to internal stock:
             # -----------------------------------------------------------------
             internal = 'X'
             for quant in delivery.quant_ids:
                 row += 1
                 # Header:
-                excel_pool.write_xls_line(ws_name, row, header,             
+                excel_pool.write_xls_line(ws_name, row, header,
                     default_format=format_text['text'])
-                    
-                # Detail:    
+
+                # Detail:
                 subtotal = quant.product_qty * quant.price
                 total += subtotal
                 line = [
@@ -179,26 +178,24 @@ class LogisticDeliveryReportWizard(models.TransientModel):
                     (quant.product_qty, format_text['number']),
                     (quant.price, format_text['number']),
                     (subtotal, format_text['number']),
-                    '', # never for internal
+                    '',  # never for internal
                     internal,
                     ]
-                excel_pool.write_xls_line(ws_name, row, line,             
-                    default_format=format_text['text'], col=6)                    
-            
+                excel_pool.write_xls_line(ws_name, row, line,
+                    default_format=format_text['text'], col=6)
+
         row += 1
-        # Write formatted with color        
+        # Write formatted with color
         excel_pool.write_xls_line(ws_name, row, [
-            'Totale', 
+            'Totale',
             (total, format_text['number']),
-            ], default_format=format_text['text'], col=9)        
+            ], default_format=format_text['text'], col=9)
         return excel_pool.return_attachment(filename)
 
     # -------------------------------------------------------------------------
-    #                               COLUMNS: 
-    # -------------------------------------------------------------------------    
+    #                               COLUMNS:
+    # -------------------------------------------------------------------------
     from_date = fields.Date('From date >=', required=True)
     to_date = fields.Date('To date <', required=True)
     supplier_id = fields.Many2one(
         'res.partner', 'Supplier', domain="[('supplier', '=', True)]")
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

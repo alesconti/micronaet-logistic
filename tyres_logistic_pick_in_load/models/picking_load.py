@@ -28,7 +28,7 @@ import shutil
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
-
+import pdb
 
 _logger = logging.getLogger(__name__)
 
@@ -66,6 +66,14 @@ class AccountFiscalPosition(models.Model):
 
     _inherit = 'account.fiscal.position'
 
+    print_group = fields.Char(
+        'Gruppo di stampa',
+        help='Ordinamento e raggruppamento di stampa fatture sequenziali')
+    sequential_print = fields.Boolean(
+        string='Stampa sequenziale',
+        help='La fattura viene stampata solo in modalità stampa sequenziale '
+             '(ovvero selezionando dalla apposita videata gli ordini e'
+             'lanciando la stampa)')
     print_ids = fields.One2many(
         'account.fiscal.position.print', 'position_id',
         'Print parameters',
@@ -116,8 +124,137 @@ class SaleOrder(models.Model):
             order.workflow_ready_to_done_current_order()
 
     @api.multi
+    def yet_sequential_printed(self):
+        """ Yet printed """
+        return self.write({
+            'sequential_printed': True,
+        })
+
+    @api.multi
+    def sequential_print_all_server_action(self):
+        """ Print all server action
+        """
+        result_pool = self.env['sale.order.print.result']
+        note = ''
+        printed_order_invoice = []
+        for order in sorted(self, reverse=True, key=lambda x: (
+                x.fiscal_position_id.print_group or '',
+                x.invoice_detail,
+                x.name)):
+            order_name = order.name
+            fiscal = order.fiscal_position_id
+
+            # Error check:
+            if not fiscal.sequential_print:
+                note += \
+                    'Ordine %s: Pos. fisc. not per stampa sequenziale\n' % \
+                    order_name
+                _logger.warning('Order not for sequential print')
+                continue
+            if order.sequential_printed:
+                note += \
+                    'Ordine %s: fattura già stampata!\n' % \
+                    order_name
+                _logger.warning('Order with invoice yet printed)')
+                continue
+            if not order.invoice_detail:
+                note += \
+                    'Ordine %s senza la fattura\n' % order_name
+                _logger.error('Order without invoice detail')
+                continue
+            if order.locked_delivery or order.logistic_source == 'internal' or\
+                    order.logistic_state not in ('ready', 'done'):
+                note += \
+                    'Ordine %s: bloccato, non pronto o non fatto\n' % \
+                    order_name
+                _logger.error('Order not for printing '
+                              '(not ready / done, locked or internal)')
+                continue
+            if order.logistic_picking_ids and \
+                    order.logistic_picking_ids[
+                        0].invoice_number == 'DA ASSEGNARE':
+                no_invoice = True
+                note += \
+                    'Ordine %s: fattura ancora da assegnare\n' % order_name
+                _logger.error('Order not for printing '
+                              '(not ready / done, locked or internal)')
+            else:
+                no_invoice = False
+
+            # -----------------------------------------------------------------
+            # Read print parameters:
+            # -----------------------------------------------------------------
+            market = order.team_id.market_type
+            try:
+                # Read parameter line:
+                parameter = [item for item in fiscal.print_ids
+                             if item.market == market][0]
+                loop_invoice = parameter.report_invoice
+            except:
+                note += \
+                    'Ordine %s: Problemi con lettura parametri\n' % order_name
+                _logger.error('Error reading print parameters')
+                continue
+
+            # -----------------------------------------------------------------
+            # Invoice
+            # -----------------------------------------------------------------
+            try:
+                if no_invoice:
+                    _logger.warning('Jumped invoice printing')
+                else:
+                    for time in range(0, loop_invoice):
+                        order.workflow_ready_print_invoice()
+            except:
+                note += \
+                    'Ordine %s: errore stampa fattura: %s\n' % (
+                        order_name, sys.exc_info())
+
+                _logger.error('Error reading print invoice PDF')
+                continue
+            try:
+                _logger.warning('Updated as printed [%s] # %s' % (
+                    order.fiscal_position_id.name,
+                    order.invoice_detail,
+                ))
+            except:
+                pass
+            printed_order_invoice.append(order)  # Printed
+
+        for order in printed_order_invoice:
+            order.write({
+                'sequential_printed': True,
+            })
+        _logger.warning('Updated as printed # %s' % len(printed_order_invoice))
+
+        # ---------------------------------------------------------------------
+        # Log error
+        # ---------------------------------------------------------------------
+        result_id = result_pool.create({
+            'note': note.replace('\n', '<br/>'),
+            }).id
+
+        form_id = self.env.ref(
+            'tyres_logistic_pick_in_load.view_sale_order_print_result_form').id
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Result for view_name'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_id': result_id,
+            'res_model': 'sale.order.print.result',
+            'view_id': form_id,
+            'views': [(form_id, 'form')],
+            'domain': [],
+            'context': self.env.context,
+            'target': 'new',
+            'nodestroy': False,
+            }
+
+    @api.multi
     def print_all_server_action(self):
         """ Print all server action
+            Managed also with manage office parameter CUPS
         """
         result_pool = self.env['sale.order.print.result']
 
@@ -129,50 +266,88 @@ class SaleOrder(models.Model):
                 log_print[order].append(_('Not print order: %s') % order.name)
                 continue
 
-            # TODO Setup loop print:
-            fiscal = order.fiscal_position_id
+            # Setup loop print:
+            # 31/03/2021 Integrazione parte di Alessandro:
+            # modifica per gestire pos. fiscale UK come parametri di stampa
+            if order.partner_shipping_id.country_id.code == 'GB' and \
+                    not order.fiscal_position_id.external_invoice_management:
+                fisc_obj = self.env['account.fiscal.position'].search(
+                    [('name', '=', 'United Kingdom')]
+                )
+                if fisc_obj:
+                    fiscal = fisc_obj
+                else:
+                    fiscal = order.fiscal_position_id
+            else:
+                fiscal = order.fiscal_position_id
+            _logger.info('---- PRINT ALL FISCAL POSITION %s' % fiscal.name)
             market = order.team_id.market_type
             try:
                 # Read parameter line:
-                parameter = [item for item in fiscal.print_ids \
-                    if item.market == market][0]
+                parameter = [item for item in fiscal.print_ids
+                             if item.market == market][0]
+
+                # Invoice sequential print only:
+                sequential_print = parameter.position_id.sequential_print
 
                 loop_picking = parameter.report_picking
                 loop_ddt = parameter.report_ddt
-                loop_invoice = parameter.report_invoice
+                loop_invoice = \
+                    0 if sequential_print else parameter.report_invoice
                 loop_extra = parameter.report_extra
                 loop_label = parameter.report_label
             except:
                 # Default print 1
                 loop_picking = loop_ddt = loop_invoice = loop_extra = \
                     loop_label = 1
+            _logger.info(
+                'Printall: pick %s, ddt %s, invoice %s, extra %s, label %s' %
+                (loop_picking, loop_ddt, loop_invoice, loop_extra, loop_label))
 
             log_print[order].append(_('Start print order: %s') % order.name)
             # -----------------------------------------------------------------
             # Picking
             # -----------------------------------------------------------------
-            # TODO
-            ''' 
             for time in range(0, loop_picking):
                 order.workflow_ready_print_picking()
-            log_print.append(_('Print #%s Picking') % loop_picking)
-            '''
+            log_print[order].append(_('Print #%s Picking') % loop_picking)
 
-            # -----------------------------------------------------------------
-            # Invoice
-            # -----------------------------------------------------------------
-            if order.check_need_invoice:
+            # =================================================================
+            # 31/03/2021 Integrazione parte gestione GB di Conti:
+            if order.partner_shipping_id.country_id.code == 'GB':
+                # -------------------------------------------------------------
+                # Invoice
+                # -------------------------------------------------------------
                 for time in range(0, loop_invoice):
                     order.workflow_ready_print_invoice()
-                log_print[order].append(_('Print #%s Invoice') % loop_invoice)
+                log_print[order].append('Print #%s Invoice' % loop_invoice)
 
-            # -----------------------------------------------------------------
-            # DDT
-            # -----------------------------------------------------------------
-            else:
+                # -------------------------------------------------------------
+                # DDT
+                # -------------------------------------------------------------
                 for time in range(0, loop_ddt):
                     order.workflow_ready_print_ddt()
-                log_print[order].append(_('Print #%s DDT') % loop_ddt)
+                log_print[order].append('Print #%s DDT' % loop_ddt)
+
+            else:  # Normal part:
+                # -------------------------------------------------------------
+                # Invoice
+                # -------------------------------------------------------------
+                if order.check_need_invoice:
+                    for time in range(0, loop_invoice):
+                        order.workflow_ready_print_invoice()
+                    log_print[order].append(
+                        'Print #%s Invoice' % loop_invoice)
+
+                # -------------------------------------------------------------
+                # DDT
+                # -------------------------------------------------------------
+                else:
+                    for time in range(0, loop_ddt):
+                        order.workflow_ready_print_ddt()
+                    log_print[order].append('Print #%s DDT' % loop_ddt)
+            # Alessandro Conti, [31.03.21 13: 16]
+            # =================================================================
 
             # -----------------------------------------------------------------
             # Extra document
@@ -189,7 +364,7 @@ class SaleOrder(models.Model):
                 for time in range(0, loop_label):
                     order.workflow_ready_print_label()
                 log_print[order].append(_('Print #%s label') % loop_label)
-
+            order.mmac_print_status = 'all'  # print_status = 'all'
         if len(self) <= 1:
             return True
 
@@ -217,7 +392,7 @@ class SaleOrder(models.Model):
             'view_mode': 'form',
             'res_id': result_id,
             'res_model': 'sale.order.print.result',
-            'view_id': form_id, # False
+            'view_id': form_id,  # False
             'views': [(form_id, 'form')],
             'domain': [],
             'context': self.env.context,
@@ -255,7 +430,7 @@ class SaleOrder(models.Model):
         """
         for order in self:
             if order.carrier_shippy:
-                if order.mmac_shippy_order_id > 0: # has the code
+                if order.mmac_shippy_order_id > 0:  # has the code
                     order.get_label_status = 'shippy'
                 else:
                     order.get_label_status = 'error'
@@ -264,6 +439,10 @@ class SaleOrder(models.Model):
 
     has_extra_document = fields.Boolean(
         'Has extra document', compute='_get_has_extra_document')
+    sequential_printed = fields.Boolean(
+        'Sequential printed',
+        help='Sequential printed check for clean order list')
+
     has_label_to_print = fields.Boolean(
         'Has label', compute='_get_has_label_to_print')
 
@@ -707,6 +886,7 @@ class StockMove(models.Model):
     default_code = fields.Char(
         string='Default code', related='product_id.default_code')
     force_hide = fields.Boolean('Force hide')
+    internal_note = fields.Char('Note interne', size=160)
 
     # -------------------------------------------------------------------------
     #                                   Button event:
@@ -828,6 +1008,7 @@ class StockMove(models.Model):
             'nodestroy': False,
             }
 
+
 class PurchaseOrderLine(models.Model):
     """ Model name: Purchase Order Line
     """
@@ -858,9 +1039,9 @@ class PurchaseOrderLine(models.Model):
                     continue # Cannot remove!
                 ctx[key] = context[key]
             if command_clean_before: # clean yet now!
-                ctx['command_next_clean'] = False # yet clean
+                ctx['command_next_clean'] = False  # yet clean
             else:
-                ctx['command_next_clean'] = True # clean all next filter
+                ctx['command_next_clean'] = True  # clean all next filter
 
         if field_name:
             ctx = context.copy()
@@ -879,16 +1060,16 @@ class PurchaseOrderLine(models.Model):
             'view_mode': 'tree,form',
             'res_model': 'purchase.order.line',
             'view_id': tree_id,
-            'search_view_id': search_id, # TODO dont' work!!!
+            'search_view_id': search_id,  # TODO dont' work!!!
             'views': [
                 (tree_id, 'tree'),
                 (False, 'form'),
-                #(search_id, 'search'),
+                # (search_id, 'search'),
                 ],
             'domain': [
                 ('dropship_manage', '=', False),
                 ('check_status', '!=', 'done'),
-                #('delivery_id', '=', False),  # TODO change or remove?!?
+                # ('delivery_id', '=', False),  # TODO change or remove?!?
                 ('order_id.logistic_state', '=', 'confirmed'),
                 '|',
                 ('user_select_id', '=', uid),
@@ -896,7 +1077,7 @@ class PurchaseOrderLine(models.Model):
                 ('order_id.partner_id.internal_stock', '=', False),
                 ],
             'context': ctx,
-            'target': 'main',# 'target': 'current', # 'new'
+            'target': 'main',  # 'target': 'current', # 'new'
             'nodestroy': False,
             }
 
