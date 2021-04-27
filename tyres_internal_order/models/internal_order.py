@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -37,14 +37,14 @@ from dateutil.relativedelta import relativedelta
 _logger = logging.getLogger(__name__)
 
 class ProductProduct(models.Model):
-    ''' Override method 
-    '''
+    """ Override method
+    """
     _inherit = 'product.product'
 
     @api.multi
     def name_get(self):
-        ''' Override name_get method
-        '''
+        """ Override name_get method
+        """
         _logger.info(self.env.context)
         if self.env.context.get('product_diplay_mode') != 'tyres':
             return super(ProductProduct, self).name_get()
@@ -53,34 +53,35 @@ class ProductProduct(models.Model):
         res = []
         for product in self:
             res.append((
-                product.id, 
+                product.id,
                 product.description_sale or \
                     product.titolocompleto or product.name or _('Not found'),
                 ))
         return res
-    
+
+
 class SaleOrderInternal(models.Model):
-    ''' Model name: Internal sale order
-    '''
-    
+    """ Model name: Internal sale order
+    """
+
     _name = 'sale.order.internal'
     _rec_name = 'date'
     _order = 'date desc'
 
     @api.multi
     def confirm_internal_order(self):
-        ''' Create Sale order
+        """ Create Sale order
             Create purchase order from sale order
-        '''
+        """
         sale_pool = self.env['sale.order']
         line_pool = self.env['sale.order.line']
         purchase_pool = self.env['sale.order.line.purchase']
-        
+
         # ---------------------------------------------------------------------
         # Search company partner:
         # ---------------------------------------------------------------------
         partner_id = self.env.user.company_id.partner_id.id
-                
+
         # ---------------------------------------------------------------------
         # Create sale order header:
         # ---------------------------------------------------------------------
@@ -94,7 +95,7 @@ class SaleOrderInternal(models.Model):
             'team_id': False,
             'payment_done': True,
             'client_order_ref': self.reference,
-            
+
             'logistic_source': self.logistic_source,
             'logistic_state': 'order',
             'note_picking': self.note,
@@ -120,15 +121,15 @@ class SaleOrderInternal(models.Model):
                 'line_id': line_id,
                 'supplier_id': line.supplier_id.id,
                 'product_uom_qty': line.product_uom_qty,
-                'purchase_price': line.price_unit,                
+                'purchase_price': line.price_unit,
                 })
 
         # ---------------------------------------------------------------------
         # Create purchase order and confirm:
         # ---------------------------------------------------------------------
-        order.workflow_manual_order_pending()        
+        order.workflow_manual_order_pending()
         self.confirmed = True
-        
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Internal order'),
@@ -144,9 +145,9 @@ class SaleOrderInternal(models.Model):
             'nodestroy': False,
             }
 
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     # Columns:
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     date = fields.Date('Date', default=fields.Date.context_today)
     reference = fields.Char('Reference', size=85, readonly=True)
     note = fields.Text('Note')
@@ -162,31 +163,31 @@ class SaleOrderInternal(models.Model):
 class SaleOrderLineInternal(models.Model):
     """ Model name: Internal sale order line
     """
-    
+
     _name = 'sale.order.line.internal'
 
     @api.onchange('product_id', 'supplier_id')
     def onchange_product_supplier(self, ):
-        ''' Find price
-        '''
+        """ Find price
+        """
         product = self.product_id
         supplier = self.supplier_id
-        
+
         if product and supplier:
             for price in product.supplier_stock_ids:
                 if price.supplier_id == supplier:
                     self.price_unit = price.quotation
                     return
-                    
-    # -------------------------------------------------------------------------    
+
+    # -------------------------------------------------------------------------
     # Columns:
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     order_id = fields.Many2one('sale.order.internal', 'Order')
     product_id = fields.Many2one('product.product', 'Product', required=True)
-    supplier_id = fields.Many2one('res.partner', 'Supplier', required=True, 
+    supplier_id = fields.Many2one('res.partner', 'Supplier', required=True,
         domain="[('supplier', '=', True), ('hide_supplier', '=', False)]")
     product_uom_qty = fields.Float(
-        string='Quantity', digits=dp.get_precision('Product Unit of Measure'), 
+        string='Quantity', digits=dp.get_precision('Product Unit of Measure'),
         required=True, default=1.0)
     price_unit = fields.Float(
         'Unit Price', digits=dp.get_precision('Product Price'), required=True)
@@ -194,50 +195,50 @@ class SaleOrderLineInternal(models.Model):
 class SaleOrderInternal(models.Model):
     """ Model name: Internal sale order
     """
-    
+
     _inherit = 'sale.order.internal'
 
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     # Columns:
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     line_ids = fields.One2many(
         'sale.order.line.internal', 'order_id', 'Detail')
 
 class SaleOrderLine(models.Model):
     """ Model name: Internal sale line
     """
-    
+
     _inherit = 'sale.order.line'
-    
+
     @api.multi # no api.depends?
     def _get_internal_order_pending(self, ):
-        ''' Get detail status of pending order
-        '''
+        """ Get detail status of pending order
+        """
         self.ensure_one()
-        
+
         lines = self.search([
             ('product_id', '=', self.product_id.id),
             ('order_id.logistic_source', '=', 'internal'), # internal order
             ('order_id.logistic_state', '=', 'pending'),
             ])
         if lines:
-            res = ''    
+            res = ''
             for line in lines:
                 remain = line.logistic_remain_qty
                 if not remain:
                     continue
                 res += 'Ordine interno residuo: %s <b>q. %s</b><br/>' % (
-                    line.order_id.name, 
+                    line.order_id.name,
                     remain,
                     )
             self.internal_order_pending = res
         else:
             self.internal_order_pending = ''#_('Nothing pending')
-            
-                
-    internal_order_pending = fields.Text('Internal pending', 
+
+
+    internal_order_pending = fields.Text('Internal pending',
         compute='_get_internal_order_pending',
         help='Internal order pending')
-          
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

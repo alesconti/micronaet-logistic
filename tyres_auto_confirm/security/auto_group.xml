@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+   <data>
+        <record id="group_auto_confirm_manager" model="res.groups">
+            <field name="name">Auto confirm group</field>
+        </record>
+   </data>
+</openerp>

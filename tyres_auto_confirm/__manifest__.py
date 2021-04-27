@@ -2,7 +2,7 @@
 #!/usr/bin/python
 ###############################################################################
 #
-# ODOO (ex OpenERP)
+# ODOO (ex OpenERP) 
 # Open Source Management Solution
 # Copyright (C) 2001-2018 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -22,24 +22,23 @@
 ###############################################################################
 
 {
-    'name': 'Order team filter',
+    'name': 'Tyres: Autoconfirm order',
     'version': '1.0',
     'category': 'Sale',
     'sequence': 5,
-    'summary': 'Order, team filter',
-    # 'description': '',
+    'summary': 'Order, Logistic, Autoconfirm',
+    #'description': '',
     'website': 'https://micronaet.com',
     'depends': [
         'base',
         'sale',
         'tyres_logistic_management',
-        'sales_team', # default function
         ],
-    'data': [
-        'security/my_order_group.xml',
+    'data': [        
+        'security/auto_group.xml',
         'security/ir.model.access.csv',
 
-        'views/filter_view.xml',
+        'views/autoconfirm_view.xml',
         ],
     'demo': [],
     'css': [],

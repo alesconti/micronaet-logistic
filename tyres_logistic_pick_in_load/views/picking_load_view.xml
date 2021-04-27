@@ -11,6 +11,17 @@
                  action = records.print_all_server_action()
              </field>
          </record>
+
+         <record id="ir_print_all_report_server_sequential_print_action" model="ir.actions.server">
+             <field name="name">Stampa fatture seq.</field>
+             <field name="type">ir.actions.server</field>
+             <field name="model_id" ref="sale.model_sale_order" />
+             <field name="binding_model_id" ref="sale.model_sale_order" />
+             <field name="state">code</field>
+             <field name="code">
+                 action = records.sequential_print_all_server_action()
+             </field>
+         </record>
          <record id="ir_confirm_all_selected_order_server_action" model="ir.actions.server">
              <field name="name">Confirm selected ready order</field>
              <field name="type">ir.actions.server</field>
@@ -40,6 +51,8 @@
             <field name="arch" type="xml">
                 <tree string="Account position">
                     <field name="name" />
+                    <field name="print_group" />
+                    <field name="sequential_print" />
                 </tree>
             </field>
         </record>
@@ -52,6 +65,9 @@
                     <sheet>
                         <group col="4" colspan="4">
                             <field name="name" readonly="1"/>
+                            <newline/>
+                            <field name="print_group" />
+                            <field name="sequential_print" />
                             <separator string="Print parameters:" colspan="4" />
                             <field name="print_ids" colspan="4" nolabel="1">
                                 <tree string="Print options" editable="bottom">
@@ -281,13 +297,16 @@
                     <field name="product_id" filter_domain="[('product_id','=',self)]"/>
                     <field name="order_id" filter_domain="[('order_id.name','ilike',self)]"/>
 
-                    <field name="order_supplier_id" filter_domain="[('order_supplier_id','=',self)]"/>
+                    <field name="order_supplier_id" filter_domain="[('order_supplier_id.name','ilike',self)]"/>
 
                     <field name="larghezza" />
                     <field name="spalla" />
                     <field name="raggio" />
 
                     <filter name="my_selection" string="Current selected" domain="[('user_select_id', '=', uid), ('logistic_delivered_manual','&gt;',0)]"/><!--TODO Change ('delivery_id','=',False), -->
+
+                    <filter name="refund_selection" string="Solo resi" domain="[('logistic_source', '=', 'refund')]"/>
+                    <filter name="no_refund_selection" string="Senza resi" domain="[('logistic_source', '!=', 'refund')]"/>
 
                     <!--<filter name="state_draft" string="Draft state" domain="[('state','=','draft')]"/>-->
                     <group expand="0" string="Group By...">
@@ -315,7 +334,7 @@
                 <search string="String">
                     <field name="name" />
                     <!--TODO-->
-                    <field name="partner_id" filter_domain="[('partner_id.name','=',self)]"/>
+                    <field name="partner_id" filter_domain="[('partner_id.name','ilike',self)]"/>
                     <field name="product_id" filter_domain="[('product_id','=',self)]"/>
 
                     <filter name="dropship_manage_selected" string="Dropship line" domain="[('dropship_manage','=',True)]"/>
@@ -333,10 +352,11 @@
             <field name="name">stock.move.tree</field>
             <field name="model">stock.move</field>
             <field name="arch" type="xml">
-                <tree string="Orphan stock move" editable="bottom" decoration-primary="dropship_manage==True">
+                <tree string="Orphan stock move" default_order="partner_id" editable="bottom" decoration-primary="dropship_manage==True">
                     <field name="picking_id" invisible="1"/>
                     <field name="force_hide" invisible="1" />
                     <field name="date" />
+                    <field name="internal_note" />
                     <field name="partner_id" readonly="1"/>
                     <field name="product_id" readonly="1" invisible="1"/>
                     <field name="name" readonly="1" invisible="1"/>
@@ -384,7 +404,7 @@
             <field name="view_mode">tree</field>
             <field name="view_id" ref="view_delivery_selection_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_search"/>
-            <field name="context">{'internal_view': True}</field>
+            <field name="context">{'internal_view': True, 'search_default_no_refund_selection': True}</field>
             <field name="domain">[('dropship_manage', '=', False), ('check_status', '!=', 'done'), ('order_id.logistic_state', '=', 'confirmed'),
                 '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('order_id.partner_id.internal_stock', '=', False)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), TODO ('delivery_id','=',False), -->
         </record>
@@ -427,7 +447,7 @@
             <field name="arch" type="xml">
                 <search string="String">
                     <field name="name" />
-                    <field name="supplier_id" filter_domain="[('supplier_id.name','=',self)]"/>
+                    <field name="supplier_id" filter_domain="[('supplier_id.name','ilike',self)]"/>
                     <field name="product_id" />
                     <field name="quant_id" />
                     <field name="picking_id" />
@@ -551,6 +571,9 @@
             <field name="arch" type="xml">
                 <tree string="Sale order ready (highlith no label line)" decoration-info="get_label_status=='manual'" decoration-danger="get_label_status=='error'" decoration-success="get_label_status=='shippy'">
                     <field name="name" />
+                    <field name="locked_delivery" invisible="1"/>
+                    <button name="locked_delivery_on" string="Lock delivery" type="object" attrs="{'invisible': [('locked_delivery','=',True)]}" icon="fa-lock"/><!--attrs="{'invisible': [('logistic_state','!=',('draft', 'order', 'pending'))]}"-->
+                    <button name="locked_delivery_off" string="Unlock delivery" type="object" attrs="{'invisible': [('locked_delivery','=',False)]}" icon="fa-mail-reply"/>
 	                <field name="date_order" />
 	                <field name="partner_id" />
 	                <field name="partner_shipping_id" />
@@ -559,7 +582,7 @@
 	                <field name="carrier_ok" invisible="1"/>
 	                <field name="carrier_stock_note" />
 	                <field name="logistic_state" invisible="1"/>
-	                <field name="mmac_shippy_order_id" invisible="1" />
+	                <!--<field name="mmac_shippy_order_id" invisible="1" />-->
 	                <field name="check_need_invoice" invisible="1" />
 
                     <field name="mmac_tracking_inviato" invisible='1'/>
@@ -582,17 +605,85 @@
 	                <field name="has_label_to_print" invisible="1" />
 	                <field name="get_label_status" invisible="1"/>
 	                <field name="label_printed" invisible="1" />
+	                <field name="mmac_fattura_generata" invisible="1"/>
+	                <field name="mmac_print_status" invisible="1"/>
+	                <field name="mmac_controllo_fattura" invisible="1"/>
 
 	                <button name="workflow_ready_to_done_current_order" string="Vai in consegna" type="object" icon="fa-caret-square-o-right fa-2x" attrs="{'invisible': [('logistic_state','!=','ready')]}"/>
 	                <button name="workflow_ready_print_picking" string="Print picking" type="object" icon="fa-file-o fa-2x" />
 	                <button name="workflow_ready_print_ddt" string="Print DDT" type="object" icon="fa-file-text-o fa-2x" attrs="{'invisible': [('check_need_invoice','=',True)]}"/>
+
 	                <button name="workflow_ready_print_invoice" string="Print invoice" type="object" icon="fa-qrcode fa-2x" attrs="{'invisible': [('check_need_invoice','=',False)]}"/>
-	                <button name="workflow_ready_print_label" string="Print label" type="object" icon="fa-film fa-2x" attrs="{'invisible': [('has_label_to_print', '=', False)]}"/>
+
+                    <button name="workflow_ready_print_label" string="Print label" type="object" icon="fa-film fa-2x" attrs="{'invisible': [('has_label_to_print', '=', False)]}"/>
 	                <button name="label_printed_ok" string="Label was printed" type="object" icon="fa-check fa-2x" attrs="{'invisible': [('label_printed', '=', False)]}"/>
 
 	                <button name="workflow_ready_print_extra" string="Print extra doc." type="object" icon="fa-list-alt fa-2x" attrs="{'invisible': [('has_extra_document','=',False)]}"/>
 
-	                <button name="print_all_server_action" string="Print all" type="object" icon="fa-files-o fa-2x" />
+                    <button name="dummy" string="Attendere" icon="fa fa-spinner fa-spin fa-2x" type="object" attrs="{'invisible': ['|',('check_need_invoice','=', False),('mmac_controllo_fattura','=', True)]}"/>
+                    <button name="print_all_server_action" string="Print all" type="object" icon="fa-files-o fa-2x" attrs="{'invisible': ['|',('mmac_print_status','=', 'all'),('check_need_invoice','=', True),('mmac_controllo_fattura','=', False)]}"/>
+                    <button name="dummy" string="Stampato" type="object" icon="fa fa-file fa-2x" attrs="{'invisible': [('mmac_print_status','!=', 'all')]}"/>
+
+	                <button name="set_workflow_logistic_done" string="Done!" type="object" icon="fa-thumbs-up fa-2x" confirm="Confirm? (cannot print document after mark as done!)" attrs="{'invisible': [('logistic_done','=',True)]}"/>
+	                <button name="set_workflow_logistic_undone" string="Undone!" type="object" icon="fa-thumbs-down fa-2x" confirm="Confirm? (cannot print document after mark as done!)" attrs="{'invisible': [('logistic_done','=',False)]}"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_sale_order_ready_sequential_print_tree">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="priority" eval="40" />
+            <field name="arch" type="xml">
+                <tree string="Sale order ready (highlight no label line)" decoration-info="get_label_status=='manual'" decoration-danger="get_label_status=='error'" decoration-success="get_label_status=='shippy'">
+                    <field name="name" />
+	                <field name="date_order" />
+	                <field name="partner_id" />
+	                <field name="partner_shipping_id" />
+	                <field name="amount_total" sum="Totale (Imposte incluse)" widget="monetary" invisible="1" />
+	                <field name="team_id" />
+	                <field name="carrier_ok" invisible="1"/>
+	                <field name="carrier_stock_note" />
+	                <field name="logistic_state" invisible="1"/>
+	                <!--<field name="mmac_shippy_order_id" invisible="1" />-->
+	                <field name="check_need_invoice" invisible="1" />
+
+                    <field name="mmac_tracking_inviato" invisible='1'/>
+                    <button name="mmac_tracking_inviato" string='TR' icon="fa-truck text-danger" attrs="{'invisible': [('mmac_tracking_inviato','=',False)]}" />
+                    <field name="mmac_fattura_inviata" invisible='1'/>
+                    <button name="mmac_fattura_inviata" string='FT' icon="fa-dollar text-danger" attrs="{'invisible': [('mmac_fattura_inviata','=',False)]}" />
+
+	                <!--
+	                <field name="carrier_shippy" string="Shippy"/>
+	                <field name="carrier_track_id" />-->
+                    <field name="shippy_ship_error" string="Check" invisible="1"/>
+                    <field name="carrier_supplier_id" string="Carrier"/>
+
+                    <field name="state" invisible="1" />
+	                <field name="logistic_done" invisible="1" />
+	                <field name="has_extra_document" invisible="1" />
+	                <field name="has_label_to_print" invisible="1" />
+	                <field name="get_label_status" invisible="1"/>
+	                <field name="label_printed" invisible="1" />
+	                <field name="mmac_fattura_generata" invisible="1"/>
+	                <field name="mmac_print_status" invisible="1"/>
+	                <field name="mmac_controllo_fattura" invisible="1"/>
+	                <field name="sequential_printed" invisible="1"/>
+	                <field name="invoice_detail" />
+                    <button name="yet_sequential_printed" string="Già stampata" type="object" icon="fa-folder-open-o fa-2x" attrs="{'invisible': [('sequential_printed','=',True)]}"/>
+	                <!--<button name="workflow_ready_to_done_current_order" string="Vai in consegna" type="object" icon="fa-caret-square-o-right fa-2x" attrs="{'invisible': [('logistic_state','!=','ready')]}"/>
+	                <button name="workflow_ready_print_picking" string="Print picking" type="object" icon="fa-file-o fa-2x" />
+	                <button name="workflow_ready_print_ddt" string="Print DDT" type="object" icon="fa-file-text-o fa-2x" attrs="{'invisible': [('check_need_invoice','=',True)]}"/>
+
+	                <button name="workflow_ready_print_invoice" string="Print invoice" type="object" icon="fa-qrcode fa-2x" attrs="{'invisible': [('check_need_invoice','=',False)]}"/>
+
+                    <button name="workflow_ready_print_label" string="Print label" type="object" icon="fa-film fa-2x" attrs="{'invisible': [('has_label_to_print', '=', False)]}"/>
+	                <button name="label_printed_ok" string="Label was printed" type="object" icon="fa-check fa-2x" attrs="{'invisible': [('label_printed', '=', False)]}"/>
+
+	                <button name="workflow_ready_print_extra" string="Print extra doc." type="object" icon="fa-list-alt fa-2x" attrs="{'invisible': [('has_extra_document','=',False)]}"/>
+
+                    <button name="dummy" string="Attendere" icon="fa fa-spinner fa-spin fa-2x" type="object" attrs="{'invisible': ['|',('check_need_invoice','=', False),('mmac_controllo_fattura','=', True)]}"/>
+                    <button name="print_all_server_action" string="Print all" type="object" icon="fa-files-o fa-2x" attrs="{'invisible': ['|',('mmac_print_status','=', 'all'),('check_need_invoice','=', True),('mmac_controllo_fattura','=', False)]}"/>
+                    <button name="dummy" string="Stampato" type="object" icon="fa fa-file fa-2x" attrs="{'invisible': [('mmac_print_status','!=', 'all')]}"/>-->
 
 	                <button name="set_workflow_logistic_done" string="Done!" type="object" icon="fa-thumbs-up fa-2x" confirm="Confirm? (cannot print document after mark as done!)" attrs="{'invisible': [('logistic_done','=',True)]}"/>
 	                <button name="set_workflow_logistic_undone" string="Undone!" type="object" icon="fa-thumbs-down fa-2x" confirm="Confirm? (cannot print document after mark as done!)" attrs="{'invisible': [('logistic_done','=',False)]}"/>
@@ -600,6 +691,18 @@
                 </tree>
             </field>
         </record>
+
+         <record model="ir.ui.view" id="view_sale_order_logistic_manage_search">
+             <field name="name">sale.order.logistic.mge.search</field>
+             <field name="model">sale.order</field>
+             <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+             <field name="arch" type="xml">
+                 <field name="user_id" position="after">
+                     <filter name="manage_office_id_office" string="Manage in office" domain="[('manage_office_id.code', '=', 'office')]"/>
+                     <filter name="manage_office_id_workshop" string="Manage in workshop" domain="[('manage_office_id.code', '=', 'workshop')]"/>
+                 </field>
+             </field>
+         </record>
          <record model="ir.actions.act_window" id="action_sale_order_ready_form">
              <field name="name">Sale order ready</field>
              <field name="res_model">sale.order</field>
@@ -607,8 +710,37 @@
              <field name="view_id" ref="view_sale_order_ready_tree"/>
              <field name="view_mode">tree,form,graph,pivot</field>
              <field name="context">{}</field>
-             <field name="domain">[('logistic_source', 'not in', ('refund', )), ('logistic_state', 'in', ('ready', 'done')), ('locked_delivery', '=', False), ('logistic_done', '=', False), ('logistic_source', '!=', 'internal')]</field>
+             <field name="domain">[('logistic_source', 'not in', ('refund', )), ('logistic_state', 'in', ('ready', 'done')), ('logistic_done', '=', False), ('logistic_source', '!=', 'internal')]</field>
          </record>
+         <record model="ir.actions.act_window" id="action_sale_order_ready_workshop_form">
+             <field name="name">Sale order ready workshop</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_id" ref="view_sale_order_ready_tree"/>
+             <field name="view_mode">tree,form,graph,pivot</field>
+             <field name="context">{}</field>
+             <field name="domain">[('manage_office_id.code', '=', 'workshop'), ('logistic_source', 'not in', ('refund', )), ('logistic_state', 'in', ('ready', 'done')), ('logistic_done', '=', False), ('logistic_source', '!=', 'internal')]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_sale_order_ready_office_form">
+             <field name="name">Sale order ready office</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_id" ref="view_sale_order_ready_tree"/>
+             <field name="view_mode">tree,form,graph,pivot</field>
+             <field name="context">{}</field>
+             <field name="domain">[('manage_office_id.code', '=', 'office'), ('logistic_source', 'not in', ('refund', )), ('logistic_state', 'in', ('ready', 'done')), ('logistic_done', '=', False), ('logistic_source', '!=', 'internal')]</field>
+         </record>
+         <record model="ir.actions.act_window" id="action_sale_order_ready_sequential_print_form">
+             <field name="name">Sale order sequential print</field>
+             <field name="res_model">sale.order</field>
+             <field name="view_type">form</field>
+             <field name="view_id" ref="view_sale_order_ready_sequential_print_tree"/>
+             <field name="view_mode">tree,form,graph,pivot</field>
+             <field name="context">{}</field>
+             <field name="domain">[('need_invoice', '=', True),('fiscal_position_id.sequential_print', '=', True), ('sequential_printed', '=', False), ('logistic_source', 'not in', ('refund', )), ('logistic_state', '=', 'done'), ('locked_delivery', '=', False), ('logistic_source', '!=', 'internal')]</field>
+             <!--(logistic_picking_ids[0].invoice_number, '!=', 'DA ASSEGNARE'), -->
+         </record> <!--('logistic_done', '=', False), -->
+
          <record model="ir.actions.act_window" id="action_sale_order_closed_form">
              <field name="name">Sale order ready</field>
              <field name="res_model">sale.order</field>
@@ -683,6 +815,27 @@
                  name="Order ready"
                  action="action_sale_order_ready_form"
                  sequence="40"
+                 />
+             <menuitem
+                 id="menu_logistic_ready_order_to_send_office"
+                 parent="menu_logistic_delivery_management_root"
+                 name="Order ready (office)"
+                 action="action_sale_order_ready_office_form"
+                 sequence="41"
+                 />
+             <menuitem
+                 id="menu_logistic_ready_order_to_send_workshop"
+                 parent="menu_logistic_delivery_management_root"
+                 name="Order ready (workshop)"
+                 action="action_sale_order_ready_workshop_form"
+                 sequence="42"
+                 />
+             <menuitem
+                 id="menu_logistic_ready_order_to_send_sequential_print"
+                 parent="menu_logistic_delivery_management_root"
+                 name="Stampa fatture (seq.)"
+                 action="action_sale_order_ready_sequential_print_form"
+                 sequence="45"
                  />
              <menuitem
                  id="menu_logistic_ready_order_to_send_closed"

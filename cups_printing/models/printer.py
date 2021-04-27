@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -32,16 +32,18 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+
 class CupsPrinter(models.Model):
     """ Model name: CUPS Printer
     """
     _name = 'cups.printer'
     _description = 'Description'
 
-    
     name = fields.Char('CUPS Printer', size=64)
+    code = fields.Char('Code', size=10, help='For fast reference')
     note = fields.Text('Note')
-    
+    options = fields.Char('CUPS Options', size=100)
+
 
 class ResUsers(models.Model):
     """ Model name: User parameter
@@ -51,6 +53,7 @@ class ResUsers(models.Model):
     default_printer_id = fields.Many2one(
         'cups.printer', 'Default Printer')
 
+
 class ResCompany(models.Model):
     """ Model name: User parameter
     """
@@ -58,5 +61,3 @@ class ResCompany(models.Model):
 
     default_printer_id = fields.Many2one(
         'cups.printer', 'Default Printer')
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
