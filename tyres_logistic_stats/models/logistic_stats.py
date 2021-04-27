@@ -62,8 +62,8 @@ class SaleOrderStats(models.Model):
     #                           OVERRIDE FOR CALLS:
     # -------------------------------------------------------------------------
     # draft > order:
-    #payment_is_done(self): # Not necessary
-    
+    # payment_is_done(self): # Not necessary
+
     # order > pending:
     @api.multi
     def workflow_manual_order_pending(self):
@@ -72,19 +72,19 @@ class SaleOrderStats(models.Model):
         res = super(SaleOrderStats, self).workflow_manual_order_pending()
         self.refresh_all_statistic_orders()
         return res
-    
+
     # TODO pending > ready
-    
-    #ready > (delivering) > done
+
+    # ready > (delivering) > done
     @api.model
-    def workflow_ready_to_done_draft_picking(self, ):
-        ''' Override order WF action        
+    def workflow_ready_to_done_draft_picking(self):
+        ''' Override order WF action
         '''
         res = super(
             SaleOrderStats, self).workflow_ready_to_done_draft_picking()
         self.refresh_all_statistic_orders()
         return res
-            
+
     # -------------------------------------------------------------------------
     #                           BUTTON EVENTS:
     # -------------------------------------------------------------------------
@@ -108,25 +108,25 @@ class SaleOrderStats(models.Model):
             'nodestroy': False,
             }
     @api.multi
-    def sale_order_refresh_margin_stats(self):    
+    def sale_order_refresh_margin_stats(self):
         ''' Update margin data:
         '''
         def get_net(line):
             ''' Extract net price
             '''
-            price_unit = line.price_unit 
+            price_unit = line.price_unit
             try:
                 tax = line.tax_id[0]
                 if not tax.price_include:
                     return price_unit
                 amount = tax.amount / 100.0
                 return price_unit / (1 + amount)
-            except:    
+            except:
                 _logger.error('Error reading tax for line: %s' % line)
                 return price_unit
 
         self.ensure_one()
-        
+
         # Statistic data:
         amount_untaxed = self.amount_untaxed
         payment_fee = self.mmac_payment_transaction_fee
@@ -140,14 +140,14 @@ class SaleOrderStats(models.Model):
             'purchase': '',
             'lines': '',
             }
-        
+
         service_mask = '%s x %10.2f = %10.2f<br/>'
         product_mask = '%s x %10.2f [%s]<br/>'
         for line in self.order_line:
             price = get_net(line)
             subtotal = (price * line.product_uom_qty)
             product = line.product_id
-            
+
             # -----------------------------------------------------------------
             # PFU article
             # -----------------------------------------------------------------
@@ -159,13 +159,13 @@ class SaleOrderStats(models.Model):
                     )
                 pfu += subtotal
                 continue
-            
+
             # -----------------------------------------------------------------
             # Expence article
             # -----------------------------------------------------------------
             if product.is_expence:
                 continue # not used!
-            
+
             # -----------------------------------------------------------------
             # Product detail
             # -----------------------------------------------------------------
@@ -174,11 +174,11 @@ class SaleOrderStats(models.Model):
                 price,
                 product.name_extended,
                 )
-            
+
             # -----------------------------------------------------------------
             # Purchase cost:
             # -----------------------------------------------------------------
-            for purchase_line in line.purchase_line_ids:                
+            for purchase_line in line.purchase_line_ids:
                 if purchase_line.order_id.partner_id.internal_stock:
                     stat_excluded = True
 
@@ -188,18 +188,18 @@ class SaleOrderStats(models.Model):
                     purchase_line.product_qty,
                     price,
                     subtotal,
-                    )                    
+                    )
                 purchase += subtotal
                 continue
-        
+
         margin = amount_untaxed - payment_fee - marketplace_fee - \
             pfu - purchase - shippy
 
-        if amount_untaxed:    
+        if amount_untaxed:
             margin_rate = 100.0 * (margin / amount_untaxed)
         else:
-            margin_rate = 0.0    
-        
+            margin_rate = 0.0
+
         if margin > 0.0:
             level = 'positive'
         elif not margin:
@@ -209,20 +209,20 @@ class SaleOrderStats(models.Model):
 
         # ---------------------------------------------------------------------
         # Log Detail:
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         detail = _('Total sold untaxed: <b>%10.2f</b><br/>') % amount_untaxed
-        
+
         detail += _('- Payment fee: <b>%10.2f</b><br/>') % payment_fee
         detail += _('- Marketplace fee: <b>%10.2f</b><br/>') % marketplace_fee
         detail += _('- Shippy: <b>%10.2f</b><br/>') % shippy
 
-        if detail_block['pfu']: 
+        if detail_block['pfu']:
             detail += _('- PFU: <b>%10.2f</b><br/><i>%s</i><br/>') % (
                 pfu,
                 detail_block['pfu'],
                 )
 
-        if detail_block['purchase']: 
+        if detail_block['purchase']:
             detail += _('- Purchase: <b>%10.2f</b><br/><i>%s</i><br/>') % (
                 purchase,
                 detail_block['purchase'],
@@ -234,9 +234,9 @@ class SaleOrderStats(models.Model):
             )
 
         detail += _('Sale result: <b>%s</b><br/>') % level
-        
-        
-        # Update record with statistic:    
+
+
+        # Update record with statistic:
         self.write({
             'stat_sale': amount_untaxed,
             # payment_fee
@@ -250,23 +250,23 @@ class SaleOrderStats(models.Model):
             'stat_detail': detail,
             'stat_lines': detail_block['lines'],
             'stat_excluded': stat_excluded,
-            })    
+            })
         return True
-        
+
     # -------------------------------------------------------------------------
     #                               COLUMNS:
     # -------------------------------------------------------------------------
-    stat_sale = fields.Float('Sale net', digits=(16, 2))  
+    stat_sale = fields.Float('Sale net', digits=(16, 2))
     # payment_fee
     # marketplace_fee
-    stat_shippy = fields.Float('Shippy', digits=(16, 2))  
-    stat_pfu = fields.Float('PFU Total', digits=(16, 2))  
-    stat_purchase = fields.Float('Purchase total', digits=(16, 2))  
-    stat_margin = fields.Float('Margin', digits=(16, 2))  
-    stat_margin_rate = fields.Float('Margin rate', digits=(16, 2))  
-    stat_lines = fields.Text('Sale lines') 
-    stat_detail = fields.Text('Sale detail')  
-    stat_excluded = fields.Boolean('Excluded', help='Has internal purchase') 
+    stat_shippy = fields.Float('Shippy', digits=(16, 2))
+    stat_pfu = fields.Float('PFU Total', digits=(16, 2))
+    stat_purchase = fields.Float('Purchase total', digits=(16, 2))
+    stat_margin = fields.Float('Margin', digits=(16, 2))
+    stat_margin_rate = fields.Float('Margin rate', digits=(16, 2))
+    stat_lines = fields.Text('Sale lines')
+    stat_detail = fields.Text('Sale detail')
+    stat_excluded = fields.Boolean('Excluded', help='Has internal purchase')
     stat_level = fields.Selection([
         ('unset', 'Not present'),
         ('negative', 'Negative'),
