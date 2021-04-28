@@ -44,6 +44,12 @@ class ResCompany(models.Model):
     """
     _inherit = 'res.company'
 
+    api_root_url = fields.Char(
+        string='Api root url', size=60)
+    api_username = fields.Char(
+        string='Api username', size=60)
+    api_password = fields.Char(
+        string='Api password', size=60)
     api_management = fields.Boolean(
         'Gestione API',
         help='Attivazione gestione API gestionale per evitare passaggi CSV')
