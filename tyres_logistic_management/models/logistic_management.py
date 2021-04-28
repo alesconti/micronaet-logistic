@@ -1401,7 +1401,7 @@ class StockPicking(models.Model):
         }
 
         # Send invoice:
-        reply = requests.post(  # TODO check endpoint and paremeters:
+        reply = requests.post(  # TODO check endpoint and parameters:
             location,
             data=json.dumps(invoice_call),
             headers=header,
@@ -1725,6 +1725,59 @@ class ResCompany(models.Model):
             return True
         else:
             _logger.error('Cannot logout from API Accounting')
+            return False
+
+
+    @api.model
+    def api_get_invoice(self, token, invoice_ref):
+        """ Get PDF from invoice
+        """
+        import urllib
+
+        company = self.env.user.company_id
+        url = company.api_root_url
+        endpoint = 'Invoice/%s/pdf' % urllib.quote_plus(invoice_ref)
+        location = '%s/%s' % (url, endpoint)
+
+        header = {
+            'Authorization': 'bearer %s' % token,
+            'accept': 'text/plain',
+            'Content-Type': 'application/json',
+        }
+        reply = requests.get(location, headers=header)
+        if reply.ok:
+            return reply.json()
+
+        else:
+            _logger.error('Cannot get invoice from accounting %s' %
+                          invoice_ref)
+            return False
+
+
+    @api.model
+    def api_get_invoice_pdf(self, token, invoice_ref):
+        """ Get PDF from invoice
+        """
+        import urllib
+
+        company = self.env.user.company_id
+        url = company.api_root_url
+        endpoint = 'Invoice/%s/pdf' % urllib.quote_plus(invoice_ref)
+        location = '%s/%s' % (url, endpoint)
+
+        header = {
+            'Authorization': 'bearer %s' % token,
+            'accept': 'text/plain',
+        }
+        reply = requests.get(location, headers=header)
+        if reply.ok:
+            pdf_file = ''  # TODO fullname of file
+            with open(pdf_file, 'wb') as f:
+                f.write(reply.content)
+            _logger.info('Invoice PDF save: %s' % pdf_file)
+            return pdf_file
+        else:
+            _logger.error('Cannot get PDF file for invoice %s' % invoice_ref)
             return False
 
 
