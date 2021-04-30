@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -14,7 +14,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -34,9 +34,9 @@ _logger = logging.getLogger(__name__)
 
 
 class FatturapaFormat(models.Model):
-    ''' Fattura PA Format and utility for formatting
+    """ Fattura PA Format and utility for formatting
         ['1.1.3']
-    '''
+    """
     _name = 'fatturapa.format'
     _description = 'FatturaPA Format'
 
@@ -45,39 +45,39 @@ class FatturapaFormat(models.Model):
     # -------------------------------------------------------------------------
     @api.model
     def format_date(self, value):
-        ''' Format date ISO mode
-        ''' 
+        """ Format date ISO mode
+        """
         value = value or ''
         return value[:10]
 
     @api.model
     def format_decimal(self, value, decimal=2):
-        ''' Format float data
-        '''
+        """ Format float data
+        """
         if not value:
             return '0.00'
-           
-        # if comes as a string, ex.: '12.045' 
+
+        # if comes as a string, ex.: '12.045'
         if type(value) in (str, ):# unicode):
             try:
                 value = float(value)
-            except:    
+            except:
                 return '0.00'
-                
+
         mask = '%%10.%sf' % decimal
         return (mask % value)
 
     @api.model
     def format_integer(self, value):
-        ''' Format integer data
-        '''
+        """ Format integer data
+        """
         return value
 
     @api.model
     def format_string(self, value, size=0):
-        ''' Format text data
+        """ Format text data
             Char used: [a:z, A:Z]
-        '''
+        """
         value = value or ''
         if size:
             return value[:size]
@@ -86,8 +86,8 @@ class FatturapaFormat(models.Model):
 
     @api.model
     def format_normalized_string(self, value, size=0):
-        ''' Format text data
-        '''
+        """ Format text data
+        """
         value = value or ''
         if size:
             return value[:size]
@@ -104,9 +104,9 @@ class FatturapaFormat(models.Model):
     doc_part = fields.Text('Doc Part')
 
 class FatturapaDocumentType(models.Model):
-    ''' Document type (invoice, credit note):
+    """ Document type (invoice, credit note):
         ['2.1.1.1'] (Startup data)
-    '''
+    """
     _name = 'fatturapa.document_type'
     _description = 'FatturaPA Document Type'
 
@@ -117,9 +117,9 @@ class FatturapaDocumentType(models.Model):
     code = fields.Char('Code', size=4)
 
 class FatturapaPaymentTerm(models.Model):
-    ''' Payment term
+    """ Payment term
         ['2.4.1']
-    '''
+    """
     _name = 'fatturapa.payment_term'
     _description = 'FatturaPA Payment Term'
 
@@ -130,9 +130,9 @@ class FatturapaPaymentTerm(models.Model):
     code = fields.Char('Code', size=4)
 
 class FatturapaPaymentMethod(models.Model):
-    ''' Payment method
+    """ Payment method
         ['2.4.2.2']
-    '''
+    """
     _name = 'fatturapa.payment_method'
     _description = 'FatturaPA Payment Method'
 
@@ -143,9 +143,9 @@ class FatturapaPaymentMethod(models.Model):
     code = fields.Char('Code', size=4)
 
 class WelfareFundType(models.Model):
-    ''' Welfare fund
+    """ Welfare fund
         ['2.1.1.7.1']
-    '''
+    """
     _name = 'welfare.fund.type'
     _description = 'welfare fund type'
 
@@ -156,9 +156,9 @@ class WelfareFundType(models.Model):
     description = fields.Char('Description')
 
 class FatturapaFiscalPosition(models.Model):
-    ''' Fiscal position:
+    """ Fiscal position:
         ['2.1.1.7.7', '2.2.1.14']
-    '''
+    """
     _name = 'fatturapa.fiscal_position'
     _description = 'FatturaPA Fiscal Position'
 
@@ -169,33 +169,33 @@ class FatturapaFiscalPosition(models.Model):
     code = fields.Char('Code', size=4)
 
 class AccountPaymentTerm(models.Model):
-    ''' Payment term
+    """ Payment term
         ['2.4.2.2']
-    '''
+    """
     _inherit = 'account.payment.term'
 
     # -------------------------------------------------------------------------
     #                             COLUMNS:
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     fatturapa_pt_id = fields.Many2one(
         'fatturapa.payment_term', string='FatturaPA Payment Term')
     fatturapa_pm_id = fields.Many2one(
         'fatturapa.payment_method', string='FatturaPA Payment Method')
 
 class ProductUom(models.Model):
-    ''' Product UOM
+    """ Product UOM
         ['2.2.1.6']
-    '''
+    """
     _inherit = 'product.uom'
 
     # -------------------------------------------------------------------------
     #                             COLUMNS:
-    # -------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------
     fatturapa_code = fields.Char('Fattura PA code', size=10)
 
 class ResPartner(models.Model):
-    ''' Extra data for partner 
-    '''
+    """ Extra data for partner
+    """
     _inherit = 'res.partner'
 
     # -------------------------------------------------------------------------
@@ -251,11 +251,11 @@ class ResPartner(models.Model):
         ]
 
 class ResCompany(models.Model):
-    ''' Company data
-    '''
-    
+    """ Company data
+    """
+
     _inherit = 'res.company'
-    
+
     # -------------------------------------------------------------------------
     #                             COLUMNS:
     # -------------------------------------------------------------------------
@@ -290,10 +290,10 @@ class ResCompany(models.Model):
     fatturapa_rea_liquidation = fields.Selection([
         ('LS', 'In liquidation'),
         ('LN', 'Not in liquidation'),
-        ], related='partner_id.rea_liquidation_state', 
+        ], related='partner_id.rea_liquidation_state',
         string='Liquidation State')
     fatturapa_vat_sender = fields.Char('VAT Sender', size=13)
-        
+
     fatturapa_tax_representative = fields.Many2one(
         'res.partner', 'Legal Tax Representative'
         )
@@ -302,15 +302,15 @@ class ResCompany(models.Model):
         )
 
 class AccountFiscalPosition(models.Model):
-    ''' Fattura PA for fiscal position
-    '''
+    """ Fattura PA for fiscal position
+    """
     _inherit = 'account.fiscal.position'
-    
+
     # -------------------------------------------------------------------------
     #                             COLUMNS:
     # -------------------------------------------------------------------------
     fatturapa = fields.Boolean('Fattura PA', help='Managed with Fattura PA')
-    fatturapa_empty_code = fields.Char('Empty code', 
+    fatturapa_empty_code = fields.Char('Empty code',
         help='Ex. XXXXXXX for not Italy, 0000000 for Italy',
         default='0000000')
     invoice_id = fields.Many2one(
@@ -319,8 +319,8 @@ class AccountFiscalPosition(models.Model):
         'fatturapa.document_type', 'Credit note document type')
 
 class AccountTax(models.Model):
-    ''' Account tax fattura PA data
-    '''
+    """ Account tax fattura PA data
+    """
     _inherit = 'account.tax'
 
     # -------------------------------------------------------------------------
@@ -371,10 +371,10 @@ class AccountTax(models.Model):
                     _('Error'), _('Too many tax %s found') %
                     tax_name)
         return tax_ids[0]"""
-        
+
 class StockPicking(models.Model):
-    ''' Stock picking extract
-    '''
+    """ Stock picking extract
+    """
     _inherit = 'stock.picking'
 
     # -------------------------------------------------------------------------
@@ -407,50 +407,50 @@ class StockPicking(models.Model):
             res += seed[division]
         res += seed[division]
         return '0' * (5 - len(res)) + res
-    """    
-    
+    """
+
     @api.multi
     def get_next_xml_id(self):
-        ''' Return next number code exadecimal 5 char
-        '''
+        """ Return next number code exadecimal 5 char
+        """
         seed = string.digits + string.ascii_uppercase
         base = len(seed)
-        
+
         sequence_pool = self.env['ir.sequence']
         sequence = sequence_pool.search([
             ('code', '=', 'stock.picking.fatturapa'),
             ])
-        
+
         res = ''
         remain = int(sequence.next_by_id())
         while remain >= base:
             position = remain % base # Rest of division
             res = seed[position] + res
             remain = remain // base # INT division
-        if remain:    
-            res = seed[remain] + res # Last if present use remain 
-        res = '0' * (5 - len(res)) + res            
+        if remain:
+            res = seed[remain] + res # Last if present use remain
+        res = '0' * (5 - len(res)) + res
         return res
-        
-    # COLUMNS: 
-    xml_code = fields.Char('XML Code', size=5, 
+
+    # COLUMNS:
+    xml_code = fields.Char('XML Code', size=5,
         help='Code for sequence of XML invoice')
-    
+
     # TODO create fields for write DDT / Invoice lines:
 
     @api.model
-    def start_tag(self, block, tag, mode='open', newline='\n', 
+    def start_tag(self, block, tag, mode='open', newline='\n',
             init_space=True):
-        ''' tag: element to create
+        """ tag: element to create
             value: data to put in tag
             block: XML block, es: 1.2.3.4 (used for extra init space
             mode: open or close
-        ''' 
+        """
         if init_space:
             extra_space = ' ' * block.count('.')
         else:
             extra_space = ''
-        
+
         return '%s<%s%s>%s' % (
             extra_space,
             '' if mode == 'open' else '/',
@@ -460,35 +460,35 @@ class StockPicking(models.Model):
 
     @api.model
     def xml_sanitize_text(self, text):
-        ''' Clean not XML character 
+        """ Clean not XML character
             TODO: to be completed
-        '''
+        """
         from xml.sax.saxutils import escape
         return escape(text or '')
 
     @api.model
-    def get_tag(self, block, tag, value, cardinality='1:1', newline='\n', 
+    def get_tag(self, block, tag, value, cardinality='1:1', newline='\n',
             init_space=True):
-        ''' tag: element to create
+        """ tag: element to create
             value: data to put in tag
             cardinality: 1:1 0:1 0:N (to check if need to return)
             block: XML block, es: 1.2.3.4 (used for extra init space
-        ''' 
+        """
         value = (value or '').strip().upper()
         value = self.xml_sanitize_text(value)
-        
+
         #    _logger.error('Extract %s, %s > %s' % (
         #        block, tag, value))
         # Readability of XML:
         if init_space:
             extra_space = ' ' * block.count('.')
         else:
-            extra_space = ''    
-        
-        # Check minimum recurrency:    
+            extra_space = ''
+
+        # Check minimum recurrency:
         if not value and cardinality[:1] == '0':
             return ''
-            
+
         return '%s<%s>%s</%s>%s' % (
             extra_space,
             tag,
@@ -499,55 +499,55 @@ class StockPicking(models.Model):
 
     @api.model
     def clean_vat(self, vat, code='IT'):
-        ''' Add extra code if not present
-        '''
+        """ Add extra code if not present
+        """
         return '%s%s' % (
             code if vat[:2].isdigit() else '',
             vat,
             )
 
     def clean_phone(self, phone, country_code='+39'):
-        ''' Add extra code if not present
-        '''
+        """ Add extra code if not present
+        """
         return phone.replace(' ', '').replace(country_code, '')
-        
+
     # -------------------------------------------------------------------------
     # XXX IMPORTANT: To beoverrided in another module:
     # -------------------------------------------------------------------------
     @api.multi
     def fatturapa_get_details(self):
-        ''' Extract line detail sumary
-        '''
+        """ Extract line detail sumary
+        """
         # XXX NOT USED HERE (OVERRIDED)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         self.ensure_one()
-        
+
         picking = self[0]
         # Result dict:
         detail_table = {}
-        vat_table = {}        
+        vat_table = {}
         ddt_reference = {}
         # TODO order?
-        
+
         # XXX Always present and one only!
         ddt_number = picking.ddt_number or ''
         # Keep only number:
-        ddt_number = picking.ddt_number.split('/')[-1] 
-        
+        ddt_number = picking.ddt_number.split('/')[-1]
+
         ddt_date = picking.ddt_date
-        
+
         i = 0 # Row sequence
         for line in picking.move_lines:
             # Parameters:
             price = line.price_unit # TODO!
             qty = line.product_uom_qty
             subtotal = price * qty
-            vat = 22.0 # TODO 
+            vat = 22.0 # TODO
             subtotal_vat = subtotal * vat / 100.0
 
-            # -----------------------------------------------------------------            
+            # -----------------------------------------------------------------
             # Detail data:
-            # -----------------------------------------------------------------            
-            i += 1     
+            # -----------------------------------------------------------------
+            i += 1
             detail_table[str(i)] = {
                 'mode': '', # No mode = product line (else SC, PR, AB, AC)
                 'discount': '', # No discount
@@ -560,13 +560,13 @@ class StockPicking(models.Model):
                 'subtotal': subtotal, # VAT excluded
                 }
 
-            # -----------------------------------------------------------------            
+            # -----------------------------------------------------------------
             # Vat data:
-            # -----------------------------------------------------------------            
+            # -----------------------------------------------------------------
             if vat in vat_table:
                 vat_table[vat][0] += subtotal
                 vat_table[vat][1] += subtotal_vat
-            else:        
+            else:
                 vat_table[vat] = [
                     subtotal, # Subtotal
                     subtotal_vat, # VAT total
@@ -575,9 +575,9 @@ class StockPicking(models.Model):
                     '', # Round
                     ]
 
-            # -----------------------------------------------------------------            
+            # -----------------------------------------------------------------
             # DDT reference:
-            # -----------------------------------------------------------------            
+            # -----------------------------------------------------------------
             if ddt_number in ddt_reference:
                 # Update list of row number
                 ddt_reference[ddt_number][0].append(str(i))
@@ -585,20 +585,20 @@ class StockPicking(models.Model):
                 # Create record reference
                 ddt_reference[ddt_number] = [
                     [str(i), ], ddt_date]
-            
+
         return detail_table, vat_table, ddt_reference
 
     @api.model
     def fatturapa_get_vat_table(self, picking):
-        ''' Extract vat sumary
-        '''
+        """ Extract vat sumary
+        """
         res = []
         return res
 
     @api.model
     def fatturapa_get_payments(self, picking):
-        ''' Extract payment sumary
-        '''
+        """ Extract payment sumary
+        """
         res = []
         return res
 
@@ -607,8 +607,8 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def get_default_folder_xml_invoice(self):
-        '''
-        '''
+        """
+        """
         path = os.path.expanduser('~/Account/Invoice/XML')
         os.system('mkdir -p %s' % path)
         return path
@@ -618,8 +618,8 @@ class StockPicking(models.Model):
     # -------------------------------------------------------------------------
     @api.multi
     def extract_account_electronic_invoice(self):
-        ''' Extract electronic invoice (or interchange file)
-        '''
+        """ Extract electronic invoice (or interchange file)
+        """
         # ---------------------------------------------------------------------
         # Parameter:
         # ---------------------------------------------------------------------
@@ -642,56 +642,56 @@ class StockPicking(models.Model):
             return True
 
         # ---------------------------------------------------------------------
-        # Params database:        
+        # Params database:
         # ---------------------------------------------------------------------
         params = {}
-        
+
         # Send code:
         xml_code = picking.get_next_xml_id()
-        picking.xml_code = xml_code # Save code for next print (always updated)    
-        
+        picking.xml_code = xml_code # Save code for next print (always updated)
+
         # ---------------------------------------------------------------------
         #                          COMPANY PARAMETERS:
         # ---------------------------------------------------------------------
         format_param = company.fatturapa_format_id
-        newline = '\n'        
+        newline = '\n'
         doc_part = format_param.doc_part + newline
 
         # ---------------------------------------------------------------------
         # Variable to manage:
         # ---------------------------------------------------------------------
-        company_vat = self.clean_vat(company.vat, italy_code)            
+        company_vat = self.clean_vat(company.vat, italy_code)
         params['company'] = {
             # Anagrafic:
-            # Sede:        
+            # Sede:
             'company': company.name or '',
             'street': company.street,
             'number': '', # XXX Not used
 
             'city': company.city,
             'zip': company.zip,
-            'province': 'BS', # TODO 
+            'province': 'BS', # TODO
             'country': italy_code, #TODO
             'rea_office': 'BS', # company.fatturapa_rea_number
             'rea_number': company.fatturapa_rea_number,
             'rea_capital': company.fatturapa_rea_capital,
             'rea_partner': company.fatturapa_rea_partner,
             'rea_liquidation': company.fatturapa_rea_liquidation,
-            
+
             # TODO company or destin.?
             #'unique_code': company.partner_id.fatturapa_unique_code,
             'vat_sender': company.fatturapa_vat_sender, # TODO use partner!!! <<< for filename!!
-            
+
             'vat': company_vat,
             'vat_code' : company_vat[:2],
             'vat_number':  company_vat[2:],
-            
+
             # TODO change fiscal code (add field, for now VAT)
             'fiscalcode': (company_vat).lstrip(italy_code),
-            
+
             # TODO change (add list field in company)
             'mode': 'RF01',
-            
+
             # TODO add field:
             'esigibility': 'I',
 
@@ -699,14 +699,14 @@ class StockPicking(models.Model):
             # (12 char max!)
             'phone': self.clean_phone(company.phone or '', italy_prefix),
             # TODO create field
-            'fax': self.clean_phone('', italy_prefix), 
+            'fax': self.clean_phone('', italy_prefix),
 
             'email': company.email or '',
-            }            
+            }
         # Update for test:
         params['company']['has_contact'] = params['company']['phone'] or \
             params['company']['fax'] or params['company']['mail']
-            
+
         # ---------------------------------------------------------------------
         #                          SENDER PARAMETERS:
         # ---------------------------------------------------------------------
@@ -721,7 +721,7 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Payment:
         # ---------------------------------------------------------------------
-        payment = sale.payment_term_id        
+        payment = sale.payment_term_id
         params['payment'] = {
             'pt': payment.fatturapa_pt_id.code, # Payment term TP*
             'pm': payment.fatturapa_pm_id.code, # Payment method MP*
@@ -741,60 +741,60 @@ class StockPicking(models.Model):
         # Invoice / Picking parameters: TODO Put in loop
         # ---------------------------------------------------------------------
         invoice_number = (picking.invoice_number or '').split('/')[-1]
-        params['invoice'] = {                
+        params['invoice'] = {
             # Format used for invoice:
             'number': '%s/%s' % (
                 int(invoice_number),
                 'NC' if picking.stock_mode == 'in' else 'FE',
                 ),
-            
+
             'date': picking.invoice_date, # TODO prepare
             'type': 'TD04' if picking.stock_mode == 'in' else 'TD01',
             'currency': 'EUR',
             'causal': 'VENDITA',
-        
+
             # Amount:
             'amount': total_db['total'],
-            'vat_total': 0.0, # TODO 
+            'vat_total': 0.0, # TODO
             }
 
         # ---------------------------------------------------------------------
         # Partner:
         # ---------------------------------------------------------------------
-        partner_vat = self.clean_vat(partner.vat, italy_code)            
+        partner_vat = self.clean_vat(partner.vat, italy_code)
         fiscalcode = (partner_vat or partner.fatturapa_private_fiscalcode \
             or partner.fatturapa_fiscalcode).lstrip(italy_code)
         params['partner'] = {
             'company': '' if partner.fatturapa_name else partner.name,
-            'name': partner.fatturapa_name, 
+            'name': partner.fatturapa_name,
             'surname': partner.fatturapa_surname,
             # Address:
             'street': partner.street,
             'number': '', # in street!
             'city': partner.city,
             'zip': partner.zip,
-            'province': '', #'BS' # 0.1 TODO 
-            'country': italy_code, #TODO            
-            
+            'province': '', #'BS' # 0.1 TODO
+            'country': italy_code, #TODO
+
             #'empty_unique': fiscal_position.fatturapa_empty_code,
             'unique_code': partner.fatturapa_unique_code, # TODO company or destin.?
             'unique_pec': partner.fatturapa_pec,
             'fiscalcode': fiscalcode,
-            
+
             # name:
             'name': partner.fatturapa_name,
             'surname': partner.fatturapa_surname,
-            
+
             'vat': partner_vat,
             'vat_code' : partner_vat[:2],
-            'vat_number':  partner_vat[2:],            
+            'vat_number':  partner_vat[2:],
             }
-            
+
         # partner_fiscal = 'RF01' # TODO Regime ordinario
         # TODO parametrize:
         params['partner']['unique_text'] = \
             params['partner']['unique_code'] or '0000000'
-        
+
         # ---------------------------------------------------------------------
         # Check parameter:
         # ---------------------------------------------------------------------
@@ -805,7 +805,7 @@ class StockPicking(models.Model):
         # partner_unique_code = '0000000'   or 'XXXXXXX'
         # need vat, fiscalcode, pec check
         # check partner_vat | partner_fiscal
-                
+
         # ---------------------------------------------------------------------
         # Generate filename for invoice:
         # ---------------------------------------------------------------------
@@ -813,7 +813,7 @@ class StockPicking(models.Model):
         path = self.get_default_folder_xml_invoice()
 
         # XXX Note: ERROR external field not declared here:
-        filename = '%s_%s.xml' % (            
+        filename = '%s_%s.xml' % (
             params['company']['vat_sender'] or params['company']['vat'],
             xml_code,
             )
@@ -826,7 +826,7 @@ class StockPicking(models.Model):
         send_format = 'FPR12' # always!
 
         # ---------------------------------------------------------------------
-        #                         WRITE INVOICE:        
+        #                         WRITE INVOICE:
         # ---------------------------------------------------------------------
         # Doc part:
         f_invoice.write(doc_part)
@@ -840,22 +840,22 @@ class StockPicking(models.Model):
             self.start_tag('1.1', 'DatiTrasmissione'))
         f_invoice.write(
             self.start_tag('1.1.1', 'IdTrasmittente'))
-        
-        f_invoice.write(self.get_tag('1.1.1.1', 'IdPaese', 
+
+        f_invoice.write(self.get_tag('1.1.1.1', 'IdPaese',
             params['sender']['vat_code']))
-        f_invoice.write(self.get_tag('1.1.1.2', 'IdCodice', 
+        f_invoice.write(self.get_tag('1.1.1.2', 'IdCodice',
             params['sender']['vat_number']))
-        
+
         f_invoice.write(
             self.start_tag('1.1.1', 'IdTrasmittente', mode='close'))
-        
+
         f_invoice.write( # Invoice number
-            self.get_tag('1.1.2', 'ProgressivoInvio', xml_code))        
+            self.get_tag('1.1.2', 'ProgressivoInvio', xml_code))
         f_invoice.write(
             self.get_tag('1.1.3', 'FormatoTrasmissione', send_format))
         # Codice univoco destinatario (7 caratteri PR, 6 PA) tutti 0 alt.
         f_invoice.write(
-            self.get_tag('1.1.4', 'CodiceDestinatario', 
+            self.get_tag('1.1.4', 'CodiceDestinatario',
             params['partner']['unique_text']))
 
         # ---------------------------------------------------------------------
@@ -863,12 +863,12 @@ class StockPicking(models.Model):
         # 1.1.5.1 <Telefono>
         # 1.1.5.2 <Email>
         #        </ContattiTrasmittente>
-        
+
         # ---------------------------------------------------------------------
         # 1.1.6 (alternative 1.1.5)
         f_invoice.write(
-            self.get_tag('1.1.4', 'PECDestinatario', 
-            params['partner']['unique_pec'], 
+            self.get_tag('1.1.4', 'PECDestinatario',
+            params['partner']['unique_pec'],
                 cardinality='0:1'))
         f_invoice.write(
             self.start_tag('1.1', 'DatiTrasmissione', mode='close'))
@@ -882,10 +882,10 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('1.2.1.1', 'IdFiscaleIVA'))
         f_invoice.write(
-            self.get_tag('1.2.1.1.1', 'IdPaese', 
+            self.get_tag('1.2.1.1.1', 'IdPaese',
             params['company']['vat_code']))
         f_invoice.write(
-            self.get_tag('1.2.1.1.2', 'IdCodice', 
+            self.get_tag('1.2.1.1.2', 'IdCodice',
             params['company']['vat_number']))
         f_invoice.write(
             self.start_tag('1.2.1.1', 'IdFiscaleIVA', mode='close'))
@@ -895,21 +895,21 @@ class StockPicking(models.Model):
             params['company']['fiscalcode']))
         f_invoice.write(
             self.start_tag('1.2.1.3', 'Anagrafica'))
-        # ---------------------------------------------------------------------                
+        # ---------------------------------------------------------------------
         if params['company']['company']: # 1.2.1.3.1 (alt. 1.2.1.3.2-1.2.1.3.3)
             f_invoice.write(
-                self.get_tag('1.2.1.3.1', 'Denominazione', 
+                self.get_tag('1.2.1.3.1', 'Denominazione',
                 params['company']['company']))
         else:
             f_invoice.write(
-                self.get_tag('1.2.1.3.1.2', 'Nome', 
+                self.get_tag('1.2.1.3.1.2', 'Nome',
                 params['company']['name']))
             f_invoice.write(
-                self.get_tag('1.2.1.3.1.3', 'Cognome', 
+                self.get_tag('1.2.1.3.1.3', 'Cognome',
                 params['company']['surname']))
 
-        # 1.2.3.1.4 <Titolo> partner_title            
-        # 1.2.3.1.5 <CodEORI> newline 
+        # 1.2.3.1.4 <Titolo> partner_title
+        # 1.2.3.1.5 <CodEORI> newline
         f_invoice.write(
             self.start_tag('1.2.1.3', 'Anagrafica', mode='close'))
         # 1.2.1.4 <AlboProfessionale>
@@ -917,37 +917,37 @@ class StockPicking(models.Model):
         # 1.2.1.6 <NumeroIscrizioneAlbo>
         # 1.2.1.7 <DataIscrizioneAlbo>
         f_invoice.write(
-            self.get_tag('1.2.1.8', 'RegimeFiscale', 
+            self.get_tag('1.2.1.8', 'RegimeFiscale',
             params['company']['mode']))
         f_invoice.write(
             self.start_tag('1.2.1', 'DatiAnagrafici', mode='close'))
 
         f_invoice.write(
-            self.start_tag('1.2.2', 'Sede'))        
+            self.start_tag('1.2.2', 'Sede'))
         f_invoice.write(
-            self.get_tag('1.2.2.1', 'Indirizzo', 
+            self.get_tag('1.2.2.1', 'Indirizzo',
             params['company']['street']))
         #f_invoice.write(
-        #    self.get_tag('1.2.2.2', 'NumeroCivico', 
+        #    self.get_tag('1.2.2.2', 'NumeroCivico',
         #        params['company']['number']))
         f_invoice.write(
-            self.get_tag('1.2.2.3', 'CAP', 
+            self.get_tag('1.2.2.3', 'CAP',
             params['company']['zip']))
         f_invoice.write(
-            self.get_tag('1.2.2.4', 'Comune', 
+            self.get_tag('1.2.2.4', 'Comune',
             params['company']['city']))
         f_invoice.write(
-            self.get_tag('1.2.2.5', 'Provincia', 
+            self.get_tag('1.2.2.5', 'Provincia',
             params['company']['province'], cardinality='0:1'))
         f_invoice.write(
-            self.get_tag('1.2.2.6', 'Nazione', 
+            self.get_tag('1.2.2.6', 'Nazione',
             params['company']['country']))
         f_invoice.write(
             self.start_tag('1.2.2', 'Sede', mode='close'))
 
         # ---------------------------------------------------------------------
         # IF PRESENTE STABILE:
-        # 1.2.3 <StabileOrganizzazione>        
+        # 1.2.3 <StabileOrganizzazione>
         # 1.2.3.1 <Indirizzo>
         # 1.2.3.2 <NumeroCivico>
         # 1.2.3.3 <CAP>
@@ -960,45 +960,45 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('1.2.4', 'IscrizioneREA'))
         f_invoice.write(
-            self.get_tag('1.2.4.1', 'Ufficio', 
+            self.get_tag('1.2.4.1', 'Ufficio',
             params['company']['rea_office']))
         f_invoice.write(
-            self.get_tag('1.2.4.2', 'NumeroREA', 
+            self.get_tag('1.2.4.2', 'NumeroREA',
             params['company']['rea_number']))
         f_invoice.write(
-            self.get_tag('1.2.4.3', 'CapitaleSociale', 
+            self.get_tag('1.2.4.3', 'CapitaleSociale',
             format_param.format_decimal(
                 params['company']['rea_capital']), cardinality='0:1'))
         f_invoice.write(
-            self.get_tag('1.2.4.4', 'SocioUnico', 
-            params['company']['rea_partner'], 
+            self.get_tag('1.2.4.4', 'SocioUnico',
+            params['company']['rea_partner'],
                 cardinality='0:1'))
         f_invoice.write(
-            self.get_tag('1.2.4.5', 'StatoLiquidazione', 
-            params['company']['rea_liquidation'], 
+            self.get_tag('1.2.4.5', 'StatoLiquidazione',
+            params['company']['rea_liquidation'],
                 cardinality='0:1'))
         f_invoice.write(
             self.start_tag('1.2.4', 'IscrizioneREA', mode='close'))
-        
+
         # NOT MANDATORY:
         if params['company']['has_contact']:
             f_invoice.write(
                 self.start_tag('1.2.5', 'Contatti'))
             f_invoice.write(
-                self.get_tag('1.2.5.1', 'Telefono', 
+                self.get_tag('1.2.5.1', 'Telefono',
                 params['company']['phone'], cardinality='0:1'))
             f_invoice.write(
-                self.get_tag('1.2.5.2', 'Fax', 
+                self.get_tag('1.2.5.2', 'Fax',
                 params['company']['fax'], cardinality='0:1'))
             f_invoice.write(
-                self.get_tag('1.2.5.3', 'Email', 
+                self.get_tag('1.2.5.3', 'Email',
                 params['company']['email'], cardinality='0:1'))
             f_invoice.write(
                 self.start_tag('1.2.5', 'Contatti', mode='close'))
-        
+
         # NOT MANDATORY:
         # 1.2.6 RiferimentoAmministrazione
-        
+
         # NOT MANDATORY:
         # 1.3 <RappresentanteFiscale
         # 1.3.1 <DatiAnagrafici
@@ -1020,7 +1020,7 @@ class StockPicking(models.Model):
 
         f_invoice.write(
             self.start_tag('1.2', 'CedentePrestatore', mode='close'))
-        
+
         # ---------------------------------------------------------------------
         #                             CUSTOMER DATA:
         # ---------------------------------------------------------------------
@@ -1028,21 +1028,21 @@ class StockPicking(models.Model):
             self.start_tag('1.4', 'CessionarioCommittente'))
         f_invoice.write(
             self.start_tag('1.4.1', 'DatiAnagrafici'))
-        
+
         if params['partner']['vat']: # Alternativo al blocco 1.4.1.2
             f_invoice.write(
                 self.start_tag('1.4.1.1', 'IdFiscaleIVA'))
             f_invoice.write(
-                self.get_tag('1.4.1.1.1', 'IdPaese', 
+                self.get_tag('1.4.1.1.1', 'IdPaese',
                     params['partner']['vat_code']))
             f_invoice.write(
-                self.get_tag('1.4.1.1.2', 'IdCodice', 
+                self.get_tag('1.4.1.1.2', 'IdCodice',
                     params['partner']['vat_number']))
             f_invoice.write(
                 self.start_tag('1.4.1.1', 'IdFiscaleIVA', mode='close'))
         else: # partner_fiscal Alternativo al blocco 1.4.1.1
             f_invoice.write(
-                self.get_tag('1.4.1.2', 'CodiceFiscale', 
+                self.get_tag('1.4.1.2', 'CodiceFiscale',
                 params['partner']['fiscalcode']))
 
         f_invoice.write(
@@ -1053,10 +1053,10 @@ class StockPicking(models.Model):
                 params['partner']['company']))
         else: # 1.4.3.1.2 (altenative 1.2.1.3.1)
             f_invoice.write(
-                self.get_tag('1.4.1.3.2', 'Nome', 
+                self.get_tag('1.4.1.3.2', 'Nome',
                 params['partner']['name']))
             f_invoice.write(
-                self.get_tag('1.4.1.3.3', 'Cognome', 
+                self.get_tag('1.4.1.3.3', 'Cognome',
                 params['partner']['surname']))
             # 1.4.3.1.4 <Titolo>partner_title
             # 1.4.3.1.5 <CodEORI> partner_eori
@@ -1068,31 +1068,31 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('1.4.2', 'Sede'))
         f_invoice.write(
-            self.get_tag('1.4.2.1', 'Indirizzo', 
+            self.get_tag('1.4.2.1', 'Indirizzo',
             params['partner']['street']))
         f_invoice.write(
-            self.get_tag('1.4.2.2', 'NumeroCivico', 
-            params['partner']['number'], 
+            self.get_tag('1.4.2.2', 'NumeroCivico',
+            params['partner']['number'],
                 cardinality='0:1'))
         f_invoice.write(
-            self.get_tag('1.4.2.3', 'CAP', 
+            self.get_tag('1.4.2.3', 'CAP',
             params['partner']['zip']))
         f_invoice.write(
-            self.get_tag('1.4.2.4', 'Comune', 
+            self.get_tag('1.4.2.4', 'Comune',
             params['partner']['city']))
         f_invoice.write(
-            self.get_tag('1.4.2.5', 'Provincia', 
-            params['partner']['province'], 
+            self.get_tag('1.4.2.5', 'Provincia',
+            params['partner']['province'],
                 cardinality='0:1'))
         f_invoice.write(
-            self.get_tag('1.4.2.6', 'Nazione', 
+            self.get_tag('1.4.2.6', 'Nazione',
             params['partner']['country']))
         f_invoice.write(
             self.start_tag('1.4.2', 'Sede', mode='close'))
 
         # ---------------------------------------------------------------------
         # IF PRESENT:
-        # 1.4.3 <StabileOrganizzazione>'        
+        # 1.4.3 <StabileOrganizzazione>'
         # 1.4.3.1 <Indirizzo>
         # 1.4.3.2 <NumeroCivico>
         # 1.4.3.3 <CAP>
@@ -1146,17 +1146,17 @@ class StockPicking(models.Model):
             self.start_tag('2.1.1', 'DatiGeneraliDocumento'))
 
         f_invoice.write(
-            self.get_tag('2.1.1.1', 'TipoDocumento', 
+            self.get_tag('2.1.1.1', 'TipoDocumento',
             params['invoice']['type']))
         f_invoice.write(
-            self.get_tag('2.1.1.2', 'Divisa', 
+            self.get_tag('2.1.1.2', 'Divisa',
             params['invoice']['currency']))
         f_invoice.write(
-            self.get_tag('2.1.1.3', 'Data', 
+            self.get_tag('2.1.1.3', 'Data',
             format_param.format_date(
                 params['invoice']['date'])))
         f_invoice.write(
-            self.get_tag('2.1.1.4', 'Numero', 
+            self.get_tag('2.1.1.4', 'Numero',
             params['invoice']['number']))
 
         # 2.1.1.5 <DatiRitenuta>
@@ -1192,22 +1192,22 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # 2.1.1.8.3 <Importo>>>> Alternative 2.1.1.8.2
         #         </ScontoMaggiorazione>
-        
+
         f_invoice.write( # Tot - Discount + VAT
-            self.get_tag('2.1.1.9', 'ImportoTotaleDocumento', 
+            self.get_tag('2.1.1.9', 'ImportoTotaleDocumento',
             format_param.format_decimal(params['invoice']['amount'])))
         #f_invoice.write(
         #    self.get_tag('2.1.1.10', 'Arrotondamento', ))
         f_invoice.write(
-            self.get_tag('2.1.1.11', 'Causale', 
-            params['invoice']['causal'], 
+            self.get_tag('2.1.1.11', 'Causale',
+            params['invoice']['causal'],
             cardinality='0:N'))
 
         # 2.1.1.12 <Art73> Reverse Charge
         f_invoice.write(
             self.start_tag('2.1.1', 'DatiGeneraliDocumento', mode='close'))
 
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         # RIFERIMENTO ORDINE: (0:N)
         # ---------------------------------------------------------------------
         """ 
@@ -1235,11 +1235,11 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('2.1.2', 'DatiOrdineAcquisto', mode='close'))
         """
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
 
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         # RIFERIMENTO CONTRATTO: (0:N)
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         """
         f_invoice.write(
             self.get_tag('2.1.3', 'DatiContratto', ))
@@ -1257,22 +1257,22 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('2.1.7', 'DatiSAL', mode='close'))
         """
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
 
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         # RIFERIMENTO DDT: (0:N) >> 1:N se non accompagnatoria
         # ---------------------------------------------------------------------
         for ddt_number in ddt_reference:
             ddt_lines, ddt_date = ddt_reference[ddt_number]
-                         
+
             f_invoice.write(
                 self.start_tag('2.1.8', 'DatiDDT'))
             f_invoice.write(
                 self.get_tag('2.1.8.1', 'NumeroDDT', ddt_number))
             f_invoice.write(
-                self.get_tag('2.1.8.2', 'DataDDT', 
+                self.get_tag('2.1.8.2', 'DataDDT',
                 format_param.format_date(ddt_date)))
-                
+
             # LOOP ON LINE REF
             for line in ddt_lines:
                 f_invoice.write(
@@ -1280,11 +1280,11 @@ class StockPicking(models.Model):
 
             f_invoice.write(
                 self.start_tag('2.1.8', 'DatiDDT', mode='close'))
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
 
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         # FATTURA ACCOMPAGNATORIA:
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         """
         # 2.1.9 <DatiTrasporto>        
         # 2.1.9.1 <DatiAnagraficiVettore>
@@ -1336,7 +1336,7 @@ class StockPicking(models.Model):
         """
         f_invoice.write(
             self.start_tag('2.1', 'DatiGenerali', mode='close'))
-        
+
         f_invoice.write(
             self.start_tag('2.2', 'DatiBeniServizi'))
 
@@ -1347,7 +1347,7 @@ class StockPicking(models.Model):
             record = detail_table[seq]
             product = record['product']
             default_code = product.product_tmpl_id.default_code
-            name = record.get('name', product.name) # Name from sale 
+            name = record.get('name', product.name) # Name from sale
             uom = product.uom_id.fatturapa_code or product.uom_id.name
 
             f_invoice.write(
@@ -1357,10 +1357,10 @@ class StockPicking(models.Model):
                 self.get_tag('2.2.1.1', 'NumeroLinea', seq))
 
             f_invoice.write(# Solo se SC PR AB AC (spesa accessoria)
-                self.get_tag('2.2.1.2', 'TipoCessionePrestazione', 
+                self.get_tag('2.2.1.2', 'TipoCessionePrestazione',
                     record['mode'], cardinality='0:1'))
 
-            # XXX Loop on every code passed:    
+            # XXX Loop on every code passed:
             f_invoice.write(
                 self.start_tag('2.2.1.3', 'CodiceArticolo'))
             f_invoice.write(# PROPRIETARIO EAN TARIC SSC
@@ -1373,19 +1373,19 @@ class StockPicking(models.Model):
             f_invoice.write(
                 self.get_tag('2.2.1.4', 'Descrizione', name))
             f_invoice.write(
-                self.get_tag('2.2.1.5', 'Quantita', 
+                self.get_tag('2.2.1.5', 'Quantita',
                 format_param.format_decimal(record['qty'])))
             f_invoice.write(
                 self.get_tag('2.2.1.6', 'UnitaMisura', uom))
             #f_invoice.write(
-            #    self.get_tag('2.2.1.7', 'DataInizioPeriodo', , 
+            #    self.get_tag('2.2.1.7', 'DataInizioPeriodo', ,
             #        cardinality='0:1'))
             #f_invoice.write(
-            #    self.get_tag('2.2.1.8', 'DataFinePeriodo', , 
+            #    self.get_tag('2.2.1.8', 'DataFinePeriodo', ,
             #        cardinality='0:1'))
             f_invoice.write(# unitario, totale sconto (anche negativo)
-                # Anche negativo # Vedi 2.2.1.2                
-                self.get_tag('2.2.1.9', 'PrezzoUnitario', 
+                # Anche negativo # Vedi 2.2.1.2
+                self.get_tag('2.2.1.9', 'PrezzoUnitario',
                 format_param.format_decimal(record['price'], decimal=6)))
 
             """
@@ -1406,17 +1406,17 @@ class StockPicking(models.Model):
             # ---------------------------------------------------------------------
             """
             f_invoice.write(# Subtotal for line
-                self.get_tag('2.2.1.11', 'PrezzoTotale', 
+                self.get_tag('2.2.1.11', 'PrezzoTotale',
                 format_param.format_decimal(record['subtotal'])))
             f_invoice.write(# % VAT 22.00 format
-                self.get_tag('2.2.1.12', 'AliquotaIVA', 
+                self.get_tag('2.2.1.12', 'AliquotaIVA',
                 format_param.format_decimal(record['vat'])))
             #f_invoice.write(# % 22.00 format
             #    self.get_tag('2.2.1.13', 'Ritenuta', format_param.format_decimal))
 
             # Obbligatorio se IVA 0:
             f_invoice.write(# TODO Descrizione eventuale esenzione
-                self.get_tag('2.2.1.14', 'Natura', record['nature'], 
+                self.get_tag('2.2.1.14', 'Natura', record['nature'],
                 cardinality='0:1'))
             #f_invoice.write(# Codice identificativo ai fini amministrativi
             #    self.get_tag('2.2.1.15', 'RiferimentoAmministrazione', ))
@@ -1437,22 +1437,22 @@ class StockPicking(models.Model):
             f_invoice.write(
                 self.start_tag('2.2.1.16', 'AltriDatiGestionali', mode='close'))
             """
-            
+
             f_invoice.write(
                 self.start_tag('2.2.1', 'DettaglioLinee', mode='close'))
 
         # ---------------------------------------------------------------------
 
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         # Obbligatorio: Elenco riepilogativo IVA del documento (1:N):
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         for vat_key in vat_table:
             (item_subtotal, item_subtotal_vat, item_nature, item_round, extra) = \
                 vat_table[vat_key]
             f_invoice.write(
                 self.start_tag('2.2.2', 'DatiRiepilogo'))
             f_invoice.write(# % 22.00 format
-                self.get_tag('2.2.2.1', 'AliquotaIVA', 
+                self.get_tag('2.2.2.1', 'AliquotaIVA',
                 format_param.format_decimal(vat_key)))
             #f_invoice.write(# % Tabella Natura (se non idicata l'IVA)
             #    self.get_tag('2.2.2.2', 'Natura', ))
@@ -1461,20 +1461,20 @@ class StockPicking(models.Model):
             #f_invoice.write(# % Tabella
             #    self.get_tag('2.2.2.4', 'Arrotondamento', ))
             f_invoice.write(# % Tabella
-                self.get_tag('2.2.2.5', 'ImponibileImporto', 
+                self.get_tag('2.2.2.5', 'ImponibileImporto',
                 format_param.format_decimal(item_subtotal)))
             f_invoice.write(# % Tabella
-                self.get_tag('2.2.2.6', 'Imposta', 
+                self.get_tag('2.2.2.6', 'Imposta',
                 format_param.format_decimal(item_subtotal_vat)))
             f_invoice.write(# % Tabella
-                self.get_tag('2.2.2.7', 'EsigibilitaIVA', 
+                self.get_tag('2.2.2.7', 'EsigibilitaIVA',
                 params['company']['esigibility']))
             #f_invoice.write(# % Tabella se presente Natura
             #    self.get_tag('2.2.2.8', 'RiferimentoNormativo', ))
             f_invoice.write(
                 self.start_tag('2.2.2', 'DatiRiepilogo', mode='close'))
-        # ---------------------------------------------------------------------        
-            
+        # ---------------------------------------------------------------------
+
         f_invoice.write(
             self.start_tag('2.2', 'DatiBeniServizi', mode='close'))
 
@@ -1491,9 +1491,9 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('2.4', 'DatiPagamento'))
         f_invoice.write(# TODO tabelle TP01 a rate TP02 pagamento completo TP03 anticipo
-            self.get_tag('2.4.1', 'CondizioniPagamento', 
+            self.get_tag('2.4.1', 'CondizioniPagamento',
             params['payment']['pt']))
-            
+
         # LOOP RATE (1:N): XXX now 1!
         f_invoice.write(
             self.start_tag('2.4.2', 'DettaglioPagamento'))
@@ -1501,26 +1501,26 @@ class StockPicking(models.Model):
         #    self.get_tag('2.4.2.1', 'Beneficiario', '', # TODO
         #    cardinality='0:1'))
         f_invoice.write( # TODO Tabella MP
-            self.get_tag('2.4.2.2', 'ModalitaPagamento', 
+            self.get_tag('2.4.2.2', 'ModalitaPagamento',
             params['payment']['pm']))
         f_invoice.write( # TODO Tabella MP
-            self.get_tag('2.4.2.3', 'DataRiferimentoTerminiPagamento', 
+            self.get_tag('2.4.2.3', 'DataRiferimentoTerminiPagamento',
                 format_param.format_date(params['invoice']['date'])))
         #f_invoice.write( # TODO Tabella MP
         #    self.get_tag('2.4.2.4', 'GiorniTerminiPagamento', ))
         #f_invoice.write( # TODO Tabella MP
         #    self.get_tag('2.4.2.5', 'DataScadenzaPagamento', ))
         f_invoice.write( # TODO Tabella MP
-            self.get_tag('2.4.2.6', 'ImportoPagamento', 
+            self.get_tag('2.4.2.6', 'ImportoPagamento',
             format_param.format_decimal(params['invoice']['amount'])))
-        
+
         # ---------------------------------------------------------------------
-        # Ufficio postale:        
+        # Ufficio postale:
         # ---------------------------------------------------------------------
-        # 2.4.2.7 <CodUfficioPostale>        
-        # 2.4.2.8 <CognomeQuietanzante>        
-        # 2.4.2.9 <NomeQuietanzante>        
-        # 2.4.2.10 <CFQuietanzante>        
+        # 2.4.2.7 <CodUfficioPostale>
+        # 2.4.2.8 <CognomeQuietanzante>
+        # 2.4.2.9 <NomeQuietanzante>
+        # 2.4.2.10 <CFQuietanzante>
         # 2.4.2.11 <TitoloQuietanzante>
         """
         # ---------------------------------------------------------------------
@@ -1537,7 +1537,7 @@ class StockPicking(models.Model):
             self.get_tag('2.4.2.16', 'BIC', ))
         """
         # ---------------------------------------------------------------------
-        # Pagamento anticipato:        
+        # Pagamento anticipato:
         """
         # 2.4.2.17 <ScontoPagamentoAnticipato>
         # 2.4.2.18 <DataLimitePagamentoAnticipato>        
@@ -1550,7 +1550,7 @@ class StockPicking(models.Model):
             self.start_tag('2.4.2', 'DettaglioPagamento', mode='close'))
         f_invoice.write(
             self.start_tag('2.4', 'DatiPagamento', mode='close'))
-        
+
         # ---------------------------------------------------------------------
 
         # ---------------------------------------------------------------------
