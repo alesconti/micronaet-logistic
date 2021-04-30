@@ -1278,7 +1278,7 @@ class StockPicking(models.Model):
         def get_partner_block(partner):
             """ Prepare partner block (used for partner and destination)
             """
-            # TODO gestione codice privato:
+            # TODO gestione codice privato: B2B
             # Private management:
             account_position = partner.property_account_position_id
             private_code = 'privato'
@@ -1295,13 +1295,13 @@ class StockPicking(models.Model):
 
             return {
                 'odooCode': partner.id,  # TODO Non era passato
-                'b2B': True,  # TODO cosa contiene?
+                'b2B': True,  # TODO cosa contiene? private o business
                 'companyName': partner.name,
                 'address': '%s %s' % (
                     partner.street or '', partner.street2 or ''),
                 'zipCode': partner.zip,
                 'city': partner.city or '',
-                'county': partner.state_id.code or '',  # TODO cosa contiene?
+                'county': partner.state_id.code or '',  # Provincia
                 'country': partner.country_id.name,
                 'isoCountryCode': partner.country_id.code,
                 'taxIdNumber': vat,  # TODO corretto?
@@ -1342,7 +1342,7 @@ class StockPicking(models.Model):
             agent_code = False
 
         # TODO funzione mancante per data in GMT + TZ
-        # TODO campi mancanti: private_code, blocco address
+        # TODO campi mancanti: blocco address
         # order.note_invoice
         # weight, parcel
         invoice_call = {
@@ -1353,6 +1353,9 @@ class StockPicking(models.Model):
             'carrier': order.carrier_supplier_id.account_ref or '',  # code
             'payment': order.payment_term_id.account_ref,  # Payment code
             'vatIncluded': vat_included,
+            'noOfPack': parcel,
+            'grossWeight': weight,
+            'notes': '',
             'customer': get_partner_block(partner),
             # 'address': get_partner_block(address), # TODO
             'details': []
@@ -1371,7 +1374,7 @@ class StockPicking(models.Model):
                     _logger.warning('Line not extract for invoice')
                     continue
 
-            if product.type == 'service':
+            if product.type == 'service':  # No D mode
                 row_mode = 'S'
             else:
                 row_mode = 'M'
