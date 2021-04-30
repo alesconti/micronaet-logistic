@@ -1043,7 +1043,7 @@ class StockPicking(models.Model):
         q = line.product_uom_qty
         total = line.price_unit * q
         if vat_rate:
-            net = (total * 100.0 ) / (100.0 + vat_rate)
+            net = (total * 100.0) / (100.0 + vat_rate)
             vat = total - net
         else:
             vat = 0

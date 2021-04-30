@@ -93,6 +93,7 @@ class StockPicking(models.AbstractModel):
         _logger.info('Extract Invoice: %s' % fullname)
         return fullname
 
+
 class ResPartner(models.Model):
     """ Add extra function
     """
