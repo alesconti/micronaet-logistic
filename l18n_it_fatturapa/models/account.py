@@ -1039,7 +1039,7 @@ class StockPicking(models.Model):
         f_invoice.write(
             self.start_tag('1.4.1', 'DatiAnagrafici'))
 
-        if params['partner']['vat']: # Alternativo al blocco 1.4.1.2
+        if params['partner']['vat']:  # Alternativo al blocco 1.4.1.2
             f_invoice.write(
                 self.start_tag('1.4.1.1', 'IdFiscaleIVA'))
             f_invoice.write(
@@ -1206,7 +1206,7 @@ class StockPicking(models.Model):
         f_invoice.write( # Tot - Discount + VAT
             self.get_tag('2.1.1.9', 'ImportoTotaleDocumento',
             format_param.format_decimal(params['invoice']['amount'])))
-        #f_invoice.write(
+        # f_invoice.write(
         #    self.get_tag('2.1.1.10', 'Arrotondamento', ))
         f_invoice.write(
             self.get_tag('2.1.1.11', 'Causale',
@@ -1418,17 +1418,17 @@ class StockPicking(models.Model):
             f_invoice.write(# Subtotal for line
                 self.get_tag('2.2.1.11', 'PrezzoTotale',
                 format_param.format_decimal(record['subtotal'])))
-            f_invoice.write(# % VAT 22.00 format
+            f_invoice.write(  # % VAT 22.00 format
                 self.get_tag('2.2.1.12', 'AliquotaIVA',
                 format_param.format_decimal(record['vat'])))
-            #f_invoice.write(# % 22.00 format
+            # f_invoice.write(# % 22.00 format
             #    self.get_tag('2.2.1.13', 'Ritenuta', format_param.format_decimal))
 
             # Obbligatorio se IVA 0:
             f_invoice.write(# TODO Descrizione eventuale esenzione
                 self.get_tag('2.2.1.14', 'Natura', record['nature'],
                 cardinality='0:1'))
-            #f_invoice.write(# Codice identificativo ai fini amministrativi
+            # f_invoice.write(# Codice identificativo ai fini amministrativi
             #    self.get_tag('2.2.1.15', 'RiferimentoAmministrazione', ))
 
             """
