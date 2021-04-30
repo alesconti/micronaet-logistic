@@ -58,7 +58,7 @@ class FatturapaFormat(models.Model):
             return '0.00'
 
         # if comes as a string, ex.: '12.045'
-        if type(value) in (str, ):# unicode):
+        if type(value) in (str, ):  # unicode):
             try:
                 value = float(value)
             except:
@@ -95,13 +95,13 @@ class FatturapaFormat(models.Model):
             return value
     # -------------------------------------------------------------------------
 
-
     # -------------------------------------------------------------------------
     #                             COLUMNS:
     # -------------------------------------------------------------------------
     name = fields.Char('Description', size=128)
     code = fields.Char('Code', size=5)
     doc_part = fields.Text('Doc Part')
+
 
 class FatturapaDocumentType(models.Model):
     """ Document type (invoice, credit note):
@@ -116,6 +116,7 @@ class FatturapaDocumentType(models.Model):
     name = fields.Char('Description', size=128)
     code = fields.Char('Code', size=4)
 
+
 class FatturapaPaymentTerm(models.Model):
     """ Payment term
         ['2.4.1']
@@ -128,6 +129,7 @@ class FatturapaPaymentTerm(models.Model):
     # -------------------------------------------------------------------------
     name = fields.Char('Description', size=128)
     code = fields.Char('Code', size=4)
+
 
 class FatturapaPaymentMethod(models.Model):
     """ Payment method
@@ -155,6 +157,7 @@ class WelfareFundType(models.Model):
     name = fields.Char('Name')
     description = fields.Char('Description')
 
+
 class FatturapaFiscalPosition(models.Model):
     """ Fiscal position:
         ['2.1.1.7.7', '2.2.1.14']
@@ -167,6 +170,7 @@ class FatturapaFiscalPosition(models.Model):
     # -------------------------------------------------------------------------
     name = fields.Char('Description', size=128)
     code = fields.Char('Code', size=4)
+
 
 class AccountPaymentTerm(models.Model):
     """ Payment term
@@ -182,6 +186,7 @@ class AccountPaymentTerm(models.Model):
     fatturapa_pm_id = fields.Many2one(
         'fatturapa.payment_method', string='FatturaPA Payment Method')
 
+
 class ProductUom(models.Model):
     """ Product UOM
         ['2.2.1.6']
@@ -192,6 +197,7 @@ class ProductUom(models.Model):
     #                             COLUMNS:
     # -------------------------------------------------------------------------
     fatturapa_code = fields.Char('Fattura PA code', size=10)
+
 
 class ResPartner(models.Model):
     """ Extra data for partner
@@ -250,6 +256,7 @@ class ResPartner(models.Model):
          'The rea code code must be unique per company !'),
         ]
 
+
 class ResCompany(models.Model):
     """ Company data
     """
@@ -301,6 +308,7 @@ class ResCompany(models.Model):
         'res.partner', 'Third Party/Sender'
         )
 
+
 class AccountFiscalPosition(models.Model):
     """ Fattura PA for fiscal position
     """
@@ -317,6 +325,7 @@ class AccountFiscalPosition(models.Model):
         'fatturapa.document_type', 'Invoice document type')
     credit_note_id = fields.Many2one(
         'fatturapa.document_type', 'Credit note document type')
+
 
 class AccountTax(models.Model):
     """ Account tax fattura PA data
@@ -371,6 +380,7 @@ class AccountTax(models.Model):
                     _('Error'), _('Too many tax %s found') %
                     tax_name)
         return tax_ids[0]"""
+
 
 class StockPicking(models.Model):
     """ Stock picking extract
@@ -679,7 +689,7 @@ class StockPicking(models.Model):
             'rea_liquidation': company.fatturapa_rea_liquidation,
 
             # TODO company or destin.?
-            #'unique_code': company.partner_id.fatturapa_unique_code,
+            # 'unique_code': company.partner_id.fatturapa_unique_code,
             'vat_sender': company.fatturapa_vat_sender, # TODO use partner!!! <<< for filename!!
 
             'vat': company_vat,
@@ -776,7 +786,7 @@ class StockPicking(models.Model):
             'province': '', #'BS' # 0.1 TODO
             'country': italy_code, #TODO
 
-            #'empty_unique': fiscal_position.fatturapa_empty_code,
+            # 'empty_unique': fiscal_position.fatturapa_empty_code,
             'unique_code': partner.fatturapa_unique_code, # TODO company or destin.?
             'unique_pec': partner.fatturapa_pec,
             'fiscalcode': fiscalcode,
@@ -817,7 +827,7 @@ class StockPicking(models.Model):
             params['company']['vat_sender'] or params['company']['vat'],
             xml_code,
             )
-        #filename = (
+        # filename = (
         #    '%s.xml' % (self.invoice_number or 'no_number')).replace('/', '_')
         fullname = os.path.join(path, filename)
         f_invoice = open(fullname, 'w')
