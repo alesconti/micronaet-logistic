@@ -114,9 +114,9 @@ class ResCompany(models.Model):
     # Logistic parameters:
     logistic_assign_mode = fields.Selection([
         ('first_available', 'First available'),
-        #('better_available', 'Better available'),
+        # ('better_available', 'Better available'),
         ], 'Assign stock mode', default='first_available',
-        help='Assign stock mode to order line (first avilable or better)',
+        help='Assign stock mode to order line (first available or better)',
         required=True,
         )
     logistic_order_sort = fields.Selection([
@@ -1057,7 +1057,7 @@ class StockPicking(models.Model):
         """
         self.ensure_one()
 
-        refund_line = {} # Move line with refund product
+        refund_line = {}  # Move line with refund product
         res = []
         kit_add = [] # Kit yet addes
         last_order = False
