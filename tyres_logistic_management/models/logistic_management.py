@@ -1337,7 +1337,7 @@ class StockPicking(models.Model):
             return zulu_date
 
         self.ensure_one()
-        pdb.set_trace()
+
         # Readability:
         picking = self
         order = picking.sale_order_id
