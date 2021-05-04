@@ -22,6 +22,7 @@
 ###############################################################################
 
 import os
+import pdb
 import sys
 import logging
 import odoo
@@ -1276,17 +1277,16 @@ class StockPicking(models.Model):
         """ Send invoice / picking via CSV to Account
         """
         def get_partner_block(partner):
-            """ Prepare partner block (used for partner and destination)
+            """ Prepare partner block for partner
             """
-            # TODO gestione codice privato: B2B
             # Private management:
             account_position = partner.property_account_position_id
-            private_code = 'privato'
+            b2b = False
             if account_position.partner_private:
                 if partner.company_type == 'company':
-                    private_code = 'business'
+                    b2b = True
             else:
-                private_code = 'business'
+                b2b = True
 
             if partner.vat and not partner.vat[:2].isdigit():
                 vat = partner.vat[2:]
@@ -1294,14 +1294,14 @@ class StockPicking(models.Model):
                 vat = partner.vat or ''
 
             return {
-                'odooCode': partner.id,  # TODO Non era passato
-                'b2B': True,  # TODO cosa contiene? private o business
+                'odooCode': partner.id,  # Originally not passed
+                'b2B': b2b,  # Type: Private or Business
                 'companyName': partner.name,
                 'address': '%s %s' % (
                     partner.street or '', partner.street2 or ''),
                 'zipCode': partner.zip,
                 'city': partner.city or '',
-                'county': partner.state_id.code or '',  # Provincia
+                'county': partner.state_id.code or '',  # Province
                 'country': partner.country_id.name,
                 'isoCountryCode': partner.country_id.code,
                 'taxIdNumber': vat,  # TODO corretto?
@@ -1310,8 +1310,31 @@ class StockPicking(models.Model):
                 'telephone': partner.phone or '',
                 'email': partner.email or '',
                 'certifiedMail': partner.fatturapa_pec or '',
-                'ipaCode': partner.fatturapa_unique_code or '',  # TODO corr.?
+                'ipaCode': partner.fatturapa_unique_code or '',  # SDI code
                 }
+
+        def get_address_block(partner):
+            """ Prepare partner block for destination
+            """
+            return {
+                'branchName': partner.name,
+                'odooCode': partner.id,  # Originally not passed
+                'address': '%s %s' % (
+                    partner.street or '', partner.street2 or ''),
+                'zipCode': partner.zip,
+                'city': partner.city or '',
+                'county': partner.state_id.code or '',  # Province
+                'country': partner.country_id.name,
+                'isoCountryCode': partner.country_id.code,
+                }
+
+        def get_zulu_date(date):
+            """ Return this date in Zulu format
+                2021-04-28T09:15:50.692Z
+            """
+            zulu_date = '%sT%sZ' % (
+                date[:10], date[11:])
+            return zulu_date
 
         self.ensure_one()
 
@@ -1341,22 +1364,20 @@ class StockPicking(models.Model):
             vat_included = True  # TODO manage
             agent_code = False
 
-        # TODO funzione mancante per data in GMT + TZ
-        # TODO campi mancanti: blocco address
-        # order.note_invoice
-        # weight, parcel
         invoice_call = {
+            'documentNo': '',  # Empty, returned from procedure
             'orderNo': order.name or '',
-            'orderDate': order.date_order,  # '2021-04-28T09:15:50.692Z',
-            'documentType': 'string',
+            'orderDate': get_zulu_date(order.date_order),
+            'documentType': account_position.id,
             'salesPerson': agent_code,
             'carrier': order.carrier_supplier_id.account_ref or '',  # code
             'payment': order.payment_term_id.account_ref,  # Payment code
             'vatIncluded': vat_included,
             'noOfPack': parcel,
             'grossWeight': weight,
-            'notes': '',
+            'notes': order.note_invoice or '',
             'customer': get_partner_block(partner),
+            'destination': get_address_block(address),
             # 'address': get_partner_block(address), # TODO
             'details': []
         }
@@ -1387,24 +1408,24 @@ class StockPicking(models.Model):
                 'unitValue': line.price_unit,
                 'taxCode': line.tax_id[0].account_ref or '',
                 'note': '',  # TODO comment
-                'noOfPacks': 0,
-                'grossWeight': 0
             })
 
         # ---------------------------------------------------------------------
         # API Call:
         # ---------------------------------------------------------------------
+        pdb.set_trace()
         url = company.api_root_url
         endpoint = 'Invoice'  # TODO
         location = '%s/%s' % (url, endpoint)
         token = company.api_get_token()
         header = {
+            'Authorization': 'bearer %s' % token,
             'accept': 'text/plain',
             'Content-Type': 'application/json',
         }
 
         # Send invoice:
-        reply = requests.post(  # TODO check endpoint and parameters:
+        reply = requests.get(  # TODO check endpoint and parameters:
             location,
             data=json.dumps(invoice_call),
             headers=header,
@@ -1799,7 +1820,8 @@ class ResPartner(models.Model):
     need_invoice = fields.Boolean('Always invoice')
     sql_customer_code = fields.Char('SQL customer code', size=20)
     sql_supplier_code = fields.Char('SQL supplier code', size=20)
-    pfu_invoice_fiscal = fields.Boolean('PFU fiscal',
+    pfu_invoice_fiscal = fields.Boolean(
+        'PFU fiscal',
         help='PFU inserti if required in fiscal position')
 
 
@@ -2556,8 +2578,8 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Shippy call:
         # ---------------------------------------------------------------------
-        shippy_selected = any([True for item in order.shippy_rate_ids \
-             if item.shippy_rate_selected])
+        shippy_selected = any([True for item in order.shippy_rate_ids
+                               if item.shippy_rate_selected])
         if order.carrier_shippy and not order.mmac_shippy_order_id:
             if order.carrier_supplier_id and \
                     order.carrier_mode_id and \
