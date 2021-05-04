@@ -1366,6 +1366,7 @@ class StockPicking(models.Model):
 
         invoice_call = {
             'documentNo': '',  # Empty, returned from procedure
+            'documentDate': '',  # Empty, returned from procedure
             'orderNo': order.name or '',
             'orderDate': get_zulu_date(order.date_order),
             'documentType': account_position.id,
