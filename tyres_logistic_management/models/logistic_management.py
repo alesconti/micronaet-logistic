@@ -1273,7 +1273,7 @@ class StockPicking(models.Model):
     # Extract invoice from account:
     # -------------------------------------------------------------------------
     @api.model
-    def send_invoice_to_account_api(self, logistic_root_folder):
+    def send_invoice_to_account_api(self):
         """ Send invoice / picking via CSV to Account
         """
         def get_partner_block(partner):
@@ -1337,7 +1337,7 @@ class StockPicking(models.Model):
             return zulu_date
 
         self.ensure_one()
-
+        pdb.set_trace()
         # Readability:
         picking = self
         order = picking.sale_order_id
@@ -1357,7 +1357,7 @@ class StockPicking(models.Model):
         try:
             vat_included = picking.move_lines[0].\
                            logistic_unload_id.tax_id[0].price_include
-            agent_code = picking.move_lines[0].logistic_unload_id.\
+            agent_code = picking.move_lines[0].logistic_unload_id.order_id.\
                          team_id.channel_ref
         except:
             _logger.error('Missing fields!')
