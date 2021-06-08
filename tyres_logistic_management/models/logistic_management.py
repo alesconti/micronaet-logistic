@@ -28,6 +28,7 @@ import logging
 import odoo
 import shutil
 import requests
+import urllib
 import base64
 import json
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
@@ -1345,6 +1346,8 @@ class StockPicking(models.Model):
         address = order.partner_shipping_id
         account_position = partner.property_account_position_id
         company = self.env.user.company_id
+        logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
+        report_path = os.path.join(logistic_root_folder, 'report')
 
         # Parse extra data:
         if order.carrier_shippy:
@@ -1356,9 +1359,9 @@ class StockPicking(models.Model):
 
         try:
             vat_included = picking.move_lines[0].\
-                           logistic_unload_id.tax_id[0].price_include
+                logistic_unload_id.tax_id[0].price_include
             agent_code = picking.move_lines[0].logistic_unload_id.order_id.\
-                         team_id.channel_ref
+                team_id.channel_ref
         except:
             _logger.error('Missing fields!')
             vat_included = True  # TODO manage
@@ -1366,7 +1369,7 @@ class StockPicking(models.Model):
 
         invoice_call = {
             'documentNo': '',  # Empty, returned from procedure
-            'documentDate': '',  # Empty, returned from procedure
+            # 'documentDate': '',  # Empty, returned from procedure
             'orderNo': order.name or '',
             'orderDate': get_zulu_date(order.date_order),
             'documentType': account_position.id,
@@ -1414,9 +1417,8 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # API Call:
         # ---------------------------------------------------------------------
-        pdb.set_trace()
         url = company.api_root_url
-        endpoint = 'Invoice'  # TODO
+        endpoint = 'Invoice'
         location = '%s/%s' % (url, endpoint)
         token = company.api_get_token()
         header = {
@@ -1426,36 +1428,71 @@ class StockPicking(models.Model):
         }
 
         # Send invoice:
-        reply = requests.get(  # TODO check endpoint and parameters:
+        reply = requests.post(  # TODO check endpoint and parameters:
             location,
             data=json.dumps(invoice_call),
             headers=header,
         )
         if reply.ok:
+            pdb.set_trace()
             reply_json = reply.json()
-            # TODO Extract PDF file and save in correct folder
-            # TODO Extract Invoice number and save in correct field
-            invoice_number = False
-            invoice_date = False
-            invoice_filename = False
-            # invoice_date = '%s-%02d-%02d' % (
-            #    invoice_date[2],
-            #    int(invoice_date[1]),
-            #    int(invoice_date[0]),
-            #    )
-            # invoice_filename = '%s.%s.PDF' % (
-            #    invoice_year,
-            #    invoice_number,
-            #    )
+            # Extract PDF file and save in correct folder:
+
+            # Extract Invoice number and save in correct field
+            invoice_number = reply_json['documentNo']
+            invoice_date = reply_json['documentDate'][:10]
+            invoice_filename = '%s.%s.PDF' % (
+                invoice_date[:4],  # year
+                invoice_number,
+                )
 
             picking.write({
                 'invoice_number': invoice_number,
                 'invoice_date': invoice_date,
                 'invoice_filename': invoice_filename,  # PDF name
             })
-
+            picking.api_save_invoice()
         else:
-            _logger.error('Invoice not received!')
+            _logger.error('Invoice not received: \n%s!' % reply.text)
+        return True
+
+    @api.multi
+    def api_save_invoice(self):
+        """ Save invoice for picking passed
+        """
+        pdb.set_trace()
+        company = self.env.user.company_id
+        logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
+        report_path = os.path.join(logistic_root_folder, 'report')
+
+        picking = self
+        invoice_number = urllib.quote_plus(picking.invoice_number)  # quoted!
+
+        # Generate filename:
+        invoice_filename = picking.invoice_filename
+        fullname = os.path.join(
+            report_path, invoice_filename)
+
+        # Call API for PDF file:
+        url = company.api_root_url
+        location = '%s/Invoice/%s/pdf' % (url, invoice_number)
+        token = company.api_get_token()
+        header = {
+            'Authorization': 'bearer %s' % token,
+            'accept': 'text/plain',
+            'Content-Type': 'application/json',
+        }
+
+        # Get PDF for invoice:
+        reply = requests.get(location, headers=header)
+        if reply.ok:
+            with open(fullname, 'wb') as f:
+                f.write(reply.content)
+        else:
+            # todo raise error!
+            _logger.error('API Error: \n%s' % (reply.text, ))
+
+        _logger.warning('Saved PDF document: %s' % fullname)
         return True
 
     @api.model
@@ -1671,6 +1708,7 @@ class StockPicking(models.Model):
                     })
                     continue  # Nothing to do with this picking
 
+                # API Management:
                 if company.api_management and company.api_invoice_area:
                     # 2. API Account mode:
                     picking.send_invoice_to_account_api()
@@ -2498,28 +2536,9 @@ class SaleOrder(models.Model):
     def workflow_ready_to_done_draft_picking(self, ):
         """ Confirm payment order (before expand kit)
             NOTE: limit, current no more used!
+            (todo unused function, removeable)
         """
         self.ensure_one()
-
-        # ---------------------------------------------------------------------
-        # TODO Get label PDF for printing
-        # ---------------------------------------------------------------------
-
-        # ---------------------------------------------------------------------
-        # TODO Print label
-        # ---------------------------------------------------------------------
-
-        # ---------------------------------------------------------------------
-        # TODO Print free export document
-        # ---------------------------------------------------------------------
-        # XXX Invoice in last step!
-
-        # ---------------------------------------------------------------------
-        # Update Workflow:
-        # ---------------------------------------------------------------------
-        # self.logistic_state = 'delivering' # XXX no more used
-
-        # No delivering step so close the order:
         return self.wf_set_order_as_done()
 
     # -------------------------------------------------------------------------
