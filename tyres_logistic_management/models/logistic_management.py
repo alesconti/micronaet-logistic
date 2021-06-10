@@ -1440,7 +1440,6 @@ class StockPicking(models.Model):
             json_dumps,
             reply,
         ))
-        pdb.set_trace()
         if reply.ok:
             reply_json = reply.json()
             # Extract PDF file and save in correct folder:
