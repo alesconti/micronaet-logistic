@@ -22,12 +22,15 @@
 ###############################################################################
 
 import os
+import pdb
 import sys
 import logging
 import odoo
 import shutil
 import requests
+import urllib
 import base64
+import json
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
@@ -1207,11 +1210,12 @@ class StockPicking(models.Model):
                 pick_id, invoice_number, invoice_date, invoice_filename)
 
         # TODO schedule action?
-        # Pool used:
-        company_pool = self.env['res.company']
-
         # Parameter:
-        company = company_pool.search([])[0]
+        company = self.env.user.company_id
+        if company.api_management and company.api_invoice_area:
+            _logger.warning('Not necessary check file from invoice (API Mode)')
+            return False
+
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
         reply_path = os.path.join(
             logistic_root_folder, 'invoice', 'reply')
@@ -1265,12 +1269,235 @@ class StockPicking(models.Model):
                 ))
         return True
 
+    # API & CSV Move:
     # -------------------------------------------------------------------------
-    #                                   BUTTON:
+    # Extract invoice from account:
     # -------------------------------------------------------------------------
+    @api.model
+    def send_invoice_to_account_api(self):
+        """ Send invoice / picking via CSV to Account
+        """
+        def get_partner_block(partner):
+            """ Prepare partner block for partner
+            """
+            # Private management:
+            account_position = partner.property_account_position_id
+            b2b = False
+            if account_position.partner_private:
+                if partner.company_type == 'company':
+                    b2b = True
+            else:
+                b2b = True
+
+            if partner.vat and not partner.vat[:2].isdigit():
+                vat = partner.vat[2:]
+            else:
+                vat = partner.vat or ''
+
+            return {
+                'odooCode': partner.id,  # Originally not passed
+                'b2B': b2b,  # Type: Private or Business
+                'companyName': partner.name,
+                'address': '%s %s' % (
+                    partner.street or '', partner.street2 or ''),
+                'zipCode': partner.zip,
+                'city': partner.city or '',
+                'county': partner.state_id.code or '',  # Province
+                'country': partner.country_id.name,
+                'isoCountryCode': partner.country_id.code,
+                'taxIdNumber': vat,  # TODO corretto?
+                'fiscalCode':
+                    partner.fatturapa_fiscalcode or partner.mmac_fiscalid,
+                'telephone': partner.phone or '',
+                'email': partner.email or '',
+                'certifiedMail': partner.fatturapa_pec or '',
+                'ipaCode': partner.fatturapa_unique_code or '',  # SDI code
+                }
+
+        def get_address_block(partner):
+            """ Prepare partner block for destination
+            """
+            return {
+                'branchName': partner.name,
+                'odooCode': partner.id,  # Originally not passed
+                'address': '%s %s' % (
+                    partner.street or '', partner.street2 or ''),
+                'zipCode': partner.zip,
+                'city': partner.city or '',
+                'county': partner.state_id.code or '',  # Province
+                'country': partner.country_id.name,
+                'isoCountryCode': partner.country_id.code,
+                }
+
+        def get_zulu_date(date):
+            """ Return this date in Zulu format
+                2021-04-28T09:15:50.692Z
+            """
+            zulu_date = '%sT%sZ' % (
+                date[:10], date[11:])
+            return zulu_date
+
+        self.ensure_one()
+
+        # Readability:
+        picking = self
+        order = picking.sale_order_id
+        partner = order.partner_invoice_id or order.partner_id
+        address = order.partner_shipping_id
+        account_position = partner.property_account_position_id
+        company = self.env.user.company_id
+        logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
+        report_path = os.path.join(logistic_root_folder, 'report')
+
+        # Parse extra data:
+        if order.carrier_shippy:
+            weight = sum([item.weight for item in order.parcel_ids])
+            parcel = len(order.parcel_ids)
+        else:
+            weight = order.carrier_manual_weight
+            parcel = order.carrier_manual_parcel
+
+        try:
+            vat_included = picking.move_lines[0].\
+                logistic_unload_id.tax_id[0].price_include
+            agent_code = picking.move_lines[0].logistic_unload_id.order_id.\
+                team_id.channel_ref
+        except:
+            _logger.error('Missing fields!')
+            vat_included = True  # TODO manage
+            agent_code = False
+
+        invoice_call = {
+            'documentNo': '',  # Empty, returned from procedure
+            # 'documentDate': '',  # Empty, returned from procedure
+            'orderNo': order.name or '',
+            'orderDate': get_zulu_date(order.date_order),
+            'documentType': account_position.id,
+            'salesPerson': agent_code,
+            'carrier': order.carrier_supplier_id.account_ref or '',  # code
+            'payment': order.payment_term_id.account_ref,  # Payment code
+            'vatIncluded': vat_included,
+            'noOfPack': parcel,
+            'grossWeight': weight,
+            'notes': order.note_invoice or '',
+            'customer': get_partner_block(partner),
+            'destination': get_address_block(address),
+            # 'address': get_partner_block(address), # TODO
+            'details': []
+        }
+        for move in self.move_lines:
+            line = move.logistic_unload_id
+            product = move.product_id
+
+            # -----------------------------------------------------------------
+            # PFU Line:
+            # -----------------------------------------------------------------
+            # Product not in invoice, except partner and fis. pos. case
+            if product.not_in_invoice:
+                if not partner.pfu_invoice_fiscal or not \
+                        account_position.pfu_invoice_enable:
+                    _logger.warning('Line not extract for invoice')
+                    continue
+
+            if product.type == 'service':  # No D mode
+                row_mode = 'S'
+            else:
+                row_mode = 'M'
+
+            invoice_call['details'].append({
+                'type': row_mode,
+                'sku': product.default_code or '',
+                'description': move.name or '',
+                'quantity': move.product_uom_qty,
+                'unitValue': line.price_unit,
+                'taxCode': line.tax_id[0].account_ref or '',
+                'note': '',  # TODO comment
+            })
+
+        # ---------------------------------------------------------------------
+        # API Call:
+        # ---------------------------------------------------------------------
+        url = company.api_root_url
+        endpoint = 'Invoice'
+        location = '%s/%s' % (url, endpoint)
+        token = company.api_get_token()
+        header = {
+            'Authorization': 'bearer %s' % token,
+            'accept': 'text/plain',
+            'Content-Type': 'application/json',
+        }
+
+        # Send invoice:
+        reply = requests.post(  # TODO check endpoint and parameters:
+            location,
+            data=json.dumps(invoice_call),
+            headers=header,
+        )
+        if reply.ok:
+            pdb.set_trace()
+            reply_json = reply.json()
+            # Extract PDF file and save in correct folder:
+
+            # Extract Invoice number and save in correct field
+            invoice_number = reply_json['documentNo']
+            invoice_date = reply_json['documentDate'][:10]
+            invoice_filename = '%s.%s.PDF' % (
+                invoice_date[:4],  # year
+                invoice_number,
+                )
+
+            picking.write({
+                'invoice_number': invoice_number,
+                'invoice_date': invoice_date,
+                'invoice_filename': invoice_filename,  # PDF name
+            })
+            # todo picking.api_save_invoice()
+        else:
+            _logger.error('Invoice not received: \n%s!' % reply.text)
+        return True
+
     @api.multi
-    def workflow_ready_to_done_done_picking(self):
-        """ Confirm draft picking documents
+    def api_save_invoice(self):
+        """ Save invoice for picking passed
+        """
+        pdb.set_trace()
+        company = self.env.user.company_id
+        logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
+        report_path = os.path.join(logistic_root_folder, 'report')
+
+        picking = self
+        invoice_number = urllib.quote_plus(picking.invoice_number)  # quoted!
+
+        # Generate filename:
+        invoice_filename = picking.invoice_filename
+        fullname = os.path.join(
+            report_path, invoice_filename)
+
+        # Call API for PDF file:
+        url = company.api_root_url
+        location = '%s/Invoice/%s/pdf' % (url, invoice_number)
+        token = company.api_get_token()
+        header = {
+            'Authorization': 'bearer %s' % token,
+            'accept': 'text/plain',
+            'Content-Type': 'application/json',
+        }
+
+        # Get PDF for invoice:
+        reply = requests.get(location, headers=header)
+        if reply.ok:
+            with open(fullname, 'wb') as f:
+                f.write(reply.content)
+        else:
+            # todo raise error!
+            _logger.error('API Error: \n%s' % (reply.text, ))
+
+        _logger.warning('Saved PDF document: %s' % fullname)
+        return True
+
+    @api.model
+    def send_invoice_to_account_csv(self, logistic_root_folder):
+        """ Send invoice / picking via CSV to Account
         """
         def clean_name(value):
             return value.replace('"', '').replace('\n', ' ').replace('\r', ' ')
@@ -1287,6 +1514,163 @@ class StockPicking(models.Model):
                 partner.country_id.code,
                 )
 
+        self.ensure_one()
+        company_pool = self.env['res.company']
+
+        # Readability:
+        picking = self
+        order = picking.sale_order_id
+        partner = order.partner_invoice_id or order.partner_id
+        address = order.partner_shipping_id
+
+        path = os.path.join(logistic_root_folder, 'invoice')
+        invoice_filename = os.path.join(
+            path, 'pick_in_%s.csv' % picking.id)
+
+        try:
+            notfound_path = os.path.join(path, 'notfound')
+            os.system('mkdir -p %s' % path)
+            os.system('mkdir -p %s' % os.path.join(path, 'reply'))
+            os.system('mkdir -p %s' % os.path.join(path, 'history'))
+            os.system('mkdir -p %s' % notfound_path)
+        except:
+            _logger.error('Cannot create %s' % path)
+        invoice_file = open(invoice_filename, 'w')
+
+        # -------------------------------------------------------------
+        # Log operation:
+        # -------------------------------------------------------------
+        log_file = os.path.join(notfound_path, 'invoice.log')
+        log_f = open(log_file, 'a')
+        log_f.write('%s. Utente ID %s, Pick id: %s, Order: %s\n' % (
+            fields.Datetime.now(),
+            self.env.uid,
+            picking.id,
+            order.name,
+        ))
+        log_f.close()
+
+        # Export syntax:
+        cols = 31
+        invoice_file.write(
+            'RAGIONE SOCIALE|'
+            'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
+            'PARTITA IVA|CODICE FISCALE|'
+            'EMAIL|TELEFONO|ID CLIENTE|PEC|SDI|NOME DESTINAZIONE|TIPO|'
+            'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
+            'ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
+            'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|'
+            'SKU|DESCRIZIONE|QTA|PREZZO|IVA|AGENTE MAGO|PAGAMENTO|'
+            'TIPO RIGA|NOTE|VETTORE|IVA INCLUSA\r\n'
+        )
+
+        mask = '%s|' * (cols - 1) + '%s'  # 30 fields
+        mask_note = '|' * (cols + 6) + 'D|%s||\r\n'  # Description row
+
+        # Parse extra data:
+        if order.carrier_shippy:
+            weight = sum([item.weight for item in order.parcel_ids])
+            parcel = len(order.parcel_ids)
+        else:
+            weight = order.carrier_manual_weight
+            parcel = order.carrier_manual_parcel
+
+        # Private management:
+        account_position = partner.property_account_position_id
+        private_code = 'privato'
+        if account_position.partner_private:
+            if partner.company_type == 'company':
+                private_code = 'business'
+        else:
+            private_code = 'business'
+
+        for move in self.move_lines:
+            line = move.logistic_unload_id
+            product = move.product_id
+
+            # ---------------------------------------------------------
+            # PFU Line:
+            # ---------------------------------------------------------
+            # Product not in invoice, except partner and fis. pos. case
+            if product.not_in_invoice:
+                if not partner.pfu_invoice_fiscal or not \
+                        account_position.pfu_invoice_enable:
+                    _logger.warning('Line not extract for invoice')
+                    continue
+            # ---------------------------------------------------------
+
+            if product.type == 'service':
+                row_mode = 'S'
+            else:
+                row_mode = 'M'
+
+            if partner.vat and not partner.vat[:2].isdigit():
+                vat = partner.vat[2:]
+            else:
+                vat = partner.vat or ''
+
+            text_line = mask % (
+                clean_name(partner.name),
+                get_address(partner),
+                vat,
+                partner.fatturapa_fiscalcode or partner.mmac_fiscalid
+                or '',
+
+                partner.email or '',
+                partner.phone or '',
+                partner.id,
+                partner.fatturapa_pec or '',
+                partner.fatturapa_unique_code or '',
+                clean_name(address.name),
+
+                private_code,
+                get_address(address),
+                address.id,
+                '',  # TODO Account ID of Bank
+                order.id,
+
+                order.name or '',
+                company_pool.formatLang(
+                    order.date_order, date=True),
+                account_position.id,  # ODOO ID
+                parcel,
+                weight,
+
+                product.default_code or '',
+                move.name or '',
+                move.product_uom_qty,
+                line.price_unit,  # XXX read from line
+                # TODO VAT code, >> sale order line?
+                line.tax_id[0].account_ref or '',
+                # Channel agent code:
+                line.order_id.team_id.channel_ref,
+                order.payment_term_id.account_ref,  # Payment code
+                row_mode,
+                '',  # comment
+                order.carrier_supplier_id.account_ref or '',  # code
+                # VAT incl.:
+                '1' if line.tax_id[0].price_include else '0',
+            )
+            text_line = text_line.replace('\r\n', ' ')
+            text_line = text_line + '\r\n'
+            invoice_file.write(text_line)
+
+        # Invoice note:
+        if order.note_invoice:
+            invoice_file.write(mask_note % clean_name(
+                order.note_invoice))
+
+        invoice_file.close()
+        self.check_import_reply()  # Check previous import reply
+        return True
+
+    # -------------------------------------------------------------------------
+    #                                   BUTTON:
+    # -------------------------------------------------------------------------
+    @api.multi
+    def workflow_ready_to_done_done_picking(self):
+        """ Confirm draft picking documents
+        """
         # Pool used:
         company_pool = self.env['res.company']
 
@@ -1302,7 +1686,6 @@ class StockPicking(models.Model):
             # Readability:
             order = picking.sale_order_id
             partner = order.partner_invoice_id or order.partner_id
-            address = order.partner_shipping_id
 
             # Need invoice check (fiscal position or order check):
             no_print_invoice = \
@@ -1315,6 +1698,7 @@ class StockPicking(models.Model):
             # Invoice procedure (check rules):
             if need_invoice:
                 is_fees = False
+                # 1. Amazon manage invoice:
                 if no_print_invoice:
                     picking.write({
                         'invoice_number': 'DA ASSEGNARE',
@@ -1324,154 +1708,14 @@ class StockPicking(models.Model):
                     })
                     continue  # Nothing to do with this picking
 
-                # -------------------------------------------------------------
-                # Extract invoice from account:
-                # -------------------------------------------------------------
-                path = os.path.join(logistic_root_folder, 'invoice')
-                invoice_filename = os.path.join(
-                    path, 'pick_in_%s.csv' % picking.id)
-
-                try:
-                    notfound_path = os.path.join(path, 'notfound')
-                    os.system('mkdir -p %s' % path)
-                    os.system('mkdir -p %s' % os.path.join(path, 'reply'))
-                    os.system('mkdir -p %s' % os.path.join(path, 'history'))
-                    os.system('mkdir -p %s' % notfound_path)
-                except:
-                    _logger.error('Cannot create %s' % path)
-                invoice_file = open(invoice_filename, 'w')
-
-                # -------------------------------------------------------------
-                # Log operation:
-                # -------------------------------------------------------------
-                log_file = os.path.join(notfound_path, 'invoice.log')
-                log_f = open(log_file, 'a')
-                log_f.write('%s. Utente ID %s, Pick id: %s, Order: %s\n' % (
-                    fields.Datetime.now(),
-                    self.env.uid,
-                    picking.id,
-                    order.name,
-                    ))
-                log_f.close()
-
-                # Export syntax:
-                cols = 31
-                invoice_file.write(
-                    'RAGIONE SOCIALE|'
-                    'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
-                    'PARTITA IVA|CODICE FISCALE|'
-                    'EMAIL|TELEFONO|ID CLIENTE|PEC|SDI|NOME DESTINAZIONE|TIPO|'
-                    'INDIRIZZO|ZIP|CITTA|PROVINCIA|NAZIONE|ISO CODE|'
-                    'ID DESTINAZIONE|DATI BANCARI|ID ORDINE|'
-                    'RIF. ORDINE|DATA ORDINE|TIPO DOCUMENTO|COLLI|PESO TOTALE|'
-                    'SKU|DESCRIZIONE|QTA|PREZZO|IVA|AGENTE MAGO|PAGAMENTO|'
-                    'TIPO RIGA|NOTE|VETTORE|IVA INCLUSA\r\n'
-                    )
-
-                mask = '%s|' * (cols - 1) + '%s'  # 30 fields
-                mask_note = '|' * (cols + 6) + 'D|%s||\r\n'  # Description row
-
-                # Parse extra data:
-                if order.carrier_shippy:
-                    weight = sum([item.weight for item in order.parcel_ids])
-                    parcel = len(order.parcel_ids)
+                # API Management:
+                if company.api_management and company.api_invoice_area:
+                    # 2. API Account mode:
+                    picking.send_invoice_to_account_api()
                 else:
-                    weight = order.carrier_manual_weight
-                    parcel = order.carrier_manual_parcel
-
-                # Private management:
-                account_position = partner.property_account_position_id
-                private_code = 'privato'
-                # if account_position.private_market and \
-                #        order.team_id.market_type == \
-                #            account_position.private_market:
-                #    private_code = 'privato'
-                # else:
-                if account_position.partner_private:
-                    if partner.company_type == 'company':
-                        private_code = 'business'
-                else:
-                    private_code = 'business'
-
-                for move in self.move_lines:
-                    line = move.logistic_unload_id
-                    product = move.product_id
-
-                    # ---------------------------------------------------------
-                    # PFU Line:
-                    # ---------------------------------------------------------
-                    # Product not in invoice, except partner and fis. pos. case
-                    if product.not_in_invoice:
-                        if not partner.pfu_invoice_fiscal or not \
-                                account_position.pfu_invoice_enable:
-                            _logger.warning('Line not extract for invoice')
-                            continue
-                    # ---------------------------------------------------------
-
-                    if product.type == 'service':
-                        row_mode = 'S'
-                    else:
-                        row_mode = 'M'
-
-                    if partner.vat and not partner.vat[:2].isdigit():
-                        vat = partner.vat[2:]
-                    else:
-                        vat = partner.vat or ''
-
-                    text_line = mask % (
-                        clean_name(partner.name),
-                        get_address(partner),
-                        vat,
-                        partner.fatturapa_fiscalcode or partner.mmac_fiscalid
-                        or '',
-
-                        partner.email or '',
-                        partner.phone or '',
-                        partner.id,
-                        partner.fatturapa_pec or '',
-                        partner.fatturapa_unique_code or '',
-                        clean_name(address.name),
-
-                        private_code,
-                        get_address(address),
-                        address.id,
-                        '',  # TODO Account ID of Bank
-                        order.id,
-
-                        order.name or '',
-                        company_pool.formatLang(
-                            order.date_order, date=True),
-                        account_position.id,  # ODOO ID
-                        parcel,
-                        weight,
-
-                        product.default_code or '',
-                        move.name or '',
-                        move.product_uom_qty,
-                        line.price_unit,  # XXX read from line
-                        # TODO VAT code, >> sale order line?
-                        line.tax_id[0].account_ref or '',
-                        # Channel agent code:
-                        line.order_id.team_id.channel_ref,
-                        order.payment_term_id.account_ref,  # Payment code
-                        row_mode,
-                        '',  # comment
-                        order.carrier_supplier_id.account_ref or '',  # code
-                        # VAT incl.:
-                        '1' if line.tax_id[0].price_include else '0',
-                        )
-                    text_line = text_line.replace('\r\n', ' ')
-                    text_line = text_line + '\r\n'
-                    invoice_file.write(text_line)
-
-                # Invoice note:
-                if order.note_invoice:
-                    invoice_file.write(mask_note % clean_name(
-                        order.note_invoice))
-
-                invoice_file.close()
-                self.check_import_reply()  # Check previous import reply
-                invoice_ids.append(picking.id)  # not used!
+                    # 3. CSV Account mode:
+                    picking.send_invoice_to_account_csv(logistic_root_folder)
+                    invoice_ids.append(picking.id)  # not used!
 
             picking.write({
                 'state': 'done',  # TODO needed?
@@ -1486,6 +1730,120 @@ class StockPicking(models.Model):
     is_fees = fields.Boolean('Is fees', help='Picking not invoiced for sale')
 
 
+class ResCompany(models.Model):
+    """ Model name: Res company
+        API Function
+    """
+    _inherit = 'res.company'
+
+    @api.model
+    def api_get_token(self):
+        """ Get token
+        """
+        company = self.env.user.company_id
+        url = company.api_root_url
+        endpoint = 'Account/login'
+
+        username = company.api_username
+        password = company.api_password
+        location = '%s/%s' % (url, endpoint)
+
+        header = {
+            'accept': 'text/plain',
+            'Content-Type': 'application/json',
+        }
+        payload = {
+            'username': username,
+            'password': password,
+        }
+
+        reply = requests.post(
+            location,
+            data=json.dumps(payload),
+            headers=header,
+        )
+        if reply.ok:
+            reply_json = reply.json()
+        else:
+            _logger.error('Cannot login API Accounting!')
+        return reply_json['token']
+
+
+    @api.model
+    def api_logoff(self, token):
+        """ Logoff
+        """
+        company = self.env.user.company_id
+        url = company.api_root_url
+        endpoint = 'Account/login'
+        location = '%s/%s' % (url, endpoint)
+        header = {
+            'Authorization': 'bearer %s' % token,
+            'accept': 'text/plain',
+            'Content-Type': 'application/json',
+        }
+        reply = requests.post(location, headers=header)
+        if reply.ok:
+            _logger.info('Logout from API Accounting')
+            return True
+        else:
+            _logger.error('Cannot logout from API Accounting')
+            return False
+
+
+    @api.model
+    def api_get_invoice(self, token, invoice_ref):
+        """ Get PDF from invoice
+        """
+        import urllib
+
+        company = self.env.user.company_id
+        url = company.api_root_url
+        endpoint = 'Invoice/%s/pdf' % urllib.quote_plus(invoice_ref)
+        location = '%s/%s' % (url, endpoint)
+
+        header = {
+            'Authorization': 'bearer %s' % token,
+            'accept': 'text/plain',
+            'Content-Type': 'application/json',
+        }
+        reply = requests.get(location, headers=header)
+        if reply.ok:
+            return reply.json()
+
+        else:
+            _logger.error('Cannot get invoice from accounting %s' %
+                          invoice_ref)
+            return False
+
+
+    @api.model
+    def api_get_invoice_pdf(self, token, invoice_ref):
+        """ Get PDF from invoice
+        """
+        import urllib
+
+        company = self.env.user.company_id
+        url = company.api_root_url
+        endpoint = 'Invoice/%s/pdf' % urllib.quote_plus(invoice_ref)
+        location = '%s/%s' % (url, endpoint)
+
+        header = {
+            'Authorization': 'bearer %s' % token,
+            'accept': 'text/plain',
+        }
+        reply = requests.get(location, headers=header)
+        if reply.ok:
+            pdf_file = ''  # TODO fullname of file
+            with open(pdf_file, 'wb') as f:
+                f.write(reply.content)
+            _logger.info('Invoice PDF save: %s' % pdf_file)
+            return pdf_file
+        else:
+            _logger.error('Cannot get PDF file for invoice %s' % invoice_ref)
+            return False
+
+
 class ResPartner(models.Model):
     """ Model name: Res Partner
     """
@@ -1495,12 +1853,14 @@ class ResPartner(models.Model):
     # -------------------------------------------------------------------------
     #                                   COLUMNS:
     # -------------------------------------------------------------------------
-    internal_stock = fields.Boolean('Internal Stock',
+    internal_stock = fields.Boolean(
+        'Internal Stock',
         help='All order to this supplier is considered as internal')
     need_invoice = fields.Boolean('Always invoice')
     sql_customer_code = fields.Char('SQL customer code', size=20)
     sql_supplier_code = fields.Char('SQL supplier code', size=20)
-    pfu_invoice_fiscal = fields.Boolean('PFU fiscal',
+    pfu_invoice_fiscal = fields.Boolean(
+        'PFU fiscal',
         help='PFU inserti if required in fiscal position')
 
 
@@ -2025,8 +2385,8 @@ class SaleOrder(models.Model):
         """ Mark empty order as unused
         """
         orders = self.search([
-            ('logistic_state', '=', 'draft'), # Insert order
-            ('order_line', '=', False), # Without line
+            ('logistic_state', '=', 'draft'),  # Insert order
+            ('order_line', '=', False),  # Without line
             ])
         _logger.info('New order: Empty order [# %s]' % len(orders))
 
@@ -2176,28 +2536,9 @@ class SaleOrder(models.Model):
     def workflow_ready_to_done_draft_picking(self, ):
         """ Confirm payment order (before expand kit)
             NOTE: limit, current no more used!
+            (todo unused function, removeable)
         """
         self.ensure_one()
-
-        # ---------------------------------------------------------------------
-        # TODO Get label PDF for printing
-        # ---------------------------------------------------------------------
-
-        # ---------------------------------------------------------------------
-        # TODO Print label
-        # ---------------------------------------------------------------------
-
-        # ---------------------------------------------------------------------
-        # TODO Print free export document
-        # ---------------------------------------------------------------------
-        # XXX Invoice in last step!
-
-        # ---------------------------------------------------------------------
-        # Update Workflow:
-        # ---------------------------------------------------------------------
-        # self.logistic_state = 'delivering' # XXX no more used
-
-        # No delivering step so close the order:
         return self.wf_set_order_as_done()
 
     # -------------------------------------------------------------------------
@@ -2257,8 +2598,8 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Shippy call:
         # ---------------------------------------------------------------------
-        shippy_selected = any([True for item in order.shippy_rate_ids \
-             if item.shippy_rate_selected])
+        shippy_selected = any([True for item in order.shippy_rate_ids
+                               if item.shippy_rate_selected])
         if order.carrier_shippy and not order.mmac_shippy_order_id:
             if order.carrier_supplier_id and \
                     order.carrier_mode_id and \
