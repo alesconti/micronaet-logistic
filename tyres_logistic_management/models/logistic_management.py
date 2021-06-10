@@ -1451,7 +1451,7 @@ class StockPicking(models.Model):
                 'invoice_date': invoice_date,
                 'invoice_filename': invoice_filename,  # PDF name
             })
-            picking.api_save_invoice()
+            # todo picking.api_save_invoice()
         else:
             _logger.error('Invoice not received: \n%s!' % reply.text)
         return True
@@ -2385,8 +2385,8 @@ class SaleOrder(models.Model):
         """ Mark empty order as unused
         """
         orders = self.search([
-            ('logistic_state', '=', 'draft'), # Insert order
-            ('order_line', '=', False), # Without line
+            ('logistic_state', '=', 'draft'),  # Insert order
+            ('order_line', '=', False),  # Without line
             ])
         _logger.info('New order: Empty order [# %s]' % len(orders))
 
