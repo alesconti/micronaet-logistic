@@ -1434,11 +1434,12 @@ class StockPicking(models.Model):
             headers=header,
         )
         if reply.ok:
-            pdb.set_trace()
             reply_json = reply.json()
             # Extract PDF file and save in correct folder:
 
             # Extract Invoice number and save in correct field
+            print(json.dumps(invoice_call))
+            pdb.set_trace()
             invoice_number = reply_json['documentNo']
             invoice_date = reply_json['documentDate'][:10]
             invoice_filename = '%s.%s.PDF' % (
