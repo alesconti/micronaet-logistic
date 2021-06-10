@@ -1445,13 +1445,13 @@ class StockPicking(models.Model):
             # Extract PDF file and save in correct folder:
 
             # Extract Invoice number and save in correct field
-            invoice_number = reply_json['documentNo']
+            invoice_number = reply_json['documentNo'].replace('/', '-')
             invoice_date = reply_json['documentDate'][:10]
             invoice_filename = '%s.%s.PDF' % (
                 invoice_date[:4],  # year
                 invoice_number,
                 )
-
+            _logger.warning('Invoice generated: %s' % invoice_number)
             picking.write({
                 'invoice_number': invoice_number,
                 'invoice_date': invoice_date,
