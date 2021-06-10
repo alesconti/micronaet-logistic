@@ -1441,7 +1441,6 @@ class StockPicking(models.Model):
             # Extract PDF file and save in correct folder:
 
             # Extract Invoice number and save in correct field
-            print(json.dumps(invoice_call))
             pdb.set_trace()
             invoice_number = reply_json['documentNo']
             invoice_date = reply_json['documentDate'][:10]
@@ -1464,7 +1463,6 @@ class StockPicking(models.Model):
     def api_save_invoice(self):
         """ Save invoice for picking passed
         """
-        pdb.set_trace()
         company = self.env.user.company_id
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
         report_path = os.path.join(logistic_root_folder, 'report')
