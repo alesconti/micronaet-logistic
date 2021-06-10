@@ -1340,7 +1340,6 @@ class StockPicking(models.Model):
         self.ensure_one()
 
         # Readability:
-        import pdb; pdb.set_trace()
         picking = self
         order = picking.sale_order_id
         partner = order.partner_invoice_id or order.partner_id
