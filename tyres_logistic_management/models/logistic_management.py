@@ -1459,9 +1459,10 @@ class StockPicking(models.Model):
                 'invoice_filename': invoice_filename,  # PDF name
             })
             # todo picking.api_save_invoice()
+            return True
         else:
             _logger.error('Invoice not received: \n%s!' % reply.text)
-        return True
+            return False
 
     @api.multi
     def api_save_invoice(self):
@@ -1717,12 +1718,14 @@ class StockPicking(models.Model):
                 # API Management:
                 if company.api_management and company.api_invoice_area:
                     # 2. API Account mode:
-                    picking.send_invoice_to_account_api()
+                    if not picking.send_invoice_to_account_api():
+                        return False  # Nothing is written if error!
                 else:
                     # 3. CSV Account mode:
                     picking.send_invoice_to_account_csv(logistic_root_folder)
                     invoice_ids.append(picking.id)  # not used!
 
+            # Correct exit:
             picking.write({
                 'state': 'done',  # TODO needed?
                 'is_fees': is_fees,
