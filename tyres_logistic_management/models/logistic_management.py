@@ -1429,19 +1429,23 @@ class StockPicking(models.Model):
         }
 
         # Send invoice:
-        reply = requests.post(  # TODO check endpoint and parameters:
+        json_dumps = json.dumps(invoice_call)
+        reply = requests.post(
             location,
-            data=json.dumps(invoice_call),
+            data=json_dumps,
             headers=header,
         )
-        print(location)
-        print(json.dumps(invoice_call))
+        _logger.info('Calling: %s\nJSON: %s\nReply: %s' % (
+            location,
+            json_dumps,
+            reply,
+        ))
+        pdb.set_trace()
         if reply.ok:
             reply_json = reply.json()
             # Extract PDF file and save in correct folder:
 
             # Extract Invoice number and save in correct field
-            pdb.set_trace()
             invoice_number = reply_json['documentNo']
             invoice_date = reply_json['documentDate'][:10]
             invoice_filename = '%s.%s.PDF' % (
