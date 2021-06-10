@@ -1433,6 +1433,8 @@ class StockPicking(models.Model):
             data=json.dumps(invoice_call),
             headers=header,
         )
+        print(location)
+        print(json.dumps(invoice_call))
         if reply.ok:
             reply_json = reply.json()
             # Extract PDF file and save in correct folder:
