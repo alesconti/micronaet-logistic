@@ -2399,8 +2399,8 @@ class SaleOrder(models.Model):
         """
         line_pool = self.env['sale.order.line']
         lines = line_pool.search([
-            ('order_id.logistic_state', '=', 'draft'), # Draft order
-            ('logistic_state', '=', 'draft'), # Draft line
+            ('order_id.logistic_state', '=', 'draft'),  # Draft order
+            ('logistic_state', '=', 'draft'),  # Draft line
              # Direct ready:
             ('product_id.type', '=', 'service'),
             ('product_id.is_expence', '=', True),
