@@ -1297,17 +1297,18 @@ class StockPicking(models.Model):
             return {
                 'odooCode': partner.id,  # Originally not passed
                 'b2B': b2b,  # Type: Private or Business
-                'companyName': partner.name,
+                'companyName': partner.name or '',
                 'address': '%s %s' % (
                     partner.street or '', partner.street2 or ''),
-                'zipCode': partner.zip,
+                'zipCode': partner.zip or '',
                 'city': partner.city or '',
                 'county': partner.state_id.code or '',  # Province
-                'country': partner.country_id.name,
-                'isoCountryCode': partner.country_id.code,
-                'taxIdNumber': vat,  # TODO corretto?
+                'country': partner.country_id.name or '',
+                'isoCountryCode': partner.country_id.code or '',
+                'taxIdNumber': vat or '',  # TODO corretto?
                 'fiscalCode':
-                    partner.fatturapa_fiscalcode or partner.mmac_fiscalid,
+                    partner.fatturapa_fiscalcode or
+                    partner.mmac_fiscalid or '',
                 'telephone': partner.phone or '',
                 'email': partner.email or '',
                 'certifiedMail': partner.fatturapa_pec or '',
@@ -1318,15 +1319,15 @@ class StockPicking(models.Model):
             """ Prepare partner block for destination
             """
             return {
-                'branchName': partner.name,
+                'branchName': partner.name or '',
                 'odooCode': partner.id,  # Originally not passed
                 'address': '%s %s' % (
                     partner.street or '', partner.street2 or ''),
-                'zipCode': partner.zip,
+                'zipCode': partner.zip or '',
                 'city': partner.city or '',
                 'county': partner.state_id.code or '',  # Province
-                'country': partner.country_id.name,
-                'isoCountryCode': partner.country_id.code,
+                'country': partner.country_id.name or '',
+                'isoCountryCode': partner.country_id.code or '',
                 }
 
         def get_zulu_date(date):
@@ -1373,9 +1374,9 @@ class StockPicking(models.Model):
             'orderNo': order.name or '',
             'orderDate': get_zulu_date(order.date_order),
             'documentType': account_position.id,
-            'salesPerson': agent_code,
+            'salesPerson': agent_code or '',
             'carrier': order.carrier_supplier_id.account_ref or '',  # code
-            'payment': order.payment_term_id.account_ref,  # Payment code
+            'payment': order.payment_term_id.account_ref or '',  # Payment code
             'vatIncluded': vat_included,
             'noOfPack': parcel,
             'grossWeight': weight,
