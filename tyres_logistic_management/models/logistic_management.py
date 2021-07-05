@@ -2712,7 +2712,6 @@ class SaleOrder(models.Model):
                 # procure_method,
                 # 'product_qty': select_qty,
                 })
-        import pdb; pdb.set_trace()
 
         # TODO check if DDT / INVOICE document:
 
