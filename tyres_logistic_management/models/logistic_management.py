@@ -2528,13 +2528,15 @@ class SaleOrder(models.Model):
     def workflow_ready_to_done_current_order(self):
         """ Button action for call all ready to done order:
         """
-        import pdb; pdb.set_trace()
         self.ensure_one()
 
         # If sequential print: print all:
         res = self.workflow_ready_to_done_draft_picking()
         if self.fiscal_position_id.sequential_print:
-            self.print_all_server_action()
+            try:
+                self.print_all_server_action()
+            except:
+                _logger.error('Error printing document')
 
         # Normal call:
         return res
@@ -2710,6 +2712,7 @@ class SaleOrder(models.Model):
                 # procure_method,
                 # 'product_qty': select_qty,
                 })
+        import pdb; pdb.set_trace()
 
         # TODO check if DDT / INVOICE document:
 
