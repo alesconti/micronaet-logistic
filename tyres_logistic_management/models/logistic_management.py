@@ -1489,7 +1489,7 @@ class StockPicking(models.Model):
         picking = self
         # invoice_number = urllib.quote_plus(picking.invoice_number)  # quoted!
         invoice_number = requote_uri(picking.invoice_number or '')  # quoted!
-        invoice_year = picking.invoice_date[:4]
+        invoice_year = (picking.invoice_date or '')[:4]
 
         # Generate filename:
         invoice_filename = picking.invoice_filename
