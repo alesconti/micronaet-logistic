@@ -31,6 +31,7 @@ import requests
 import urllib
 import base64
 import json
+from requests.utils import requote_uri
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
@@ -1274,6 +1275,19 @@ class StockPicking(models.Model):
     # Extract invoice from account:
     # -------------------------------------------------------------------------
     @api.model
+    def extract_invoice_data_from_account(self, reply_json):
+        """ Extract invoice 3 field data from reply
+        """
+        invoice_number = (reply_json['documentNo'] or '').replace('/', '-')
+        invoice_date = reply_json['documentDate'][:10]
+        invoice_filename = '%s.%s.PDF' % (
+            invoice_date[:4],  # year
+            invoice_number,
+        )
+        return invoice_number, invoice_date, invoice_filename
+
+
+@api.model
     def send_invoice_to_account_api(self):
         """ Send invoice / picking via CSV to Account
         """
@@ -1331,7 +1345,7 @@ class StockPicking(models.Model):
             else:
                 return {
                     'branchName': partner.name or '',
-                    'odooCode': partner.id,  # Originally not passed
+                    'odooCode': str(partner.id),  # Originally not passed
                     'address': '%s %s' % (
                         partner.street or '', partner.street2 or ''),
                     'zipCode': partner.zip or '',
@@ -1459,12 +1473,8 @@ class StockPicking(models.Model):
             # Extract PDF file and save in correct folder:
 
             # Extract Invoice number and save in correct field
-            invoice_number = (reply_json['documentNo'] or '').replace('/', '-')
-            invoice_date = reply_json['documentDate'][:10]
-            invoice_filename = '%s.%s.PDF' % (
-                invoice_date[:4],  # year
-                invoice_number,
-                )
+            invoice_number, invoice_date, invoice_filename = \
+                self.extract_invoice_data_from_account(reply_json)
             _logger.warning('Invoice generated: %s' % invoice_number)
             picking.write({
                 'invoice_number': invoice_number,
@@ -1481,13 +1491,11 @@ class StockPicking(models.Model):
     def api_save_invoice(self):
         """ Save invoice for picking passed
         """
-        from requests.utils import requote_uri
         company = self.env.user.company_id
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
         report_path = os.path.join(logistic_root_folder, 'report')
 
         picking = self
-        # invoice_number = urllib.quote_plus(picking.invoice_number)  # quoted!
         invoice_number = requote_uri(picking.invoice_number or '')  # quoted!
         invoice_year = (picking.invoice_date or '')[:4]
 
@@ -1504,14 +1512,21 @@ class StockPicking(models.Model):
             'accept': 'text/plain',
             'Content-Type': 'application/json',
         }
-        if invoice_year and invoice_number:
-            location = '%s/Invoice/%s/%s/pdf' % (
-                url, invoice_year, invoice_number)
-        else:
-            pdb.set_trace()
-            location = '%s/Invoice/ByReference/%s/pdf' % (
-                url, picking.sale_order_id.name)
+        if not(invoice_year and invoice_number):
+            reply_json = picking.api_get_invoice_by_reference(token)
+            invoice_number, invoice_date, invoice_filename = \
+                self.extract_invoice_data_from_account(reply_json)
+            invoice_year = (invoice_date or '')[:4]
 
+            # Update picking reference data:
+            picking.write({
+                'invoice_number': invoice_number,
+                'invoice_date': invoice_date,
+                'invoice_filename': invoice_filename,
+            })
+
+        location = '%s/Invoice/%s/%s/pdf' % (
+            url, invoice_year, invoice_number)
         # Get PDF for invoice:
         reply = requests.get(location, headers=header)
         if reply.ok:
@@ -1826,11 +1841,9 @@ class ResCompany(models.Model):
     def api_get_invoice(self, token, invoice_ref):
         """ Get PDF from invoice
         """
-        import urllib
-
         company = self.env.user.company_id
         url = company.api_root_url
-        endpoint = 'Invoice/%s/pdf' % urllib.quote_plus(invoice_ref)
+        endpoint = 'Invoice/%s/pdf' % requote_uri(invoice_ref)
         location = '%s/%s' % (url, endpoint)
 
         header = {
@@ -1845,6 +1858,30 @@ class ResCompany(models.Model):
         else:
             _logger.error('Cannot get invoice from accounting %s' %
                           invoice_ref)
+            return False
+
+    @api.model
+    def api_get_invoice_by_reference(self, token):
+        """ Read by reference Invoice
+        """
+        company = self.env.user.company_id
+        picking = self
+        url = company.api_root_url
+        order_name = picking.sale_order_id.name
+        endpoint = 'Invoice/ByReference/%s' % requote_uri(order_name)
+        location = '%s/%s' % (url, endpoint)
+
+        header = {
+            'Authorization': 'bearer %s' % token,
+            'accept': 'text/plain',
+            'Content-Type': 'application/json',
+        }
+        reply = requests.get(location, headers=header)
+        if reply.ok:
+            return reply.json()
+        else:
+            _logger.error('Cannot get invoice by reference %s' %
+                          order_name)
             return False
 
 
