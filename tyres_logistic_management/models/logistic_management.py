@@ -1286,8 +1286,7 @@ class StockPicking(models.Model):
         )
         return invoice_number, invoice_date, invoice_filename
 
-
-@api.model
+    @api.model
     def send_invoice_to_account_api(self):
         """ Send invoice / picking via CSV to Account
         """
