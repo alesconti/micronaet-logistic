@@ -1516,7 +1516,7 @@ class StockPicking(models.Model):
                 'invoice_date': invoice_date,
                 'invoice_filename': invoice_filename,
             })
-            invoice_number = requote_uri(requote_uri)
+            invoice_number = requote_uri(invoice_number)
             invoice_year = (invoice_date or '')[:4]
 
         location = '%s/Invoice/%s/%s/pdf' % (
