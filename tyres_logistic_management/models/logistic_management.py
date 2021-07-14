@@ -1308,7 +1308,7 @@ class StockPicking(models.Model):
                 vat = partner.vat or ''
 
             return {
-                'odooCode': partner.id,  # Originally not passed
+                'odooCode': str(partner.id),  # Originally not passed
                 'b2B': b2b,  # Type: Private or Business
                 'companyName': partner.name or '',
                 'address': '%s %s' % (
@@ -1328,20 +1328,8 @@ class StockPicking(models.Model):
                 'ipaCode': partner.fatturapa_unique_code or '',  # SDI code
                 }
 
-        def get_address_block(partner, destination=False):
+        def get_address_block(partner):
             """ Prepare partner block for destination
-            """
-            if destination:
-                return {
-                    'odooCode': str(partner.id),  # Originally not passed
-                    'destination': '%s %s\n%s %s\n%s' % (
-                        partner.street or '',
-                        partner.street2 or '',
-                        partner.zip or '',
-                        partner.city or '',
-                        partner.country_id.name or '',
-                    )}
-            else:
                 return {
                     'branchName': partner.name or '',
                     'odooCode': str(partner.id),  # Originally not passed
@@ -1353,6 +1341,16 @@ class StockPicking(models.Model):
                     'country': partner.country_id.name or '',
                     'isoCountryCode': partner.country_id.code or '',
                     }
+            """
+            return {
+                'odooCode': str(partner.id),  # Originally not passed
+                'destination': '%s %s\n%s %s\n%s' % (
+                    partner.street or '',
+                    partner.street2 or '',
+                    partner.zip or '',
+                    partner.city or '',
+                    partner.country_id.name or '',
+                )}
 
         def get_zulu_date(date):
             """ Return this date in Zulu format
@@ -1405,7 +1403,7 @@ class StockPicking(models.Model):
             'grossWeight': weight,
             'notes': order.note_invoice or '',
             'customer': get_partner_block(partner),
-            'destination': get_address_block(address, destination=True),
+            'destination': get_address_block(address),
             # 'address': get_partner_block(address), # TODO
             'details': []
         }
