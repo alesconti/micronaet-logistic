@@ -1315,20 +1315,31 @@ class StockPicking(models.Model):
                 'ipaCode': partner.fatturapa_unique_code or '',  # SDI code
                 }
 
-        def get_address_block(partner):
+        def get_address_block(partner, destination=False):
             """ Prepare partner block for destination
             """
-            return {
-                'branchName': partner.name or '',
-                'odooCode': partner.id,  # Originally not passed
-                'address': '%s %s' % (
-                    partner.street or '', partner.street2 or ''),
-                'zipCode': partner.zip or '',
-                'city': partner.city or '',
-                'county': partner.state_id.code or '',  # Province
-                'country': partner.country_id.name or '',
-                'isoCountryCode': partner.country_id.code or '',
-                }
+            if destination:
+                return {
+                    'odooCode': partner.id,  # Originally not passed
+                    'destination': '%s %s\n%s %s\n%s' % (
+                        partner.street or '',
+                        partner.street2 or '',
+                        partner.zip or '',
+                        partner.city or '',
+                        partner.country_id.name or '',
+                    )}
+            else:
+                return {
+                    'branchName': partner.name or '',
+                    'odooCode': partner.id,  # Originally not passed
+                    'address': '%s %s' % (
+                        partner.street or '', partner.street2 or ''),
+                    'zipCode': partner.zip or '',
+                    'city': partner.city or '',
+                    'county': partner.state_id.code or '',  # Province
+                    'country': partner.country_id.name or '',
+                    'isoCountryCode': partner.country_id.code or '',
+                    }
 
         def get_zulu_date(date):
             """ Return this date in Zulu format
@@ -1382,7 +1393,7 @@ class StockPicking(models.Model):
             'grossWeight': weight,
             'notes': order.note_invoice or '',
             'customer': get_partner_block(partner),
-            'destination': get_address_block(address),
+            'destination': get_address_block(address, destination=True),
             # 'address': get_partner_block(address), # TODO
             'details': []
         }
