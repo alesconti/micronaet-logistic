@@ -1484,6 +1484,7 @@ class StockPicking(models.Model):
 
         picking = self
         invoice_number = urllib.quote_plus(picking.invoice_number)  # quoted!
+        invoice_year = picking.invoice_date[:4]
 
         # Generate filename:
         invoice_filename = picking.invoice_filename
@@ -1492,7 +1493,7 @@ class StockPicking(models.Model):
 
         # Call API for PDF file:
         url = company.api_root_url
-        location = '%s/Invoice/%s/pdf' % (url, invoice_number)
+        location = '%s/Invoice/%s/%s/pdf' % (url, invoice_year, invoice_number)
         token = company.api_get_token()
         header = {
             'Authorization': 'bearer %s' % token,
