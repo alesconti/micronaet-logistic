@@ -50,6 +50,8 @@ class ResCompany(models.Model):
         string='Api username', size=60)
     api_password = fields.Char(
         string='Api password', size=60)
+    api_token = fields.Text(
+        string='Api token')
     api_management = fields.Boolean(
         'Gestione API',
         help='Attivazione gestione API gestionale per evitare passaggi CSV')
