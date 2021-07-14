@@ -1441,6 +1441,10 @@ class StockPicking(models.Model):
 
         # Send invoice:
         json_dumps = json.dumps(invoice_call)
+        _logger.info('Calling: %s\nJSON: %s' % (
+            location,
+            json_dumps,
+        ))
         reply = requests.post(
             location,
             data=json_dumps,
@@ -1478,12 +1482,14 @@ class StockPicking(models.Model):
     def api_save_invoice(self):
         """ Save invoice for picking passed
         """
+        from requests.utils import requote_uri
         company = self.env.user.company_id
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
         report_path = os.path.join(logistic_root_folder, 'report')
 
         picking = self
-        invoice_number = urllib.quote_plus(picking.invoice_number)  # quoted!
+        # invoice_number = urllib.quote_plus(picking.invoice_number)  # quoted!
+        invoice_number = requote_uri(picking.invoice_number)  # quoted!
         invoice_year = picking.invoice_date[:4]
 
         # Generate filename:
@@ -1502,7 +1508,6 @@ class StockPicking(models.Model):
         }
 
         # Get PDF for invoice:
-        pdb.set_trace()
         reply = requests.get(location, headers=header)
         if reply.ok:
             with open(fullname, 'wb') as f:
