@@ -1501,6 +1501,7 @@ class StockPicking(models.Model):
         }
 
         # Get PDF for invoice:
+        pdb.set_trace()
         reply = requests.get(location, headers=header)
         if reply.ok:
             with open(fullname, 'wb') as f:
