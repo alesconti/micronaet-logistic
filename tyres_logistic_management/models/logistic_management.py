@@ -460,7 +460,7 @@ class PurchaseOrder(models.Model):
             'name': _('Purchase line'),
             'view_type': 'form',
             'view_mode': 'tree,form',
-            #'res_id': 1,
+            # 'res_id': 1,
             'res_model': 'purchase.order.line',
             'view_id': tree_view_id,
             'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
@@ -1488,7 +1488,7 @@ class StockPicking(models.Model):
 
         picking = self
         # invoice_number = urllib.quote_plus(picking.invoice_number)  # quoted!
-        invoice_number = requote_uri(picking.invoice_number)  # quoted!
+        invoice_number = requote_uri(picking.invoice_number or '')  # quoted!
         invoice_year = picking.invoice_date[:4]
 
         # Generate filename:
