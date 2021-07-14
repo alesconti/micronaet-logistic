@@ -1468,7 +1468,7 @@ class StockPicking(models.Model):
                 'invoice_date': invoice_date,
                 'invoice_filename': invoice_filename,  # PDF name
             })
-            # todo picking.api_save_invoice()
+            picking.api_save_invoice()
             return True
         else:
             _logger.error('Invoice not received: \n%s!' % reply.text)
