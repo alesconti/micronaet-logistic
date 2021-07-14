@@ -1369,7 +1369,8 @@ class StockPicking(models.Model):
         address = order.partner_shipping_id
         account_position = partner.property_account_position_id
         company = self.env.user.company_id
-        logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
+        # logistic_root_folder = os.path.expanduser(
+        # company.logistic_root_folder)
 
         # Parse extra data:
         if order.carrier_shippy:
@@ -1442,50 +1443,49 @@ class StockPicking(models.Model):
         url = company.api_root_url
         endpoint = 'Invoice'
         location = '%s/%s' % (url, endpoint)
-        token = company.api_get_token()
-        header = {
-            'Authorization': 'bearer %s' % token,
-            'accept': 'text/plain',
-            'Content-Type': 'application/json',
-        }
-
-        # Send invoice:
+        token = company.api_token or company.api_get_token()
         json_dumps = json.dumps(invoice_call)
-        _logger.info('Calling: %s\nJSON: %s' % (
-            location,
-            json_dumps,
-        ))
-        reply = requests.post(
-            location,
-            data=json_dumps,
-            headers=header,
-        )
-        _logger.info('Calling: %s\nJSON: %s\nReply: %s' % (
-            location,
-            json_dumps,
-            reply,
-        ))
-        if reply.ok:
-            reply_json = reply.json()
-            # Extract PDF file and save in correct folder:
 
-            # Extract Invoice number and save in correct field
-            invoice_number, invoice_date, invoice_filename = \
-                self.extract_invoice_data_from_account(reply_json)
-            _logger.warning('Invoice generated: %s' % invoice_number)
-            picking.write({
-                'invoice_number': invoice_number,
-                'invoice_date': invoice_date,
-                'invoice_filename': invoice_filename,  # PDF name
-            })
-            picking.api_save_invoice()
-            return True
-        else:
-            _logger.error('Invoice not received: \n%s!' % reply.text)
-            return False
+        loop_times = 1
+        while loop_times <= 2:  # Loop twice if token error
+            loop_times += 1
+            header = {
+                'Authorization': 'bearer %s' % token,
+                'accept': 'text/plain',
+                'Content-Type': 'application/json',
+            }
+
+            # Send invoice:
+            _logger.info('Calling: %s\nJSON: %s [Attempt: %s]' % (
+                location, json_dumps, loop_times))
+            reply = requests.post(
+                location, data=json_dumps, headers=header)
+            _logger.info('Calling: %s\nJSON: %s\nReply: %s' % (
+                location, json_dumps, reply))
+            if reply.ok:
+                reply_json = reply.json()
+
+                # Extract Invoice number and save in correct field
+                invoice_number, invoice_date, invoice_filename = \
+                    self.extract_invoice_data_from_account(reply_json)
+                _logger.warning('Invoice generated: %s' % invoice_number)
+                picking.write({
+                    'invoice_number': invoice_number,
+                    'invoice_date': invoice_date,
+                    'invoice_filename': invoice_filename,  # PDF name
+                })
+
+                # Extract PDF file and save in correct folder:
+                picking.api_save_invoice_pdf()
+                return True
+            elif reply.status_code == 401:  # Token error
+                token = company.api_get_token()
+            else:
+                _logger.error('Invoice not received: \n%s!' % reply.text)
+                return False
 
     @api.multi
-    def api_save_invoice(self):
+    def api_save_invoice_pdf(self):
         """ Save invoice for picking passed if not reference in picking reload
             from Account calling invoice with ODOO reference.
         """
@@ -1499,14 +1499,11 @@ class StockPicking(models.Model):
 
         # Call API for PDF file:
         url = company.api_root_url
-        token = company.api_get_token()
-        header = {
-            'Authorization': 'bearer %s' % token,
-            'accept': 'text/plain',
-            'Content-Type': 'application/json',
-        }
+        token = company.api_token or company.api_get_token()
+
+        # 2 cases: has number assigned, without number assigned
         if not invoice_year or not invoice_number:
-            reply_json = company.api_get_invoice_by_reference(token, picking)
+            reply_json = company.api_get_invoice_by_reference(picking)
             invoice_number, invoice_date, invoice_filename = \
                 self.extract_invoice_data_from_account(reply_json)
 
@@ -1521,22 +1518,32 @@ class StockPicking(models.Model):
 
         location = '%s/Invoice/%s/%s/pdf' % (
             url, invoice_year, invoice_number)
-        # Get PDF for invoice:
-        reply = requests.get(location, headers=header)
 
-        if reply.ok:
-            # Generate filename:
-            invoice_filename = picking.invoice_filename
-            fullname = os.path.join(
-                report_path, invoice_filename)
-            with open(fullname, 'wb') as f:
-                f.write(reply.content)
-            _logger.warning('Saved PDF document: %s' % fullname)
-            return True
-        else:
-            # todo raise error!
-            _logger.error('API Error: \n%s' % (reply.text, ))
-            return False
+        loop_times = 1
+        while loop_times <= 2:
+            loop_times += 1
+            header = {
+                'Authorization': 'bearer %s' % token,
+                'accept': 'text/plain',
+                'Content-Type': 'application/json',
+            }
+            # Get PDF for invoice:
+            reply = requests.get(location, headers=header)
+
+            if reply.ok:
+                # Generate filename:
+                invoice_filename = picking.invoice_filename
+                fullname = os.path.join(
+                    report_path, invoice_filename)
+                with open(fullname, 'wb') as f:
+                    f.write(reply.content)
+                _logger.warning('Saved PDF document: %s' % fullname)
+                return True
+            elif reply.status_code == 401:
+                token = company.api_get_token()
+            else:  # todo raise error!
+                _logger.error('API Error: \n%s' % (reply.text, ))
+                return False
 
     @api.model
     def send_invoice_to_account_csv(self, logistic_root_folder):
@@ -1803,17 +1810,48 @@ class ResCompany(models.Model):
         }
 
         reply = requests.post(
-            location,
-            data=json.dumps(payload),
-            headers=header,
-        )
+            location, data=json.dumps(payload), headers=header)
         if reply.ok:
             reply_json = reply.json()
         else:
             _logger.error('Cannot login API Accounting!')
-        return reply_json['token']
+            return False
 
+        token = reply_json['token']
+        company.write({'api_token': token})
+        return token
 
+    @api.model
+    def api_get_invoice_by_reference(self, picking):
+        """ Read by reference Invoice (pass order number not invoice)
+        """
+        company = self.env.user.company_id
+        token = company.api_token or company.api_get_token()
+
+        url = company.api_root_url
+        order_name = picking.sale_order_id.name
+        endpoint = 'Invoice/ByReference/%s' % requote_uri(order_name)
+        location = '%s/%s' % (url, endpoint)
+        loop_times = 1
+
+        while loop_times <= 2:
+            loop_times += 1
+            header = {
+                'Authorization': 'bearer %s' % token,
+                'accept': 'text/plain',
+                'Content-Type': 'application/json',
+            }
+            reply = requests.get(location, headers=header)
+            if reply.ok:
+                return reply.json()
+            elif reply.status_code == 401:
+                token = company.api_get_token()
+            else:
+                _logger.error(
+                    'Cannot get invoice by reference %s' % order_name)
+                return False
+
+    '''
     @api.model
     def api_logoff(self, token):
         """ Logoff
@@ -1835,11 +1873,11 @@ class ResCompany(models.Model):
             _logger.error('Cannot logout from API Accounting')
             return False
 
-
     @api.model
     def api_get_invoice(self, token, invoice_ref):
         """ Get PDF from invoice
         """
+        # todo review (not used for now)!
         company = self.env.user.company_id
         url = company.api_root_url
         endpoint = 'Invoice/%s/pdf' % requote_uri(invoice_ref)
@@ -1858,31 +1896,7 @@ class ResCompany(models.Model):
             _logger.error('Cannot get invoice from accounting %s' %
                           invoice_ref)
             return False
-
-    @api.model
-    def api_get_invoice_by_reference(self, token, picking):
-        """ Read by reference Invoice
-        """
-        company = self.env.user.company_id
-        url = company.api_root_url
-        order_name = picking.sale_order_id.name
-        endpoint = 'Invoice/ByReference/%s' % requote_uri(order_name)
-        location = '%s/%s' % (url, endpoint)
-
-        header = {
-            'Authorization': 'bearer %s' % token,
-            'accept': 'text/plain',
-            'Content-Type': 'application/json',
-        }
-        reply = requests.get(location, headers=header)
-        if reply.ok:
-            return reply.json()
-        else:
-            _logger.error('Cannot get invoice by reference %s' %
-                          order_name)
-            return False
-
-
+    
     @api.model
     def api_get_invoice_pdf(self, token, invoice_ref):
         """ Get PDF from invoice
@@ -1907,7 +1921,7 @@ class ResCompany(models.Model):
             return pdf_file
         else:
             _logger.error('Cannot get PDF file for invoice %s' % invoice_ref)
-            return False
+            return False'''
 
 
 class ResPartner(models.Model):
