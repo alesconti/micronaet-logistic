@@ -1486,7 +1486,8 @@ class StockPicking(models.Model):
 
     @api.multi
     def api_save_invoice(self):
-        """ Save invoice for picking passed
+        """ Save invoice for picking passed if not reference in picking reload
+            from Account calling invoice with ODOO reference.
         """
         company = self.env.user.company_id
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
@@ -1496,11 +1497,6 @@ class StockPicking(models.Model):
         invoice_number = requote_uri(picking.invoice_number or '')  # quoted!
         invoice_year = (picking.invoice_date or '')[:4]
 
-        # Generate filename:
-        invoice_filename = picking.invoice_filename
-        fullname = os.path.join(
-            report_path, invoice_filename)
-
         # Call API for PDF file:
         url = company.api_root_url
         token = company.api_get_token()
@@ -1509,11 +1505,10 @@ class StockPicking(models.Model):
             'accept': 'text/plain',
             'Content-Type': 'application/json',
         }
-        if not(invoice_year and invoice_number):
-            reply_json = picking.api_get_invoice_by_reference(token)
+        if not invoice_year or not invoice_number:
+            reply_json = company.api_get_invoice_by_reference(token, picking)
             invoice_number, invoice_date, invoice_filename = \
                 self.extract_invoice_data_from_account(reply_json)
-            invoice_year = (invoice_date or '')[:4]
 
             # Update picking reference data:
             picking.write({
@@ -1521,20 +1516,27 @@ class StockPicking(models.Model):
                 'invoice_date': invoice_date,
                 'invoice_filename': invoice_filename,
             })
+            invoice_number = requote_uri(requote_uri)
+            invoice_year = (invoice_date or '')[:4]
 
         location = '%s/Invoice/%s/%s/pdf' % (
             url, invoice_year, invoice_number)
         # Get PDF for invoice:
         reply = requests.get(location, headers=header)
+
         if reply.ok:
+            # Generate filename:
+            invoice_filename = picking.invoice_filename
+            fullname = os.path.join(
+                report_path, invoice_filename)
             with open(fullname, 'wb') as f:
                 f.write(reply.content)
+            _logger.warning('Saved PDF document: %s' % fullname)
+            return True
         else:
             # todo raise error!
             _logger.error('API Error: \n%s' % (reply.text, ))
-
-        _logger.warning('Saved PDF document: %s' % fullname)
-        return True
+            return False
 
     @api.model
     def send_invoice_to_account_csv(self, logistic_root_folder):
@@ -1858,11 +1860,10 @@ class ResCompany(models.Model):
             return False
 
     @api.model
-    def api_get_invoice_by_reference(self, token):
+    def api_get_invoice_by_reference(self, token, picking):
         """ Read by reference Invoice
         """
         company = self.env.user.company_id
-        picking = self
         url = company.api_root_url
         order_name = picking.sale_order_id.name
         endpoint = 'Invoice/ByReference/%s' % requote_uri(order_name)
