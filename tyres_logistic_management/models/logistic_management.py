@@ -1359,7 +1359,6 @@ class StockPicking(models.Model):
         account_position = partner.property_account_position_id
         company = self.env.user.company_id
         logistic_root_folder = os.path.expanduser(company.logistic_root_folder)
-        report_path = os.path.join(logistic_root_folder, 'report')
 
         # Parse extra data:
         if order.carrier_shippy:
@@ -1499,13 +1498,19 @@ class StockPicking(models.Model):
 
         # Call API for PDF file:
         url = company.api_root_url
-        location = '%s/Invoice/%s/%s/pdf' % (url, invoice_year, invoice_number)
         token = company.api_get_token()
         header = {
             'Authorization': 'bearer %s' % token,
             'accept': 'text/plain',
             'Content-Type': 'application/json',
         }
+        if invoice_year and invoice_number:
+            location = '%s/Invoice/%s/%s/pdf' % (
+                url, invoice_year, invoice_number)
+        else:
+            pdb.set_trace()
+            location = '%s/Invoice/ByReference/%s/pdf' % (
+                url, picking.sale_order_id.name)
 
         # Get PDF for invoice:
         reply = requests.get(location, headers=header)

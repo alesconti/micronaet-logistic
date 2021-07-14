@@ -622,6 +622,7 @@
                                      <field name="ddt_number" />
                                      <field name="invoice_number" />
                                      <field name="state" invisible="1"/>
+                                     <button name="api_save_invoice" type="object" string="Refresh PDF" icon="fa-print"/>
                                  </tree>
                              </field>
                          </group>
