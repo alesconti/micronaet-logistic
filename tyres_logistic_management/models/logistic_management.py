@@ -1278,6 +1278,10 @@ class StockPicking(models.Model):
     def extract_invoice_data_from_account(self, reply_json):
         """ Extract invoice 3 field data from reply
         """
+        if not reply_json:
+            _logger.error('No reply so no invoice in accounting!')
+            return '', '', ''
+
         invoice_number = (reply_json['documentNo'] or '').replace('/', '-')
         invoice_date = reply_json['documentDate'][:10]
         invoice_filename = '%s.%s.PDF' % (
