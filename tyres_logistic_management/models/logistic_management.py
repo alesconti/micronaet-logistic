@@ -1348,7 +1348,8 @@ class StockPicking(models.Model):
             """
             return {
                 'odooCode': str(partner.id),  # Originally not passed
-                'destination': '%s %s\n%s %s\n%s' % (
+                'destination': '%s\n%s %s\n%s %s\n%s' % (
+                    partner.name or '',
                     partner.street or '',
                     partner.street2 or '',
                     partner.zip or '',
