@@ -1348,13 +1348,14 @@ class StockPicking(models.Model):
             """
             return {
                 'odooCode': str(partner.id),  # Originally not passed
-                'destination': '%s\n%s %s\n%s %s\n%s' % (
+                'destination': '%s\n%s %s\n%s %s\n%s [%s]' % (
                     partner.name or '',
                     partner.street or '',
                     partner.street2 or '',
                     partner.zip or '',
                     partner.city or '',
                     partner.country_id.name or '',
+                    partner.country_id.code or '',
                 )}
 
         def get_zulu_date(date):
