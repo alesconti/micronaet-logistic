@@ -1356,7 +1356,9 @@ class StockPicking(models.Model):
                     partner.city or '',
                     partner.country_id.name or '',
                     # partner.country_id.code or '',
-                )}
+                    ),
+                'isoCountryCode': partner.country_id.code or '',
+                }
 
         def get_zulu_date(date):
             """ Return this date in Zulu format
