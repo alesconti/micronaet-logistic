@@ -22,6 +22,7 @@
 ###############################################################################
 
 import os
+import pdb
 import sys
 import logging
 import odoo
@@ -544,8 +545,10 @@ class StockPicking(models.Model):
         for picking in pickings:
             try:
                 fiscal_position = picking.sale_order_id.fiscal_position_id
+                country_code = fiscal_position.country_id.code
+                pdb.set_trace()
                 ws_name = '{} {}'.format(
-                    fiscal_position.code, fiscal_position.name)
+                    country_code, fiscal_position.name)
             except:
                 ws_name = 'Non trovata'
             if ws_name not in fiscal_pickings:
