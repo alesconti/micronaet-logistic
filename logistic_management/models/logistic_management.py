@@ -550,8 +550,8 @@ class StockPicking(models.Model):
                 ws_name = 'Non trovata'
             if ws_name not in fiscal_pickings:
                 fiscal_pickings[ws_name] = []
+                excel_pool.create_worksheet(ws_name)
             fiscal_pickings[ws_name].append(picking)
-            excel_pool.create_worksheet(ws_name)
 
         # Add extra sheet for manage remain invoice:
         ws_invoice = 'Fatturato'
