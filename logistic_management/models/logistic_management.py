@@ -534,7 +534,7 @@ class StockPicking(models.Model):
 
             # Not invoiced (only DDT):
             ('ddt_number', '!=', False),
-            #('invoice_number', '=', False),
+            # ('invoice_number', '=', False),
             ])
 
         ws_name = 'Registro corrispettivi'
@@ -553,10 +553,10 @@ class StockPicking(models.Model):
         f_text_red = excel_pool.get_format('text_red')
         f_number_black = excel_pool.get_format('number')
         f_number_red = excel_pool.get_format('number_red')
-        #f_green_text = excel_pool.get_format('bg_green')
-        #f_yellow_text = excel_pool.get_format('bg_yellow')
-        #f_green_number = excel_pool.get_format('bg_green_number')
-        #f_yellow_number = excel_pool.get_format('bg_yellow_number')
+        # f_green_text = excel_pool.get_format('bg_green')
+        # f_yellow_text = excel_pool.get_format('bg_yellow')
+        # f_green_number = excel_pool.get_format('bg_green_number')
+        # f_yellow_number = excel_pool.get_format('bg_yellow_number')
 
         # ---------------------------------------------------------------------
         # Setup page: Corrispettivo
@@ -632,11 +632,14 @@ class StockPicking(models.Model):
                 }
 
             if picking.invoice_number:
-                row_invoice +=1
+                row_invoice += 1
                 for move in picking.move_lines_for_report():
-                    subtotal['amount'] += sign * float(move[9]) # Total without VAT
-                    subtotal['vat'] += sign * float(move[6]) # VAT Total
-                    subtotal['total'] += sign * float(move[10]) # Total with VAT
+                    # Total without VAT:
+                    subtotal['amount'] += sign * float(move[9])
+                    # VAT Total:
+                    subtotal['vat'] += sign * float(move[6])
+                    # Total with VAT
+                    subtotal['total'] += sign * float(move[10])
 
                 # Update total:
                 total_invoice['amount'] += subtotal['amount']
@@ -657,12 +660,15 @@ class StockPicking(models.Model):
                     (subtotal['total'], f_number),
                     ), default_format=f_text)
 
-            else: # No invoice:
-                row +=1
+            else:  # No invoice:
+                row += 1
                 for move in picking.move_lines_for_report():
-                    subtotal['amount'] += sign * float(move[9]) # Total without VAT
-                    subtotal['vat'] += sign * float(move[6]) # VAT Total
-                    subtotal['total'] += sign * float(move[10]) # Total with VAT
+                    # Total without VAT:
+                    subtotal['amount'] += sign * float(move[9])
+                    # VAT Total
+                    subtotal['vat'] += sign * float(move[6])
+                    # Total with VAT
+                    subtotal['total'] += sign * float(move[10])
 
                 # Update total:
                 total['amount'] += subtotal['amount']
@@ -676,7 +682,7 @@ class StockPicking(models.Model):
                     picking.name,
                     '' if stock_mode == 'in' else order.logistic_state,
                     partner.name,
-                    partner.property_account_position_id.name,  # Fiscal position
+                    partner.property_account_position_id.name,  # Fiscal pos.
                     (subtotal['amount'], f_number),
                     (subtotal['vat'], f_number),
                     (subtotal['total'], f_number),
