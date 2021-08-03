@@ -721,14 +721,15 @@ class StockPicking(models.Model):
             # -----------------------------------------------------------------
             # Totals:
             # -----------------------------------------------------------------
-            # 1. Corrispettivi:
-            row += 1
-            excel_pool.write_xls_line(ws_name, row, (
-                'Totali:',
-                (total['amount'], f_number_black),
-                (total['vat'], f_number_black),
-                (total['total'], f_number_black),
-                ), default_format=f_header, col=6)
+            if ws_name != 'Fatturato':
+                # 1. Corrispettivi:
+                row += 1
+                excel_pool.write_xls_line(ws_name, row, (
+                    'Totali:',
+                    (total['amount'], f_number_black),
+                    (total['vat'], f_number_black),
+                    (total['total'], f_number_black),
+                    ), default_format=f_header, col=6)
 
         # 2. Invoice:
         row_invoice += 1
