@@ -541,14 +541,18 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         # Collect picking grouped by fiscal position:
         # ---------------------------------------------------------------------
-        fiscal_pickings = {}
+        fiscal_pickings = {
+            'Fatturato': [],
+        }
         for picking in pickings:
             if picking.invoice_number:
-                continue  # No page creation
+               fiscal_pickings['Fatturato'].append(picking)
+               continue  # No page creation
+
             try:
                 fiscal_position = picking.sale_order_id.fiscal_position_id
                 country_code = fiscal_position.country_id.code
-                ws_name = 'Pos. {}'.format(country_code)
+                ws_name = 'Pos. {}'.format(country_code or 'senza codice')
             except:
                 ws_name = 'Pos. non trovata'
             if ws_name not in fiscal_pickings:
@@ -556,7 +560,7 @@ class StockPicking(models.Model):
                 excel_pool.create_worksheet(ws_name)
             fiscal_pickings[ws_name].append(picking)
 
-        # Add extra sheet for manage remain invoice:
+        # Add extra sheet for manage remain invoice (last page):
         ws_invoice = 'Fatturato'
         excel_pool.create_worksheet(ws_invoice)
 
