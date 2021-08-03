@@ -543,14 +543,14 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         fiscal_pickings = {}
         for picking in pickings:
+            if picking.invoice_number:
+                continue  # No page creation
             try:
                 fiscal_position = picking.sale_order_id.fiscal_position_id
                 country_code = fiscal_position.country_id.code
-                pdb.set_trace()
-                ws_name = '{} {}'.format(
-                    country_code, fiscal_position.name)
+                ws_name = 'Pos. {}'.format(country_code)
             except:
-                ws_name = 'Non trovata'
+                ws_name = 'Pos. non trovata'
             if ws_name not in fiscal_pickings:
                 fiscal_pickings[ws_name] = []
                 excel_pool.create_worksheet(ws_name)
