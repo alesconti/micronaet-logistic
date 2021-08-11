@@ -12,16 +12,16 @@
                          <group colspan="4" col="4">
                             <field name="stock_mode" readonly="1"/>
                             <field name="refund_origin_id" readonly="1" attrs="{'invisible': [('stock_mode','!=','in')]}"/>
-                            
+
                             <field name="ddt_number" attrs="{'invisible': [('ddt_number','=',False)]}" />
                             <field name="ddt_date" attrs="{'invisible': [('ddt_number','=',False)]}"/>
-                            
+
                             <!--Invoice or credit note:-->
                             <field name="invoice_number" attrs="{'invisible': [('invoice_number','=',False)]}"/>
                             <field name="invoice_date" attrs="{'invisible': [('invoice_number','=',False)]}"/>
-                            <field name="invoice_filename" attrs="{'invisible': [('invoice_number','=',False)]}"/>                            
+                            <field name="invoice_filename" attrs="{'invisible': [('invoice_number','=',False)]}"/>
                             <newline/>
-                                                                 
+
                             <field name="carriage_condition_id" />
                             <field name="goods_description_id" />
                             <field name="transportation_reason_id" />
@@ -29,13 +29,19 @@
                             <field name="carrier_id" />
                             <field name="parcels" />
                             <field name="weight" />
-                         </group>    
+                         </group>
+                     </page>
+                     <page>
+                         <group colspan="4" col="4">
+                             <separator string="Chiamata API" colspan="4" />
+                             <field name="invoice_json" colspan="4" nolabel="1" readonly="1"/>
+                         </group>
                      </page>
                      <page string="Refunded" attrs="{'invisible': [('refunded_ids','!=',False)]}">
                          <group colspan="4" col="4">
                              <field name="refunded_ids" />
-                         </group>    
-                     </page>                     
+                         </group>
+                     </page>
                  </xpath>
              </field>
          </record>
@@ -50,7 +56,7 @@
                  </field>
              </field>
          </record>
-    
+
         <!-- DdT Data -->
         <record id="view_carriage_condition_tree" model="ir.ui.view">
             <field name="name">stock.picking.carriage_condition.tree</field>

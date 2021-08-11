@@ -50,6 +50,7 @@ class StockPickingGoodsDescription(models.Model):
     name = fields.Char(string='Description of Goods', required=True)
     note = fields.Text(string='Note')
 
+
 class StockPickingTransportationReason(models.Model):
 
     _name = 'stock.picking.transportation_reason'
@@ -57,6 +58,7 @@ class StockPickingTransportationReason(models.Model):
 
     name = fields.Char(string='Reason For Transportation', required=True)
     note = fields.Text(string='Note')
+
 
 class StockPickingTransportationMethod(models.Model):
 
@@ -68,15 +70,15 @@ class StockPickingTransportationMethod(models.Model):
 
 
 class StockPicking(models.Model):
-    ''' Add extra fields to keep picking as DDT or Invoice:
-    '''
+    """ Add extra fields to keep picking as DDT or Invoice:
+    """
     _inherit = 'stock.picking'
 
     # BUTTON / UTILITY: Launch wizard
     @api.multi
     def generate_refund_document(self):
-        ''' Open refund management from this documet
-        '''
+        """ Open refund management from this document
+        """
         # Pool used:
         wizard_pool = self.env['stock.picking.refund.wizard']
         line_pool = self.env['stock.picking.refund.line.wizard']
@@ -125,9 +127,9 @@ class StockPicking(models.Model):
 
     @api.multi
     def assign_invoice_number(self):
-        ''' Assign invoice number depend on fiscal position and parameter in
+        """ Assign invoice number depend on fiscal position and parameter in
             partner configuration
-        '''
+        """
         for picking in self:
             # Load partner sequence (depend on fiscal position)
             partner = picking.partner_id
@@ -160,9 +162,9 @@ class StockPicking(models.Model):
 
     @api.multi
     def assign_ddt_number(self):
-        ''' Assign DDt number depend on fiscal position and parameter in
+        """ Assign DDt number depend on fiscal position and parameter in
             partner configuration
-        '''
+        """
         for picking in self: # Use DDT counter:
             if picking.stock_mode == 'out':
                 counter = self.env['ir.sequence'].next_by_code(
@@ -213,8 +215,8 @@ class StockPicking(models.Model):
 
 
 class StockPicking(models.Model):
-    ''' Add extra fields to keep picking as DDT or Invoice:
-    '''
+    """ Add extra fields to keep picking as DDT or Invoice:
+    """
     _inherit = 'stock.picking'
 
     # -------------------------------------------------------------------------
