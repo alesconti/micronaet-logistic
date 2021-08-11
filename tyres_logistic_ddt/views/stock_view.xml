@@ -31,7 +31,7 @@
                             <field name="weight" />
                          </group>
                      </page>
-                     <page>
+                     <page string="API">
                          <group colspan="4" col="4">
                              <separator string="Chiamata API" colspan="4" />
                              <field name="invoice_json" colspan="4" nolabel="1" readonly="1"/>
