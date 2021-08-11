@@ -3,7 +3,7 @@
 ##############################################################################
 #
 #    Copyright (C) 2001-2018 Micronaet S.r.l. (<https://micronaet.com>)
-#    Developer: Nicola Riolini @thebrush 
+#    Developer: Nicola Riolini @thebrush
 #               (<https://it.linkedin.com/in/thebrush>)
 #    Copyright (C) 2014 Abstract (http://www.abstract.it)
 #    @author Davide Corio <davide.corio@abstract.it>
@@ -71,7 +71,7 @@ class StockPicking(models.Model):
     ''' Add extra fields to keep picking as DDT or Invoice:
     '''
     _inherit = 'stock.picking'
-    
+
     # BUTTON / UTILITY: Launch wizard
     @api.multi
     def generate_refund_document(self):
@@ -98,16 +98,16 @@ class StockPicking(models.Model):
             line_pool.create({
                 'wizard_id': wizard_id,
                 'product_id': line.product_id.id,
-                'product_qty': product_qty,            
+                'product_qty': product_qty,
                 'refund_qty': product_qty, # Same q. (returned from customer)
                 'stock_qty': product_qty, # Same q. (load stock)
                 # Reference for description in report:
-                'line_id': line.logistic_unload_id.id, 
+                'line_id': line.logistic_unload_id.id,
                 })
-        
+
         # ---------------------------------------------------------------------
         # Open wizard element
-        # ---------------------------------------------------------------------        
+        # ---------------------------------------------------------------------
         return {
             'type': 'ir.actions.act_window',
             'name': _('Refund wizard'),
@@ -134,30 +134,30 @@ class StockPicking(models.Model):
             if not partner.property_account_position_id:
                 _logger.error(
                     'Partner %s with no fiscal position' % partner.name)
-                return False    
+                return False
 
-            sequence = False # TODO 
+            sequence = False # TODO
             if not sequence:
                 _logger.error(
                     'Partner %s no sequence found in fiscal position' % (
                         partner.name))
-                return False    
+                return False
 
-            sequence_number = False # TODO 
+            sequence_number = False # TODO
             if picking.stock_mode == 'out':
                 picking.write({
                     'invoice_number': sequence_number,
-                    'invoice_date': fields.Datetime.now(),    
+                    'invoice_date': fields.Datetime.now(),
                     })
-            else: # 'nc' >> Credit note     
-                # Note: Keep same number but different prefix:   
+            else: # 'nc' >> Credit note
+                # Note: Keep same number but different prefix:
                 sequence_number = sequence_number.replace('FT', 'NC')
                 picking.write({
                     'invoice_number': sequence_number,
                     'invoice_date': fields.Datetime.now(),
                     })
         return True
-                
+
     @api.multi
     def assign_ddt_number(self):
         ''' Assign DDt number depend on fiscal position and parameter in
@@ -174,12 +174,12 @@ class StockPicking(models.Model):
             # Update Document data (DDT or FC)
             picking.write({
                 'ddt_number': counter,
-                'ddt_date': fields.Datetime.now(),    
+                'ddt_date': fields.Datetime.now(),
                 })
         return True
 
     # -------------------------------------------------------------------------
-    # Columns: 
+    # Columns:
     # -------------------------------------------------------------------------
     stock_mode = fields.Selection([
         ('in', 'Refund document'),
@@ -187,14 +187,15 @@ class StockPicking(models.Model):
         ], string='Stock mode', default='out')
     refund_origin_id = fields.Many2one(
         'stock.picking', string='Back document refunded')
-        
+
     ddt_number = fields.Char('Document number')
     ddt_date = fields.Datetime('Document date')
-    invoice_number = fields.Char('Invoice number') 
+    invoice_number = fields.Char('Invoice number')
     invoice_date = fields.Datetime('Invoice date')
     invoice_filename = fields.Char(
         'Invoice filename', size=80,
-        help='Invoice filename for PDF report') 
+        help='Invoice filename for PDF report')
+    invoice_json = fields.Text('Invoice JSON')
     carriage_condition_id = fields.Many2one(
         'stock.picking.carriage_condition', string='Carriage Condition')
     goods_description_id = fields.Many2one(
@@ -210,15 +211,16 @@ class StockPicking(models.Model):
     parcels = fields.Integer('Parcels')
     weight = fields.Float('Weight')
 
+
 class StockPicking(models.Model):
     ''' Add extra fields to keep picking as DDT or Invoice:
     '''
     _inherit = 'stock.picking'
 
     # -------------------------------------------------------------------------
-    # Columns: 
+    # Columns:
     # -------------------------------------------------------------------------
     refunded_ids = fields.One2many(
-        'stock.picking', 'refund_origin_id', 
+        'stock.picking', 'refund_origin_id',
         string='Document refunded this BC')
 

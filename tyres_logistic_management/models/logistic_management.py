@@ -1481,6 +1481,7 @@ class StockPicking(models.Model):
                     'invoice_number': invoice_number,
                     'invoice_date': invoice_date,
                     'invoice_filename': invoice_filename,  # PDF name
+                    'invoice_json': json_dumps,
                 })
 
                 # Extract PDF file and save in correct folder:
