@@ -1330,6 +1330,7 @@ class StockPicking(models.Model):
                 'email': partner.email or '',
                 'certifiedMail': partner.fatturapa_pec or '',
                 'ipaCode': partner.fatturapa_unique_code or '',  # SDI code
+                # 'naturalPerson': partner.company_type != 'company',
                 }
 
         def get_address_block(partner):
@@ -1398,6 +1399,13 @@ class StockPicking(models.Model):
             vat_included = True  # TODO manage
             agent_code = False
 
+        # Extract always VAT from price:
+        if vat_included:
+             remove_vat = True
+         else:
+             remove_vat = False
+         vat_included = False
+
         invoice_call = {
             'documentNo': '',  # Empty, returned from procedure
             # 'documentDate': '',  # Empty, returned from procedure
@@ -1435,12 +1443,19 @@ class StockPicking(models.Model):
             else:
                 row_mode = 'M'
 
+            vat = line.tax_id[0].amount
+            if vat and remove_vat:
+                rate = (100.0 + vat) / 100.0
+                unit_value = line.price_unit / rate
+            else:
+                unit_value = line.price_unit
+
             invoice_call['details'].append({
                 'type': row_mode,
                 'sku': product.default_code or '',
                 'description': move.name or '',
                 'quantity': move.product_uom_qty,
-                'unitValue': line.price_unit,
+                'unitValue': unit_value,
                 'taxCode': line.tax_id[0].account_ref or '',
                 'note': '',  # TODO comment
             })
