@@ -1396,15 +1396,12 @@ class StockPicking(models.Model):
                 team_id.channel_ref
         except:
             _logger.error('Missing fields!')
-            vat_included = True  # TODO manage
+            vat_included = True  # TODO manage error
             agent_code = False
 
         # Extract always VAT from price:
-        if vat_included:
-             remove_vat = True
-         else:
-             remove_vat = False
-         vat_included = False
+        remove_vat = vat_included
+        vat_included = False
 
         invoice_call = {
             'documentNo': '',  # Empty, returned from procedure
