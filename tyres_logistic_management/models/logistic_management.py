@@ -1443,7 +1443,7 @@ class StockPicking(models.Model):
             vat = line.tax_id[0].amount
             if vat and remove_vat:
                 rate = (100.0 + vat) / 100.0
-                unit_value = line.price_unit / rate
+                unit_value = round(line.price_unit / rate, 3)
             else:
                 unit_value = line.price_unit
 
