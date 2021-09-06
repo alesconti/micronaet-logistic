@@ -1330,7 +1330,7 @@ class StockPicking(models.Model):
                 'email': partner.email or '',
                 'certifiedMail': partner.fatturapa_pec or '',
                 'ipaCode': partner.fatturapa_unique_code or '',  # SDI code
-                # 'naturalPerson': partner.company_type != 'company',
+                'NaturalPerson': partner.company_type == 'person',
                 }
 
         def get_address_block(partner):
