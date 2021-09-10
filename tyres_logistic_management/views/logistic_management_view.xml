@@ -137,7 +137,7 @@
                     </div>
                 </xpath>
                 <field name="type" position="after">
-                    <field name="service_type" attrs="{'required': [('type', '=', 'service')], 'invisible': [('type', '!=', 'service')]}"/>
+                    <field name="service_type_account" attrs="{'required': [('type', '=', 'service')], 'invisible': [('type', '!=', 'service')]}"/>
                 </field>
             </field>
          </record>

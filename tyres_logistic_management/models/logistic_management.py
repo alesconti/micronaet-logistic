@@ -211,7 +211,7 @@ class ProductTemplate(models.Model):
     name_extended = fields.Char(
         compute='_get_name_extended_full', string='Extended name')
     not_in_invoice = fields.Boolean('Not in invoice')
-    service_type = fields.Selection([
+    service_type_account = fields.Selection([
         ('S', 'Servizio generico'),
         ('T', 'Voce di trasporto'),
         ('A', 'Prestazioni accesorie'),
@@ -1441,7 +1441,7 @@ class StockPicking(models.Model):
                     continue
 
             if product.type == 'service':  # No D mode
-                row_mode = 'S'
+                row_mode = product.service_type_account
             else:
                 row_mode = 'M'
 
@@ -3603,7 +3603,7 @@ class SaleOrderLine(models.Model):
             # Create details:
             # -----------------------------------------------------------------
             purchase_id = False
-            #is_company_partner = (supplier == company.partner_id)
+            # is_company_partner = (supplier == company.partner_id)
             for splitted in purchase_db[key]:
                 product = splitted.line_id.product_id
                 line = splitted.line_id
