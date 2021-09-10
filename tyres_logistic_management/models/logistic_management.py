@@ -211,11 +211,11 @@ class ProductTemplate(models.Model):
     name_extended = fields.Char(
         compute='_get_name_extended_full', string='Extended name')
     not_in_invoice = fields.Boolean('Not in invoice')
-    service_type_account = fields.Selection([
-        ('S', 'Servizio generico'),
-        ('T', 'Voce di trasporto'),
-        ('A', 'Prestazioni accesorie'),
-    ], 'Tipo di servizio')
+    #service_type_account = fields.Selection([
+    #    ('S', 'Servizio generico'),
+    #    ('T', 'Voce di trasporto'),
+    #    ('A', 'Prestazioni accesorie'),
+    #], 'Tipo di servizio', default='S')
 
 
 class PurchaseOrder(models.Model):
@@ -1441,7 +1441,8 @@ class StockPicking(models.Model):
                     continue
 
             if product.type == 'service':  # No D mode
-                row_mode = product.service_type_account
+                # row_mode = product.service_type_account
+                row_mode = 'S'
             else:
                 row_mode = 'M'
 
