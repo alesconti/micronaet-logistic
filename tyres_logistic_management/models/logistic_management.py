@@ -1441,7 +1441,7 @@ class StockPicking(models.Model):
                     continue
 
             if product.type == 'service':  # No D mode
-                row_mode = product.service_type_account  # 'S'
+                row_mode = product.service_type_account or 'S'
             else:
                 row_mode = 'M'
 
