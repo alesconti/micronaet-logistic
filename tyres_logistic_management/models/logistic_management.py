@@ -211,6 +211,11 @@ class ProductTemplate(models.Model):
     name_extended = fields.Char(
         compute='_get_name_extended_full', string='Extended name')
     not_in_invoice = fields.Boolean('Not in invoice')
+    service_type = fields.Selection([
+        ('S', 'Servizio generico'),
+        ('T', 'Voce di trasporto'),
+        ('A', 'Prestazioni accesorie'),
+    ], 'Tipo di servizio')
 
 
 class PurchaseOrder(models.Model):

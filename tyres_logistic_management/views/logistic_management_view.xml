@@ -136,6 +136,9 @@
                         <label for="is_expence"/>
                     </div>
                 </xpath>
+                <field name="type" position="after">
+                    <field name="service_type" attrs="{'required': [('type', '=', 'service')], 'invisible': [('type', '!=', 'service')]}"/>
+                </field>
             </field>
          </record>
         <record model="ir.ui.view" id="view_product_template_account_ref_form">
