@@ -1500,9 +1500,8 @@ class StockPicking(models.Model):
                     'invoice_filename': invoice_filename,  # PDF name
                     'invoice_json': json_dumps,
                 })
-
                 # Extract PDF file and save in correct folder:
-                # picking.api_save_invoice_pdf()
+                picking.api_save_invoice_pdf()
 
                 return True
             elif reply.status_code == 401:  # Token error
@@ -1570,8 +1569,7 @@ class StockPicking(models.Model):
             if reply.ok:
                 # Generate filename:
                 invoice_filename = picking.invoice_filename
-                fullname = os.path.join(
-                    report_path, invoice_filename)
+                fullname = os.path.join(report_path, invoice_filename)
                 with open(fullname, 'wb') as f:
                     f.write(reply.content)
                 _logger.warning('Saved PDF document: %s' % fullname)
