@@ -31,7 +31,7 @@ import requests
 import urllib
 import base64
 import json
-from requests.utils import requote_uri
+from requests.utils import requote_uri  # todo remove?
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
@@ -1546,10 +1546,9 @@ class StockPicking(models.Model):
         # A. Call with invoice reference:
         # location = '%s/Invoice/%s/%s/pdf' % (
         #    url, invoice_year, invoice_number)
-        # urllib.quote_plus
 
         # B. Call with order reference
-        order_number = requote_uri(picking.sale_order_id.name)
+        order_number = urllib.parse.quote_plus(picking.sale_order_id.name)
         if not order_number:
             _logger.error('Picking without order linked, no invoice!')
             return False
@@ -1623,7 +1622,7 @@ class StockPicking(models.Model):
 
         # B. Call with order reference
         # order_number = requote_uri(picking.sale_order_id.name)
-        order_number = urllib.quote_plus(picking.sale_order_id.name)
+        order_number = urllib.parse.quote_plus(picking.sale_order_id.name)
         if not order_number:
             _logger.error('Picking without order linked, no invoice!')
             return False
