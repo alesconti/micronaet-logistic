@@ -1548,7 +1548,7 @@ class StockPicking(models.Model):
         #    url, invoice_year, invoice_number)
 
         # B. Call with order reference
-        order_number = picking.sale_order_id.name
+        order_number = requote_uri(picking.sale_order_id.name)
         if not order_number:
             _logger.error('Picking without order linked, no invoice!')
             return False
@@ -1564,6 +1564,7 @@ class StockPicking(models.Model):
                 'Content-Type': 'application/json',
             }
             # Get PDF for invoice:
+            _logger.warning('Calling: %s...' % location)
             reply = requests.get(location, headers=header)
 
             if reply.ok:
