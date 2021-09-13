@@ -1622,7 +1622,8 @@ class StockPicking(models.Model):
         # urllib.quote_plus
 
         # B. Call with order reference
-        order_number = requote_uri(picking.sale_order_id.name)
+        # order_number = requote_uri(picking.sale_order_id.name)
+        order_number = urllib.quote_plus(picking.sale_order_id.name)
         if not order_number:
             _logger.error('Picking without order linked, no invoice!')
             return False
