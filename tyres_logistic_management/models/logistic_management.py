@@ -1540,12 +1540,13 @@ class StockPicking(models.Model):
                 'invoice_date': invoice_date,
                 'invoice_filename': invoice_filename,
             })
-            invoice_number = requote_uri(invoice_number)
-            invoice_year = (invoice_date or '')[:4]
+            # invoice_number = requote_uri(invoice_number)
+            # invoice_year = (invoice_date or '')[:4]
 
         # A. Call with invoice reference:
         # location = '%s/Invoice/%s/%s/pdf' % (
         #    url, invoice_year, invoice_number)
+        # urllib.quote_plus
 
         # B. Call with order reference
         order_number = requote_uri(picking.sale_order_id.name)
