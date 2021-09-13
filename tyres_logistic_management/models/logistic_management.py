@@ -1502,7 +1502,8 @@ class StockPicking(models.Model):
                 })
 
                 # Extract PDF file and save in correct folder:
-                picking.api_save_invoice_pdf()
+                # picking.api_save_invoice_pdf()
+
                 return True
             elif reply.status_code == 401:  # Token error
                 token = company.api_get_token()
@@ -1542,8 +1543,17 @@ class StockPicking(models.Model):
             invoice_number = requote_uri(invoice_number)
             invoice_year = (invoice_date or '')[:4]
 
-        location = '%s/Invoice/%s/%s/pdf' % (
-            url, invoice_year, invoice_number)
+        # A. Call with invoice reference:
+        # location = '%s/Invoice/%s/%s/pdf' % (
+        #    url, invoice_year, invoice_number)
+
+        # B. Call with order reference
+        order_number = picking.sale_order_id.name
+        if not order_number:
+            _logger.error('Picking without order linked, no invoice!')
+            return False
+        location = '%s/Invoice/ByReference/%s/pdf' % (
+            url, order_number)
 
         loop_times = 1
         while loop_times <= 2:
