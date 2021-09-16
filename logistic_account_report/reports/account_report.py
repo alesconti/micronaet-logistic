@@ -77,6 +77,8 @@ class StockPicking(models.AbstractModel):
     def extract_account_invoice_report(self):
         """ Extract PDF report
         """
+        # A. Generate PDF from picking:
+        picking = self
         folder = self.get_default_folder_invoice_path()
 
         # TODO Sanitize file name:
@@ -91,6 +93,19 @@ class StockPicking(models.AbstractModel):
         f_pdf.write(pdf[0])
         f_pdf.close()
         _logger.info('Extract Invoice: %s' % fullname)
+
+        # B. Generate Symlink procedure:
+        companys = self.env['res.company'].search([])
+        history_folder = companys[0]._logistic_folder('invoice', 'history')
+        original_base = os.path.basename(fullname)
+        date = picking.scheduled_date
+        month_path = os.path.join(history_folder, date[:4], date[5:7])
+        os.system('mkdir -p %s' % month_path)
+        symlink = os.system('ln -s "%s" "%s"' % (
+            fullname,
+            os.path.join(month_path, original_base)
+            ))
+
         return fullname
 
 

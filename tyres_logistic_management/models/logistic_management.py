@@ -1502,6 +1502,7 @@ class StockPicking(models.Model):
                 })
                 # Extract PDF file and save in correct folder:
                 picking.api_save_invoice_pdf()
+                # todo 13/09 da togliere quando Cedrik lo genera automatic.
 
                 return True
             elif reply.status_code == 401:  # Token error

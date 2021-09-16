@@ -911,10 +911,10 @@ class StockPicking(models.Model):
         """ Confirm draft picking documents
         """
         # ---------------------------------------------------------------------
-        # Confirm pickign for DDT and Invoice:
+        # Confirm picking for DDT and Invoice:
         # ---------------------------------------------------------------------
-        ddt_ids = [] # For extra operation after
-        invoice_ids = [] # For extra operation after
+        ddt_ids = []  # For extra operation after
+        invoice_ids = []  # For extra operation after
         for picking in self:
             partner = picking.partner_id
             order = picking.sale_order_id
@@ -978,7 +978,7 @@ class StockPicking(models.Model):
 
             # B. Supplier folder:
             # TODO sanitize name!
-            if supplier_name: # NC no Supplier link!
+            if supplier_name:  # NC no Supplier link!
                 supplier_path = os.path.join(supplier_folder, supplier_name)
                 os.system('mkdir -p %s' % supplier_path)
                 symlink = os.system('ln -s "%s" "%s"' % (
@@ -1011,21 +1011,24 @@ class StockPicking(models.Model):
         history_folder = companys[0]._logistic_folder('invoice', 'history')
 
         for picking in self.browse(invoice_ids):
-            # -----------------------------------------------------------------
+            # =================================================================
             #                 Invoice Extract:
             # -----------------------------------------------------------------
+            # 16/09/2021 No more printed from now:
+
             # 1. Invoice Extract procedure:
-            original_fullname = picking.extract_account_invoice_report()
+            # original_fullname = picking.extract_account_invoice_report()
 
             # 2. Invoice Symlink procedure:
-            original_base = os.path.basename(original_fullname)
-            date = picking.scheduled_date
-            month_path = os.path.join(history_folder, date[:4], date[5:7])
-            os.system('mkdir -p %s' % month_path)
-            symlink = os.system('ln -s "%s" "%s"' % (
-                original_fullname,
-                os.path.join(month_path, original_base)
-                ))
+            # original_base = os.path.basename(original_fullname)
+            # date = picking.scheduled_date
+            # month_path = os.path.join(history_folder, date[:4], date[5:7])
+            # os.system('mkdir -p %s' % month_path)
+            # symlink = os.system('ln -s "%s" "%s"' % (
+            #    original_fullname,
+            #    os.path.join(month_path, original_base)
+            #    ))
+            # =================================================================
 
             # 3. Invoice Print procedure:
             # TODO
