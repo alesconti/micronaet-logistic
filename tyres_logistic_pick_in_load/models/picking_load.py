@@ -1092,7 +1092,7 @@ class PurchaseOrderLine(models.Model):
             'views': [
                 (tree_id, 'tree'),
                 (False, 'form'),
-                # (search_id, 'search'),
+                (search_id, 'search'),
                 ],
             'domain': domain,
             'context': context,
