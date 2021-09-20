@@ -417,7 +417,7 @@
             <field name="res_model">purchase.order.line</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree</field>
-            <field name="view_id" ref="tyres_logistic_pick_in_load.view_delivery_selection_tree"/>
+            <field name="view_id" ref="view_delivery_selection_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_search"/>
             <field name="context">{'open_mode': 'refund'}</field>
             <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
@@ -795,7 +795,7 @@
                  />
                 <menuitem
                  parent="menu_logistic_delivery_management_root"
-                 id="menu_purchase_selection_order_line_resi"
+                 id="menu_purchase_selection_order_line_refund"
                  action="action_purchase_selection_order_line_refund_fast"
                  sequence="6"
                  />
