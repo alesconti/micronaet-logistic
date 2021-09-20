@@ -1060,7 +1060,7 @@ class PurchaseOrderLine(models.Model):
 
         open_mode = context.get('open_mode')
         if open_mode == 'refund':
-            _logger.warning('View in refund mode')
+            _logger.warning('\n\n\n\nView in refund mode')
             domain = [
                 ('dropship_manage', '=', False),
                 ('check_status', '!=', 'done'),
@@ -1071,7 +1071,7 @@ class PurchaseOrderLine(models.Model):
                 ('user_select_id', '=', False),
             ]
         else:  # 'office', 'workshop'
-            _logger.warning('View in office / workshop mode')
+            _logger.warning('\n\n\n\nView in office / workshop mode')
             domain = [
                 ('dropship_manage', '=', False),
                 ('check_status', '!=', 'done'),
