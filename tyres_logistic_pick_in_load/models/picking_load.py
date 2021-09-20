@@ -1070,8 +1070,8 @@ class PurchaseOrderLine(models.Model):
                 '|', ('user_select_id', '=', uid),
                 ('user_select_id', '=', False),
             ]
-        elif open_mode = 'workshop':
-            _logger.warning('\n\n\n\nView in office mode')
+        elif open_mode == 'workshop':
+            _logger.warning('View in office mode')
             domain = [
                 ('dropship_manage', '=', False),
                 ('check_status', '!=', 'done'),
@@ -1082,7 +1082,7 @@ class PurchaseOrderLine(models.Model):
                 ('user_select_id', '=', False),
             ]
         else:  # 'office'
-            _logger.warning('\n\n\n\nView in office mode')
+            _logger.warning('View in office mode')
             domain = [
                 ('dropship_manage', '=', False),
                 ('check_status', '!=', 'done'),
