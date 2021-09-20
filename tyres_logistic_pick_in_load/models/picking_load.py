@@ -1095,7 +1095,7 @@ class PurchaseOrderLine(models.Model):
                 (search_id, 'search'),
                 ],
             'domain': domain,
-            'context': context,
+            'context': ctx,
             'target': 'main',  # 'target': 'current', # 'new'
             'nodestroy': False,
             }
