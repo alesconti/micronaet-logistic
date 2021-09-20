@@ -664,7 +664,7 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     # Function fields:
     # -------------------------------------------------------------------------
-    @api.depends('load_line_ids')
+    @api.depends('load_line_ids', 'load_line_ids.product_uom_qty')
     @api.multi
     def _get_logistic_status_field(self):
         """ Manage all data for logistic situation in sale order:
