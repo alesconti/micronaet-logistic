@@ -24,6 +24,7 @@
 import os
 import pdb
 import sys
+import time
 import logging
 import odoo
 import shutil
@@ -669,7 +670,7 @@ class PurchaseOrderLine(models.Model):
     def _get_logistic_status_field(self):
         """ Manage all data for logistic situation in sale order:
         """
-        _logger.warning('Update logistic qty fields now')
+        _logger.warning('Update purchased and delivered qty fields now')
         for line in self:
             logistic_delivered_qty = 0.0
             for move in line.load_line_ids:
