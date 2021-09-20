@@ -664,7 +664,7 @@ class PurchaseOrderLine(models.Model):
     # -------------------------------------------------------------------------
     # Function fields:
     # -------------------------------------------------------------------------
-    @api.depends('load_line_ids', 'load_line_ids.product_uom_qty')
+    # @api.depends('load_line_ids', 'load_line_ids.product_uom_qty')
     @api.multi
     def _get_logistic_status_field(self):
         """ Manage all data for logistic situation in sale order:
@@ -687,13 +687,13 @@ class PurchaseOrderLine(models.Model):
         'Delivered qty', digits=dp.get_precision('Product Price'),
         help='Qty delivered with load documents',
         readonly=True, compute='_get_logistic_status_field', multi=True,
-        store=True,
+        store=False,
         )
     logistic_undelivered_qty = fields.Float(
         'Undelivered qty', digits=dp.get_precision('Product Price'),
         help='Qty undelivered, remain to load',
         readonly=True, compute='_get_logistic_status_field', multi=True,
-        store=True,
+        store=False,
         )
 
     # TODO logistic state?
