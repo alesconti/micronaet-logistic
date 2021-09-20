@@ -405,7 +405,7 @@
             <field name="search_view_id" ref="view_delivery_selection_search"/>
             <field name="context">{'internal_view': True, 'search_default_no_refund_selection': True}</field>
             <field name="domain">[('dropship_manage', '=', False), ('check_status', '!=', 'done'), ('order_id.logistic_state', '=', 'confirmed'),
-                '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('internal_stock', '=', True)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), TODO ('delivery_id','=',False), -->
+                '|', ('user_select_id', '=', uid), ('user_select_id', '=', False), ('internal_stock', '=', False)]</field><!--('logistic_delivered_qty', '&lt;', 'product_qty'), TODO ('delivery_id','=',False), -->
         </record>
 
         <record model="ir.actions.act_window" id="action_stock_move_selection_order_to_link_line">
