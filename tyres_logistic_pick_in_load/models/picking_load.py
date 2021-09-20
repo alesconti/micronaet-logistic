@@ -1051,7 +1051,7 @@ class PurchaseOrderLine(models.Model):
         if field_name:
             ctx = context.copy()
             ctx['search_default_%s' % field_name] = field_value
-        _logger.info(ctx)
+        _logger.info(context)
 
         tree_id = self.env.ref(
             'tyres_logistic_pick_in_load.view_delivery_selection_tree').id
@@ -1095,7 +1095,7 @@ class PurchaseOrderLine(models.Model):
                 # (search_id, 'search'),
                 ],
             'domain': domain,
-            'context': ctx,
+            'context': context,
             'target': 'main',  # 'target': 'current', # 'new'
             'nodestroy': False,
             }
