@@ -1081,7 +1081,7 @@ class PurchaseOrderLine(models.Model):
                 ('user_select_id', '=', False),
             ]
 
-        return {
+        action_data = {
             'type': 'ir.actions.act_window',
             'name': _('Filter applied: %s' % name),
             'view_type': 'form',
@@ -1099,6 +1099,8 @@ class PurchaseOrderLine(models.Model):
             'target': 'main',  # 'target': 'current', # 'new'
             'nodestroy': False,
             }
+        pdb.set_trace()
+        return action_data
 
     @api.multi
     def clean_fast_filter(self):
