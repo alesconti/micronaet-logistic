@@ -1041,9 +1041,9 @@ class PurchaseOrderLine(models.Model):
             for key in context:
                 # Remove all previous search default:
                 if key.startswith('search_default_'):
-                    continue # Cannot remove!
+                    continue  # Cannot remove!
                 ctx[key] = context[key]
-            if command_clean_before: # clean yet now!
+            if command_clean_before:  # clean yet now!
                 ctx['command_next_clean'] = False  # yet clean
             else:
                 ctx['command_next_clean'] = True  # clean all next filter
@@ -1058,6 +1058,29 @@ class PurchaseOrderLine(models.Model):
         search_id = self.env.ref(
             'tyres_logistic_pick_in_load.view_delivery_selection_search').id
 
+        open_mode = context.get('open_mode')
+        if open_mode == 'refund':
+            _logger.warning('View in refund mode')
+            domain = [
+                ('dropship_manage', '=', False),
+                ('check_status', '!=', 'done'),
+                ('logistic_source', '=', 'refund'),
+                ('order_id.logistic_state', '=', 'confirmed'),
+                ('internal_stock', '=', False),
+                '|', ('user_select_id', '=', uid),
+                ('user_select_id', '=', False),
+            ]
+        else:  # 'office', 'workshop'
+            _logger.warning('View in office / workshop mode')
+            domain = [
+                ('dropship_manage', '=', False),
+                ('check_status', '!=', 'done'),
+                ('order_id.logistic_state', '=', 'confirmed'),
+                ('internal_stock', '=', False),
+                '|', ('user_select_id', '=', uid),
+                ('user_select_id', '=', False),
+            ]
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Filter applied: %s' % name),
@@ -1071,16 +1094,7 @@ class PurchaseOrderLine(models.Model):
                 (False, 'form'),
                 # (search_id, 'search'),
                 ],
-            'domain': [
-                ('dropship_manage', '=', False),
-                ('check_status', '!=', 'done'),
-                # ('delivery_id', '=', False),  # TODO change or remove?!?
-                ('order_id.logistic_state', '=', 'confirmed'),
-                '|',
-                ('user_select_id', '=', uid),
-                ('user_select_id', '=', False),
-                ('internal_stock', '=', False),
-                ],
+            'domain': domain,
             'context': ctx,
             'target': 'main',  # 'target': 'current', # 'new'
             'nodestroy': False,
