@@ -311,7 +311,6 @@
 
                     <filter name="refund_selection" string="Solo resi" domain="[('logistic_source', '=', 'refund')]"/>
                     <filter name="no_refund_selection" string="Senza resi" domain="[('logistic_source', '!=', 'refund')]"/><!--was removed-->
-                    <!--<filter name="state_draft" string="Draft state" domain="[('state','=','draft')]"/>-->
                     <group expand="0" string="Group By...">
 
                         <filter name="group_larghezza" string="Width" context="{'group_by': 'larghezza'}"/>
@@ -323,8 +322,6 @@
                         <filter name="group_supplier" string="Supplier" context="{'group_by': 'order_supplier_id'}"/>
 
                         <filter name="group_create" string="Create" context="{'group_by': 'create_date:day'}"/>
-
-                        <!--<filter string="Status" context="{'group_by': 'state'}" />-->
                     </group>
                 </search>
             </field>

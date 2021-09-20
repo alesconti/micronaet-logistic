@@ -1099,7 +1099,7 @@ class PurchaseOrderLine(models.Model):
             'target': 'main',  # 'target': 'current', # 'new'
             'nodestroy': False,
             }
-        pdb.set_trace()
+        _logger.warning('Filter: %s' % (action_data, ))
         return action_data
 
     @api.multi
