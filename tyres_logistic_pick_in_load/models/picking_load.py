@@ -95,6 +95,11 @@ class PurchaseOrderLine(models.Model):
         'Ord. forn.', related='order_id.date_order')
     customer_order_date = fields.Datetime(
         'Ord. cl.', related='logistic_sale_id.order_id.date_order')
+    internal_stock = fields.Boolean(
+        'Ordine interno',
+        related='order_id.partner_id.internal_stock',
+        help='Usato per velocizzare il test nella videata di arrivo merce',
+        store=True)
 
 
 class SaleOrderPrintResult(models.TransientModel):
@@ -1074,7 +1079,7 @@ class PurchaseOrderLine(models.Model):
                 '|',
                 ('user_select_id', '=', uid),
                 ('user_select_id', '=', False),
-                ('order_id.partner_id.internal_stock', '=', False),
+                ('internal_stock', '=', False),
                 ],
             'context': ctx,
             'target': 'main',  # 'target': 'current', # 'new'
@@ -1155,10 +1160,10 @@ class PurchaseOrderLine(models.Model):
         # Search selection line for this user:
         # ---------------------------------------------------------------------
         lines = self.search([
-            ('user_select_id', '=', self.env.uid), # This user
-            ('logistic_delivered_manual', '>', 0), # With quantity insert
-            ('order_id.partner_id.internal_stock', '=', False), # No internal
-            ('check_status', '!=', 'done'), # Market previously
+            ('user_select_id', '=', self.env.uid),  # This user
+            ('logistic_delivered_manual', '>', 0),  # With quantity insert
+            ('internal_stock', '=', False),  # No internal
+            ('check_status', '!=', 'done'),  # Market previously
             ])
 
         if not lines:

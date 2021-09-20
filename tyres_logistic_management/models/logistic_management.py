@@ -647,14 +647,14 @@ class PurchaseOrderLine(models.Model):
                 # Purchase order line line:
                 'logistic_purchase_id': line.id,
 
-                #'purchase_line_id': load_line.id, # XXX needed?
-                #'logistic_quant_id': quant.id, # XXX no quants here
+                # 'purchase_line_id': load_line.id, # XXX needed?
+                # 'logistic_quant_id': quant.id, # XXX no quants here
 
                 # group_id
                 # reference'
                 # sale_line_id
                 # procure_method,
-                #'product_qty': select_qty,
+                # 'product_qty': select_qty,
                 })
 
         # ---------------------------------------------------------------------
