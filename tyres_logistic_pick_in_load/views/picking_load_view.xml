@@ -303,10 +303,14 @@
                     <field name="raggio" />
 
                     <filter name="my_selection" string="Current selected" domain="[('user_select_id', '=', uid), ('logistic_delivered_manual','&gt;',0)]"/><!--TODO Change ('delivery_id','=',False), -->
+                    <filter name="gmp" string="GMP ITALIA" domain="[('order_supplier_name', '=', 'GMP ITALIA')]"/>
+                    <filter name="mak" string="MAK" domain="[('order_supplier_name', '=', 'MAK')]"/>
+                    <filter name="ozr" string="OZ RACING" domain="[('order_supplier_name', '=', 'OZ RACING')]"/>
+                    <filter name="pirelli" string="PIRELLI" domain="[('order_supplier_name', '=', 'PIRELLI')]"/>
+                    <filter name="tagliabue" string="TAGLIABUE" domain="[('order_supplier_name', '=', 'TAGLIABUE')]"/>
 
                     <filter name="refund_selection" string="Solo resi" domain="[('logistic_source', '=', 'refund')]"/>
-                    <filter name="no_refund_selection" string="Senza resi" domain="[('logistic_source', '!=', 'refund')]"/>
-
+                    <filter name="no_refund_selection" string="Senza resi" domain="[('logistic_source', '!=', 'refund')]"/><!--was removed-->
                     <!--<filter name="state_draft" string="Draft state" domain="[('state','=','draft')]"/>-->
                     <group expand="0" string="Group By...">
 
