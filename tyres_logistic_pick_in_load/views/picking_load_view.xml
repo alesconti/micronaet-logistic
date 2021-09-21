@@ -396,7 +396,7 @@
             <field name="context">{'open_mode': 'workshop'}</field>
             <field name="domain">[('dropship_manage', '=', False), ('check_status', '!=', 'done'), ('logistic_source', '!=', 'refund'),
                 ('order_id.logistic_state', '=', 'confirmed'),('internal_stock', '=', False),
-                '|', ('user_select_id', '=', uid), ('user_select_id', '=', False)]</field>
+                ('user_select_id', 'in', (False, uid))]</field>
         </record>
         <record model="ir.actions.act_window" id="action_purchase_selection_order_internal_line_fast">
             <field name="name">Consegne in arrivo (uff.)</field>
@@ -405,9 +405,9 @@
             <field name="view_mode">tree</field>
             <field name="view_id" ref="view_delivery_selection_tree"/>
             <field name="search_view_id" ref="view_delivery_selection_search"/>
-            <field name="context">{'open_mode': 'office', 'internal_view': True, 'search_default_no_refund_selection': True}</field>
+            <field name="context">{'open_mode': 'office', 'internal_view': True}</field>
             <field name="domain">[('dropship_manage', '=', False), ('check_status', '!=', 'done'), ('order_id.logistic_state', '=', 'confirmed'),
-                ('internal_stock', '=', False),'|', ('user_select_id', '=', uid), ('user_select_id', '=', False)]</field>
+                ('logistic_source', '!=', 'refund'),('internal_stock', '=', False),('user_select_id', 'in', (False, uid))]</field>
         </record>
         <record model="ir.actions.act_window" id="action_purchase_selection_order_line_refund_fast">
             <field name="name">Resi (in arrivo)</field>
@@ -419,7 +419,7 @@
             <field name="context">{'open_mode': 'refund'}</field>
             <!--<field name="context">{'form_view_ref': 'logistic_pick_in_load.view_delivery_selection_form'}</field>-->
             <field name="domain">[('dropship_manage', '=', False), ('check_status', '!=', 'done'),('logistic_source', '=', 'refund'),
-                ('order_id.logistic_state', '=', 'confirmed'),('internal_stock', '=', False),'|', ('user_select_id', '=', uid),('user_select_id', '=', False),
+                ('order_id.logistic_state', '=', 'confirmed'),('internal_stock', '=', False),('user_select_id', 'in', (False, uid)),
                 ]</field>
         </record>
 

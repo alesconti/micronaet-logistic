@@ -1067,8 +1067,7 @@ class PurchaseOrderLine(models.Model):
                 ('logistic_source', '=', 'refund'),
                 ('order_id.logistic_state', '=', 'confirmed'),
                 ('internal_stock', '=', False),
-                '|', ('user_select_id', '=', uid),
-                ('user_select_id', '=', False),
+                ('user_select_id', 'in', (False, uid)),
             ]
         elif open_mode == 'workshop':
             _logger.warning('View in office mode')
@@ -1078,18 +1077,17 @@ class PurchaseOrderLine(models.Model):
                 ('logistic_source', '!=', 'refund'),
                 ('order_id.logistic_state', '=', 'confirmed'),
                 ('internal_stock', '=', False),
-                '|', ('user_select_id', '=', uid),
-                ('user_select_id', '=', False),
+                ('user_select_id', 'in', (False, uid)),
             ]
         else:  # 'office'
             _logger.warning('View in office mode')
             domain = [
                 ('dropship_manage', '=', False),
                 ('check_status', '!=', 'done'),
+                ('logistic_source', '!=', 'refund'),
                 ('order_id.logistic_state', '=', 'confirmed'),
                 ('internal_stock', '=', False),
-                '|', ('user_select_id', '=', uid),
-                ('user_select_id', '=', False),
+                ('user_select_id', 'in', (False, uid)),
             ]
 
         action_data = {
