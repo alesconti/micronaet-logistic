@@ -156,19 +156,17 @@
 
                             <!--                             Extra Page for report:                                  -->
                             <p style="page-break-after:always;" />
-                            <table class="width: 100%; font-size: 14px;">
+                            <table class="width: 100%; font-size: 10px;">
                                 <tr>
                                     <td colspan="2">
                                         <img t-att-src="'http://localhost:28069/tyres_free_export_report/static/src/img/header.png'" style="max-width: 100%;"/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="width: 50%; font-family: times, serif; font-size:10pt;">
-                                        <p class="width: 50%; font-family: times, serif; font-size:10pt;">
+                                    <td class="width: 50%;">
                                         <input type="checkbox" /> 1. The vehicle is 25 or more years old or the equipment item was manufactured on a date when no<br/>
                                             applicable Federal Motor Vehicle Safety Standard or Theft Prevention Standard was in effect.<br/>
                                             Date of manufacture: ____________________[591.5(i)]<br/><br/>
-                                        </p>
                                         <input type="checkbox" checked="unchecked"/> 2A. The vehicle or equipment item conforms to all applicable Federal Motor Vehicle Safety Standards<br/>
                                             (or the vehicle does not conform solely because readily attachable equipment items that will be<br/>
                                             attached to it before it is offered for sale to the first purchaser for purposes other than resale are not<br/>
@@ -236,7 +234,7 @@
 
                                             <b>Attachment:</b> Copy of Official Orders.
                                     </td>
-                                    <td class="width: 50%; font-family: times, serif; font-size:10pt;">
+                                    <td class="width: 50%;">
                                         <input type="checkbox" /> 7.  The vehicle or equipment does not conform to all applicable Federal Motor Vehicle Safety and<br/>
                                             Bumper Standards, but is being imported solely for the purpose of research, investigations,<br/>
                                             demonstrations or training, or competitive racing events, and I state that I will comply with the<br/>
