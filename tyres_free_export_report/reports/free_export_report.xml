@@ -156,19 +156,19 @@
 
                             <!--                             Extra Page for report:                                  -->
                             <p style="page-break-after:always;" />
-                            <table class="width: 100%;">
+                            <table class="width: 100%; font-size: 18px;">
                                 <tr>
                                     <td colspan="2">
                                         <img t-att-src="'/tyres_free_export_report/static/src/img/header.png'" height="140"/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <input type="checkbox" checked="unchecked"/> 1. The vehicle is 25 or more years old or the equipment item was manufactured on a date when no
+                                    <td class="width: 50%">
+                                        <input type="checkbox" /> 1. The vehicle is 25 or more years old or the equipment item was manufactured on a date when no
                                             applicable Federal Motor Vehicle Safety Standard or Theft Prevention Standard was in effect.
                                             Date of manufacture: ____________________[591.5(i)]
 
-                                        <i class="fa fa-check" />2A. The vehicle or equipment item conforms to all applicable Federal Motor Vehicle Safety Standards
+                                        <input type="checkbox" checked="unchecked"/> 2A. The vehicle or equipment item conforms to all applicable Federal Motor Vehicle Safety Standards
                                             (or the vehicle does not conform solely because readily attachable equipment items that will be
                                             attached to it before it is offered for sale to the first purchaser for purposes other than resale are not
                                             attached), and Bumper and Theft Prevention Standards, and bears a certification label or tag to that
@@ -235,7 +235,7 @@
 
                                             <b>Attachment:</b> Copy of Official Orders.
                                     </td>
-                                    <td>
+                                    <td class="width: 50%">
                                         7.  The vehicle or equipment does not conform to all applicable Federal Motor Vehicle Safety and
                                             Bumper Standards, but is being imported solely for the purpose of research, investigations,
                                             demonstrations or training, or competitive racing events, and I state that I will comply with the
