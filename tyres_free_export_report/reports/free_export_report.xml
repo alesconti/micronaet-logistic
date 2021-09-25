@@ -162,7 +162,17 @@
                                         <img t-att-src="'/tyres_free_export_report/static/src/img/header.png'" style="max-width: 100%;"/>
                                     </td>
                                 </tr>
-                                <tr>
+                            </table>
+
+                            <div class="row">
+                                <div class="col-xs-6; font-size: 6 px;">
+                                    <input type="checkbox" /> 1. The vehicle is 25 or more years old or the equipment item was manufactured on a date when no applicable Federal Motor Vehicle Safety Standard or Theft Prevention Standard was in effect. Date of manufacture: ____________________[591.5(i)]<br/>
+                                </div>
+                                <div class="col-xs-6">
+                                </div>
+                            </div>
+
+                            <!--    <tr>
                                     <td class="width: 60%; font-size: 6 px;">
                                         <p class="font-size: 6 px;">
                                         <input type="checkbox" /> 1. The vehicle is 25 or more years old or the equipment item was manufactured on a date when no applicable Federal Motor Vehicle Safety Standard or Theft Prevention Standard was in effect. Date of manufacture: ____________________[591.5(i)]<br/>
@@ -227,7 +237,8 @@
 
                                             <b>Attachment:</b> Copy of NHTSA permission letter.
                                     </td>
-                                </tr>
+                                </tr>-->
+                            <table class="width: 100%; font-size: 6 px;">
                                 <tr>
                                     <td colspan="2">
                                         <img src="/tyres_free_export_report/static/src/img/footer.png" style="max-width: 100%;"/>
