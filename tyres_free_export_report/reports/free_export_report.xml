@@ -163,7 +163,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="width: 50%">
+                                    <td class="width: 50%; font-size: 14px;">
                                         <input type="checkbox" /> 1. The vehicle is 25 or more years old or the equipment item was manufactured on a date when no<br/>
                                             applicable Federal Motor Vehicle Safety Standard or Theft Prevention Standard was in effect.<br/>
                                             Date of manufacture: ____________________[591.5(i)]<br/><br/>
@@ -235,7 +235,7 @@
 
                                             <b>Attachment:</b> Copy of Official Orders.
                                     </td>
-                                    <td class="width: 50%">
+                                    <td class="width: 50%; font-size: 14px;">
                                         <input type="checkbox" /> 7.  The vehicle or equipment does not conform to all applicable Federal Motor Vehicle Safety and<br/>
                                             Bumper Standards, but is being imported solely for the purpose of research, investigations,<br/>
                                             demonstrations or training, or competitive racing events, and I state that I will comply with the<br/>
