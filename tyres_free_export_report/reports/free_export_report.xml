@@ -159,7 +159,7 @@
                             <table class="width: 100%; font-size: 14px;">
                                 <tr>
                                     <td colspan="2">
-                                        <img t-att-src="'/tyres_free_export_report/static/src/img/header.png'" style="max-width: 100%;"/>
+                                        <img t-att-src="'http://localhost:28069/tyres_free_export_report/static/src/img/header.png'" style="max-width: 100%;"/>
                                     </td>
                                 </tr>
                                 <tr>
