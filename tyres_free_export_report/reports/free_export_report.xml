@@ -156,7 +156,7 @@
 
                             <!--                             Extra Page for report:                                  -->
                             <p style="page-break-after:always;" />
-                            <table class="width: 100%; font-size: 18px;">
+                            <table class="width: 100%; font-size: 14px;">
                                 <tr>
                                     <td colspan="2">
                                         <img t-att-src="'/tyres_free_export_report/static/src/img/header.png'" style="max-width: 100%;"/>
