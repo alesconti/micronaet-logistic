@@ -165,7 +165,7 @@
                             </table>
 
                             <div class="row">
-                                <div class="col-xs-6; font-size: 6 px;">
+                                <div class="col-sm-6;">
                                     <input type="checkbox" /> 1. The vehicle is 25 or more years old or the equipment item was manufactured on a date when no applicable Federal Motor Vehicle Safety Standard or Theft Prevention Standard was in effect. Date of manufacture: ____________________[591.5(i)]<br/>
                                     <input type="checkbox" checked="unchecked"/> 2A. The vehicle or equipment item conforms to all applicable Federal Motor Vehicle Safety Standards (or the vehicle does not conform solely because readily attachable equipment items that will be attached to it before it is offered for sale to the first purchaser for purposes other than resale are not attached), and Bumper and Theft Prevention Standards, and bears a certification label or tag to that effect permanently affixed by the original manufacturer to the vehicle or affixed by the manufacturer to the equipment item or to its delivery container in accordance with applicable National Highway Traffic Safety Administration (NHTSA) regulations [591.5(b)];<br/>
                                         Attachment: Copy of manufacturer's confirmation letter.<br/>
