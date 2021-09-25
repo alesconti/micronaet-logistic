@@ -155,7 +155,7 @@
                             </div>
 
                             <!--                             Extra Page for report:                                  -->
-                            <p t-if="doc.pagebreak_after" style="page-break-after:always;" />
+                            <p style="page-break-after:always;" />
                             <div class="oe_structure"/>
 
                             <div class="row">
