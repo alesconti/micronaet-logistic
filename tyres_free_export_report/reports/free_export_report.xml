@@ -156,7 +156,7 @@
 
                             <!--                             Extra Page for report:                                  -->
                             <p style="page-break-after:always;" />
-                            <table class="width: 100%; font-size: 8px;">
+                            <table class="width: 100%; font-size: 7px;">
                                 <tr>
                                     <td colspan="2">
                                         <img t-att-src="'/tyres_free_export_report/static/src/img/header.png'" style="max-width: 100%;"/>
@@ -174,7 +174,7 @@
                                             <b>Attachments:</b> Copy of DOT Bond; and<br/>
                                                                 Copy of Contract with a Registered Importer, if applicable.<br/><br/>
 
-                                        <input type="checkbox" /> 4. The vehicle or equipment does not conform to all applicable Federal Motor Vehicle Safety, Bumper and Theft Prevention Standards, but is intended solely for export and is labeled for export on the vehicle or equipment item, and the outside of any container of the vehicle or equipment item bears a label or tag to that effect. [591.5(c)]
+                                        <input type="checkbox" /> 4. The vehicle or equipment does not conform to all applicable Federal Motor Vehicle Safety, Bumper and Theft Prevention Standards, but is intended solely for export and is labeled for export on the vehicle or equipment item, and the outside of any container of the vehicle or equipment item bears a label or tag to that effect. [591.5(c)]<br/>
 
                                         <input type="checkbox" /> 5. The vehicle or equipment does not conform to all applicable Federal Motor Vehicle Safety, Bumper and Theft Prevention Standards, but I am eligible to import it because all of the following conditions exist:<br/>
                                             a. I am a nonresident of the United States and the vehicle is registered in a country other than the United States;<br/>
