@@ -231,7 +231,7 @@
 
                             <table class="width: 100%; font-size: 6 px; border: 1px solid black;">
                                 <tr class="width: 100%; font-size: 6 px; border: 1px solid black;">
-                                    <td class="width: 0%; font-size: 6 px; border: 1px solid black;">
+                                    <td style="width: 50%; font-size: 6 px; border: 1px solid #000000; padding: 0 cm;">
                                         NAME OF IMPORTER (Please type)<br/>
                                     </td>
                                     <td>
@@ -255,7 +255,7 @@
                                     </td>
                                     <td>
                                         DECLARANT'S SIGNATURE
-                                        <img src="/tyres_free_export_report/static/src/img/footer.png" style="max-width: 100%;"/>
+                                        <img src="/tyres_free_export_report/static/src/img/signature.png" style="max-width: 100%;"/>
                                     </td>
                                     <td>
                                         DATE SIGNED<br/>
@@ -265,7 +265,7 @@
 
                                 <tr>
                                     <td colspan="3">
-                                        <img src="/tyres_free_export_report/static/src/img/footer.png" style="max-width: 100%;"/>
+                                        <img src="/tyres_free_export_report/static/src/img/footer_bottom.png" style="max-width: 100%;"/>
                                     </td>
                                 </tr>
                             </table>
