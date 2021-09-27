@@ -233,7 +233,7 @@
                                 <tr>
                                     <td style="vertical-align: top; height: 50px; width: 50%; font-size: 6 px; border: 1px solid black;">
                                         NAME OF IMPORTER (Please type)<br/>
-                                        <span t-esc="o.partner_shipping_id.name"/>
+                                        <span t-esc="o.partner_shipping_id.name or ''"/>
                                     </td>
                                     <td colspan="2" style="vertical-align: top; font-size: 6 px; border: 1px solid black;">
                                         IMPORTER'S ADDRESS (Street, City, State, Zip Code)<br/>
