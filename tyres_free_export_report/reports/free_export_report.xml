@@ -229,7 +229,7 @@
                                 </div>
                             </div>
 
-                            <table style="width: 100%; font-size: 6 px; border: 1px solid black;">
+                            <table style="vertical-align: top; width: 100%; font-size: 6 px; border: 1px solid black;">
                                 <tr>
                                     <td  style="height: 50px; width: 50%; font-size: 6 px; border: 1px solid black;">
                                         NAME OF IMPORTER (Please type)<br/>
