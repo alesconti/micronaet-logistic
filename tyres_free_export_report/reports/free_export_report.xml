@@ -278,10 +278,8 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align: top; font-size: 6 px; border: 1px solid black;">
+                                    <td style="vertical-align: top; font-size: 6 px; border: 1px solid black;" colspan="2">
                                         HS-7 (Rev. 05-2006)
-                                    </td>
-                                    <td style="font-size: 6 px; border: 1px solid black;">
                                     </td>
                                     <td style="font-size: 6 px; border: 1px solid black;align: right;">
                                         OVER<br/>
@@ -289,39 +287,6 @@
                                     </td>
                                 </tr>
                             </table>
-
-                            <!--
-                                US Department<br/>
-                                of Transportation<br/>
-                                <b>National Highway<br/>
-                                Traffic Safety<br/>
-                                Administration</b>
-
-                                — D E C L A R A T I O N —
-                                Importation of Motor Vehicles and Motor Vehicle Equipment Subject to<br/>
-                                <b>Federal Motor Vehicle Safety, Bumper and Theft Prevention Standards</b>
-
-                                OMB No. 2127-0002<br/>
-                                Public Law 100—562,<br/>
-                                49 USC Chap. 301<br/>
-
-
-                                PORT OF ENTRY
-                                CUSTOMS PORT CODE
-                                CUSTOMS ENTRY NO
-                                ENTRY DATE
-
-                                MAKE OF VEHICLE
-                                MODEL
-                                YEAR
-                                VEHICLE IDENTIFICATION NUMBER (VIN)
-
-                                REGISTERED IMPORTER NAME AND NHTSA REGISTRATION NUMBER (Required when Box 3 is checked)
-                                VEHICLE ELIGIBILITY NO. (Box 3)
-
-
-                                DESCRIPTION OF MERCHANDISE IF MOTOR VEHICLE EQUIPMENT
-                                -->
                         </div>
                     </t>
                 </t>
