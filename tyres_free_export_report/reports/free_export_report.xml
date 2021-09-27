@@ -231,7 +231,7 @@
 
                             <table style="width: 100%; font-size: 6 px; border: 1px solid black;">
                                 <tr>
-                                    <td>
+                                    <td style="width: 50%; font-size: 6 px; border: 1px solid black;">
                                         NAME OF IMPORTER (Please type)<br/>
                                     </td>
                                     <td>
@@ -239,7 +239,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="width: 50%;">
+                                    <td style="width: 50%; font-size: 6 px; border: 1px solid black;">
                                         NAME OF DECLARANT (Please type)<br/>
                                         FELAPPI SRL
                                     </td>
@@ -249,23 +249,34 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
+                                    <td style="width: 50%; font-size: 6 px; border: 1px solid black;">
                                         DECLARANT'S CAPACITY <br/>
                                         SHIPPER
                                     </td>
-                                    <td>
+                                    <td style="font-size: 6 px; border: 1px solid black;">
                                         DECLARANT'S SIGNATURE
                                         <img src="/tyres_free_export_report/static/src/img/signature.png" style="max-width: 100%;"/>
                                     </td>
-                                    <td>
+                                    <td style="font-size: 6 px; border: 1px solid black;">
                                         DATE SIGNED<br/>
-
                                     </td>
                                 </tr>
-
                                 <tr>
-                                    <td colspan="3">
-                                        <img src="/tyres_free_export_report/static/src/img/footer_bottom.png" style="max-width: 100%;"/>
+                                    <td colspan="3" style="font-size: 6 px; border: 1px solid black;">
+                                        EPA Requirements: Importers of motor vehicles/engines and nonroad vehicles/engines/equipment must also submit EPA form 3520-1 or 3520-21 to U.S.
+                                        Customs and Border Protection to identify the basis for importation into the United States and U.S. territories under the laws administered by the United States
+                                        Environmental Protection Agency. For more information, please see www.epa.gov/otaq/imports/index.htm.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 6 px; border: 1px solid black;">
+                                        HS-7 (Rev. 05-2006)
+                                    </td>
+                                    <td style="font-size: 6 px; border: 1px solid black;">
+                                    </td>
+                                    <td style="font-size: 6 px; border: 1px solid black;align: right;">
+                                        OVER<br/>
+                                        75124 –M34d
                                     </td>
                                 </tr>
                             </table>
