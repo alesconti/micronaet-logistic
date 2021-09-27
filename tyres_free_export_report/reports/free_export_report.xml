@@ -228,19 +228,19 @@
                                         <b>Attachment:</b> Copy of NHTSA permission letter.
                                 </div>
                             </div>
+
                             <table class="width: 100%; font-size: 6 px; border: 1px solid black;">
-                                <tr>
-                                    <td class="width: 50%;">
-                                        NAME OF IMPORTER (Please type)
+                                <tr class="width: 100%; font-size: 6 px; border: 1px solid black;">
+                                    <td class="width: 0%; font-size: 6 px; border: 1px solid black;">
+                                        NAME OF IMPORTER (Please type)<br/>
                                     </td>
                                     <td>
-                                        IMPORTER'S ADDRESS (Street, City, State, Zip Code)
+                                        IMPORTER'S ADDRESS (Street, City, State, Zip Code)<br/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="width: 50%;"></td>
-                                    <td>
-                                        NAME OF DECLARANT (Please type)
+                                    <td class="width: 50%;">
+                                        NAME OF DECLARANT (Please type)<br/>
                                         FELAPPI SRL
                                     </td>
                                     <td>
@@ -249,21 +249,22 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="width: 50%;"></td>
                                     <td>
                                         DECLARANT'S CAPACITY <br/>
                                         SHIPPER
                                     </td>
                                     <td>
                                         DECLARANT'S SIGNATURE
+                                        <img src="/tyres_free_export_report/static/src/img/footer.png" style="max-width: 100%;"/>
                                     </td>
                                     <td>
-                                        DATE SIGNED
+                                        DATE SIGNED<br/>
+
                                     </td>
                                 </tr>
 
                                 <tr>
-                                    <td colspan="2">
+                                    <td colspan="3">
                                         <img src="/tyres_free_export_report/static/src/img/footer.png" style="max-width: 100%;"/>
                                     </td>
                                 </tr>
