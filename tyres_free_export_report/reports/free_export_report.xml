@@ -231,19 +231,19 @@
 
                             <table style="width: 100%; font-size: 6 px; border: 1px solid black;">
                                 <tr>
-                                    <td style="width: 50%; font-size: 6 px; border: 1px solid black;">
+                                    <td  style="width: 50%; font-size: 6 px; border: 1px solid black;">
                                         NAME OF IMPORTER (Please type)<br/>
                                     </td>
-                                    <td>
+                                    <td colspan="2">
                                         IMPORTER'S ADDRESS (Street, City, State, Zip Code)<br/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="width: 50%; font-size: 6 px; border: 1px solid black;">
+                                    <td  style="width: 50%; font-size: 6 px; border: 1px solid black;">
                                         NAME OF DECLARANT (Please type)<br/>
                                         FELAPPI SRL
                                     </td>
-                                    <td>
+                                    <td colspan="2">
                                         DECLARANT'S ADDRESS <br/>
                                         VIA GRUMELLO 2/C - 25054 MARONE (BS) - ITALIA
                                     </td>
