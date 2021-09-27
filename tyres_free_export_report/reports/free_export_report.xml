@@ -155,14 +155,14 @@
 
                             <!-- ========================== Extra Page for report: ================================= -->
                             <p style="page-break-after:always;" />
-                            <table class="width: 100%; font-size: 6 px;">
+                            <table class="width: 100%; font-size: 12 px;">
                                 <tr>
                                     <td style="border: 1px solid black;">
                                         <img t-att-src="'/tyres_free_export_report/static/src/img/header.png'" style="max-width: 100%;"/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align: top; font-size: 6 px; border: 1px solid black;">
+                                    <td style="vertical-align: top; font-size: 12 px; border: 1px solid black;">
                                         DESCRIPTION OF MERCHANDISE IF MOTOR VEHICLE EQUIPMENT<br/>
                                         <span t-esc="', '.join(['%s x %s ' % (line.product_uom_qty, line.product_id.name) for line in o.order_line])"/>
                                     </td>
@@ -235,53 +235,53 @@
                                 </div>
                             </div>
 
-                            <table style="vertical-align: top; width: 100%; font-size: 6 px; border: 1px solid black;">
+                            <table style="vertical-align: top; width: 100%; font-size: 12 px; border: 1px solid black;">
                                 <tr>
-                                    <td style="vertical-align: top; height: 50px; width: 50%; font-size: 6 px; border: 1px solid black;">
+                                    <td style="vertical-align: top; height: 50px; width: 50%; font-size: 12 px; border: 1px solid black;">
                                         NAME OF IMPORTER (Please type)<br/>
                                         <span t-esc="o.partner_shipping_id.name or ''"/>
                                     </td>
-                                    <td colspan="2" style="vertical-align: top; font-size: 6 px; border: 1px solid black;">
+                                    <td colspan="2" style="vertical-align: top; font-size: 12 px; border: 1px solid black;">
                                         IMPORTER'S ADDRESS (Street, City, State, Zip Code)<br/>
                                         <span t-esc="'%s, %s, %s, %s' % (o.partner_shipping_id.street or '', o.partner_shipping_id.city or '', o.partner_shipping_id.country_id.name or '', o.partner_shipping_id.zip or '')"/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td  style="vertical-align: top; height: 50px; width: 50%; font-size: 6 px; border: 1px solid black;">
+                                    <td  style="vertical-align: top; height: 50px; width: 50%; font-size: 12 px; border: 1px solid black;">
                                         NAME OF DECLARANT (Please type)<br/>
                                         FELAPPI SRL
                                     </td>
-                                    <td colspan="2" style="vertical-align: top; font-size: 6 px; border: 1px solid black;">
+                                    <td colspan="2" style="vertical-align: top; font-size: 12 px; border: 1px solid black;">
                                         DECLARANT'S ADDRESS <br/>
                                         VIA GRUMELLO 2/C - 25054 MARONE (BS) - ITALIA
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align: top; height: 50px; width: 50%; font-size: 6 px; border: 1px solid black;">
+                                    <td style="vertical-align: top; height: 50px; width: 50%; font-size: 12 px; border: 1px solid black;">
                                         DECLARANT'S CAPACITY <br/>
                                         SHIPPER
                                     </td>
-                                    <td style="vertical-align: top; font-size: 6 px; border: 1px solid black;">
+                                    <td style="vertical-align: top; font-size: 12 px; border: 1px solid black;">
                                         DECLARANT'S SIGNATURE
                                         <img src="/tyres_free_export_report/static/src/img/signature.png" style="max-width: 100%;"/>
                                     </td>
-                                    <td style="font-size: 6 px; border: 1px solid black;">
+                                    <td style="font-size: 12 px; border: 1px solid black;">
                                         DATE SIGNED<br/>
                                         <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="3" style="vertical-align: top; font-size: 6 px; border: 1px solid black;">
+                                    <td colspan="3" style="vertical-align: top; font-size: 12 px; border: 1px solid black;">
                                         EPA Requirements: Importers of motor vehicles/engines and nonroad vehicles/engines/equipment must also submit EPA form 3520-1 or 3520-21 to U.S.
                                         Customs and Border Protection to identify the basis for importation into the United States and U.S. territories under the laws administered by the United States
                                         Environmental Protection Agency. For more information, please see www.epa.gov/otaq/imports/index.htm.
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align: top; font-size: 6 px; border: 1px solid black;" colspan="2">
+                                    <td style="vertical-align: top; font-size: 12 px; border: 1px solid black;" colspan="2">
                                         HS-7 (Rev. 05-2006)
                                     </td>
-                                    <td style="font-size: 6 px; border: 1px solid black;align: right;">
+                                    <td style="font-size: 12 px; border: 1px solid black;align: right;">
                                         OVER<br/>
                                         75124 –M34d
                                     </td>
