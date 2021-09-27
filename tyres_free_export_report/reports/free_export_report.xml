@@ -228,7 +228,40 @@
                                         <b>Attachment:</b> Copy of NHTSA permission letter.
                                 </div>
                             </div>
-                            <table class="width: 100%; font-size: 6 px;">
+                            <table class="width: 100%; font-size: 6 px; border: 1px solid black;">
+                                <tr>
+                                    <td class="width: 50%;">
+                                        NAME OF IMPORTER (Please type)
+                                    </td>
+                                    <td>
+                                        IMPORTER'S ADDRESS (Street, City, State, Zip Code)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="width: 50%;"></td>
+                                    <td>
+                                        NAME OF DECLARANT (Please type)
+                                        FELAPPI SRL
+                                    </td>
+                                    <td>
+                                        DECLARANT'S ADDRESS <br/>
+                                        VIA GRUMELLO 2/C - 25054 MARONE (BS) - ITALIA
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="width: 50%;"></td>
+                                    <td>
+                                        DECLARANT'S CAPACITY <br/>
+                                        SHIPPER
+                                    </td>
+                                    <td>
+                                        DECLARANT'S SIGNATURE
+                                    </td>
+                                    <td>
+                                        DATE SIGNED
+                                    </td>
+                                </tr>
+
                                 <tr>
                                     <td colspan="2">
                                         <img src="/tyres_free_export_report/static/src/img/footer.png" style="max-width: 100%;"/>
