@@ -229,9 +229,9 @@
                                 </div>
                             </div>
 
-                            <table class="width: 100%; font-size: 6 px; border: 1px solid black;">
-                                <tr class="width: 100%; font-size: 6 px; border: 1px solid black;">
-                                    <td style="width: 50%; font-size: 6 px; border: 1px solid #000000; padding: 0 cm;">
+                            <table style="width: 100%; font-size: 6 px; border: 1px solid black;">
+                                <tr>
+                                    <td>
                                         NAME OF IMPORTER (Please type)<br/>
                                     </td>
                                     <td>
