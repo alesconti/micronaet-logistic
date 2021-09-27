@@ -165,7 +165,7 @@
                             </table>
 
                             <div class="row">
-                                <div class="col-sm-6;">
+                                <div class="col-5 col-sm-5">
                                     <input type="checkbox" /> 1. The vehicle is 25 or more years old or the equipment item was manufactured on a date when no applicable Federal Motor Vehicle Safety Standard or Theft Prevention Standard was in effect. Date of manufacture: ____________________[591.5(i)]<br/>
                                     <input type="checkbox" checked="unchecked"/> 2A. The vehicle or equipment item conforms to all applicable Federal Motor Vehicle Safety Standards (or the vehicle does not conform solely because readily attachable equipment items that will be attached to it before it is offered for sale to the first purchaser for purposes other than resale are not attached), and Bumper and Theft Prevention Standards, and bears a certification label or tag to that effect permanently affixed by the original manufacturer to the vehicle or affixed by the manufacturer to the equipment item or to its delivery container in accordance with applicable National Highway Traffic Safety Administration (NHTSA) regulations [591.5(b)];<br/>
                                         Attachment: Copy of manufacturer's confirmation letter.<br/>
@@ -195,7 +195,7 @@
 
                                         <b>Attachment:</b> Copy of Official Orders.<br/>
                                 </div>
-                                <div class="col-xs-6">
+                                <div class="col-5 col-xs-5">
                                     <input type="checkbox" /> 7. The vehicle or equipment does not conform to all applicable Federal Motor Vehicle Safety and Bumper Standards, but is being imported solely for the purpose of research, investigations, demonstrations or training, or competitive racing events, and I state that I will comply with the applicable restrictions on importers of such merchandise as specified in 49 CFR 591.7 and I will provide the Administrator with documentary proof of export or destruction not later than 30 days following the end of the period for which the vehicle has been admitted into the United States. [591.5(j)]<br/><br/>
 
                                         <b>Attachment:</b><br/>
