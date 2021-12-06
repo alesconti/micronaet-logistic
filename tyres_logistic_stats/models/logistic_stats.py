@@ -274,5 +274,3 @@ class SaleOrderStats(models.Model):
         ('positive', 'Positive'),
         ], 'Margin level', default='unset',
         )
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

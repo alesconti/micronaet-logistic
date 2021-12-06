@@ -48,6 +48,7 @@ class CarrierSupplier(models.Model):
     name = fields.Char('Name')
     account_ref = fields.Char('Account ref.')
 
+
 class CarrierSupplierMode(models.Model):
     """ Model name: Parcels supplier mode of delivery
     """
@@ -82,6 +83,7 @@ class CarrierParcelTemplate(models.Model):
 
     weight = fields.Float('Weight', digits=(16, 2), required=True)
     weight_uom_id = fields.Many2one('product.uom', 'Product UOM')
+
 
 class SaleOrderParcel(models.Model):
     """ Model name: Parcels for sale order

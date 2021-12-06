@@ -875,7 +875,6 @@ class StockPicking(models.Model):
                 slot_name = product.default_slot_id.name \
                     if product.default_slot_id else 'Manca per il prodotto'
 
-
             excel_pool.write_xls_line(ws_name, row, [
                  '',
                  template.default_code,
@@ -897,7 +896,7 @@ class StockPicking(models.Model):
                 )
         filename = filename.replace(
             ':', '_').replace(' ', '').replace('[', '_').replace(']', '')
-        #now = now.replace(':', '_').replace('-', '_')
+        # now = now.replace(':', '_').replace('-', '_')
         fullname = os.path.join(folder, filename)
 
         excel_pool.save_file_as(fullname)
