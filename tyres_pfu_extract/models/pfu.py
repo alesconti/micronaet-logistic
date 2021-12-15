@@ -70,8 +70,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             ]
     @api.multi
     def extract_fiscal_excel_pfu_report(self, ):
-        ''' Extract fiscal report
-        '''
+        """ Extract fiscal report
+        """
         move_pool = self.env['stock.move']
         excel_pool = self.env['excel.writer']
         company_pool = self.env['res.company']
@@ -175,8 +175,25 @@ class StockPickingPfuExtractWizard(models.TransientModel):
 
     @api.multi
     def extract_excel_pfu_report(self, ):
-        ''' Extract Excel PFU report
-        '''
+        """ Extract Excel PFU report
+        """
+        # Utility:
+        def get_ipcode(supplier, product, ipcode_cache):
+            """ Extract IP code for product
+            """
+            ipcode = ipcode_cache.get(product)
+            if ipcode:
+                return ipcode
+
+            product_detail = [
+                line for line in product.supplier_stock_ids if
+                line.supplier_id == supplier]
+            if product_detail:
+                ipcode = product_detail[0].ipcode
+                ipcode[product] = ipcode
+                return ipcode
+            return ''
+
         move_pool = self.env['stock.move']
         excel_pool = self.env['excel.writer']
 
@@ -188,7 +205,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
 
         # Sell Extra CEE:
         domain.append(
-            ('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '=', True), # Linked to order
+            # Linked to order
+            ('logistic_load_id.order_id.partner_invoice_id.property_account_position_id.is_pfu', '=', True),
             )
 
         if supplier:
@@ -203,8 +221,9 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         supplier_category_move = {}
         for move in move_pool.search(domain):
             supplier = move.delivery_id.supplier_id
-            category = move.product_id.mmac_pfu.name or ''
-            if not category: # Missed category product not in report
+            product = move.product_id
+            category = product.mmac_pfu.name or ''
+            if not category:  # Missed category product not in report
                 continue
 
             if supplier not in supplier_category_move:
@@ -219,12 +238,13 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         #                          EXTRACT EXCEL:
         # ---------------------------------------------------------------------
         # Excel file configuration:
-        header = ('RAEE', 'Cod. Articolo', 'Descrizione', u'Q.tà',
+        header = (
+            'RAEE', 'Cod. Articolo', 'Cod. Forn.', 'Descrizione', u'Q.tà',
             'Doc Fornitore', 'Data Doc.', 'N. Fattura', 'N. Nostra fattura',
             'Data Doc.', 'ISO stato')
 
         column_width = (
-            5, 15, 45, 5,
+            5, 15, 15, 45, 5,
             15, 12, 12, 15,
             10, 8,
             )
@@ -232,7 +252,8 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         # Write detail:
         # ---------------------------------------------------------------------
-        setup_complete = False # For initial setup:
+        ipcode_cache = {}
+        setup_complete = False  # For initial setup:
         for supplier in sorted(supplier_category_move, key=lambda x: x.name):
             ws_name = supplier.name.strip()
 
@@ -241,7 +262,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
             # -----------------------------------------------------------------
             excel_pool.create_worksheet(ws_name)
             excel_pool.column_width(ws_name, column_width)
-            if not setup_complete: # First page only:
+            if not setup_complete:  # First page only:
                 setup_complete = True
                 excel_pool.set_format()
                 format_text = {
@@ -307,8 +328,9 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                     excel_pool.write_xls_line(ws_name, row, (
                         category,  # product.mmac_pfu.name,
                         product.default_code,
+                        get_ipcode(supplier, product, ipcode_cache),  # ipcode
                         product.name_extended,  # name,
-                        (qty, format_text['number']), # TODO check if it's all!
+                        (qty, format_text['number']),  # todo check if it's all
                         move.delivery_id.name,  # Delivery ref.
                         move.delivery_id.date,
                         '',  # Number supplier invoice
@@ -334,5 +356,3 @@ class StockPickingPfuExtractWizard(models.TransientModel):
         # Save file:
         # ---------------------------------------------------------------------
         return excel_pool.return_attachment('Report_PFU')
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

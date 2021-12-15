@@ -839,7 +839,7 @@ class StockPicking(models.Model):
         # ---------------------------------------------------------------------
         now = fields.Datetime.now()
 
-        #for picking in self:
+        # for picking in self:
         picking = self
         partner = picking.partner_id.name
         origin = picking.origin
@@ -855,7 +855,7 @@ class StockPicking(models.Model):
              'Foto', 'Codice', 'Nome', 'Ordine', 'Stato', 'Q.', 'Posizione'
              ], default_format=f_header)
         for move in picking.move_lines:
-            row +=1
+            row += 1
             product = move.product_id
             template = product.product_tmpl_id
             sale_line = move.logistic_load_id
