@@ -190,7 +190,7 @@ class StockPickingPfuExtractWizard(models.TransientModel):
                 line.supplier_id == supplier]
             if product_detail:
                 ipcode = product_detail[0].ipcode
-                ipcode[product] = ipcode
+                ipcode_cache[product] = ipcode
                 return ipcode
             return ''
 
