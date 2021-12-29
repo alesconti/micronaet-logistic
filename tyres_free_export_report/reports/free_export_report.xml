@@ -167,7 +167,7 @@
                                         <span t-esc="', '.join(['%s x %s ' % (line.product_uom_qty, line.product_id.name) for line in o.order_line])"/>
                                     </td>
                                     <td style="taxt-align: center; vertical-align: top; font-size: 13 px; border: 1px solid black;">
-                                        TELEFONO: <span t-esc="o.partner_id.phone or '/'"/>
+                                        TELEFONO: <b><span t-esc="o.partner_id.phone or '/'"/></b>
                                     </td>
                                 </tr>
                             </table>
