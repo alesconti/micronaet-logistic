@@ -175,7 +175,7 @@
                                             <t t-foreach="brand_data" t-as="brand">
                                                 <!--HEADER:-->
                                                 <table class="width: 100%; font-size: 12 px;">
-                                                    <tr><th style="border: 1px solid black;">Q.</th><th style="border: 1px solid black;">Detail</th><th style="border: 1px solid black;">Made by</th></tr>
+                                                    <tr><th style="border: 1px solid black;">Q.</th><th style="border: 1px solid black;">Detail</th><th style="border: 1px solid black;">Manufacturer</th></tr>
 
                                                     <!--DATA:-->
                                                     <t t-foreach="brand_data[brand]" t-as="brand_line">
