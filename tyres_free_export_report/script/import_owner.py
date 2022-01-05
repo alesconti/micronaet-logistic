@@ -102,7 +102,7 @@ for row in range(row_start, WS.nrows):
     if country_name == 'Italia':
         country_ids = [109]
     elif country_name == 'USA':
-        country_ids = [92]
+        country_ids = [233]
     else:
         country_ids = country_pool.search([
             ('name', '=', country_name),

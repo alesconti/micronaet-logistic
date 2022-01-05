@@ -122,3 +122,12 @@ class SaleOrder(models.Model):
                 company.phone or '',
                 company.vat or '',
                 )
+
+    @api.multi
+    def get_brand_document(self, ):
+        """ Get brand document part
+        """
+        self.ensure_one()
+
+        company = self.company_id
+
