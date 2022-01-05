@@ -175,18 +175,14 @@
                                             <t t-foreach="brand_data" t-as="brand">
                                                 <!--HEADER:-->
                                                 <table class="width: 100%; font-size: 12 px;">
-                                                    <tr>
-                                                        <th>Q.</th>
-                                                        <th>Detail</th>
-                                                        <th>Made by</th>
-                                                    </tr>
+                                                    <tr><th style="border: 1px solid black;">Q.</th><th style="border: 1px solid black;">Detail</th><th style="border: 1px solid black;">Made by</th></tr>
 
                                                     <!--DATA:-->
                                                     <t t-foreach="brand_data[brand]" t-as="brand_line">
                                                         <tr>
-                                                            <td><span t-esc="brand_data.product_uom_qty"/></td>
-                                                            <td>295/35-23 108W W320 WINTER ICEPT EVO 2 (AO) XL HANKOOK</td>
-                                                            <td>HANKOOK</td>
+                                                            <td style="border: 1px solid black;"><span t-esc="brand_data.product_uom_qty"/></td>
+                                                            <td style="border: 1px solid black;"><span t-esc="brand_data.name"/></td>
+                                                            <td style="border: 1px solid black;"><span t-esc="brand.name"/></td>
                                                         </tr>
                                                     </t>
 
