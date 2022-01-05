@@ -130,7 +130,6 @@ class SaleOrder(models.Model):
         """
         self.ensure_one()
         order = self
-        pdb.set_trace()
         result = {}
         for line in order.order_line:
             brand = line.product_id.brand
@@ -142,7 +141,7 @@ class SaleOrder(models.Model):
             result[brand].append(line)
         return result
 
-    @api.multi
+    @api.model
     def get_brand_detail(self, brand):
         """ Get brand document part
         """
