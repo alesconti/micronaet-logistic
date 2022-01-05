@@ -2,9 +2,9 @@
 <openerp>
     <data>
         <!-- Inherit Form View to Modify it -->
-        <record id="view_form_mmac_brand_report_extra" model="ir.ui.view">
-            <field name="name">mmac.brand.extra.report</field>
-            <field name="model">mmac.brand</field>
+        <record id="view_form_mmac_brand_report_extra_form" model="ir.ui.view">
+            <field name="name">mmac_brand.extra.report</field>
+            <field name="model">mmac_brand</field>
             <field name="inherit_id" ref="mmac_odoo4.view_form_mmac_brand"/>
             <field name="arch" type="xml">
                 <xpath expr="//group[1]" position="after">
@@ -16,6 +16,20 @@
                         <field name="country_id"/>
                     </group>
                 </xpath>
+            </field>
+        </record>
+        <record id="view_form_mmac_brand_report_extra_tree" model="ir.ui.view">
+            <field name="name">mmac_brand.extra.report.tree</field>
+            <field name="model">mmac_brand</field>
+            <field name="inherit_id" ref="mmac_odoo4.view_tree_mmac_brand"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="owner"/>
+                    <field name="street"/>
+                    <field name="city"/>
+                    <field name="zipcode"/>
+                    <field name="country_id"/>
+                </field>
             </field>
         </record>
         <!--<record model="ir.ui.view" id="view_res_company_form">

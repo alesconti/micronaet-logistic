@@ -122,5 +122,3 @@ class SaleOrder(models.Model):
                 company.phone or '',
                 company.vat or '',
                 )
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
