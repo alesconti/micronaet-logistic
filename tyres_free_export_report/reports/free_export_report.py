@@ -146,12 +146,15 @@ class SaleOrder(models.Model):
         """ Get brand document part
         """
         self.ensure_one()
-        return '{}, {} {} - {} [{}]'.format(
-            brand.name.upper(),
-            brand.owner or '',
-            brand.street or '',
-            brand.zipcode or '',
-            brand.country_id.name or '',
-        )
+        if brand:
+            return '{}, {} {} - {} [{}]'.format(
+                brand.name.upper(),
+                brand.owner or '',
+                brand.street or '',
+                brand.zipcode or '',
+                brand.country_id.name or '',
+            )
+        else:
+            return '/'
 
 

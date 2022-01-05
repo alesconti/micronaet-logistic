@@ -172,33 +172,33 @@
                                             The parcel is composed by:<br/><br/>
 
                                             <!--Brand table for product:-->
-                                            <table class="width: 100%; font-size: 12 px;">
-                                                <tr>
-                                                    <th>Q.</th>
-                                                    <th>Detail</th>
-                                                    <th>Made by</th>
-                                                </tr>
                                             <t t-foreach="brand_data" t-as="brand">
-                                                <tr>
-                                                    <td>
-                                                        4 car tyres : 295/35-23 108W W320 WINTER ICEPT EVO 2 (AO) XL HANKOOK made by  HANKOOK<br/>
-                                                    </td>
-                                                    <td>
-                                                        295/35-23 108W W320 WINTER ICEPT EVO 2 (AO) XL HANKOOK<br/>
-                                                    </td>
-                                                    <td>
-                                                        HANKOOK<br/>
-                                                    </td>
-                                                </tr>
+                                                <!--HEADER:-->
+                                                <table class="width: 100%; font-size: 12 px;">
+                                                    <tr>
+                                                        <th>Q.</th>
+                                                        <th>Detail</th>
+                                                        <th>Made by</th>
+                                                    </tr>
+
+                                                    <!--DATA:-->
+                                                    <t t-foreach="brand_data[brand]" t-as="brand_line">
+                                                        <tr>
+                                                            <td><span t-esc="brand_data.product_uom_qty"/></td>
+                                                            <td>295/35-23 108W W320 WINTER ICEPT EVO 2 (AO) XL HANKOOK</td>
+                                                            <td>HANKOOK</td>
+                                                        </tr>
+                                                    </t>
+
+                                                    <!--Brand information:-->
+                                                    <tr>
+                                                        <td>
+                                                            Data of the manufacturer are:<br/>
+                                                            <span t-esc="o.get_brand_detail(brand)"/>
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </t>
-                                            <!--Brand information:-->
-                                                <tr>
-                                                    <td>
-                                                        data of the manufacturer are:<br/>
-                                                        <span t-esc="o.get_brand_detail(brand)"/>
-                                                    </td>
-                                                </tr>
-                                            </table>
 
                                             If you require any further information, please feel free to contact us<br/>
                                             Sincerely,<br/>
