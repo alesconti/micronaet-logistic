@@ -154,6 +154,7 @@
                             </div>
 
                             <!-- ========================== Brand extra page: ====================================== -->
+                            <t t-set="month_convert" t-value="{'01': 'January', '02': 'February', '03': 'March', '04': 'April', '05': 'May', '06': 'June', '07': 'July', '08': 'August', '09': 'September', '10': 'October', '11': 'November', '12': 'December'}"/>
                             <t t-set="brand_data" t-value="o.get_brand_document()"/>
                             <t t-if="brand_data">
                                 <p style="page-break-after:always;" />
@@ -166,7 +167,8 @@
                                     </tr>
                                     <tr>
                                         <td style="font-size: 14 px; border: 0px solid black;">
-                                            <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%B %d, %Y')"/><br/><br/><br/>
+                                            <span t-esc="month_convert.get(context_timestamp(datetime.datetime.now()).strftime('%d, %Y')"/><br/><br/><br/>
+                                            <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%m')"/><br/><br/><br/>
                                             To Whom It May Concern,<br/><br/>
                                             We are writing to you regarding the informations requested for the shipment nr. <b><span t-field="o.carrier_track_id" /></b>.<br/><br/>
                                             The parcel is composed by:<br/><br/><br/>
