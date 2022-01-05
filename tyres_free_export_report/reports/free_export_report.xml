@@ -158,31 +158,30 @@
                             <p style="page-break-after:always;" />
                             <table class="width: 100%; font-size: 12 px;">
                                 <tr>
-                                    <td style="border: 1px solid black;">
+                                    <td style="border: 0px solid black;">
                                         <img t-att-src="'/tyres_free_export_report/static/src/img/brand_header.png'" style="max-width: 100%;"/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align: top; font-size: 12 px; border: 1px solid black;">
-                                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/>
-                                        To Whom It May Concern,
-                                        We are writing to you regarding the informations requested for the shipment nr. <b><span t-field="o.carrier_track_id" /></b>.
-                                        The parcel is composed by:
+                                    <td style="vertical-align: top; font-size: 14 px; border: 0px solid black;">
+                                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/><br/>
+                                        To Whom It May Concern,<br/>
+                                        We are writing to you regarding the informations requested for the shipment nr. <b><span t-field="o.carrier_track_id" /></b>.<br/>
+                                        The parcel is composed by:<br/><br/>
 
-                                        4 car tyres : 295/35-23 108W W320 WINTER ICEPT EVO 2 (AO) XL HANKOOK made by  HANKOOK
+                                        4 car tyres : 295/35-23 108W W320 WINTER ICEPT EVO 2 (AO) XL HANKOOK made by  HANKOOK<br/>
 
-                                        data of the manufacturer are:
-                                        HANKOOK TIRE 286, Pangyo-ro  Bundang-gu Seongnam-si, Gyeonggi-do 13494 Korea
+                                        data of the manufacturer are:<br/>
+                                        HANKOOK TIRE 286, Pangyo-ro  Bundang-gu Seongnam-si, Gyeonggi-do 13494 Korea<br/>
 
-
-                                        If you require any further information, please feel free to contact us
-                                        Sincerely,
+                                        If you require any further information, please feel free to contact us<br/>
+                                        Sincerely,<br/>
                                         Felappi S.r.l.
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="border: 1px solid black;">
-                                        <img t-att-src="'/tyres_free_export_report/static/src/img/brand_signature.png'" style="max-width: 100%;"/>
+                                    <td style="border: 0px solid black;">
+                                        <img t-att-src="'/tyres_free_export_report/static/src/img/brand_signature.png'" style="max-width: 30%;"/>
                                     </td>
                                 </tr>
                             </table>
