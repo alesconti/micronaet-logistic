@@ -130,8 +130,13 @@ class SaleOrder(models.Model):
         self.ensure_one()
         order = self
 
-        # order.order_line
-        return []
+        result = {}
+        for line in order.order_line:
+            brand = line.product_id.brand
+            if brand not in result:
+                result[brand] = []
+            result[brand].append(line)
+        return result
 
     @api.multi
     def get_brand_detail(self, brand):
