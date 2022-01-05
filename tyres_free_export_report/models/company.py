@@ -47,9 +47,9 @@ class MmacBrand(models.Model):
     _inherit = 'mmac_brand'
 
     owner = fields.Char(string='Proprietario', size=80)
-    street = fields.Char(string='Indirizzo', size=80)
-    city = fields.Char(string='Città', size=60)
-    zipcode = fields.Char(string='CAP', size=5)
+    street = fields.Char(string='Indirizzo', size=100)
+    city = fields.Char(string='Città', size=80)
+    zipcode = fields.Char(string='CAP', size=20)
     country_id = fields.Many2one(
         comodel_name='res.country',
         string='Nazione')
