@@ -182,7 +182,7 @@
                                                         <tr>
                                                             <td style="border: 1px solid black;"><span t-esc="brand_line.product_uom_qty"/></td>
                                                             <td style="border: 1px solid black;"><span t-esc="brand_line.name"/></td>
-                                                            <td style="border: 1px solid black;"><span t-esc="brand_line.name"/></td>
+                                                            <td style="border: 1px solid black;"><span t-esc="brand.name"/></td>
                                                         </tr>
                                                     </t>
 
