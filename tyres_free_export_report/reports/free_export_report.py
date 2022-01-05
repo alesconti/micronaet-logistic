@@ -133,3 +133,17 @@ class SaleOrder(models.Model):
         # order.order_line
         return []
 
+    @api.multi
+    def get_brand_detail(self, brand):
+        """ Get brand document part
+        """
+        self.ensure_one()
+        return '{}, {} {} - {} [{}]'.format(
+            brand.name.upper(),
+            brand.owner or '',
+            brand.street or '',
+            brand.zipcode or '',
+            brand.country_id.name or '',
+        )
+
+

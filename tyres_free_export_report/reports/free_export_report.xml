@@ -156,6 +156,7 @@
                             <!-- ========================== Brand extra page: ====================================== -->
                             <t t-set="brand_data" t-value="get_brand_document"/>
                             <p style="page-break-after:always;" />
+
                             <table class="width: 100%; font-size: 12 px;">
                                 <tr>
                                     <td style="border: 0px solid black;">
@@ -169,10 +170,34 @@
                                         We are writing to you regarding the informations requested for the shipment nr. <b><span t-field="o.carrier_track_id" /></b>.<br/>
                                         The parcel is composed by:<br/><br/>
 
-                                        4 car tyres : 295/35-23 108W W320 WINTER ICEPT EVO 2 (AO) XL HANKOOK made by  HANKOOK<br/>
-
-                                        data of the manufacturer are:<br/>
-                                        HANKOOK TIRE 286, Pangyo-ro  Bundang-gu Seongnam-si, Gyeonggi-do 13494 Korea<br/>
+                                        <!--Brand table for product:-->
+                                        <table class="width: 100%; font-size: 12 px;">
+                                            <tr>
+                                                <th>Q.</th>
+                                                <th>Detail</th>
+                                                <th>Made by</th>
+                                            </tr>
+                                        <t t-foreach="brand_data" t-as="brand">
+                                            <tr>
+                                                <td>
+                                                    4 car tyres : 295/35-23 108W W320 WINTER ICEPT EVO 2 (AO) XL HANKOOK made by  HANKOOK<br/>
+                                                </td>
+                                                <td>
+                                                    295/35-23 108W W320 WINTER ICEPT EVO 2 (AO) XL HANKOOK<br/>
+                                                </td>
+                                                <td>
+                                                    HANKOOK<br/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <!--Brand information:-->
+                                            <tr>
+                                                <td>
+                                                    data of the manufacturer are:<br/>
+                                                    <span t-esc="get_brand_detail(brand)"/>
+                                                </td>
+                                            </tr>
+                                        </table>
 
                                         If you require any further information, please feel free to contact us<br/>
                                         Sincerely,<br/>
