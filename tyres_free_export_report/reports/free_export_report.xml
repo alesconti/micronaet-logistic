@@ -188,7 +188,7 @@
 
                                                     <!--Brand information:-->
                                                     <tr>
-                                                        <td>
+                                                        <td colspan="3">
                                                             <br/>
                                                             Data of the manufacturer are:<br/>
                                                             <span t-esc="o.get_brand_detail(brand)"/>
