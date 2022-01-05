@@ -77,21 +77,24 @@ for row in range(row_start, WS.nrows):
     owner = WS.cell(row, 1).value
     street = WS.cell(row, 2).value
     city = WS.cell(row, 3).value
-    zipcode = WS.cell(row, 4).value
+    zipcode = str(WS.cell(row, 4).value)
     country_name = WS.cell(row, 5).value
+
+    if zipcode.endswith('.0'):
+        zipcode = zipcode[:-2]
 
     brand_ids = brand_pool.search([
         ('name', '=', brand),
     ])
     if not brand_ids:
-        print('%s. [ERR] Brand not found: %s' % brand)
+        print('%s. [ERR] Brand not found: %s' % (i, brand))
         continue
 
     country_ids = country_pool.search([
         ('name', '=', country_name),
     ])
     if not country_ids:
-        print('%s. [ERR] Country not found: %s' % country_name)
+        print('%s. [ERR] Country not found: %s' % (i, country_name))
         continue
 
     brand_pool.write(brand_ids, {
@@ -101,4 +104,4 @@ for row in range(row_start, WS.nrows):
         'zipcode': zipcode,
         'country_id': country_ids[0],
     })
-    print('%s. [INFO] Brand updated: %s' % brand)
+    print('%s. [INFO] Brand updated: %s' % (i, brand))
