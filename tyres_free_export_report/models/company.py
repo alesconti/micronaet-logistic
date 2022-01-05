@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -13,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -30,9 +30,9 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from openerp.tools.translate import _
 from openerp.tools import (
-    DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+    DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare,
     )
 
@@ -40,16 +40,31 @@ from openerp.tools import (
 _logger = logging.getLogger(__name__)
 
 
+class MmacBrand(models.Model):
+    """ Model name: Brand
+    """
+
+    _inherit = 'mmac.brand'
+
+    owner = fields.Char(string='Owner', size=80)
+    street = fields.Char(string='Owner', size=80)
+    city = fields.Char(string='Owner', size=60)
+    zipcode = fields.Char(string='Owner', size=5)
+    country_id = fields.Many2one(
+        comodel_name='res.country',
+        string='Country')
+
+
 class ResCompany(models.Model):
     """ Model name: ResCompany
     """
-    
+
     _inherit = 'res.company'
-    
+
     # -------------------------------------------------------------------------
     # COLUMNS:
     # -------------------------------------------------------------------------
-    #report_free_export = fields.Text('Report text: Free Export')
+    # report_free_export = fields.Text('Report text: Free Export')
     # -------------------------------------------------------------------------
 
 
