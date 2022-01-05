@@ -166,7 +166,7 @@
                                     </tr>
                                     <tr>
                                         <td style="font-size: 14 px; border: 0px solid black;">
-                                            <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/><br/>
+                                            <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%B %d, %Y')"/><br/>
                                             To Whom It May Concern,<br/>
                                             We are writing to you regarding the informations requested for the shipment nr. <b><span t-field="o.carrier_track_id" /></b>.<br/>
                                             The parcel is composed by:<br/><br/>
