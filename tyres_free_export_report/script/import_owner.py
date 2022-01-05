@@ -81,6 +81,8 @@ for row in range(row_start, WS.nrows):
     city = WS.cell(row, 3).value
     zipcode = str(WS.cell(row, 4).value)
     country_name = WS.cell(row, 5).value.strip()
+    if country_name == 'USA':
+        country_name = 'Stati Uniti'
 
     if zipcode.endswith('.0'):
         zipcode = zipcode[:-2]
