@@ -180,7 +180,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="border: 0px solid black;">
+                                    <td style="vertical-align: top; align: right; border: 0px solid black;">
                                         <img t-att-src="'/tyres_free_export_report/static/src/img/brand_signature.png'" style="max-width: 30%;"/>
                                     </td>
                                 </tr>
