@@ -128,6 +128,8 @@ class SaleOrder(models.Model):
         """ Get brand document part
         """
         self.ensure_one()
+        order = self
 
-        company = self.company_id
+        # order.order_line
+        return []
 
