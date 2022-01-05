@@ -88,7 +88,7 @@ class SaleOrder(models.Model):
                 company.state_id.name if company.state_id else '',
 
                 (company.country_id.name if company.country_id else ''
-                    ).upper(),
+                 ).upper(),
                 company.phone or '',
 
                 company.vat or '',
