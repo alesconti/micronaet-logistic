@@ -73,12 +73,14 @@ i = 0
 pdb.set_trace()
 for row in range(row_start, WS.nrows):
     i += 1
+    if i == 7:
+        pdb.set_trace()
     brand = WS.cell(row, 0).value.upper()
     owner = WS.cell(row, 1).value
     street = WS.cell(row, 2).value
     city = WS.cell(row, 3).value
     zipcode = str(WS.cell(row, 4).value)
-    country_name = WS.cell(row, 5).value
+    country_name = WS.cell(row, 5).value.strip()
 
     if zipcode.endswith('.0'):
         zipcode = zipcode[:-2]
@@ -97,13 +99,16 @@ for row in range(row_start, WS.nrows):
         'zipcode': zipcode,
     }
 
-    country_ids = country_pool.search([
-        ('name', '=', country_name),
-    ])
+    if country_name == 'Italia':
+        country_ids = [109]
+    else:
+        country_ids = country_pool.search([
+            ('name', '=', country_name),
+        ])
     if country_ids:
         data['country_id'] = country_ids[0]
     else:
         print('%s. [ERR] Country not found: %s' % (i, country_name))
 
     brand_pool.write(brand_ids, data)
-    print('%s. [INFO] Brand updated: %s' % (i, brand))
+    # print('%s. [INFO] Brand updated: %s' % (i, brand))
