@@ -189,12 +189,13 @@
                                                     <!--Brand information:-->
                                                     <tr>
                                                         <td>
+                                                            <br/>
                                                             Data of the manufacturer are:<br/>
                                                             <span t-esc="o.get_brand_detail(brand)"/>
                                                         </td>
                                                     </tr>
                                                 </table>
-                                                <br/>
+                                                <br/><br/>
                                             </t>
 
                                             If you require any further information, please feel free to contact us<br/>
