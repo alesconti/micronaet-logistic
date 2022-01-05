@@ -73,7 +73,7 @@ i = 0
 pdb.set_trace()
 for row in range(row_start, WS.nrows):
     i += 1
-    brand = WS.cell(row, 0).value
+    brand = WS.cell(row, 0).value.upper()
     owner = WS.cell(row, 1).value
     street = WS.cell(row, 2).value
     city = WS.cell(row, 3).value
@@ -90,18 +90,20 @@ for row in range(row_start, WS.nrows):
         print('%s. [ERR] Brand not found: %s' % (i, brand))
         continue
 
-    country_ids = country_pool.search([
-        ('name', '=', country_name),
-    ])
-    if not country_ids:
-        print('%s. [ERR] Country not found: %s' % (i, country_name))
-        continue
-
-    brand_pool.write(brand_ids, {
+    data = {
         'owner': owner,
         'street': street,
         'city': city,
         'zipcode': zipcode,
-        'country_id': country_ids[0],
-    })
+    }
+
+    country_ids = country_pool.search([
+        ('name', '=', country_name),
+    ])
+    if country_ids:
+        data['country_id'] = country_ids[0]
+    else:
+        print('%s. [ERR] Country not found: %s' % (i, country_name))
+
+    brand_pool.write(brand_ids, data)
     print('%s. [INFO] Brand updated: %s' % (i, brand))
