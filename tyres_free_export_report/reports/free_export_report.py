@@ -22,6 +22,7 @@
 ###############################################################################
 
 import os
+import pdb
 import sys
 import logging
 from odoo import fields, api, models, exceptions
@@ -129,10 +130,13 @@ class SaleOrder(models.Model):
         """
         self.ensure_one()
         order = self
-
+        pdb.set_trace()
         result = {}
         for line in order.order_line:
             brand = line.product_id.brand
+            if not brand:
+                _logger.error('Line without brand (Extra report)')
+                continue
             if brand not in result:
                 result[brand] = []
             result[brand].append(line)
