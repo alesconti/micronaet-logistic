@@ -128,13 +128,15 @@ class SaleOrder(models.Model):
         name = self.name.strip().replace(' ', '_').replace('-', '_')
 
         # Creating dynamic path to create zip file
-        file_name = os.path.join('static', 'src', 'download', name)
-        pdb.set_trace()
-        file_name_zip = '%s.rar' % file_name
-        zipfilepath = os.path.join(path, file_name_zip)
+        zip_path = os.path.join(
+            'static', 'src', 'download',
+            )
+        zip_name = '%s.rar' % name
+        zip_fullname = os.path.join(
+            zip_path, zip_name)
 
-        # ZIP file:
-        zip_archive = zipfile.ZipFile(zipfilepath, 'w')
+        # Compress file in ZIP file:
+        zip_archive = zipfile.ZipFile(zip_fullname, 'w')
         attachment_filename = '/home/thebrush/Documenti/explode_parser.py.pdf'
         zip_archive.write(attachment_filename)
         zip_archive.close()
@@ -142,7 +144,7 @@ class SaleOrder(models.Model):
         return {
             'type': 'ir.actions.act_url',
             'url': '/tyres_logistic_pick_in_load/static/src/download/%s' %
-                   file_name_zip,
+                   file_name,
             'target': 'new',
             }
 
