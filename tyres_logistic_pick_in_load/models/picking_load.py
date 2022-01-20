@@ -119,7 +119,7 @@ class ReturnAttachmentWizard(models.TransientModel):
     _name = 'return.attachment.wizard'
 
     name = fields.Char('Name', size=200)
-    attachment = fields.Binays('Attachment')
+    attachment = fields.Binary('Attachment')
 
 
 class SaleOrder(models.Model):
@@ -132,15 +132,17 @@ class SaleOrder(models.Model):
     def odoo_button_download_document(self):
         """ Return document
         """
-        name = self.name.strip().replace(' ', '_').replace('-', '_')
+        order = self
+        name = order.name.strip().replace(' ', '_').replace('-', '_')
         zip_path = '/tmp'
         zip_fullname = os.path.join(zip_path, '%s.zip' % name)
 
         # Add document:
-        data_filename = ''
-        data_fullname = os.path.join('', data_filename)
+        attachment_name = 'explode_parser.py.pdf'
+        attachment_path = '/home/thebrush/Documenti'
+        data_fullname = os.path.join(attachment_path, attachment_filename)
         zip_f = zipfile.ZipFile(zip_fullname, 'w')
-        zip_f.write(data_fullname)
+        zip_f.write(data_fullname, attachment_name, zipfile.ZIP_DEFLATED)
         zip_f.close()
 
         # Read binary zipfile:
@@ -152,7 +154,7 @@ class SaleOrder(models.Model):
         attach_id = self.env[model].create({
             'name': zip_fullname,
             'attachment': b64,
-        })
+        }).id
         url = '/web/content/%s/%s/%s.zip?download=true' % (
             model, attach_id, name)
         return {
