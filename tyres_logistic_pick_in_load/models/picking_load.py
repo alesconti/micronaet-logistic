@@ -118,7 +118,8 @@ class ReturnAttachmentWizard(models.TransientModel):
     """
     _name = 'return.attachment.wizard'
 
-    name = fields.Char('Name', size=200)
+    name = fields.Char('Name', size=80)
+    datas_fname = fields.Char('File name', help='Filename for url', size=80)
     attachment = fields.Binary('Attachment')
 
 
@@ -154,13 +155,12 @@ class SaleOrder(models.Model):
         model = 'return.attachment.wizard'
         attach_id = self.env[model].create({
             'name': zip_name,
+            'datas_fname': zip_name,
             'attachment': b64,
         }).id
-        url = '/web/content/?model=return.attachment.wizard&id={}&field=attachment&field_filename=name&download=true' % (
-            attach_id)
-        # url = '/web/content/?model={}&id={}&download=true'.format(
-        #     model, attach_id,
-        # )
+        url = '/web/content/?field_filename=name&model=return.attachment.wizard&id={}' \
+              '&field=attachment&download=true'.format(
+                   attach_id)
         return {
             'name': 'Document %s' % name,
             # 'res_model': 'ir.actions.act_url',
