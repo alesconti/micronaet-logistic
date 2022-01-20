@@ -133,6 +133,7 @@ class SaleOrder(models.Model):
     def odoo_button_download_document(self):
         """ Return document
         """
+        pdb.set_trace()
         order = self
         document = []
 
@@ -141,6 +142,7 @@ class SaleOrder(models.Model):
             document.append(
                 ('/home/thebrush/Documenti', 'explode_parser.py.pdf'))
         if not document:
+            _logger.error('Nessun documento da scaricare!')
             raise exceptions.Warning('Nessun documento da scaricare!')
 
         # ---------------------------------------------------------------------
@@ -157,6 +159,7 @@ class SaleOrder(models.Model):
         zip_f = zipfile.ZipFile(zip_fullname, 'w')
         for attachment_path, attachment_name in document:
             data_fullname = os.path.join(attachment_path, attachment_name)
+            _logger.warning('Attaching %s file' % data_fullname)
             zip_f.write(data_fullname, attachment_name, zipfile.ZIP_DEFLATED)
         zip_f.close()
 
@@ -179,6 +182,8 @@ class SaleOrder(models.Model):
               'model=return.attachment.wizard&id={}' \
               '&field=attachment&download=true'.format(
                    attach_id)
+
+        logger.warning('Return zip file: %s' % zip_name)
         return {
             'name': 'Document %s' % name,
             'type': 'ir.actions.act_url',
