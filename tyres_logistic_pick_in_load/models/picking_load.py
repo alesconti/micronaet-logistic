@@ -133,14 +133,27 @@ class SaleOrder(models.Model):
     def odoo_button_download_document(self):
         """ Return document
         """
-        pdb.set_trace()
         order = self
         document = []
 
-        if order.has_extra_document:
+        # ---------------------------------------------------------------------
+        # Check what document are present:
+        # ---------------------------------------------------------------------
+        name = order.name.strip().replace(' ', '_').replace('-', '_')
+        if order.check_need_invoice:
             # todo
             document.append(
                 ('/home/thebrush/Documenti', 'explode_parser.py.pdf'))
+
+        if True or order.has_extra_document:
+            extra_name = 'extra_document_%s.pdf' % name
+            extra_fullname = order.with_context(
+                force_filename=extra_name
+            ).save_extra_document_file()
+            # todo
+            document.append(
+                (extra_fullname, extra_name))
+
         if not document:
             _logger.error('Nessun documento da scaricare!')
             raise exceptions.Warning('Nessun documento da scaricare!')
@@ -148,7 +161,6 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         # Generate Zip file:
         # ---------------------------------------------------------------------
-        name = order.name.strip().replace(' ', '_').replace('-', '_')
         zip_path = '/tmp'
         zip_name = '%s.zip' % name
         zip_fullname = os.path.join(zip_path, zip_name)
@@ -157,10 +169,10 @@ class SaleOrder(models.Model):
         # Add document:
         # ---------------------------------------------------------------------
         zip_f = zipfile.ZipFile(zip_fullname, 'w')
-        for attachment_path, attachment_name in document:
-            data_fullname = os.path.join(attachment_path, attachment_name)
-            _logger.warning('Attaching %s file' % data_fullname)
-            zip_f.write(data_fullname, attachment_name, zipfile.ZIP_DEFLATED)
+        for attachment_fullname, attachment_filename in document:
+            _logger.warning('Attaching %s file' % attachment_fullname)
+            zip_f.write(
+                attachment_fullname, attachment_filename, zipfile.ZIP_DEFLATED)
         zip_f.close()
 
         # ---------------------------------------------------------------------

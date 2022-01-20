@@ -2179,22 +2179,35 @@ class SaleOrder(models.Model):
         return self.send_report_to_printer(fullname, 'invoice')
 
     @api.multi
-    def workflow_ready_print_extra(self):
-        """ Print picking
-            (method overridden in mmac)
+    def save_extra_document_file(self):
+        """ Save extra document as a temp file
+            force_filename = force parameter for name in PDF
+            @return: fullname of create file
         """
-        report_name = 'tyres_free_export_report.report_free_export_lang'
-        fullname = '/tmp/free_export_%s.pdf' % self.id
+        filename = self.env.context.get('force_filename')
+
+        temp_path = '/tmp'
+        if not filename:
+            filename = 'libera_esportazione_%s.pdf' % self.id
+        fullname = os.path.join(temp_path, filename)
 
         # Pool used:
         report_pool = self.env['ir.actions.report']
-
+        report_name = 'tyres_free_export_report.report_free_export_lang'
         report = report_pool._get_report_from_name(report_name)
         pdf = report.render_qweb_pdf(self.ids)
 
         f_pdf = open(fullname, 'wb')
         f_pdf.write(pdf[0])
         f_pdf.close()
+        return fullname
+
+    @api.multi
+    def workflow_ready_print_extra(self):
+        """ Print picking
+            (method overridden in mmac)
+        """
+        fullname = self.save_extra_document_file()
 
         # Managed for office redirect:
         try:
