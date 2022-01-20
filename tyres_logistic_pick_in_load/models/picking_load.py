@@ -135,12 +135,13 @@ class SaleOrder(models.Model):
         order = self
         name = order.name.strip().replace(' ', '_').replace('-', '_')
         zip_path = '/tmp'
-        zip_fullname = os.path.join(zip_path, '%s.zip' % name)
+        zip_name = '%s.zip' % name
+        zip_fullname = os.path.join(zip_path, zip_name)
 
         # Add document:
         attachment_name = 'explode_parser.py.pdf'
         attachment_path = '/home/thebrush/Documenti'
-        data_fullname = os.path.join(attachment_path, attachment_filename)
+        data_fullname = os.path.join(attachment_path, attachment_name)
         zip_f = zipfile.ZipFile(zip_fullname, 'w')
         zip_f.write(data_fullname, attachment_name, zipfile.ZIP_DEFLATED)
         zip_f.close()
@@ -152,18 +153,30 @@ class SaleOrder(models.Model):
 
         model = 'return.attachment.wizard'
         attach_id = self.env[model].create({
-            'name': zip_fullname,
+            'name': zip_name,
             'attachment': b64,
         }).id
-        url = '/web/content/%s/%s/%s.zip?download=true' % (
-            model, attach_id, name)
+        url = '/web/content/?model=return.attachment.wizard&id={}&field=attachment&field_filename=name&download=true' % (
+            attach_id)
+        # url = '/web/content/?model={}&id={}&download=true'.format(
+        #     model, attach_id,
+        # )
         return {
-            'name': 'Download conformity data file',
-            'res_model': 'ir.actions.act_url',
+            'name': 'Document %s' % name,
+            # 'res_model': 'ir.actions.act_url',
             'type': 'ir.actions.act_url',
             'target': 'self',
             'url': url,
             }
+
+        return {
+            'name': 'FEC',
+            'type': 'ir.actions.act_url',
+            'url': '/web/content/?model=sale.order&id={}&field=dummy&filename_field=dummy_filename&download=true'.format(
+                self.id
+            ),
+            'target': 'self',
+        }
         """    
         # Getting this path
         path = os.path.dirname(os.path.realpath(__file__))
