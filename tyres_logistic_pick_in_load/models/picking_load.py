@@ -118,6 +118,33 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     @api.multi
+    def odoo_button_download_document(self):
+        """ Return document
+        """
+        pdb.set_trace()
+        # Getting this path
+        path = os.path.dirname(os.path.realpath(__file__))
+        name = self.name.strip().replace(' ', '_').replace('-', '_')
+
+        # Creating dynamic path to create zip file
+        file_name = os.path.join('static', 'src', 'download', name)
+        file_name_zip = '%s.rar' % file_name
+        zipfilepath = os.path.join(path, file_name_zip)
+
+        # ZIP file:
+        zip_archive = zipfile.ZipFile(zipfilepath, 'w')
+        attachment_filename = '/tmp/prova.pdf'
+        zip_archive.write(attachment_filename)
+        zip_archive.close()
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/tyres_logistic_management/static/src/download/%s' %
+                   file_name_zip,
+            'target': 'new',
+            }
+
+    @api.multi
     def confirm_all_selected_server_action(self):
         """ Confirm all selected order
         """
@@ -272,7 +299,7 @@ class SaleOrder(models.Model):
                 continue
 
             # Setup loop print:
-            # 31/03/2021 Integrazione parte di Alessandro:
+            # 31/03/2021 Integrazione parte di Alessandro Conti:
             # modifica per gestire pos. fiscale UK come parametri di stampa
             if order.partner_shipping_id.country_id.code == 'GB' and \
                     not order.fiscal_position_id.external_invoice_management:
@@ -351,7 +378,7 @@ class SaleOrder(models.Model):
                     for time in range(0, loop_ddt):
                         order.workflow_ready_print_ddt()
                     log_print[order].append('Print #%s DDT' % loop_ddt)
-            # Alessandro Conti, [31.03.21 13: 16]
+            # End Alessandro Conti, [31.03.21 13: 16]
             # =================================================================
 
             # -----------------------------------------------------------------

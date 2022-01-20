@@ -643,6 +643,7 @@
                     <button name="label_printed_ok" string="Label was printed" type="object" icon="fa-check fa-2x" attrs="{'invisible': [('label_printed', '=', False)]}"/>
 
                     <button name="workflow_ready_print_extra" string="Print extra doc." type="object" icon="fa-list-alt fa-2x" attrs="{'invisible': [('has_extra_document','=',False)]}"/>
+                    <button name="odoo_button_download_document" string="Download" type="object" icon="fa-download fa-2x" /><!--attrs="{'invisible': [('has_extra_document','=',False)]}"-->
 
                     <button name="dummy" string="Attendere" icon="fa fa-spinner fa-spin fa-2x" type="object" attrs="{'invisible': ['|',('check_need_invoice','=', False),('mmac_controllo_fattura','=', True)]}"/>
                     <button name="print_all_server_action" string="Print all" type="object" icon="fa-files-o fa-2x" attrs="{'invisible': ['|',('mmac_print_status','=', 'all'),('check_need_invoice','=', True),('mmac_controllo_fattura','=', False)]}"/>

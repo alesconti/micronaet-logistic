@@ -22,6 +22,7 @@
 ###############################################################################
 
 import os
+import zipfile
 import pdb
 import sys
 import time
