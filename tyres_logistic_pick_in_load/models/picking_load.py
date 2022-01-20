@@ -141,17 +141,16 @@ class SaleOrder(models.Model):
         # ---------------------------------------------------------------------
         name = order.name.strip().replace(' ', '_').replace('-', '_')
         if order.check_need_invoice:
-            # todo
+            invoice_fullname = order.get_invoice_fullname()
+            invoice_name = os.path.basename(invoice_fullname)
             document.append(
-                ('/home/thebrush/Documenti/explode_parser.py.pdf',
-                 'explode_parser.py.pdf'))
+                (invoice_fullname, invoice_name))
 
         if order.has_extra_document:
             extra_name = 'extra_document_%s.pdf' % name
             extra_fullname = order.with_context(
                 force_filename=extra_name
             ).save_extra_document_file()
-            # todo
             document.append(
                 (extra_fullname, extra_name))
 

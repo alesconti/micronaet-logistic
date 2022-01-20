@@ -2151,8 +2151,8 @@ class SaleOrder(models.Model):
         return self.send_report_to_printer(fullname, 'ddt')
 
     @api.multi
-    def workflow_ready_print_invoice(self):
-        """ Print picking
+    def get_invoice_fullname(self):
+        """ Extract invoice filename
         """
         try:
             filename = self.logistic_picking_ids[0].invoice_filename
@@ -2167,13 +2167,19 @@ class SaleOrder(models.Model):
         if not filename:
             raise exceptions.Warning('Invoice not generated (filename missed!')
 
-        company_pool = self.env['res.company']
-
         # Parameter:
+        company_pool = self.env['res.company']
         company = company_pool.search([])[0]
         logistic_root_folder = company.logistic_root_folder
         report_path = os.path.join(logistic_root_folder, 'report')
         fullname = os.path.join(report_path, filename)
+        return fullname
+
+    @api.multi
+    def workflow_ready_print_invoice(self):
+        """ Print picking
+        """
+        fullname = self.get_invoice_fullname()
 
         # Not managed for office print redirect:
         return self.send_report_to_printer(fullname, 'invoice')
