@@ -143,7 +143,8 @@ class SaleOrder(models.Model):
         if order.check_need_invoice:
             # todo
             document.append(
-                ('/home/thebrush/Documenti', 'explode_parser.py.pdf'))
+                ('/home/thebrush/Documenti/explode_parser.py.pdf',
+                 'explode_parser.py.pdf'))
 
         if order.has_extra_document:
             extra_name = 'extra_document_%s.pdf' % name
@@ -195,7 +196,7 @@ class SaleOrder(models.Model):
               '&field=attachment&download=true'.format(
                    attach_id)
 
-        logger.warning('Return zip file: %s' % zip_name)
+        _logger.warning('Return zip file: %s' % zip_name)
         return {
             'name': 'Document %s' % name,
             'type': 'ir.actions.act_url',
