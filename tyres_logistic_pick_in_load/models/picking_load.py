@@ -23,6 +23,7 @@
 
 import os
 import sys
+import zipfile
 import logging
 import shutil
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
@@ -121,25 +122,26 @@ class SaleOrder(models.Model):
     def odoo_button_download_document(self):
         """ Return document
         """
-        pdb.set_trace()
         # Getting this path
         path = os.path.dirname(os.path.realpath(__file__))
+        path = path.replace('models', '')
         name = self.name.strip().replace(' ', '_').replace('-', '_')
 
         # Creating dynamic path to create zip file
         file_name = os.path.join('static', 'src', 'download', name)
+        pdb.set_trace()
         file_name_zip = '%s.rar' % file_name
         zipfilepath = os.path.join(path, file_name_zip)
 
         # ZIP file:
         zip_archive = zipfile.ZipFile(zipfilepath, 'w')
-        attachment_filename = '/tmp/prova.pdf'
+        attachment_filename = '/home/thebrush/Documenti/explode_parser.py.pdf'
         zip_archive.write(attachment_filename)
         zip_archive.close()
 
         return {
             'type': 'ir.actions.act_url',
-            'url': '/tyres_logistic_management/static/src/download/%s' %
+            'url': '/tyres_logistic_pick_in_load/static/src/download/%s' %
                    file_name_zip,
             'target': 'new',
             }
