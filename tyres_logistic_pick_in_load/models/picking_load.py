@@ -26,6 +26,7 @@ import sys
 import zipfile
 import logging
 import shutil
+import base64
 from odoo import api, fields, models, tools, exceptions, SUPERUSER_ID
 from odoo.addons import decimal_precision as dp
 from odoo.tools.translate import _
@@ -112,6 +113,15 @@ class SaleOrderPrintResult(models.TransientModel):
     note = fields.Text('Result printing')
 
 
+class ReturnAttachmentWizard(models.TransientModel):
+    """ Wizard for download document
+    """
+    _name = 'return.attachment.wizard'
+
+    name = fields.Char('Name', size=200)
+    attachment = fields.Binays('Attachment')
+
+
 class SaleOrder(models.Model):
     """ Model name: Sale order
     """
@@ -122,6 +132,37 @@ class SaleOrder(models.Model):
     def odoo_button_download_document(self):
         """ Return document
         """
+        name = self.name.strip().replace(' ', '_').replace('-', '_')
+        zip_path = '/tmp'
+        zip_fullname = os.path.join(zip_path, '%s.zip' % name)
+
+        # Add document:
+        data_filename = ''
+        data_fullname = os.path.join('', data_filename)
+        zip_f = zipfile.ZipFile(zip_fullname, 'w')
+        zip_f.write(data_fullname)
+        zip_f.close()
+
+        # Read binary zipfile:
+        with open(zip_fullname, 'rb') as f:
+            file_bytes = f.read()
+            b64 = base64.b64encode(file_bytes)
+
+        model = 'return.attachment.wizard'
+        attach_id = self.env[model].create({
+            'name': zip_fullname,
+            'attachment': b64,
+        })
+        url = '/web/content/%s/%s/%s.zip?download=true' % (
+            model, attach_id, name)
+        return {
+            'name': 'Download conformity data file',
+            'res_model': 'ir.actions.act_url',
+            'type': 'ir.actions.act_url',
+            'target': 'self',
+            'url': url,
+            }
+        """    
         # Getting this path
         path = os.path.dirname(os.path.realpath(__file__))
         path = path.replace('models', '')
@@ -129,7 +170,7 @@ class SaleOrder(models.Model):
 
         # Creating dynamic path to create zip file
         zip_path = os.path.join(
-            'static', 'src', 'download',
+            path, 'static', 'src', 'download',
             )
         zip_name = '%s.rar' % name
         zip_fullname = os.path.join(
@@ -137,17 +178,19 @@ class SaleOrder(models.Model):
 
         # Compress file in ZIP file:
         zip_archive = zipfile.ZipFile(zip_fullname, 'w')
-        attachment_filename = '/home/thebrush/Documenti/explode_parser.py.pdf'
-        zip_archive.write(attachment_filename)
+        document_name = 'explode_parser.py.pdf'
+        attachment_filename = '/home/thebrush/Documenti/%s' % document_name
+        zip_archive.write(
+            attachment_filename, attachment_filename, zipfile.ZIP_DEFLATED)
         zip_archive.close()
 
         return {
             'type': 'ir.actions.act_url',
             'url': '/tyres_logistic_pick_in_load/static/src/download/%s' %
-                   file_name,
+                   zip_name,
             'target': 'new',
             }
-
+        """
     @api.multi
     def confirm_all_selected_server_action(self):
         """ Confirm all selected order
