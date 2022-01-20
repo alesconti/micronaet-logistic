@@ -145,7 +145,7 @@ class SaleOrder(models.Model):
             document.append(
                 ('/home/thebrush/Documenti', 'explode_parser.py.pdf'))
 
-        if True or order.has_extra_document:
+        if order.has_extra_document:
             extra_name = 'extra_document_%s.pdf' % name
             extra_fullname = order.with_context(
                 force_filename=extra_name
