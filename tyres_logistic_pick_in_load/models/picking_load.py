@@ -134,78 +134,58 @@ class SaleOrder(models.Model):
         """ Return document
         """
         order = self
+        document = []
+
+        if order.has_extra_document:
+            # todo
+            document.append(
+                ('/home/thebrush/Documenti', 'explode_parser.py.pdf'))
+        if not document:
+            raise exceptions.Warning('Nessun documento da scaricare!')
+
+        # ---------------------------------------------------------------------
+        # Generate Zip file:
+        # ---------------------------------------------------------------------
         name = order.name.strip().replace(' ', '_').replace('-', '_')
         zip_path = '/tmp'
         zip_name = '%s.zip' % name
         zip_fullname = os.path.join(zip_path, zip_name)
 
+        # ---------------------------------------------------------------------
         # Add document:
-        attachment_name = 'explode_parser.py.pdf'
-        attachment_path = '/home/thebrush/Documenti'
-        data_fullname = os.path.join(attachment_path, attachment_name)
+        # ---------------------------------------------------------------------
         zip_f = zipfile.ZipFile(zip_fullname, 'w')
-        zip_f.write(data_fullname, attachment_name, zipfile.ZIP_DEFLATED)
+        for attachment_path, attachment_name in document:
+            data_fullname = os.path.join(attachment_path, attachment_name)
+            zip_f.write(data_fullname, attachment_name, zipfile.ZIP_DEFLATED)
         zip_f.close()
 
-        # Read binary zipfile:
+        # ---------------------------------------------------------------------
+        # Save binary file in wizard field:
+        # ---------------------------------------------------------------------
         with open(zip_fullname, 'rb') as f:
             file_bytes = f.read()
             b64 = base64.b64encode(file_bytes)
 
-        model = 'return.attachment.wizard'
-        attach_id = self.env[model].create({
+        # ---------------------------------------------------------------------
+        # Return document:
+        # ---------------------------------------------------------------------
+        attach_id = self.env['return.attachment.wizard'].create({
             'name': zip_name,
             'datas_fname': zip_name,
             'attachment': b64,
         }).id
-        url = '/web/content/?field_filename=name&model=return.attachment.wizard&id={}' \
+        url = '/web/content/?field_filename=name&' \
+              'model=return.attachment.wizard&id={}' \
               '&field=attachment&download=true'.format(
                    attach_id)
         return {
             'name': 'Document %s' % name,
-            # 'res_model': 'ir.actions.act_url',
             'type': 'ir.actions.act_url',
             'target': 'self',
             'url': url,
             }
 
-        return {
-            'name': 'FEC',
-            'type': 'ir.actions.act_url',
-            'url': '/web/content/?model=sale.order&id={}&field=dummy&filename_field=dummy_filename&download=true'.format(
-                self.id
-            ),
-            'target': 'self',
-        }
-        """    
-        # Getting this path
-        path = os.path.dirname(os.path.realpath(__file__))
-        path = path.replace('models', '')
-        name = self.name.strip().replace(' ', '_').replace('-', '_')
-
-        # Creating dynamic path to create zip file
-        zip_path = os.path.join(
-            path, 'static', 'src', 'download',
-            )
-        zip_name = '%s.rar' % name
-        zip_fullname = os.path.join(
-            zip_path, zip_name)
-
-        # Compress file in ZIP file:
-        zip_archive = zipfile.ZipFile(zip_fullname, 'w')
-        document_name = 'explode_parser.py.pdf'
-        attachment_filename = '/home/thebrush/Documenti/%s' % document_name
-        zip_archive.write(
-            attachment_filename, attachment_filename, zipfile.ZIP_DEFLATED)
-        zip_archive.close()
-
-        return {
-            'type': 'ir.actions.act_url',
-            'url': '/tyres_logistic_pick_in_load/static/src/download/%s' %
-                   zip_name,
-            'target': 'new',
-            }
-        """
     @api.multi
     def confirm_all_selected_server_action(self):
         """ Confirm all selected order
