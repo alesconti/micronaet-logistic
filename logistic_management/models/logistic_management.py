@@ -1009,6 +1009,8 @@ class StockPicking(models.Model):
         folder = companys[0]._logistic_folder('invoice')
         history_folder = companys[0]._logistic_folder('invoice', 'history')
 
+        '''
+        # 03/02/2022: removed also Fattura PA:
         for picking in self.browse(invoice_ids):
             # =================================================================
             #                 Invoice Extract:
@@ -1033,8 +1035,9 @@ class StockPicking(models.Model):
             # todo
 
             # 4. Extract electronic invoice:
-            # 03/02/2022: removed also Fattura PA:
+            
             # picking.extract_account_electronic_invoice()
+        '''
 
     @api.model
     def move_lines_for_report_total(self):
