@@ -929,9 +929,10 @@ class StockPicking(models.Model):
             ddt_ids.append(picking.id)
 
             # Invoice procedure (check rules):
-            if need_invoice:
-                picking.assign_invoice_number()
-                invoice_ids.append(picking.id)
+            # 03/02/2022 Removed assign invoice number:
+            # if need_invoice:
+            #    picking.assign_invoice_number()
+            #    invoice_ids.append(picking.id)
 
             picking.write({
                 'state': 'done',  # TODO needed?
