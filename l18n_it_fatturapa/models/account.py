@@ -658,7 +658,7 @@ class StockPicking(models.Model):
 
         # Send code:
         xml_code = picking.get_next_xml_id()
-        picking.xml_code = xml_code # Save code for next print (always updated)
+        picking.xml_code = xml_code  # Save code for next print (always updated)
 
         # ---------------------------------------------------------------------
         #                          COMPANY PARAMETERS:
@@ -758,14 +758,14 @@ class StockPicking(models.Model):
                 'NC' if picking.stock_mode == 'in' else 'FE',
                 ),
 
-            'date': picking.invoice_date, # TODO prepare
+            'date': picking.invoice_date,  # todo prepare
             'type': 'TD04' if picking.stock_mode == 'in' else 'TD01',
             'currency': 'EUR',
             'causal': 'VENDITA',
 
             # Amount:
             'amount': total_db['total'],
-            'vat_total': 0.0, # TODO
+            'vat_total': 0.0,  # todo
             }
 
         # ---------------------------------------------------------------------
@@ -833,7 +833,7 @@ class StockPicking(models.Model):
         f_invoice = open(fullname, 'w')
         _logger.warning('Output invoice XML: %s' % fullname)
 
-        send_format = 'FPR12' # always!
+        send_format = 'FPR12'  # always!
 
         # ---------------------------------------------------------------------
         #                         WRITE INVOICE:
@@ -1589,5 +1589,3 @@ class StockPicking(models.Model):
             self.start_tag('1', 'p:FatturaElettronica', mode='close'))
 
         f_invoice.close()
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

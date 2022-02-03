@@ -145,7 +145,7 @@ class StockPicking(models.Model):
                         partner.name))
                 return False
 
-            sequence_number = False # TODO
+            sequence_number = False  # todo
             if picking.stock_mode == 'out':
                 picking.write({
                     'invoice_number': sequence_number,

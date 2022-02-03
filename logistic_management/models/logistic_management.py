@@ -1030,10 +1030,11 @@ class StockPicking(models.Model):
             # =================================================================
 
             # 3. Invoice Print procedure:
-            # TODO
+            # todo
 
             # 4. Extract electronic invoice:
-            picking.extract_account_electronic_invoice()
+            # 03/02/2022: removed also Fattura PA:
+            # picking.extract_account_electronic_invoice()
 
     @api.model
     def move_lines_for_report_total(self):
