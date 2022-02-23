@@ -1430,7 +1430,7 @@ class PurchaseOrderLine(models.Model):
     product_name = fields.Char('Product name', related='product_id.name')
 
     check_status = fields.Selection([
-        #('none', 'Not touched'), # Not selected
+        # ('none', 'Not touched'), # Not selected
         ('done', 'Load in stock'), # Selected all remain to deliver
 
         ('total', 'Total received'), # Selected all to deliver
@@ -1446,6 +1446,7 @@ class PurchaseOrderLine(models.Model):
         'Logistic source', readonly=True,
         related='logistic_sale_id.order_id.logistic_source',
         )
+
 
 class StockPickingDelivery(models.Model):
     """ Model name: Stock picking import document: add relations
@@ -1466,4 +1467,3 @@ class StockPickingDelivery(models.Model):
     quant_id = fields.Many2one('product.product',
         related='quant_ids.product_id',
         string='Product in stock')
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

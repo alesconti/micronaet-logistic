@@ -122,8 +122,9 @@ class LogisticDeliveryReportWizard(models.TransientModel):
             default_format=format_text['header'])
 
         total = 0.0
-        for delivery in sorted(delivery_data, key=lambda x:
-                (x.supplier_id.name, x.date)):
+        for delivery in sorted(
+                delivery_data, key=lambda x:
+                    (x.supplier_id.name, x.date)):
 
             header = [
                 delivery.supplier_id.name,
@@ -141,7 +142,8 @@ class LogisticDeliveryReportWizard(models.TransientModel):
             for detail in delivery.move_line_ids:
                 row += 1
                 # Header:
-                excel_pool.write_xls_line(ws_name, row, header,
+                excel_pool.write_xls_line(
+                    ws_name, row, header,
                     default_format=format_text['text'])
 
                 # Detail:
@@ -156,7 +158,8 @@ class LogisticDeliveryReportWizard(models.TransientModel):
                     detail.dropship_manage,
                     internal,
                     ]
-                excel_pool.write_xls_line(ws_name, row, line,
+                excel_pool.write_xls_line(
+                    ws_name, row, line,
                     default_format=format_text['text'], col=6)
 
             # -----------------------------------------------------------------
@@ -166,7 +169,8 @@ class LogisticDeliveryReportWizard(models.TransientModel):
             for quant in delivery.quant_ids:
                 row += 1
                 # Header:
-                excel_pool.write_xls_line(ws_name, row, header,
+                excel_pool.write_xls_line(
+                    ws_name, row, header,
                     default_format=format_text['text'])
 
                 # Detail:
@@ -181,7 +185,8 @@ class LogisticDeliveryReportWizard(models.TransientModel):
                     '',  # never for internal
                     internal,
                     ]
-                excel_pool.write_xls_line(ws_name, row, line,
+                excel_pool.write_xls_line(
+                    ws_name, row, line,
                     default_format=format_text['text'], col=6)
 
         row += 1
