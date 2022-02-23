@@ -275,6 +275,7 @@
                  </field>
                  <field name="origin" position="after">
                     <field name="sale_order_id" attrs="{'invisible': [('sale_order_id','=',False)]}"/>
+                    <!--<field name="delivery_id" groups="tyres_logistic_management.group_logistic_purchase_manager"/>-->
                     <field name="is_fees" groups="tyres_logistic_management.group_logistic_manager" />
                  </field>
              </field>
