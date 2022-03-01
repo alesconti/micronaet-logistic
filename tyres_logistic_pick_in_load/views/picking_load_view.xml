@@ -504,8 +504,7 @@
             </field>
         </record>
 
-
-         <record model="ir.ui.view" id="view_stock_picking_delivery_ref_form">
+         <!--<record model="ir.ui.view" id="view_stock_picking_delivery_ref_form">
              <field name="name">stock.picking.delivery.form</field>
              <field name="model">stock.picking</field>
              <field name="inherit_id" ref="tyres_logistic_management.view_stock_picking_confirm_out_form"/>
@@ -514,7 +513,7 @@
                     <field name="delivery_id" groups="tyres_logistic_management.group_logistic_purchase_manager"/>
                 </field>
              </field>
-         </record>
+         </record>-->
 
         <record model="ir.ui.view" id="view_stock_picking_delivery_form">
             <field name="name">stock.picking.delivery.form</field>
@@ -537,7 +536,6 @@
                             <field name="create_date" readonly="1"/>
                             <field name="date" required="1" />
                             <field name="picking_id" attrs="{'invisible': [('picking_id','=',False)]}" readonly="1"/>
-                            <field name="delivery_id" groups="tyres_logistic_management.group_logistic_purchase_manager"/>
 
                             <notebook colspan="4">
                                 <page string="Stock move:">
@@ -551,6 +549,7 @@
                                                  <field name="product_uom_qty" readonly="1" />
                                                  <field name="price_unit"/>
                                                  <field name="dropship_manage" invisible="1"/>
+                                                 <field name="delivery_id" groups="tyres_logistic_management.group_logistic_purchase_manager"/>
                                             </tree>
                                         </field>
                                     </group>
