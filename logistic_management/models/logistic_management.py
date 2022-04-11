@@ -1167,7 +1167,7 @@ class StockPicking(models.Model):
             if not last_order or current_order != last_order:
                 last_order = current_order
                 write_order = '%s del %s' % (
-                    current_order.name,
+                    current_order.name.replace("M-",""),
                     current_order.date_order,
                     )
             else:
